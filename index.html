@@ -280,6 +280,14 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  background:rgba(30,30,36,.6);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:0 1vh 4vh rgba(0,0,0,.4)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 #toast b{font-weight:700;margin-right:calc(1*var(--u))}
+#answer{position:fixed;left:50%;bottom:calc(6*var(--u));width:min(88vw,150vh);transform:translate(-50%,calc(3*var(--u)));z-index:7;opacity:0;transition:opacity .5s,transform .5s;
+ padding:calc(2.8*var(--u)) calc(3.4*var(--u));border-radius:calc(3*var(--u));
+ background:linear-gradient(180deg,rgba(40,44,56,.78),rgba(22,24,32,.78));border:1px solid rgba(255,255,255,.18);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2vh 6vh rgba(0,0,0,.55);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%)}
+#answer.on{opacity:1;transform:translate(-50%,0)}
+#answer small{display:flex;align-items:center;gap:calc(1*var(--u));font-size:calc(1.8*var(--u));font-weight:700;letter-spacing:.14em;color:#9cc2ff;margin-bottom:calc(1*var(--u))}
+#answer small::before{content:"";width:calc(1.2*var(--u));height:calc(1.2*var(--u));border-radius:50%;background:#6ea8ff;box-shadow:0 0 calc(1.5*var(--u)) #6ea8ff}
+#answer p{font-size:calc(3.4*var(--u));line-height:1.35;font-weight:500}
 #dimmer{position:fixed;inset:0;z-index:8;background:#000;opacity:0;pointer-events:none;transition:opacity 30s linear}
 @media (orientation:portrait){
  .gr .scorers{grid-row:3;font-size:2.7vw;padding:0 4vw 3vw}
@@ -314,7 +322,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="dimmer"></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="dimmer"></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -370,7 +378,9 @@ const CFG={
   // Dims the screen in the evening (level 0 = off, 0.6 = quite dark)
   dim:{from:'22:00', to:'07:00', level:0.35},
   // Nova remote + voice: the companion page (remote.html) sends commands on this private channel. Must match remote.html.
-  remote:{topic:'nova-5da4c2f61e34c2fc', holdSecs:60}
+  // showAnswers: show Nova's answers in a card on the dashboard. speak: also say them out loud from this computer
+  // (comes out of the monitor if its speakers are used; Chrome needs one click on the page first).
+  remote:{topic:'nova-5da4c2f61e34c2fc', holdSecs:60, showAnswers:true, speak:true}
 };
 /* ================================ */
 const $=id=>document.getElementById(id);
@@ -1097,8 +1107,16 @@ setInterval(dimmer,60000);
 /* ---------- Nova: commands from the remote / voice page ---------- */
 let toastT;
 function toast(html){$('toast').innerHTML=html;$('toast').classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('on'),5000)}
+let ansT;
 function reply(text){
-  const T=CFG.remote&&CFG.remote.topic;if(!T||!text)return;
+  const RM=CFG.remote||{},T=RM.topic;if(!text)return;
+  if(RM.showAnswers!==false){
+    $('answer').innerHTML=`<small>NOVA</small><p>${esc(text)}</p>`;$('answer').classList.add('on');$('toast').classList.remove('on');
+    clearTimeout(ansT);ansT=setTimeout(()=>$('answer').classList.remove('on'),Math.max(8000,text.split(' ').length*450));
+  }
+  if(RM.speak&&'speechSynthesis' in window){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
+    const v=speechSynthesis.getVoices().find(v=>/^(Samantha|Ava|Allison|Karen)/.test(v.name))||speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+  if(!T)return;
   fetch(`https://ntfy.sh/${T}-reply`,{method:'POST',body:text}).catch(()=>{});
 }
 function showFor(type){nextPage(type,paused?0:((CFG.remote&&CFG.remote.holdSecs)||60))}
@@ -1184,7 +1202,7 @@ function remote(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 5';
+document.getElementById('ver').textContent='build nova 7';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
