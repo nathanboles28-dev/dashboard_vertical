@@ -1087,7 +1087,30 @@ function teamBlocks(n){
 let actx=null;
 const audio=()=>{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}return actx};
 ['click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,audio,{passive:true}));
-if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
+/* ---------- Nova's voice (out of this computer's speakers) ---------- */
+let novaVoice=null,soundReady=false;
+function pickNovaVoice(){
+  if(!('speechSynthesis' in window))return;const vs=speechSynthesis.getVoices();if(!vs.length)return;
+  novaVoice=null;for(const n of ((CFG.remote&&CFG.remote.voice)||[])){novaVoice=vs.find(x=>x.name===n)||vs.find(x=>x.name.startsWith(n));if(novaVoice)break}
+  novaVoice=novaVoice||vs.find(x=>x.default&&/^en/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang))||null;
+}
+if('speechSynthesis' in window){pickNovaVoice();speechSynthesis.onvoiceschanged=pickNovaVoice}
+function speak(text,fallback){
+  if(!('speechSynthesis' in window))return;
+  if(!novaVoice)pickNovaVoice();
+  const go=()=>{
+    const u=new SpeechSynthesisUtterance(text);window._novaUtt=u;           /* keep a reference: Chrome drops speech that gets garbage-collected */
+    const v=fallback?null:novaVoice;if(v){u.voice=v;u.lang=v.lang}else u.lang='en-US';
+    let started=false;u.onstart=()=>{started=true};
+    u.onerror=()=>{if(!started&&!fallback)speak(text,true)};
+    setTimeout(()=>{if(!started&&!fallback){console.warn('Nova voice silent, retrying with default voice');speechSynthesis.cancel();speak(text,true)}},2500);
+    speechSynthesis.resume();speechSynthesis.speak(u);
+  };
+  if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(go,200)}else go();   /* speaking right after cancel() is silent in Chrome */
+}
+/* first click on the dashboard unlocks sound; Nova confirms out loud */
+document.addEventListener('click',()=>{if(soundReady)return;soundReady=true;
+  if(CFG.remote&&CFG.remote.speak){speak('Nova is ready.');toast('<b>Nova</b>Sound is on'+(novaVoice?' · '+esc(novaVoice.name):''))}},{passive:true});
 function horn(){
   const vol=+(CFG.goalAlert&&CFG.goalAlert.horn);if(!vol||muted)return;
   const a=audio();if(!a)return;
@@ -1116,9 +1139,7 @@ function reply(text){
     $('answer').innerHTML=`<small>NOVA</small><p>${esc(text)}</p>`;$('answer').classList.add('on');$('toast').classList.remove('on');
     clearTimeout(ansT);ansT=setTimeout(()=>$('answer').classList.remove('on'),Math.max(8000,text.split(' ').length*450));
   }
-  if(RM.speak&&'speechSynthesis' in window){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
-    const vs=speechSynthesis.getVoices();let v=null;for(const n of (RM.voice||[])){v=vs.find(x=>x.name===n)||vs.find(x=>x.name.startsWith(n));if(v)break}
-    v=v||vs.find(x=>/^en/i.test(x.lang));if(v){u.voice=v;u.lang=v.lang}speechSynthesis.speak(u)}catch(e){}}
+  if(RM.speak)speak(text);
   if(!T)return;
   fetch(`https://ntfy.sh/${T}-reply`,{method:'POST',body:text}).catch(()=>{});
 }
@@ -1205,7 +1226,7 @@ function remote(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 8';
+document.getElementById('ver').textContent='build nova 9';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
