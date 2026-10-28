@@ -11,7 +11,7 @@
 const NOVA={
   topic:'nova-5da4c2f61e34c2fc',
   wake:['nova','novah','noba','nava','novo','no va'],  // what counts as "Nova" (speech-to-text often hears these)
-  speak:true,                                   // read Nova's answers out loud on this device
+  speak:false,                                  // also read Nova's answers out loud on THIS device (answers always show on the dashboard)
   voice:['Samantha','Ava','Allison','Karen','Google US English','Google UK English Female'],  // first one found is used
   lang:'en-CA'
 };
@@ -101,9 +101,9 @@ document.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>
 function setConn(ok,msg){$('conn').className='pill '+(ok?'ok':'bad');$('conn').querySelector('span').textContent=msg||(ok?'Connected':'Offline')}
 
 /* ---------- answers from the dashboard ---------- */
-let speakOn=NOVA.speak;try{const v=localStorage.getItem('nova-speak');if(v!==null)speakOn=v==='1'}catch(e){}
+let speakOn=NOVA.speak;try{const v=localStorage.getItem('nova-speak-v2');if(v!==null)speakOn=v==='1'}catch(e){}
 $('speakSw').classList.toggle('on',speakOn);
-$('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak',speakOn?'1':'0')}catch(e){}};
+$('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak-v2',speakOn?'1':'0')}catch(e){}};
 function listen(){
   const es=new EventSource('https://ntfy.sh/'+T+'-reply/sse');
   es.onopen=()=>setConn(true);
