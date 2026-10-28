@@ -69,7 +69,7 @@ body.alt #mini{opacity:.85}
 .gnext{display:flex;align-items:center;gap:1.4vw;font-size:calc(3*var(--u));font-weight:300;padding:calc(1.4*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .gnext .logo{width:calc(6*var(--u));height:calc(6*var(--u));background:none;padding:0}.gnext span:last-child{margin-left:auto;color:var(--dim)}
 /* forecast */
-#pFc{padding:calc(5*var(--u)) 5vw;display:grid;grid-template-rows:auto 1fr 1.5fr;gap:calc(2.6*var(--u))}
+#pFc{padding:calc(12*var(--u)) 5vw calc(5*var(--u));display:grid;grid-template-rows:auto 1fr 1.4fr auto;gap:calc(2.6*var(--u))}
 .fnow{display:flex;align-items:center;gap:2.4vw}
 #fIcon{font-size:calc(13*var(--u));line-height:1}#fTemp{font-size:calc(13*var(--u));font-weight:200;line-height:1}
 #fDesc{font-size:calc(3.6*var(--u));font-weight:300}#fSub{font-size:calc(2.3*var(--u));color:var(--dim);margin-top:calc(.8*var(--u))}
@@ -181,7 +181,9 @@ body.alt #mini{opacity:.85}
  .gr .when small{font-size:2.5vw}.gr .when b,.gr .when.live b{font-size:5vw}.gr .when.fin b{font-size:4.4vw}
  .gnone{font-size:4.4vw}.gnext{font-size:3.6vw;gap:3vw}.gnext .logo{width:8vw;height:8vw}
  /* forecast: hourly in two rows */
- #pFc{padding:14vw 5vw 8vw;grid-template-rows:auto 1fr 1.25fr;gap:4vw}
+ #pFc{padding:14vw 5vw 8vw;grid-template-rows:auto .8fr 1.3fr auto;gap:3vw}
+ #fHours .day:nth-child(n+7){display:none}
+ #fHours{grid-template-rows:1fr}
  #fIcon,#fTemp{font-size:20vw}#fDesc{font-size:5.4vw}#fSub{font-size:3vw}
  #fHours{display:grid;grid-template-columns:repeat(6,1fr);align-content:space-evenly;row-gap:4vw}
  #fHours .day{font-size:3.2vw}#fHours .day span{font-size:6.4vw}
@@ -271,6 +273,14 @@ body.alt #mini{opacity:.85}
 .cev small{display:block;font-size:calc(2.1*var(--u));color:var(--dim);margin-top:calc(.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cday{font-size:calc(2*var(--u));font-weight:600;letter-spacing:.06em;color:var(--dim);text-transform:uppercase;margin:calc(2*var(--u)) 0 calc(.4*var(--u))}
 .cday:first-of-type{margin-top:0}
+.cev-dr{color:#9cc2ff;font-weight:600}
+.rm-wrap{position:relative;aspect-ratio:16/9;border-radius:calc(1.8*var(--u));overflow:hidden;background:#15171c;border:1px solid rgba(255,255,255,.12)}
+.rm-in{position:absolute;left:0;top:0;width:800px;height:450px;transform-origin:0 0}
+.rm-in img{position:absolute;width:256px;height:256px;max-width:none}.rm-in img.ref{opacity:.9}
+.rm-in svg{position:absolute;inset:0;width:800px;height:450px}
+.rm-cr{position:absolute;right:8px;bottom:6px;font-size:13px;color:rgba(255,255,255,.6);text-shadow:0 0 4px #000}
+.rm-t{font-style:normal;font-size:calc(2.3*var(--u));color:#9cc2ff;font-weight:700;letter-spacing:0;text-transform:none}
+.rm-foot{font-size:calc(2.4*var(--u));color:var(--dim);margin-top:calc(1.4*var(--u))}.rm-foot b{color:var(--ink)}.rm-foot .rm-late{color:#ff9aa8}
 .cnote{font-size:calc(2.5*var(--u));color:var(--dim)}
 .cdgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(2*var(--u))}
 .cd{padding:calc(2.4*var(--u)) calc(2*var(--u));border-radius:calc(2*var(--u));background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);text-align:center;min-width:0}
@@ -487,14 +497,14 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .gd-hs{width:calc(6.4*var(--u));height:calc(6.4*var(--u));border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);flex:none;overflow:hidden;position:relative}
 .gd-hs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
 .lc-cams{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u))}
-.lc-cam{border-radius:calc(1.8*var(--u));overflow:hidden;position:relative;aspect-ratio:16/10;border:1px solid rgba(255,255,255,.14);background:#1b1f26}
+.lc-cam{border-radius:calc(1.8*var(--u));overflow:hidden;position:relative;aspect-ratio:16/9;border:1px solid rgba(255,255,255,.14);background:#1b1f26}
 .lc-cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s}
 .lc-cap{position:absolute;left:0;right:0;bottom:0;padding:calc(4*var(--u)) calc(1.6*var(--u)) calc(1.2*var(--u));background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:calc(2.2*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lc-cap small{display:block;font-weight:400;color:var(--dim);font-size:calc(1.9*var(--u))}
 .lc-lv{position:absolute;top:calc(1.2*var(--u));left:calc(1.2*var(--u));font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.08em;background:rgba(0,0,0,.55);padding:calc(.4*var(--u)) calc(1*var(--u));border-radius:calc(.8*var(--u))}
 .lc-ev{display:flex;gap:calc(2*var(--u));align-items:flex-start;padding:calc(1.4*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .lc-ev:last-child{border:0}.lc-ev>i{font-style:normal;font-size:calc(4*var(--u));line-height:1}.lc-ev>div{min-width:0;flex:1}
-.lc-ev b{display:block;font-size:calc(2.9*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc-ev small{display:block;font-size:calc(2.3*var(--u));color:var(--dim);margin-top:calc(.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-ev b{display:block;font-size:calc(2.7*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc-ev small{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;font-size:calc(1.95*var(--u));line-height:1.35;color:rgba(235,235,245,.72);margin-top:calc(.5*var(--u));overflow:hidden}
 .lc-tag{margin-left:auto;font-size:calc(2.1*var(--u));color:var(--dim);flex:none;text-align:right}.lc-ev.red b{color:#ff9aa8}
 .lc-pl{display:grid;grid-template-columns:calc(34*var(--u)) 1fr;gap:calc(3*var(--u));align-items:center}
 .lc-radar{aspect-ratio:1}.lc-radar svg{width:100%;height:100%;display:block}
@@ -557,18 +567,88 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  .lv-body .lv-sb{grid-column:1/-1}.lv-body .lv-feed{grid-column:2}
  .lv-lg{width:calc(9*var(--u));height:calc(9*var(--u))}.lv-sc{font-size:calc(8*var(--u))}
 }
+/* ===== Hockey hub ===== */
+.hb-body,.wr-body{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u));overflow:hidden}
+.hb-body>*,.wr-body>*{flex-shrink:0}
+.hb-watch{display:flex;flex-direction:column;gap:calc(1.6*var(--u))}
+.hb-wl{display:flex;align-items:center;gap:calc(2.4*var(--u))}.hb-ol{width:calc(11*var(--u));height:calc(11*var(--u));object-fit:contain}
+.hb-wl small{display:block;font-size:calc(2*var(--u));font-weight:800;letter-spacing:.14em;color:var(--dim)}.hb-wl b{display:block;font-size:calc(4.4*var(--u));font-weight:700}.hb-wl span{display:block;font-size:calc(2.6*var(--u));color:var(--dim)}
+.hb-nets{display:flex;flex-wrap:wrap;gap:calc(1.2*var(--u))}
+.hb-net{font-size:calc(2.5*var(--u));font-weight:700;padding:calc(1*var(--u)) calc(2*var(--u));border-radius:calc(3*var(--u));background:rgba(77,139,255,.22);border:1px solid rgba(77,139,255,.55);color:#dbe7ff}
+.hl-slot{position:relative;aspect-ratio:16/9;border-radius:calc(1.8*var(--u));overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.14)}
+.hl-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hl-cap{font-size:calc(2.4*var(--u));font-weight:600;margin-top:calc(1.2*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(1.4*var(--u));margin-bottom:calc(1.6*var(--u))}
+.hb-nums div{text-align:center;padding:calc(1.4*var(--u)) 0;border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06)}
+.hb-nums b{display:block;font-size:calc(5*var(--u));font-weight:300;line-height:1.1}.hb-nums span{display:block;font-size:calc(1.9*var(--u));color:var(--dim)}
+.hb-pace svg{width:100%;display:block}
+.hb-mv{display:flex;gap:calc(1.6*var(--u));align-items:baseline;padding:calc(1*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.hb-mv>div{min-width:0}.hb-mv b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:calc(2.5*var(--u));font-weight:500}.hb-mv small{font-size:calc(2*var(--u));color:var(--dim)}
+.hb-lg{flex:none;font-size:calc(1.8*var(--u));font-weight:800;letter-spacing:.06em;padding:calc(.4*var(--u)) calc(1*var(--u));border-radius:calc(1*var(--u))}
+.hb-lg.nhl{background:rgba(77,139,255,.25);color:#cfe0ff}.hb-lg.mlb{background:rgba(200,40,28,.28);color:#ffd0cc}
+.hb-inj{display:flex;justify-content:space-between;gap:calc(2*var(--u));padding:calc(.8*var(--u)) 0;font-size:calc(2.4*var(--u))}.hb-inj span{color:#ffb3b3;font-size:calc(2.2*var(--u));text-align:right}
+.lv-replay h2{color:#ffd84a!important}
+.gd-tv{margin-top:calc(1.4*var(--u));display:flex;justify-content:center;flex-wrap:wrap;gap:calc(1*var(--u))}
+/* ===== Weather extras ===== */
+#wxfx{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:0;transition:opacity 2s}
+.dayl{font-size:calc(1.8*var(--u));color:var(--dim);margin-top:calc(1.2*var(--u))}.dayl b{color:var(--ink);font-weight:600}
+.chip-snow,.chip-bday{display:inline-block;margin-top:calc(1*var(--u));font-size:calc(1.9*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(2*var(--u))}
+.chip-snow{background:rgba(160,200,255,.22);border:1px solid rgba(160,200,255,.5)}
+.chip-bday{background:linear-gradient(90deg,rgba(255,92,138,.35),rgba(255,184,77,.35));border:1px solid rgba(255,160,180,.6);font-size:calc(2.4*var(--u))}
+.fc-extra{display:grid;grid-template-columns:1fr 1fr;gap:calc(2.6*var(--u))}
+.sn-big{font-size:calc(7*var(--u));font-weight:200;line-height:1.05}.sn-big small{font-size:calc(2.6*var(--u));color:var(--dim)}.sn-none{opacity:.5}
+.sn-txt{font-size:calc(2.2*var(--u));color:var(--dim);margin-top:calc(.8*var(--u));line-height:1.4}
+.sn-warn{margin-top:calc(1.2*var(--u));font-size:calc(2.2*var(--u));font-weight:700;color:#ffe08a}.sn-note{margin-top:calc(1.2*var(--u));font-size:calc(2.1*var(--u));color:#cfe0ff}
+/* ===== Birthday ===== */
+#bday{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:radial-gradient(80% 60% at 50% 40%,rgba(80,20,60,.85),rgba(5,5,15,.95))}
+#bday.on{display:flex;animation:bdIn 1s ease both}@keyframes bdIn{from{opacity:0}}
+#confetti{position:absolute;inset:0;width:100%;height:100%}
+.bd-card{position:relative;text-align:center;animation:bdPop 1.2s cubic-bezier(.2,1.4,.4,1) both}@keyframes bdPop{from{transform:scale(.6);opacity:0}}
+.bd-cake{font-size:calc(18*var(--u));line-height:1;animation:bdBob 2.4s ease-in-out infinite}@keyframes bdBob{50%{transform:translateY(calc(-2*var(--u))) rotate(-4deg)}}
+.bd-k{font-size:calc(3.4*var(--u));font-weight:800;letter-spacing:.4em;color:#ffd84a;margin-top:calc(3*var(--u))}
+.bd-n{font-size:calc(12*var(--u));font-weight:800;line-height:1.05;background:linear-gradient(90deg,#ff5c8a,#ffd84a,#5fd88a,#6ea8ff,#b18cff);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 4vw}
+.bd-s{font-size:calc(3*var(--u));color:rgba(255,255,255,.7);margin-top:calc(2*var(--u))}
+/* ===== Wrapped ===== */
+.wr-hero{text-align:center;padding:calc(3.4*var(--u)) calc(3*var(--u));background:linear-gradient(135deg,rgba(255,92,138,.32),rgba(177,140,255,.28),rgba(77,139,255,.22))!important}
+.wr-k{font-size:calc(2.2*var(--u));font-weight:800;letter-spacing:.24em;color:#ffd1e0}
+.wr-big{font-size:calc(13*var(--u));font-weight:200;line-height:1.05;margin-top:calc(1*var(--u))}.wr-big small{display:block;font-size:calc(3*var(--u));font-weight:500;color:rgba(255,255,255,.8)}
+.wr-facts{display:grid;grid-template-columns:repeat(3,1fr);margin-top:calc(2.4*var(--u))}.wr-facts b{display:block;font-size:calc(4*var(--u));font-weight:600}.wr-facts span{font-size:calc(2*var(--u));color:rgba(255,255,255,.7)}
+.wr-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(1.6*var(--u))}
+.wr-it{position:relative;min-width:0;text-align:center}.wr-it b{display:block;font-size:calc(2.1*var(--u));font-weight:600;margin-top:calc(.8*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wr-it span{font-size:calc(1.8*var(--u));color:var(--dim)}
+.wr-po{aspect-ratio:2/3;border-radius:calc(1.2*var(--u));overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.15)}.wr-po img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wr-rank{position:absolute;top:calc(-1*var(--u));left:calc(-1*var(--u));z-index:1;width:calc(4.4*var(--u));height:calc(4.4*var(--u));border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:calc(2.2*var(--u));background:#ff5c8a;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.wr-u{display:grid;grid-template-columns:auto calc(20*var(--u)) 1fr auto;align-items:center;gap:calc(1.6*var(--u));padding:calc(.9*var(--u)) 0;font-size:calc(2.5*var(--u))}
+.wr-u b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wr-u>span:last-child{color:var(--dim);font-variant-numeric:tabular-nums}
+.wr-bar{height:calc(1.4*var(--u));border-radius:calc(1*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.wr-bar i{display:block;height:100%;border-radius:calc(1*var(--u))}
+/* ===== Visual refresh: page accent colours, icons, glow and entrance animation ===== */
+#shift{--acc:#6ea8ff}#pLive{--acc:#ff5c6c}#pGames{--acc:#4d8bff;--ico:'🏒'}#pJelly{--acc:#b18cff;--ico:'🍿'}#pGameday{--acc:#4d8bff;--ico:'🍁'}
+#pLocal{--acc:#2fd3c0;--ico:'🚗'}#pFc{--acc:#5db7ff;--ico:'⛅'}#pNews{--acc:#ff9f43;--ico:'📰'}#pStand{--acc:#5fd88a;--ico:'📊'}
+#pComing{--acc:#ffd84a;--ico:'📅'}#pHub{--acc:#4d8bff;--ico:'🏒'}#pWrap{--acc:#ff5c8a;--ico:'🎬'}#pPhotos{--acc:#ffb84d}
+.page::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
+ background:radial-gradient(70% 40% at 8% -6%,color-mix(in srgb,var(--acc,#6ea8ff) 30%,transparent),transparent 70%),radial-gradient(60% 35% at 100% 106%,color-mix(in srgb,var(--acc,#6ea8ff) 20%,transparent),transparent 70%)}
+.jf-title,.ptitle{color:color-mix(in srgb,var(--acc,#fff) 45%,#fff)!important;font-size:calc(3.4*var(--u))!important;font-weight:700!important;letter-spacing:.02em!important;
+ text-shadow:0 0 calc(2.4*var(--u)) color-mix(in srgb,var(--acc,#6ea8ff) 55%,transparent)}
+.jf-title::before,.ptitle::before{content:var(--ico,none);margin-right:.35em}
+.page .jf-glass,.page .card{border-top-color:color-mix(in srgb,var(--acc,#fff) 40%,rgba(255,255,255,.14))}
+.page .gd-card h2,.page .card h2{color:color-mix(in srgb,var(--acc,#fff) 35%,rgba(235,235,245,.7))}
+@keyframes rise{from{opacity:0;transform:translateY(calc(3*var(--u))) scale(.985)}}
+.page.enter :is(.jf-glass,.card,.gr,.nhero,.fnow,.jf-title,.ptitle){animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+.page.enter :is(.jf-glass,.card,.gr):nth-child(2){animation-delay:.07s}.page.enter :is(.jf-glass,.card,.gr):nth-child(3){animation-delay:.14s}
+.page.enter :is(.jf-glass,.card,.gr):nth-child(4){animation-delay:.21s}.page.enter :is(.jf-glass,.card,.gr):nth-child(5){animation-delay:.28s}
+.page.enter :is(.jf-glass,.card,.gr):nth-child(n+6){animation-delay:.34s}
+#pFc{position:fixed}#pFc .jf-title{z-index:2}
 </style>
 </head>
 <body>
-<div id="bg"><b class="l1"></b><b class="l2"></b><b class="l3"></b><b class="l4"></b><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div>
+<div id="bg"><b class="l1"></b><b class="l2"></b><b class="l3"></b><b class="l4"></b><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div><canvas id="wxfx"></canvas>
 <main id="shift" class="page on">
- <section id="clock" class="card"><div id="time"></div><div id="date"></div></section>
- <section id="wx" class="card"><div id="wxicon">⛅</div><div><div id="temp">--°</div><div id="wxdesc">Loading…</div><div id="wxsub"></div></div><div class="map" id="radar"></div></section>
+ <section id="clock" class="card"><div id="time"></div><div id="date"></div><div id="bdayChip" class="chip-bday" style="display:none"></div></section>
+ <section id="wx" class="card"><div id="wxicon">⛅</div><div><div id="temp">--°</div><div id="wxdesc">Loading…</div><div id="wxsub"></div><div id="snowChip" class="chip-snow" style="display:none"></div></div><div class="map" id="radar"></div></section>
  <section id="fc" class="card"><h2>Next 5 days</h2><div class="days"></div></section>
  <section id="sun" class="card"><h2>Sun and moon</h2>
   <div class="cols"><div><div class="big" id="sunrise">--</div><div class="row">Sunrise</div></div>
   <div><div class="big" id="sunset">--</div><div class="row">Sunset</div></div></div>
-  <div class="moonrow"><div id="moon"></div><div id="moontxt"></div></div></section>
+  <div class="moonrow"><div id="moon"></div><div id="moontxt"></div></div><div class="dayl" id="dayl"></div></section>
  <section id="air" class="card"><h2>Next 12 hours</h2>
 <div class="hours" id="hours"></div></section>
  <section id="news" class="card"><h2 id="pgTitle"></h2><div id="miniCal"></div><div id="nextList" hidden></div><div class="stg" id="stdNHL" hidden></div><div class="stg" id="stdOHL" hidden></div></section>
@@ -578,18 +658,22 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 <section id="pPhotos" class="page"><img id="photo" alt=""><div id="pmsg"></div></section>
 <section id="pGames" class="page"><div class="gwrap"><div class="ptitle" id="gTitle">Tonight</div><div id="gList"></div></div></section>
 <section id="pFc" class="page">
+ <div class="jf-title">Forecast · Woodstock</div>
  <div class="fnow"><div id="fIcon"></div><div><div id="fTemp">--°</div><div id="fDesc"></div><div id="fSub"></div></div></div>
  <div class="card"><h2>Next 24 hours</h2><div id="fHours"></div></div>
  <div class="card"><h2>7-day forecast</h2><div id="fDays"></div></div>
+ <div class="fc-extra"><div class="card"><h2>❄️ Snow</h2><div id="fxSnow"></div></div><div class="card"><h2>🌅 Daylight</h2><div id="fxDay"></div></div></div>
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pHub" class="page"><div id="hubBody"></div></section>
+<section id="pWrap" class="page"><div id="wrBody"></div></section>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -622,6 +706,8 @@ const CFG={
     {type:'jellyfin',  secs:15},
     {type:'gameday',   secs:40},
     {type:'local',     secs:40},
+    {type:'hub',       secs:40},
+    {type:'wrapped',   secs:30},
     {type:'forecast',  secs:15},
     {type:'photos',    secs:15},
     {type:'news',      secs:15},
@@ -673,9 +759,21 @@ const CFG={
   gameday:{on:true, team:'TOR'},
   // Live game page: while one of your teams is playing. secs = time on the live page; otherSecs = time on every other page during the game.
   // mlbTeamId: your MLB team's number (Blue Jays = 141).
-  live:{on:true, secs:60, otherSecs:10, mlbTeamId:141},
+  live:{on:true, secs:60, otherSecs:10, mlbTeamId:141, replaySecs:180},   // replaySecs: how long a new goal replay plays on the live page
+  // Leafs hub page: where to watch, highlights, season pace, roster moves
+  hub:{on:true, team:'TOR'},
+  // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
+  weatherFx:{on:true, amount:1},
+  // Snow alert chip on the main page when at least alertCm is expected in the next 24 hours
+  snow:{alertCm:5},
+  // Birthday mode: calendar events with "birthday" in the title get a big celebration at this time (secs = how long)
+  birthday:{on:true, time:'09:00', secs:90},
+  // Jellyfin Wrapped page: this month's most watched (first 3 days of a month show last month)
+  wrapped:{on:true},
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
   local:{on:true, cams:4, roadKm:40, planeKm:40},
+  // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
+  commute:{bufferMin:10},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
   remote:{holdSecs:60, showAnswers:true, speak:true,
     voice:['Matilda (Premium)','Matilda (Enhanced)','Matilda','Samantha']}   // first voice found on this Mac is used
@@ -769,7 +867,7 @@ function moon(){
 
 async function weather(){
   try{
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,apparent_temperature,weather_code,is_day&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max&timezone=auto`;
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&current=temperature_2m,apparent_temperature,weather_code,is_day&hourly=temperature_2m,precipitation_probability,weather_code,is_day,snowfall&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,snowfall_sum&timezone=auto`;
     const d=await (await tfetch(u)).json(), c=d.current, dl=d.daily;
     const [ic,tx]=wx(c.weather_code,c.is_day===0);WXD={c,dl,tx,hr:d.hourly};
     $('wxicon').innerHTML=ic;$('temp').textContent=Math.round(c.temperature_2m)+'°';
@@ -792,6 +890,7 @@ async function weather(){
     $('fDays').innerHTML=dl.time.slice(0,nd).map((t,i)=>{const mn=dl.temperature_2m_min[i],mx=dl.temperature_2m_max[i],pp=(dl.precipitation_probability_max||[])[i]||0;
       const day=i?new Date(t+'T12:00').toLocaleDateString([],{weekday:'long'}):'Today';
       return `<div class="fdr"><b>${day}</b><span class="ic">${wx(dl.weather_code[i])[0]}</span><span class="pp">${pp>=10?'💧 '+pp+'%':''}</span><span class="lo">${Math.round(mn)}°</span><div class="rng"><div style="left:${((mn-lo)/sp*100).toFixed(1)}%;right:${((hi-mx)/sp*100).toFixed(1)}%"></div></div><span>${Math.round(mx)}°</span></div>`}).join('');
+    try{weatherExtras()}catch(e){console.warn('wx extras',e)}
   }catch(e){console.warn('weather',e)}
 }
 
@@ -1128,10 +1227,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn());
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1158,7 +1257,13 @@ function nextPage(force,hold){
   if(p.type==='gameday'){renderGameday();loadGameday()}
   if(p.type==='local'){renderLocal();loadLocal();loadPlanes()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
+  if(p.type==='hub'){renderHub();if(Date.now()-hubAt>600000)loadHub()}
+  if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
+  pauseVideos();
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
+  {const pe=$(PAGE_EL[p.type]);if(pe){pe.classList.add('enter');clearTimeout(pe._et);pe._et=setTimeout(()=>pe.classList.remove('enter'),1700)}}
+  if(p.type==='hub'&&HUB&&(HUB.videos||[]).length)mountVideo('hub','#hubVid',HUB.videos,true);
+  if(p.type==='live'&&replayOn())renderLive2();
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
@@ -1352,9 +1457,10 @@ async function loadCalendar(){
   try{
     const evs=icsParse(await calText());
     const from=new Date(new Date().getFullYear(),new Date().getMonth(),1),to=new Date(dayStart(new Date()).getTime()+45*864e5);
-    calEvents=icsExpand(evs,from,to);calErr='';calAt=Date.now();
+    calEvents=icsExpand(evs,from,to);calErr='';calAt=Date.now();setTimeout(prefetchRoutes,2000);
   }catch(e){calErr=(e&&/key/i.test(e.message))?e.message:'Calendar unavailable right now';console.warn('calendar',e)}
   if($('pComing').classList.contains('on'))renderComing();
+  try{birthdayCheck()}catch(e){}
 }
 
 /* ---------- Countdowns ---------- */
@@ -1392,16 +1498,19 @@ function monthHTML(){
   return `<div class="card stcard"><h2 class="hwx"><span>${now.toLocaleDateString([],{month:'long',year:'numeric'})}</span><em class="mleg"><i class="de"></i>Events <i class="dg"></i>Games <i class="dh"></i>Holidays</em></h2>
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
+let comSig='';
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
   const tm=e=>e.allDay?'All day':fmt(e.start);
-  const evRow=e=>`<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${esc(e.loc)}</small>`:''}</div></div>`;
+  const evRow=e=>{const r=e.loc?rtGet(e.loc):null;if(e.loc&&!r)routeTo(e.loc);
+    return `<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>📍 ${esc(e.loc)}${r?` · <span class="cev-dr">🚗 ${driveTxt(r.min)}</span>`:''}</small>`:''}</div></div>`};
   let cal='';
   if(calOn()){
     const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
     let days='',last='';
     later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday"><span>${daysUntil(e.start)===1?'Tomorrow':e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${dayWx(e.start)}</div>`}days+=evRow(e)});
     cal=`<div class="card stcard"><h2 class="hwx"><span>Today</span>${dayWx(now)}</h2>${today.length?today.map(evRow).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}</div>
+      ${routeCard()}
       <div class="card stcard"><h2>This week</h2>${days||`<div class="cnote">${calErr||'Nothing else this week'}</div>`}</div>`;
   }
   const cds=countdownList().slice(0,3);
@@ -1410,7 +1519,7 @@ function renderComing(){
   loadSchedules();
   const html=cal+monthHTML()+`<div id="cdCard">${cdHTML}</div>`;
   $('comingBody').style.cssText='display:flex;flex-direction:column;gap:calc(3*var(--u));flex:1;min-height:0;overflow:hidden';
-  if($('comingBody').innerHTML!==html){$('comingBody').innerHTML=html;fitComing()}
+  if(html!==comSig){comSig=html;$('comingBody').innerHTML=html;drawRouteMaps();fitComing();setTimeout(fitComing,500)}
 }
 /* too much for the screen? drop countdowns first, then trim the week list from the bottom */
 function fitComing(){
@@ -1419,6 +1528,7 @@ function fitComing(){
   const cd=$('cdCard');if(cd)cd.remove();
   const rows=[...$('comingBody').querySelectorAll('.cev')].filter(r=>!r.closest('.card').querySelector('h2.hwx span')||r.closest('.card').querySelector('h2.hwx span').textContent!=='Today');
   while(over()&&rows.length>1){const r=rows.pop(),prev=r.previousElementSibling;r.remove();if(prev&&prev.classList.contains('cday')&&(!prev.nextElementSibling||prev.nextElementSibling.classList.contains('cday')))prev.remove()}
+  if(over()){const m=cb.querySelector('.mgrid');if(m)m.closest('.card').remove()}
 }
 
 /* ---------- Goal scorers for your teams' games (Tonight page) ---------- */
@@ -1639,6 +1749,7 @@ function wxSay(tomorrow){
     :`It's ${num(c.temperature_2m)} degrees and ${tx.toLowerCase()} in ${CFG.city}. Today's high is ${num(dl.temperature_2m_max[0])}, and the low is ${num(dl.temperature_2m_min[0])}.`;
   if(pp>=40)s+=` There's ${/^(8|11|18)/.test(String(pp))?'an':'a'} ${pp} percent chance of ${kind}${tomorrow?'':' today'}.`;
   else if(!tomorrow){const p1=(dl.precipitation_probability_max||[])[1]||0;if(p1>=50)s+=` Tomorrow there's ${/^(8|11|18)/.test(String(p1))?'an':'a'} ${p1} percent chance of precipitation.`}
+  {const sn=snowInfo();if(sn&&sn.s24>=1)s+=` Expect about ${Math.round(sn.s24)} centimetres of snow in the next 24 hours.`}
   if(wxAlerts.length)s+=` Heads up: there's ${/^[aeiou]/i.test(wxAlerts[0].alert_name_en||'')?'an':'a'} ${wxAlerts[0].alert_name_en} in effect.`;
   return s;
 }
@@ -1673,6 +1784,8 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
+  if(has(/\b(hub|highlights?|injur(y|ies|ed)|roster|trades?|channel|what channel)\b/)){showFor('hub');return reply(hubSay())}
   if(has(/\b(game ?day|matchup|puck drop)\b/)){if(gdToday())showFor('gameday');return reply(gdSay())}
   if(has(/\b(traffic|planes?|flights?|airplanes?|cameras?|roads?|highway|401|403)\b/)){showFor('local');return reply(locSay())}
   if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
@@ -1696,7 +1809,7 @@ function handleCommand(raw){
     if(!calOn())return reply('Your calendar isn\'t connected yet.');
     const tom=has(/\btomorrow\b/),d0=dayStart(new Date()),a=new Date(d0.getTime()+(tom?864e5:0)),b=new Date(a.getTime()+864e5);
     const ev=calEvents.filter(e=>e.start>=a&&e.start<b);
-    return reply(ev.length?`${tom?'Tomorrow':'Today'} you have ${ev.length} thing${ev.length>1?'s':''}: `+ev.map(e=>`${e.title}${e.allDay?'':' at '+fmt(e.start)}`).join(', ')+'.':`Nothing on your calendar ${tom?'tomorrow':'today'}.`)}
+    return reply(ev.length?`${tom?'Tomorrow':'Today'} you have ${ev.length} thing${ev.length>1?'s':''}: `+ev.map(e=>{const r=e.loc?rtGet(e.loc):null;return `${e.title}${e.allDay?'':' at '+fmt(e.start)}${r?`, about ${driveTxt(r.min)} away`:''}`}).join(', ')+'.':`Nothing on your calendar ${tom?'tomorrow':'today'}.`)}
   if(has(/\b(home|dashboard|main)\b/)){showFor('dashboard');return reply('Okay.')}
   if(has(/\b(back|previous|go back)\b/)){nextPage(0,paused?0:(CFG.remote&&CFG.remote.holdSecs)||60);return}
   if(has(/\b(next|skip)\b/)){nextPage(undefined,paused?0:undefined);return}
@@ -1881,6 +1994,7 @@ function renderGameday(){
         <div class="gd-tm">${gdLogo(g.them.logo,g.them.abbr)}<b>${esc(them)}</b><span>${esc(T.rec||'')} · ${esc(T.pts||0)} pts</span></div></div>
       <div class="gd-cd" id="gdCd"></div>
       <div class="gd-cdl">Puck drop <b>${fmt(st)}</b>${g.venue?' · '+esc(g.venue):''}</div>
+      ${g.nets&&g.nets.length?`<div class="gd-tv">${g.nets.map(n=>`<span class="hb-net">📺 ${esc(netName(n))}</span>`).join('')}</div>`:''}
       <div class="gd-lm"><span>${lastTxt}</span>${lead?`<span class="gd-pill">${esc(lead)}</span>`:''}</div></div>
     <div class="jf-glass gd-card gd-cmp"><h2>Head to head this season</h2>
       ${row({t:'Goals for / game'},U.gfpg,T.gfpg,'high')}${row({t:'Goals against / game'},U.gapg,T.gapg,'low')}
@@ -1968,7 +2082,7 @@ function renderLocal(){
 /* too much for the screen? trim road events, then the plane list */
 function fitLocal(){const b=document.querySelector('#locBody .lc-body');if(!b)return;[...b.children].forEach(c=>c.style.flexShrink='0');
   const over=()=>b.scrollHeight>b.clientHeight+2;
-  for(let g=0;g<12&&over();g++){const ev=b.querySelectorAll('.lc-ev'),fl=b.querySelectorAll('.lc-f');if(ev.length>1)ev[ev.length-1].remove();else if(fl.length>1)fl[fl.length-1].remove();else break}}
+  for(let g=0;g<14&&over();g++){const ev=b.querySelectorAll('.lc-ev'),fl=b.querySelectorAll('.lc-f');if(fl.length>2)fl[fl.length-1].remove();else if(ev.length>2)ev[ev.length-1].remove();else if(fl.length>1)fl[fl.length-1].remove();else if(ev.length>1)ev[ev.length-1].remove();else break}}
 function locSay(){
   const evs=(LOC&&LOC.events)||[],bad=evs.filter(e=>evInfo(e).red),pl=(PL&&PL.planes)||[];
   let s=bad.length?bad.slice(0,2).map(e=>`There's ${evInfo(e).n==='Incident'?'an incident':'a '+evInfo(e).n.toLowerCase()} on ${e.road}${e.dir?' '+e.dir.toLowerCase():''}, ${Math.round(e.dist)} kilometres away.`).join(' '):
@@ -2058,7 +2172,7 @@ function renderLive2(){
       return `<div class="jf-glass gd-card"><h2>${esc(nick(T.name))}</h2>${tp.map(p=>{const bits=[p.g?p.g+'G':'',p.a?p.a+'A':''].filter(Boolean).join(' ');
         return `<div class="lv-pl"><b>${esc(p.name)}</b><span>${[bits,p.sog?p.sog+' SOG':'',!bits&&!p.sog&&p.hits?p.hits+' hits':''].filter(Boolean).join(' · ')||'–'}</span></div>`}).join('')}
         ${gk?`<div class="lv-gk"><b>${esc(gk.name)}</b><span>${esc(gk.saves)} saves${gk.sv?' · '+esc(gk.sv):''}</span></div>`:''}</div>`};
-    mid=rinkCard+pt+`<div class="gd-two">${tcard('a',A)}${tcard('h',H)}</div>`;
+    mid=(replayOn()?lvReplayCard():rinkCard)+pt+`<div class="gd-two">${tcard('a',A)}${tcard('h',H)}</div>`;
   }else{
     const inn=LV.innings||[],n=Math.max(9,inn.length),cells=s=>Array.from({length:n},(_,i)=>{const x=inn[i],v=x?x[s]:'';const now=i===inn.length-1&&LV.state==='live'&&((s==='a')===!!LV.top);
       return `<td${now?' class="now"':''}>${v==null?'':esc(v)}</td>`}).join('');
@@ -2074,11 +2188,12 @@ function renderLive2(){
     const pz=(LV.pitches||[]).slice(-4).map(p=>`${p.n} ${p.call==='B'?'Ball':p.call==='X'?'In play':'Strike'}${p.mph?' · '+p.mph:''}${p.type?' '+esc(p.type.toLowerCase()):''}`).join('<br>');
     const zones=`<div class="lv-zones"><div class="jf-glass gd-card"><h2>This at-bat</h2>${lvZone()}<div class="lv-pz">${pz||'No pitches yet'}</div></div>
       <div class="jf-glass gd-card"><h2>Balls in play</h2>${lvSpray()}<div class="lv-pz"><span style="color:#ffd84a">●</span> Home run · ● Hit · ○ Out</div></div></div>`;
-    mid=ls+sit+zones;
+    mid=ls+sit+(replayOn()?lvReplayCard():zones);
   }
   const html=`<div class="jf-title"><i class="jf-live"></i>${LV.state==='final'?'Final':'Live'} · ${esc(LV.league)}</div>
     <div class="lv-body">${sb}${mid}<div class="jf-glass gd-card lv-feed"><h2>Play by play</h2>${lvFeed()}</div></div>`;
   if(html!==lvSig){lvSig=html;b.innerHTML=html}
+  if(replayOn())mountVideo('live','#lvVid',[latestClip()],true);
   fitLive();setTimeout(fitLive,400);
 }
 /* too tall? trim the play-by-play, then a player per team */
@@ -2096,10 +2211,242 @@ function liveSay(){
 }
 
 setInterval(()=>{if(liveGames().length&&!$('pLive').classList.contains('on')&&Date.now()-lvAt>50000)loadLive()},30000);
+/* ================= Hockey hub: where to watch, highlights, season pace, roster moves ================= */
+let HUB=null,hubAt=0,hubSig='',hubVidIdx=0;
+const NETNAME={SN:'Sportsnet',SNO:'Sportsnet Ontario',SN1:'Sportsnet One',SNE:'Sportsnet East',SNW:'Sportsnet West',SNP:'Sportsnet Pacific',SN360:'Sportsnet 360',CBC:'CBC · Hockey Night in Canada',
+  TSN:'TSN',TSN1:'TSN1',TSN2:'TSN2',TSN3:'TSN3',TSN4:'TSN4',TSN5:'TSN5',TVAS:'TVA Sports',TVAS2:'TVA Sports 2',CITY:'Citytv',PRIME:'Prime Video','SN+':'Sportsnet+'};
+const netName=n=>NETNAME[n]||n;
+const hubOn=()=>!!(CFG.hub&&CFG.hub.on!==false&&CFG.relay);
+async function loadHub(){
+  if(!hubOn())return;const H=CFG.hub||{};
+  try{const r=await tfetch(relayBase()+'/hub?team='+(H.team||'TOR')+'&mlb='+((CFG.live&&CFG.live.mlbTeamId)||141),20000),d=await r.json();if(!d.error){HUB=d;hubAt=Date.now()}}
+  catch(e){console.warn('hub',e)}
+  if($('pHub').classList.contains('on'))renderHub();
+}
+setInterval(()=>{if($('pHub').classList.contains('on')||Date.now()-hubAt>900000)loadHub()},300000);
+/* one shared muted video player that survives page redraws */
+const vids={};
+function vidPlayer(name){if(vids[name])return vids[name];const v=document.createElement('video');v.muted=true;v.playsInline=true;v.autoplay=true;v.preload='auto';v.className='hl-video';
+  v.setAttribute('muted','');v.setAttribute('playsinline','');v.onerror=()=>{v.dataset.bad=(v.dataset.bad||'')+'|'+v.src;v.dispatchEvent(new Event('ended'))};vids[name]=v;return v}
+function mountVideo(name,slotSel,list,loop){
+  const slot=document.querySelector(slotSel);if(!slot||!list||!list.length)return;
+  const v=vidPlayer(name);v._list=list;
+  if(!v._idx||v._idx>=list.length)v._idx=0;
+  const want=list[v._idx].mp4;if(v.src!==want)v.src=want;
+  v.onended=()=>{v._idx=(v._idx+1)%v._list.length;if(!loop&&v._idx===0&&v._list.length===1){v.currentTime=0}v.src=v._list[v._idx].mp4;v.play().catch(()=>{});
+    const cap=document.querySelector(slotSel+'+.hl-cap');if(cap)cap.textContent=v._list[v._idx].title};
+  if(v.parentNode!==slot)slot.appendChild(v);v.play().catch(()=>{});
+  const cap=slot.nextElementSibling;if(cap&&cap.classList.contains('hl-cap'))cap.textContent=list[v._idx].title;
+}
+function pauseVideos(){Object.values(vids).forEach(v=>{try{v.pause()}catch(e){}})}
+function paceChart(){
+  const P=HUB.pace||[],N=HUB.totalGames||82,line=HUB.line,ppg=HUB.gp?HUB.pts/HUB.gp:0,maxY=Math.max(120,Math.ceil(Math.max(ppg*N,(line?line.ppg*N:0))/10)*10+10);
+  const W=300,Hh=150,px=g=>(g/N*W).toFixed(1),py=v=>(Hh-v/maxY*Hh).toFixed(1);
+  const path=P.map((p,i)=>(i?'L':'M')+px(p.gp)+' '+py(p.pts)).join(''),last=P[P.length-1]||{gp:0,pts:0};
+  const proj=HUB.gp?`<path d="M${px(last.gp)} ${py(last.pts)}L${px(N)} ${py(ppg*N)}" stroke="#4d8bff" stroke-width="1.6" stroke-dasharray="4 4" fill="none" opacity=".7"/>`:'';
+  const pl=line?`<path d="M0 ${Hh}L${px(N)} ${py(line.ppg*N)}" stroke="#ff8da2" stroke-width="1.4" stroke-dasharray="2 4" fill="none"/>`:'';
+  const grid=[0,.25,.5,.75,1].map(f=>{const v=Math.round(maxY*f);return `<line x1="0" x2="${W}" y1="${py(v)}" y2="${py(v)}" stroke="rgba(255,255,255,.08)"/><text x="-4" y="${(+py(v)+3).toFixed(1)}" font-size="8" fill="rgba(255,255,255,.45)" text-anchor="end">${v}</text>`}).join('');
+  const area=P.length>1?`<path d="${path}L${px(last.gp)} ${Hh}L0 ${Hh}Z" fill="url(#hubg)"/>`:'';
+  return `<svg viewBox="-24 -8 ${W+32} ${Hh+24}"><defs><linearGradient id="hubg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4d8bff" stop-opacity=".45"/><stop offset="1" stop-color="#4d8bff" stop-opacity="0"/></linearGradient></defs>
+    ${grid}${area}${pl}${proj}<path d="${path}" stroke="#7fb0ff" stroke-width="2.4" fill="none" stroke-linejoin="round"/>
+    <circle cx="${px(last.gp)}" cy="${py(last.pts)}" r="4" fill="#fff" stroke="#4d8bff" stroke-width="2"/>
+    <text x="0" y="${Hh+14}" font-size="8" fill="rgba(255,255,255,.45)">Game 0</text><text x="${W}" y="${Hh+14}" font-size="8" fill="rgba(255,255,255,.45)" text-anchor="end">${N}</text></svg>`;
+}
+function renderHub(){
+  const b=$('hubBody'),T=nick('Maple Leafs');
+  if(!HUB){b.innerHTML=`<div class="jf-title">Leafs hub</div><div class="jf-wait">Loading…</div>`;return}
+  const w=HUB.watch,ppg=HUB.gp?HUB.pts/HUB.gp:0,N=HUB.totalGames||82;
+  const watch=w?`<div class="jf-glass gd-card hb-watch"><div class="hb-wl">${w.oppLogo?`<img class="hb-ol" src="${esc(w.oppLogo)}" alt="" onerror="this.style.visibility='hidden'">`:''}
+      <div><small>NEXT GAME</small><b>${w.home?'vs':'at'} ${esc(w.opp)}</b><span>${new Date(w.start).toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})} · ${fmt(new Date(w.start))}</span></div></div>
+      <div class="hb-nets">${(w.nets&&w.nets.length?w.nets:['Not announced yet']).map(n=>`<span class="hb-net">📺 ${esc(netName(n))}</span>`).join('')}</div></div>`:'';
+  const lg=HUB.lastGame,vids_=HUB.videos||[];
+  const hl=vids_.length?`<div class="jf-glass gd-card hb-hl"><h2>Highlights${lg?` · last game ${lg.win?'W':'L'} ${esc(lg.us)}–${esc(lg.them)} ${lg.home?'vs':'at'} ${esc(lg.opp)}`:''}</h2>
+      <div class="hl-slot" id="hubVid"></div><div class="hl-cap"></div></div>`:'';
+  const stats=`<div class="jf-glass gd-card hb-pace"><h2>Season pace</h2>
+      <div class="hb-nums"><div><b>${esc(HUB.pts)}</b><span>points · ${esc(HUB.record)}</span></div><div><b>${HUB.gp?Math.round(ppg*N):'–'}</b><span>on pace for</span></div>
+      <div><b>${HUB.line?Math.round(HUB.line.ppg*N):'–'}</b><span>playoff line pace</span></div>${HUB.confRank?`<div><b>${HUB.confRank}${['th','st','nd','rd'][HUB.confRank%10>3||[11,12,13].includes(HUB.confRank%100)?0:HUB.confRank%10]}</b><span>in conference</span></div>`:''}</div>
+      ${paceChart()}<div class="lv-leg"><span style="color:#7fb0ff">━ ${esc(T)}</span><span style="color:#7fb0ff">┅ pace</span><span style="color:#ff8da2">┅ playoff line (8th in conf.)</span></div></div>`;
+  const moves=(HUB.moves||[]).map(m=>`<div class="hb-mv"><span class="hb-lg ${m.lg==='MLB'?'mlb':'nhl'}">${m.lg==='MLB'?'⚾ JAYS':'🏒 LEAFS'}</span><div><b>${esc(m.text)}</b><small>${m.date?esc(new Date(m.date).toLocaleDateString([],{month:'short',day:'numeric'})):''}</small></div></div>`).join('');
+  const inj=(HUB.injuries||[]).map(i=>`<div class="hb-inj"><b>${esc(i.name)}</b><span>${esc(i.status)}${i.note?' · '+esc(i.note):''}</span></div>`).join('');
+  const rm=`<div class="jf-glass gd-card hb-moves"><h2>Roster moves</h2>${moves||'<div class="cnote">No recent moves</div>'}${inj?`<div class="gd-sub">INJURIES</div>${inj}`:''}</div>`;
+  const html=`<div class="jf-title">Leafs hub</div><div class="hb-body">${watch}${hl}${stats}${rm}</div>`;
+  if(html!==hubSig){hubSig=html;b.innerHTML=html}
+  if(vids_.length)mountVideo('hub','#hubVid',vids_,true);
+  fitBody('#hubBody .hb-body','.hb-mv,.hb-inj');
+}
+/* generic "too tall? remove items from the bottom" helper */
+function fitBody(sel,itemSel){const b=document.querySelector(sel);if(!b)return;[...b.children].forEach(c=>c.style.flexShrink='0');
+  const over=()=>b.scrollHeight>b.clientHeight+2;for(let g=0;g<20&&over();g++){const x=b.querySelectorAll(itemSel);if(x.length<=1)break;x[x.length-1].remove()}
+  setTimeout(()=>{for(let g=0;g<20&&over();g++){const x=b.querySelectorAll(itemSel);if(x.length<=1)break;x[x.length-1].remove()}},400)}
+function hubSay(){
+  if(!HUB)return 'I\'m still loading the Leafs hub.';
+  let s=`The Leafs have ${HUB.pts} points from ${HUB.gp} games, on pace for ${Math.round((HUB.gp?HUB.pts/HUB.gp:0)*(HUB.totalGames||82))}.`;
+  if(HUB.watch){const w=HUB.watch;s+=` Next game ${w.home?'against':'at'} ${w.opp} ${new Date(w.start).toLocaleDateString([],{weekday:'long'})} at ${fmt(new Date(w.start))}${w.nets&&w.nets.length?', on '+w.nets.map(netName).join(' and '):''}.`}
+  return s;
+}
+
+/* ================= Goal replays on the Live page (ESPN clips) ================= */
+let LVH=[],lvhAt=0,lvhCount=-1,replayUntil=0;
+async function loadLiveHighlights(){
+  const x=liveGames().find(z=>z.L.type==='espn'&&/^(nhl|mlb)$/.test(z.L.league));if(!x)return;
+  try{const r=await tfetch(relayBase()+'/highlights?league='+x.L.league+'&event='+encodeURIComponent(x.g.id),12000),d=await r.json();
+    if(!d.error){const v=d.videos||[];if(lvhCount>=0&&v.length>lvhCount){replayUntil=Date.now()+((CFG.live&&CFG.live.replaySecs)||180)*1000;vidPlayer('live')._idx=0}
+      lvhCount=v.length;LVH=v;lvhAt=Date.now();if($('pLive').classList.contains('on'))renderLive2()}}
+  catch(e){console.warn('highlights',e)}
+}
+setInterval(()=>{if(liveGames().length)loadLiveHighlights();else{lvhCount=-1;LVH=[]}},60000);
+const replayOn=()=>LVH.length>0&&Date.now()<replayUntil;
+const latestClip=()=>LVH.slice().sort((a,b)=>(Date.parse(b.date)||0)-(Date.parse(a.date)||0))[0]||LVH[LVH.length-1];
+const lvReplayCard=()=>`<div class="jf-glass gd-card lv-replay"><h2>🎬 Replay</h2><div class="hl-slot" id="lvVid"></div><div class="hl-cap"></div></div>`;
+
+/* ================= Weather extras: animated background, snow, daylight ================= */
+const fx={c:null,x:null,parts:[],mode:'',flash:0,next:0};
+function fxMode(){if(!WXD||!(CFG.weatherFx&&CFG.weatherFx.on!==false))return '';const c=WXD.c.weather_code;
+  if(c>=95)return 'storm';if((c>=71&&c<=77)||c===85||c===86)return 'snow';if((c>=51&&c<=67)||(c>=80&&c<=82))return 'rain';return ''}
+function fxInit(){fx.c=$('wxfx');fx.x=fx.c.getContext('2d');const rs=()=>{fx.c.width=innerWidth*devicePixelRatio;fx.c.height=innerHeight*devicePixelRatio};rs();addEventListener('resize',rs);requestAnimationFrame(fxLoop)}
+function fxSpawn(m){const W=fx.c.width,H=fx.c.height,d=devicePixelRatio;
+  return m==='snow'?{x:Math.random()*W,y:Math.random()*-H,r:(1+Math.random()*2.6)*d,vy:(.4+Math.random()*.9)*d,vx:(Math.random()-.5)*.4*d,ph:Math.random()*6.28}
+    :{x:Math.random()*W*1.2,y:Math.random()*-H,len:(12+Math.random()*16)*d,vy:(9+Math.random()*6)*d,vx:-2.2*d}}
+function fxLoop(t){
+  requestAnimationFrame(fxLoop);const m=fxMode();if(!fx.x)return;const ctx=fx.x,W=fx.c.width,H=fx.c.height;
+  if(m!==fx.mode){fx.mode=m;fx.parts=[];fx.c.style.opacity=m?1:0}
+  if(!m){if(fx.cleared!==true){ctx.clearRect(0,0,W,H);fx.cleared=true}return}fx.cleared=false;
+  const want=Math.round((m==='snow'?110:150)*((CFG.weatherFx&&CFG.weatherFx.amount)||1));
+  while(fx.parts.length<want)fx.parts.push(fxSpawn(m==='storm'?'rain':m));
+  ctx.clearRect(0,0,W,H);
+  if(m==='snow'){ctx.fillStyle='rgba(255,255,255,.75)';fx.parts.forEach(p=>{p.ph+=.01;p.x+=p.vx+Math.sin(p.ph)*.3*devicePixelRatio;p.y+=p.vy;if(p.y>H+10){Object.assign(p,fxSpawn('snow'),{y:-10})}ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill()})}
+  else{ctx.strokeStyle='rgba(170,200,255,.35)';ctx.lineWidth=1.2*devicePixelRatio;ctx.beginPath();fx.parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.y>H+20){Object.assign(p,fxSpawn('rain'),{y:-20})}ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+p.vx*1.5,p.y+p.len)});ctx.stroke()}
+  if(m==='storm'){if(t>fx.next){fx.flash=1;fx.next=t+6000+Math.random()*14000}if(fx.flash>0){ctx.fillStyle=`rgba(220,230,255,${fx.flash*.35})`;ctx.fillRect(0,0,W,H);fx.flash-=.06}}
+}
+/* snowfall over the next 48 hours (cm) */
+function snowInfo(){if(!WXD||!WXD.hr||!WXD.hr.snowfall)return null;const hr=WXD.hr,t0=new Date();t0.setMinutes(0,0,0);let k=hr.time.findIndex(t=>new Date(t)>=t0);if(k<0)k=0;
+  let s24=0,s48=0,first=null,peak=null;for(let i=k;i<Math.min(k+48,hr.time.length);i++){const v=hr.snowfall[i]||0;if(i<k+24)s24+=v;s48+=v;if(v>0.05&&!first)first=new Date(hr.time[i]);if(v>0.05)peak=new Date(hr.time[i])}
+  return {s24:Math.round(s24*10)/10,s48:Math.round(s48*10)/10,first,last:peak}}
+/* hours of daylight on a date (Forsythe et al. day-length model) */
+function dayLen(d){const lat=CFG.lat*Math.PI/180,J=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);
+  const P=Math.asin(.39795*Math.cos(.2163108+2*Math.atan(.9671396*Math.tan(.0086*(J-186)))));
+  return 24-24/Math.PI*Math.acos((Math.sin(.8333*Math.PI/180)+Math.sin(lat)*Math.sin(P))/(Math.cos(lat)*Math.cos(P)))}
+function daylight(){const n=new Date(),t=dayLen(n),y=dayLen(new Date(n.getTime()-864e5)),diff=Math.round((t-y)*3600),y0=n.getFullYear();
+  const ws=new Date(y0,11,21),ss=new Date(y0,5,21),ws2=new Date(y0+1,11,21),ss2=new Date(y0+1,5,21);
+  const toLonger=n<ss||n>=ws?null:Math.max(0,daysUntil(ws)),toShorter=n>=ss&&n<ws?null:Math.max(0,daysUntil(n<ss?ss:ss2));
+  const hm=h=>Math.floor(h)+'h '+Math.round(h%1*60)+'m',ms=s=>{s=Math.abs(s);return (s>=60?Math.floor(s/60)+'m ':'')+(s%60)+'s'};
+  return {len:hm(t),diff,diffTxt:diff===0?'same as yesterday':ms(diff)+(diff<0?' less':' more')+' than yesterday',
+    turn:toLonger!==null?(toLonger===0?'Shortest day of the year — longer days from tomorrow':`Days start getting longer in ${toLonger} day${toLonger===1?'':'s'}`):(toShorter===0?'Longest day of the year':`Longest day in ${toShorter} day${toShorter===1?'':'s'}`)}}
+function weatherExtras(){
+  const d=daylight();$('dayl').innerHTML=`☀️ <b>${d.len}</b> of daylight · ${esc(d.diffTxt)}`;
+  const s=snowInfo(),chip=$('snowChip');
+  if(s&&s.s24>=((CFG.snow&&CFG.snow.alertCm)||5)){chip.style.display='';chip.innerHTML=`❄️ ${Math.round(s.s24)} cm of snow coming`}else chip.style.display='none';
+  $('fxSnow').innerHTML=s&&s.s48>=0.2?`<div class="sn-big">${s.s48<1?'<1':Math.round(s.s48)}<small> cm</small></div><div class="sn-txt">expected in the next 48 hours${s.first?`<br>starting ${dayTag(s.first)||'today'} ${fmt(s.first)}`:''}</div>
+      ${s.s24>=((CFG.snow&&CFG.snow.alertCm)||5)?'<div class="sn-warn">🧹 Heavy snow — plan to shovel</div>':s.s48>=2?'<div class="sn-note">Light shovelling likely</div>':''}`
+    :`<div class="sn-big sn-none">0<small> cm</small></div><div class="sn-txt">No snow in the next 48 hours</div>`;
+  $('fxDay').innerHTML=`<div class="sn-big">${d.len}</div><div class="sn-txt">${esc(d.diffTxt)}<br>${esc(d.turn)}</div>`;
+}
+setInterval(weatherExtras,600000);
+
+/* ================= Birthday mode ================= */
+const bdayName=t=>{let s=String(t||'').replace(/\b(happy|birthday|bday|b-day|day)\b/gi,'').replace(/['’]s\b/g,'').replace(/[-–:!🎂🎉]/g,' ').replace(/\s+/g,' ').trim();return s||'someone special'};
+function birthdaysToday(){const t0=dayStart(new Date()),t1=new Date(t0.getTime()+864e5);return calEvents.filter(e=>e.start>=t0&&e.start<t1&&/birthday|\bb-?day\b/i.test(e.title||'')).map(e=>bdayName(e.title))}
+function birthdayCheck(){
+  const B=CFG.birthday||{};if(B.on===false)return;const names=[...new Set(birthdaysToday())];
+  $('bdayChip').style.display=names.length?'':'none';if(names.length)$('bdayChip').textContent='🎂 '+names.join(' & ')+(names.length>1?'\'s birthdays today':'\'s birthday today');
+  if(!names.length)return;
+  const n=new Date(),[h,m]=String(B.time||'09:00').split(':').map(Number),start=new Date(n.getFullYear(),n.getMonth(),n.getDate(),h,m||0),key='nova-bday-'+n.toDateString();
+  let shown=false;try{shown=localStorage.getItem(key)==='1'}catch(e){}
+  if(!shown&&n>=start&&n.getHours()<21){try{localStorage.setItem(key,'1')}catch(e){}birthdayShow(names)}
+}
+function birthdayShow(names){
+  const who=names.join(' and '),el=$('bday');
+  el.innerHTML=`<canvas id="confetti"></canvas><div class="bd-card"><div class="bd-cake">🎂</div><div class="bd-k">HAPPY BIRTHDAY</div><div class="bd-n">${esc(who)}!</div><div class="bd-s">${new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</div></div>`;
+  el.classList.add('on');confetti($('confetti'));
+  if(CFG.remote&&CFG.remote.speak)speak(`Happy birthday, ${who}! Hope you have an amazing day.`);
+  setTimeout(()=>el.classList.remove('on'),((CFG.birthday&&CFG.birthday.secs)||90)*1000);
+}
+function confetti(c){const x=c.getContext('2d'),d=devicePixelRatio;c.width=innerWidth*d;c.height=innerHeight*d;const cols=['#ff5c8a','#ffd84a','#5fd88a','#6ea8ff','#b18cff','#ff9f43'];
+  const ps=Array.from({length:220},()=>({x:Math.random()*c.width,y:Math.random()*-c.height,w:(6+Math.random()*8)*d,h:(10+Math.random()*10)*d,vy:(2+Math.random()*3)*d,vx:(Math.random()-.5)*2*d,r:Math.random()*6.28,vr:(Math.random()-.5)*.2,c:cols[Math.floor(Math.random()*cols.length)]}));
+  const end=Date.now()+((CFG.birthday&&CFG.birthday.secs)||90)*1000;
+  (function f(){if(Date.now()>end||!$('bday').classList.contains('on')){x.clearRect(0,0,c.width,c.height);return}x.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{p.y+=p.vy;p.x+=p.vx+Math.sin(p.y/60)*d;p.r+=p.vr;if(p.y>c.height+20){p.y=-20;p.x=Math.random()*c.width}x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h*.5);x.restore()});requestAnimationFrame(f)})();
+}
+setInterval(birthdayCheck,60000);
+
+/* ================= Jellyfin Wrapped (this month; the first 3 days of a month show last month) ================= */
+let WR=null,wrAt=0,wrSig='';
+const wrMonth=()=>{const n=new Date();return n.getDate()<=3?new Date(n.getFullYear(),n.getMonth()-1,1):new Date(n.getFullYear(),n.getMonth(),1)};
+async function loadWrapped(){
+  if(!jfOn()||!(CFG.wrapped&&CFG.wrapped.on!==false))return;
+  try{const r=await tfetch(relayBase()+'/jellyfin/wrapped?key='+encodeURIComponent(SECRETS.calkey)+'&from='+encodeURIComponent(wrMonth().toISOString().replace(/\.\d+Z$/,'.000Z')),25000),d=await r.json();
+    if(!d.error){WR=d;wrAt=Date.now()}}catch(e){console.warn('wrapped',e)}
+  if($('pWrap').classList.contains('on'))renderWrapped();
+}
+setInterval(()=>{if(Date.now()-wrAt>1800000)loadWrapped()},600000);
+function renderWrapped(){
+  const b=$('wrBody'),mo=wrMonth().toLocaleDateString([],{month:'long'});
+  if(!WR){b.innerHTML=`<div class="jf-title">Jellyfin Wrapped</div><div class="jf-wait">${jfOn()?'Crunching the numbers…':'Jellyfin key not set on this screen'}</div>`;return}
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],maxU=Math.max(1,...(WR.users||[]).map(u=>u.hours));
+  const poster=(id,t)=>{const u=jfImg(id,'Primary'),h=jfHash(t)%360;return `<div class="wr-po" style="background:linear-gradient(170deg,hsl(${h} 35% 32%),hsl(${h} 40% 12%))">${u?`<img src="${esc(u)}&size=s" alt="" onerror="this.remove()">`:''}</div>`};
+  const html=`<div class="jf-title">Jellyfin Wrapped · ${esc(mo)}</div><div class="wr-body">
+    <div class="jf-glass wr-hero"><div class="wr-k">${esc(mo.toUpperCase())} ON ${esc((JF&&JF.server)||'JELLYFIN').toUpperCase()}</div>
+      <div class="wr-big">${jfNum(Math.round(WR.hours))}<small> hours watched</small></div>
+      <div class="wr-facts"><div><b>${jfNum(WR.plays)}</b><span>things played</span></div><div><b>${WR.plays?days[WR.busiestDay]:'–'}</b><span>busiest day</span></div><div><b>${jfNum(WR.late)}</b><span>after 11 PM</span></div></div></div>
+    ${(WR.shows||[]).length?`<div class="jf-glass gd-card"><h2>Top shows</h2><div class="wr-row">${WR.shows.map((s,i)=>`<div class="wr-it"><div class="wr-rank">${i+1}</div>${poster(s.poster,s.title)}<b>${esc(s.title)}</b><span>${s.plays} episode${s.plays===1?'':'s'}</span></div>`).join('')}</div></div>`:''}
+    ${(WR.movies||[]).length?`<div class="jf-glass gd-card"><h2>Top movies</h2><div class="wr-row">${WR.movies.map(s=>`<div class="wr-it">${poster(s.poster,s.title)}<b>${esc(s.title)}</b><span>${s.year?esc(s.year)+' · ':''}${s.plays>1?s.plays+' plays':'watched'}</span></div>`).join('')}</div></div>`:''}
+    ${(WR.users||[]).length?`<div class="jf-glass gd-card"><h2>Who watched the most</h2>${WR.users.slice(0,5).map((u,i)=>`<div class="wr-u"><span class="jf-av" style="background:${jfCol(u.name)}">${esc(String(u.name).charAt(0).toUpperCase())}</span><b>${i===0?'👑 ':''}${esc(u.name)}</b>
+      <div class="wr-bar"><i style="width:${(u.hours/maxU*100).toFixed(1)}%;background:${jfCol(u.name)}"></i></div><span>${u.hours} h</span></div>`).join('')}</div>`:''}
+    ${!WR.plays?'<div class="jf-wait" style="position:static;height:auto;padding:4vh 0">Nothing watched yet this month</div>':''}</div>`;
+  if(html!==wrSig){wrSig=html;b.innerHTML=html}
+  fitBody('#wrBody .wr-body','.wr-u');
+}
+
+/* ---------- Drive times + route map for calendar events with a location ---------- */
+const RT={};
+const rtKey=l=>String(l||'').trim().toLowerCase();
+const rtSkip=l=>!l||/teams|zoom|meet\b|google meet|webex|skype|http|online|virtual|phone|call\b|microsoft/i.test(l);
+const rtGet=l=>{const r=RT[rtKey(l)];return r&&r.st==='ok'?r.d:null};
+async function routeTo(loc){
+  if(rtSkip(loc)||!SECRETS.calkey||!CFG.relay)return;const k=rtKey(loc),c=RT[k];
+  if(c&&(c.st==='wait'||c.st==='ok'||(c.st==='none'&&Date.now()-c.at<1800000)))return;
+  RT[k]={st:'wait'};
+  try{const r=await tfetch(relayBase()+`/route?key=${encodeURIComponent(SECRETS.calkey)}&lat=${CFG.lat}&lon=${CFG.lon}&q=${encodeURIComponent(loc)}`,20000),d=await r.json();
+    RT[k]=d.error||d.none?{st:'none',at:Date.now()}:{st:'ok',d}}
+  catch(e){RT[k]={st:'none',at:Date.now()}}
+  if($('pComing').classList.contains('on'))renderComing();
+}
+async function prefetchRoutes(){const t0=dayStart(new Date()),t7=new Date(t0.getTime()+7*864e5),seen=new Set();
+  for(const e of calEvents){if(e.start<t0||e.start>=t7||!e.loc||rtSkip(e.loc)||seen.has(rtKey(e.loc)))continue;seen.add(rtKey(e.loc));if(seen.size>10)break;await routeTo(e.loc);await new Promise(r=>setTimeout(r,1200))}}
+const driveTxt=m=>m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min';
+const leaveBy=(e,r)=>new Date(e.start.getTime()-(r.min+((CFG.commute&&CFG.commute.bufferMin)||10))*60000);
+/* the next event today that has a reachable location */
+function routeEvent(){const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
+  return calEvents.filter(e=>e.start>=t0&&e.start<t1&&e.loc&&!rtSkip(e.loc)&&(e.allDay||e.end>now)).map(e=>({e,r:rtGet(e.loc)})).find(x=>x.r)||null}
+function routeCard(){const x=routeEvent();if(!x)return '';const {e,r}=x,lb=leaveBy(e,r),late=!e.allDay&&lb<new Date();
+  return `<div class="card stcard rm-card"><h2 class="hwx"><span>🗺️ ${esc(e.title)}</span><span class="rm-t">🚗 ${driveTxt(r.min)} · ${r.km} km</span></h2>
+    <div class="rm-wrap" data-loc="${esc(rtKey(e.loc))}"></div>
+    <div class="rm-foot">${e.allDay?'':late?`<b class="rm-late">Should have left at ${fmt(lb)}</b> · `:`Leave by <b>${fmt(lb)}</b> to arrive for ${fmt(e.start)} · `}${esc(r.name||e.loc)}</div></div>`}
+/* draw a zoomed-out map (CARTO/Esri style tiles) with the route on top */
+function drawRouteMaps(){document.querySelectorAll('.rm-wrap').forEach(w=>{
+  const r=RT[w.dataset.loc]&&RT[w.dataset.loc].d;if(!r||!r.line||!r.line.length)return;
+  const W=800,H=450,P=r.line.concat([[r.from[1],r.from[0]],[r.lon,r.lat]]);
+  const wp=(lon,lat,z)=>{const n=256*2**z,s=Math.sin(lat*Math.PI/180);return [(lon+180)/360*n,(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n]};
+  let z=15,bx;for(;z>3;z--){const pts=P.map(p=>wp(p[0],p[1],z)),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);bx={x0:Math.min(...xs),x1:Math.max(...xs),y0:Math.min(...ys),y1:Math.max(...ys)};if(bx.x1-bx.x0<W*.78&&bx.y1-bx.y0<H*.72)break}
+  const cx=(bx.x0+bx.x1)/2,cy=(bx.y0+bx.y1)/2,ox=cx-W/2,oy=cy-H/2;let tiles='';
+  for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+W)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+H)/256);ty++){
+    const st=`left:${(tx*256-ox).toFixed(1)}px;top:${(ty*256-oy).toFixed(1)}px`;
+    tiles+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${ty}/${tx}" style="${st}" alt="" onerror="this.remove()">`;
+    tiles+=`<img class="ref" src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/${z}/${ty}/${tx}" style="${st}" alt="" onerror="this.remove()">`}
+  const xy=p=>{const q=wp(p[0],p[1],z);return [(q[0]-ox).toFixed(1),(q[1]-oy).toFixed(1)]};
+  const pl=r.line.map(xy).map(p=>p.join(',')).join(' '),a=xy([r.from[1],r.from[0]]),b=xy([r.lon,r.lat]);
+  w.innerHTML=`<div class="rm-in">${tiles}<svg viewBox="0 0 ${W} ${H}"><polyline points="${pl}" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+    <polyline points="${pl}" fill="none" stroke="#4d8bff" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${a[0]}" cy="${a[1]}" r="9" fill="#5fd88a" stroke="#fff" stroke-width="3"/><text x="${+a[0]+14}" y="${+a[1]+5}" font-size="18" font-weight="700" fill="#fff" stroke="#000" stroke-width="3" paint-order="stroke">Home</text>
+    <path d="M${b[0]} ${b[1]} c-10 -14 -14 -22 -14 -30 a14 14 0 0 1 28 0 c0 8 -4 16 -14 30z" fill="#ff5c6c" stroke="#fff" stroke-width="2.5" transform="translate(0 0)"/><circle cx="${b[0]}" cy="${+b[1]-30}" r="5" fill="#fff"/></svg>
+    <div class="rm-cr">Map © Esri · Route © OpenStreetMap</div></div>`;
+  const sc=()=>{const s=w.clientWidth/W;w.firstChild.style.transform=`scale(${s})`};sc();setTimeout(sc,300);
+})}
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 21';
+document.getElementById('ver').textContent='build nova 23';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -2111,7 +2458,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
