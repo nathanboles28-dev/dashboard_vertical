@@ -189,6 +189,28 @@ body.alt #mini{opacity:.85}
 #bg i{position:absolute;inset:-8%;background-size:cover;background-position:center;opacity:0;transition:opacity 4s ease;
  filter:blur(60px) saturate(1.25) brightness(.5);transform:scale(1.1)}
 #bg i.on{opacity:1}
+@property --b0{syntax:'<color>';inherits:true;initial-value:#16233f}
+@property --b1{syntax:'<color>';inherits:true;initial-value:#0a0f1d}
+@property --b2{syntax:'<color>';inherits:true;initial-value:#03050a}
+@property --c1{syntax:'<color>';inherits:true;initial-value:#1f4b9a}
+@property --c2{syntax:'<color>';inherits:true;initial-value:#3a2f7a}
+@property --c3{syntax:'<color>';inherits:true;initial-value:#14618c}
+@property --c4{syntax:'<color>';inherits:true;initial-value:#2b3f8f}
+@property --bo{syntax:'<number>';inherits:true;initial-value:.5}
+#bg[data-bg]{background:radial-gradient(130% 90% at 30% 0%,var(--b0) 0%,var(--b1) 45%,var(--b2) 100%);
+ transition:--b0 var(--fade,60s) ease,--b1 var(--fade,60s) ease,--b2 var(--fade,60s) ease,--c1 var(--fade,60s) ease,--c2 var(--fade,60s) ease,--c3 var(--fade,60s) ease,--c4 var(--fade,60s) ease,--bo var(--fade,60s) ease}
+/* lava lamp: big soft blobs drifting and stretching slowly */
+#bg b{position:absolute;border-radius:50%;filter:blur(110px);opacity:var(--bo);will-change:transform}
+#bg .l1{width:75vmax;height:62vmax;left:-25vmax;top:-20vmax;background:var(--c1);animation:lava1 75s ease-in-out infinite alternate}
+#bg .l2{width:65vmax;height:70vmax;right:-30vmax;top:15vh;background:var(--c2);animation:lava2 95s ease-in-out infinite alternate}
+#bg .l3{width:70vmax;height:55vmax;left:-10vmax;bottom:-30vmax;background:var(--c3);animation:lava3 85s ease-in-out infinite alternate}
+#bg .l4{width:45vmax;height:50vmax;left:25vw;top:35vh;background:var(--c4);animation:lava4 65s ease-in-out infinite alternate}
+@keyframes lava1{0%{transform:translate(0,0) scale(1,1)}30%{transform:translate(22vmax,14vmax) scale(1.25,.9)}65%{transform:translate(6vmax,38vmax) scale(.9,1.2)}100%{transform:translate(28vmax,8vmax) scale(1.1,1)}}
+@keyframes lava2{0%{transform:translate(0,0) scale(1,1)}35%{transform:translate(-26vmax,20vmax) scale(.85,1.2)}70%{transform:translate(-8vmax,-12vmax) scale(1.2,.95)}100%{transform:translate(-30vmax,30vmax) scale(1,1.1)}}
+@keyframes lava3{0%{transform:translate(0,0) scale(1,1)}40%{transform:translate(24vmax,-26vmax) scale(1.2,1)}75%{transform:translate(40vmax,-6vmax) scale(.9,1.15)}100%{transform:translate(10vmax,-34vmax) scale(1.05,.9)}}
+@keyframes lava4{0%{transform:translate(0,0) scale(1,1)}25%{transform:translate(-20vmax,-18vmax) scale(1.3,1.1)}60%{transform:translate(15vmax,-30vmax) scale(.8,1)}100%{transform:translate(-10vmax,20vmax) scale(1.15,1.25)}}
+#bg[data-bg="photo"] b{display:none}
+#bg[data-bg]:not([data-bg="photo"]) i{display:none}
 #bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45))}
 [data-theme="glass"] #bg{display:block}
 [data-theme="glass"] .aurora{display:none}
@@ -218,6 +240,9 @@ body.alt #mini{opacity:.85}
 .nlist{padding:calc(1*var(--u)) calc(3*var(--u))}
 .nrow{display:flex;align-items:center;gap:calc(2.6*var(--u));padding:calc(2*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .nrow:last-child{border:0}
+.ntag{display:inline-block;font-size:calc(1.7*var(--u));font-weight:700;letter-spacing:.1em;color:#9cc2ff;margin-bottom:calc(1*var(--u))}
+.nlist h2{margin:calc(1.4*var(--u)) 0 0}
+.noimg{width:calc(19*var(--u));height:calc(11.5*var(--u));border-radius:calc(1.2*var(--u));flex:none;background:rgba(255,255,255,.06)}
 .nrow img{width:calc(19*var(--u));height:calc(11.5*var(--u));object-fit:cover;border-radius:calc(1.2*var(--u));flex:none;background:#111}
 .nrow b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:calc(2.9*var(--u));font-weight:500;line-height:1.25}
 /* standings */
@@ -261,6 +286,22 @@ body.alt #mini{opacity:.85}
 .tg .logo{width:calc(5*var(--u));height:calc(5*var(--u));background:none;padding:0;border-radius:0}
 .tg .tt{font-variant-numeric:tabular-nums}
 #pGames .gwrap{align-self:flex-start}
+/* coming up: weather on day headers + month calendar */
+.cday{display:flex;justify-content:space-between;align-items:center}
+.hwx{display:flex;justify-content:space-between;align-items:center}
+.dwx{font-style:normal;font-size:calc(2.2*var(--u));color:var(--ink);font-weight:500;letter-spacing:0;text-transform:none;display:flex;align-items:center;gap:calc(.6*var(--u))}
+.dwx svg{width:calc(3*var(--u));height:calc(3*var(--u))}.dwx i{font-style:normal;color:var(--dim)}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:calc(.2*var(--u));text-align:center}
+.mh{font-size:calc(1.8*var(--u));font-weight:600;color:var(--dim);padding-bottom:calc(.6*var(--u))}
+.mc{display:flex;flex-direction:column;align-items:center;gap:calc(.3*var(--u));padding:calc(.2*var(--u)) 0}
+.mc b{width:calc(4.8*var(--u));height:calc(4.8*var(--u));display:grid;place-items:center;border-radius:50%;font-size:calc(2.5*var(--u));font-weight:500;font-variant-numeric:tabular-nums}
+.mc.past b{color:rgba(235,235,245,.35)}
+.mc.today b{background:#fff;color:#000;font-weight:700}
+.mc span{display:flex;gap:calc(.5*var(--u));height:calc(1*var(--u))}
+.mgrid i,.mleg i{display:inline-block;width:calc(1*var(--u));height:calc(1*var(--u));border-radius:50%}
+.de{background:#6ea8ff}.dg{background:#5fd88a}.dh{background:#ffb84d}
+.mleg{font-style:normal;font-size:calc(1.7*var(--u));color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none;display:flex;align-items:center;gap:calc(.6*var(--u))}
+.mleg i{margin-left:calc(1*var(--u))}
 /* scorers on the Tonight page */
 .gr .scorers{grid-column:1/4;grid-row:3;display:grid;grid-template-columns:1fr 1fr;column-gap:calc(3*var(--u));padding:0 calc(3*var(--u)) calc(2.4*var(--u));
  font-size:calc(2.2*var(--u));color:var(--dim);text-align:center;line-height:1.55}
@@ -297,7 +338,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 </style>
 </head>
 <body>
-<div id="bg"><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div>
+<div id="bg"><b class="l1"></b><b class="l2"></b><b class="l3"></b><b class="l4"></b><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div>
 <main id="shift" class="page on">
  <section id="clock" class="card"><div id="time"></div><div id="date"></div></section>
  <section id="wx" class="card"><div id="wxicon">⛅</div><div><div id="temp">--°</div><div id="wxdesc">Loading…</div><div id="wxsub"></div></div><div class="map" id="radar"></div></section>
@@ -331,6 +372,10 @@ const CFG={
   clock24:false,
   // Colour theme: 'glass' (dark, frosted glass over your blurred photos), 'aurora' (blue, purple, pink), 'dusk' (warm amber and rose), 'graphite' (neutral dark), 'forest' (green), 'midnight' (the original blue and violet)
   theme:'glass',
+  // Background for the glass theme: 'cycle' (lava-lamp glow that slowly moves through all the colours below),
+  // or one fixed colour: 'midnight' (deep navy), 'graphite' (charcoal), 'ocean' (deep teal), 'plum' (dark purple), or 'photo' (blurred photos from your folder)
+  background:'cycle',
+  bgMinutes:4,   // cycle: minutes on each colour before it slowly fades to the next
   // Scores: one box per league, shown left to right.
   // type 'espn' covers NHL, MLB, NBA etc. ('sport/league' as ESPN names them).
   // type 'hockeytech' covers the OHL (ESPN doesn't carry it).
@@ -364,10 +409,19 @@ const CFG={
   // unless it was started in kiosk mode with --autoplay-policy=no-user-gesture-required
   goalAlert:{on:true, secs:25, horn:0.5},
   // News page: RSS feeds, newest first
-  news:{count:5, feeds:[
-    {name:'CBC News',   url:'https://www.cbc.ca/webfeed/rss/rss-topstories'},
-    {name:'CBC London', url:'https://www.cbc.ca/webfeed/rss/rss-canada-london'}
-  ]},
+  news:{
+    sports:[
+      {name:'TSN',         url:'https://www.tsn.ca/arc/outboundfeeds/rss/category/nhl/?outputType=xml'},
+      {name:'CBC Sports',  url:'https://www.cbc.ca/webfeed/rss/rss-sports-nhl'}
+    ],
+    local:[
+      {name:'CTV London',  url:'https://www.ctvnews.ca/arc/outboundfeeds/rss/category/london/?outputType=xml'},
+      {name:'CBC London',  url:'https://www.cbc.ca/webfeed/rss/rss-canada-london'},
+      {name:'CTV Kitchener',url:'https://www.ctvnews.ca/arc/outboundfeeds/rss/category/kitchener/?outputType=xml'}
+    ],
+    boost:['Leafs','Maple Leafs','Knights','Blue Jays','Jays'],   // stories mentioning these go to the top of Sports
+    sportsCount:2, localCount:3
+  },
   // Relay: your own Cloudflare Worker address (e.g. 'https://nova-relay.yourname.workers.dev'). News and calendar need it,
   // because CBC and Outlook don't let web pages read them directly.
   relay:'https://nova-relay.nathanboles28.workers.dev',
@@ -386,6 +440,19 @@ const CFG={
 /* ================================ */
 const $=id=>document.getElementById(id);
 document.documentElement.dataset.theme=CFG.theme||'dusk';
+(function(){
+  const P={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
+    ocean:{b:['#0d3a44','#071a20','#020607'],c:['#0f7a86','#1d4f8a','#0d6a5e','#14507a'],o:.58},
+    plum:{b:['#33204a','#150d22','#05030a'],c:['#6b2fa0','#2f3f9a','#8a2f7a','#4a2f9a'],o:.56},
+    graphite:{b:['#2a2d33','#121317','#050506'],c:['#5a6170','#3a3f4a','#4a5262','#2f343e'],o:.42}};
+  const el=document.getElementById('bg'),mode=CFG.background||'cycle';
+  el.dataset.bg=mode==='photo'?'photo':(mode==='cycle'?'midnight':mode);
+  const apply=n=>{const p=P[n]||P.midnight;p.b.forEach((c,i)=>el.style.setProperty('--b'+i,c));p.c.forEach((c,i)=>el.style.setProperty('--c'+(i+1),c));el.style.setProperty('--bo',p.o)};
+  if(mode==='photo')return;
+  if(mode!=='cycle'){el.style.setProperty('--fade','0s');apply(mode);return}
+  const order=['midnight','ocean','plum','graphite'];let i=0;apply(order[0]);
+  setInterval(()=>{i=(i+1)%order.length;apply(order[i])},Math.max(1,+CFG.bgMinutes||4)*60000);
+})();
 let jpN=0;
 function jsonpObj(url,ms=10000){return new Promise((res,rej)=>{
   const cb='__jp'+(++jpN)+'_'+Date.now(),sc=document.createElement('script');let done=false,t;
@@ -853,29 +920,43 @@ setInterval(()=>{alIdx++;drawAlert()},8000);
 const ago=d=>{const m=Math.round((Date.now()-d)/60000);return isNaN(m)?'':m<60?Math.max(1,m)+'m ago':m<1440?Math.round(m/60)+'h ago':d.toLocaleDateString([],{weekday:'short'})};
 async function loadNews(){
   const N=CFG.news||{},items=[];
-  await Promise.all((N.feeds||[]).map(async F=>{
+  const groups=[['sports',N.sports||[]],['local',N.local||(N.feeds||[])]];
+  await Promise.all(groups.flatMap(([grp,feeds])=>feeds.map(async F=>{
     try{
       const x=new DOMParser().parseFromString(await anyText(F.url,t=>/<(rss|feed|channel)/i.test(t)),'text/xml');
       x.querySelectorAll('item,entry').forEach(it=>{
         const q=s=>{const n=it.getElementsByTagName(s)[0];return n?n.textContent.trim():''};
-        const desc=q('description')||q('summary')||q('content');
+        const desc=q('description')||q('summary')||q('content:encoded')||q('content');
         let img='';const m=desc.match(/<img[^>]+src=['"]([^'"]+)/i);if(m)img=m[1];
-        if(!img){const mc=it.querySelector('enclosure[url],thumbnail[url],content[url]');if(mc)img=mc.getAttribute('url')}
+        if(!img){for(const el of it.getElementsByTagName('*')){const ln=el.localName,u=el.getAttribute('url')||el.getAttribute('href');
+          if(u&&/^(content|thumbnail|enclosure)$/.test(ln)&&!/video|audio/i.test(el.getAttribute('type')||'')&&/^https?:/.test(u)){img=u;break}}}
         const title=q('title').replace(/\s+/g,' ');
-        if(title)items.push({title,img,src:F.name,date:new Date(q('pubDate')||q('published')||q('updated')||Date.now())});
+        const date=new Date(q('pubDate')||q('published')||q('updated')||q('dc:date')||Date.now());
+        if(title&&title.length>12)items.push({title,img,src:F.name,grp,date});
       });
     }catch(e){console.warn('news',F.name,e)}
-  }));
-  if(items.length){const seen=new Set();newsItems=items.filter(i=>!seen.has(i.title)&&seen.add(i.title)).sort((a,b)=>b.date-a.date)}
+  })));
+  if(items.length){
+    const seen=new Set(),boost=(N.boost||[]).map(w=>new RegExp('\\b'+w+'\\b','i')),day=Date.now()-36*3600e3;
+    const score=i=>(i.grp==='sports'&&i.date>day&&boost.some(r=>r.test(i.title))?1e13:0)+i.date.getTime();
+    newsItems=items.filter(i=>{const k=i.title.toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>score(b)-score(a));
+  }
   if($('pNews').classList.contains('on'))renderNews();
 }
 function renderNews(){
   if(!newsItems.length){$('newsBody').innerHTML='<div class="gnone">Headlines unavailable right now</div>';return}
-  const n=(CFG.news&&CFG.news.count)||5,hero=newsItems.find(i=>i.img)||newsItems[0],rest=newsItems.filter(i=>i!==hero).slice(0,n);
-  const img=u=>u?`<img src="${esc(u)}" alt="" onerror="this.style.visibility='hidden'">`:'';
-  const html=`<div class="nhero">${hero.img?img(hero.img):'<div style="aspect-ratio:16/9;background:rgba(255,255,255,.06)"></div>'}<div class="cap"><b>${esc(hero.title)}</b><div class="nmeta">${esc(hero.src)} · ${ago(hero.date)}</div></div></div>
-    <div class="card nlist">${rest.map(i=>`<div class="nrow">${img(i.img)}<div style="min-width:0"><b>${esc(i.title)}</b><div class="nmeta">${esc(i.src)} · ${ago(i.date)}</div></div></div>`).join('')}</div>`;
+  const N=CFG.news||{},sp=newsItems.filter(i=>i.grp==='sports'),lo=newsItems.filter(i=>i.grp==='local');
+  const img=u=>u?`<img src="${esc(u)}" alt="" onerror="this.style.visibility='hidden'">`:'<span class="noimg"></span>';
+  const row=i=>`<div class="nrow">${img(i.img)}<div style="min-width:0"><b>${esc(i.title)}</b><div class="nmeta">${esc(i.src)} · ${ago(i.date)}</div></div></div>`;
+  const hero=sp.find(i=>i.img)||sp[0]||lo.find(i=>i.img)||lo[0];
+  const spRest=sp.filter(i=>i!==hero).slice(0,N.sportsCount||3),loRest=lo.filter(i=>i!==hero).slice(0,N.localCount||3);
+  const html=`<div class="nhero">${hero.img?img(hero.img):'<div style="aspect-ratio:16/9;background:rgba(255,255,255,.06)"></div>'}<div class="cap"><span class="ntag">${hero.grp==='sports'?'SPORTS':'SOUTHERN ONTARIO'}</span><b>${esc(hero.title)}</b><div class="nmeta">${esc(hero.src)} · ${ago(hero.date)}</div></div></div>
+    ${spRest.length?`<div class="card nlist"><h2>Sports</h2>${spRest.map(row).join('')}</div>`:''}
+    ${loRest.length?`<div class="card nlist"><h2>Southern Ontario</h2>${loRest.map(row).join('')}</div>`:''}`;
   if($('newsBody').innerHTML!==html)$('newsBody').innerHTML=html;
+  $('newsBody').style.cssText='display:flex;flex-direction:column;gap:calc(2.4*var(--u));flex:1;min-height:0;overflow:hidden';
+  const nb=$('newsBody');[...nb.children].forEach(c=>c.style.flexShrink='0');
+  for(let g=0;g<6&&nb.scrollHeight>nb.clientHeight+2;g++){const lists=[...nb.querySelectorAll('.nlist')].reverse(),l=lists.find(x=>x.querySelectorAll('.nrow').length>1)||lists[0];if(!l)break;const r=l.querySelectorAll('.nrow');r.length?r[r.length-1].remove():l.remove()}
 }
 
 /* ---------- Standings page ---------- */
@@ -957,7 +1038,7 @@ async function loadCalendar(){
   const u=String((CFG.calendar&&CFG.calendar.ics)||'').trim().replace(/^webcal:/i,'https:');if(!u)return;
   try{
     const evs=icsParse(await anyText(u,t=>/BEGIN:VCALENDAR/.test(t),20000));
-    const from=dayStart(new Date()),to=new Date(from.getTime()+8*864e5);
+    const from=new Date(new Date().getFullYear(),new Date().getMonth(),1),to=new Date(dayStart(new Date()).getTime()+45*864e5);
     calEvents=icsExpand(evs,from,to);calErr='';calAt=Date.now();
   }catch(e){calErr='Calendar unavailable right now';console.warn('calendar',e)}
   if($('pComing').classList.contains('on'))renderComing();
@@ -981,24 +1062,50 @@ function countdownList(){
   nextRows.forEach(r=>out.push({name:(r.me||r.L.label)+' '+r.at+' '+r.opp,date:r.date,emoji:r.L.sport==='baseball'?'⚾':'🏒',sub:fmt(r.date)}));
   return out.sort((a,b)=>a.date-b.date).slice(0,6);
 }
+function dayWx(d){
+  if(!WXD)return '';const dl=WXD.dl,p=n=>String(n).padStart(2,'0'),k=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`,i=dl.time.indexOf(k);
+  return i<0?'':`<em class="dwx">${wx(dl.weather_code[i])[0]} ${Math.round(dl.temperature_2m_max[i])}° <i>${Math.round(dl.temperature_2m_min[i])}°</i></em>`;
+}
+function monthHTML(){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1),dim=new Date(y,m+1,0).getDate(),lead=first.getDay();
+  const key=d=>d.toDateString(),ev={},gm={},hol={};
+  calEvents.forEach(e=>{ev[key(e.start)]=1});
+  Object.values(sched).forEach(T=>T.games.forEach(g=>{gm[key(g.date)]=1}));
+  [...holidays(y)].forEach(h=>{hol[key(h.date)]=h.emoji});
+  (CFG.countdowns||[]).forEach(c=>{const d=new Date(c.date+'T00:00');if(!isNaN(d))hol[key(d)]=c.emoji||'⭐'});
+  let cells='';for(let i=0;i<lead;i++)cells+='<div></div>';
+  for(let d=1;d<=dim;d++){const dt=new Date(y,m,d),k=key(dt),past=dt<dayStart(now);
+    cells+=`<div class="mc${k===key(now)?' today':''}${past?' past':''}"><b>${d}</b><span>${ev[k]?'<i class="de"></i>':''}${gm[k]?'<i class="dg"></i>':''}${hol[k]?'<i class="dh"></i>':''}</span></div>`}
+  return `<div class="card stcard"><h2 class="hwx"><span>${now.toLocaleDateString([],{month:'long',year:'numeric'})}</span><em class="mleg"><i class="de"></i>Events <i class="dg"></i>Games <i class="dh"></i>Holidays</em></h2>
+    <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
+}
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
   const tm=e=>e.allDay?'All day':fmt(e.start);
   const evRow=e=>`<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${esc(e.loc)}</small>`:''}</div></div>`;
   let cal='';
   if(CFG.calendar&&CFG.calendar.ics){
-    const today=calEvents.filter(e=>e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1).slice(0,8);
+    const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
     let days='',last='';
-    later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday">${daysUntil(e.start)===1?'Tomorrow':e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</div>`}days+=evRow(e)});
-    cal=`<div class="card stcard"><h2>Today</h2>${today.length?today.map(evRow).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}</div>
+    later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday"><span>${daysUntil(e.start)===1?'Tomorrow':e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${dayWx(e.start)}</div>`}days+=evRow(e)});
+    cal=`<div class="card stcard"><h2 class="hwx"><span>Today</span>${dayWx(now)}</h2>${today.length?today.map(evRow).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}</div>
       <div class="card stcard"><h2>This week</h2>${days||`<div class="cnote">${calErr||'Nothing else this week'}</div>`}</div>`;
   }
-  const cds=countdownList();
+  const cds=countdownList().slice(0,3);
   const cdHTML=cds.length?`<div class="card stcard"><h2>Countdowns</h2><div class="cdgrid">${cds.map(c=>{const n=daysUntil(c.date);
     return `<div class="cd"><div class="em">${c.emoji}</div><b>${n===0?'Today':n===1?'1<small>day</small>':n+'<small>days</small>'}</b><span>${esc(c.name)}</span><em>${c.sub&&n<=1?c.sub:c.date.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</em></div>`}).join('')}</div></div>`:'';
-  const html=cal+cdHTML;
-  $('comingBody').style.cssText='display:flex;flex-direction:column;gap:calc(3*var(--u))';
-  if($('comingBody').innerHTML!==html)$('comingBody').innerHTML=html;
+  loadSchedules();
+  const html=cal+monthHTML()+`<div id="cdCard">${cdHTML}</div>`;
+  $('comingBody').style.cssText='display:flex;flex-direction:column;gap:calc(3*var(--u));flex:1;min-height:0;overflow:hidden';
+  if($('comingBody').innerHTML!==html){$('comingBody').innerHTML=html;fitComing()}
+}
+/* too much for the screen? drop countdowns first, then trim the week list from the bottom */
+function fitComing(){
+  const cb=$('comingBody');[...cb.children].forEach(c=>c.style.flexShrink='0');const over=()=>cb.scrollHeight>cb.clientHeight+2;
+  if(!over())return;
+  const cd=$('cdCard');if(cd)cd.remove();
+  const rows=[...$('comingBody').querySelectorAll('.cev')].filter(r=>!r.closest('.card').querySelector('h2.hwx span')||r.closest('.card').querySelector('h2.hwx span').textContent!=='Today');
+  while(over()&&rows.length>1){const r=rows.pop(),prev=r.previousElementSibling;r.remove();if(prev&&prev.classList.contains('cday')&&(!prev.nextElementSibling||prev.nextElementSibling.classList.contains('cday')))prev.remove()}
 }
 
 /* ---------- Goal scorers for your teams' games (Tonight page) ---------- */
@@ -1193,7 +1300,7 @@ function handleCommand(raw){
   if(has(/\b(when|next)\b/)&&has(/\b(play|playing|game|games|match)\b/)){showFor('games');const now=team?gameSay(team):'';return reply(now&&!/^Final/.test(now)?now:nextSay(team))}
   if(has(/\b(weather|forecast|temperature|outside|rain|raining|snow|snowing|cold|warm|hot|umbrella|jacket|degrees)\b/)){showFor('forecast');return reply(wxSay(has(/\btomorrow\b/)))}
   if(has(/\b(score|scores|game|games|playing|hockey|baseball|leafs|knights|jays)\b/)){showFor('games');return reply(gameSay(team)||(team?nextSay(team):'None of your teams play today. '+nextSay('')))}
-  if(has(/\b(news|headlines|happening)\b/)){showFor('news');return reply(newsItems.length?'Here are the top headlines. '+newsItems.slice(0,3).map(i=>i.title).join('. ')+'.':'Sorry, I can\'t get the news right now.')}
+  if(has(/\b(news|headlines|happening)\b/)){showFor('news');{const sp=newsItems.filter(i=>i.grp==='sports').slice(0,2),lo=newsItems.filter(i=>i.grp==='local').slice(0,2);return reply(newsItems.length?(sp.length?'In sports: '+sp.map(i=>i.title).join('. ')+'. ':'')+(lo.length?'Around southern Ontario: '+lo.map(i=>i.title).join('. ')+'.':''):'Sorry, I can\'t get the news right now.')}}
   if(has(/\b(standings?|table|division|conference|rank|ranked|place)\b/)){showFor('standings');
     const pos=(rows,fav,lbl)=>{const i=rows.findIndex(r=>fav.includes(r.c));return i<0?'':`The ${rows[i].name||rows[i].c} are ${i+1}${['st','nd','rd'][i]||'th'} in the ${lbl} with ${rows[i].pts} points.`};
     const n=CFG.leagues.find(l=>l.league==='nhl'),o=CFG.leagues.find(l=>l.type==='hockeytech');
@@ -1226,11 +1333,11 @@ function remote(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 9';
+document.getElementById('ver').textContent='build nova 14';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
-  if(CFG.theme!=='glass'||!photos.length||bgFails>5)return;
+  if(CFG.theme!=='glass'||CFG.background!=='photo'||!photos.length||bgFails>5)return;
   const f=photos[Math.floor(Math.random()*photos.length)],urls=photoUrls(f.id).map(u=>u.replace('2400','800')),img=new Image();let t=0;
   img.onload=()=>{bgFails=0;const ls=document.querySelectorAll('#bg i'),nx=ls[bgOn%2];bgOn++;
     nx.style.backgroundImage=`url("${img.src}")`;nx.classList.add('on');ls[bgOn%2].classList.remove('on')};
