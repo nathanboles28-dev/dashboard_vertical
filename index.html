@@ -637,6 +637,47 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .page.enter :is(.jf-glass,.card,.gr):nth-child(4){animation-delay:.21s}.page.enter :is(.jf-glass,.card,.gr):nth-child(5){animation-delay:.28s}
 .page.enter :is(.jf-glass,.card,.gr):nth-child(n+6){animation-delay:.34s}
 #pFc{position:fixed}#pFc .jf-title{z-index:2}
+
+/* ===== Leafs hub v2 ===== */
+.hb2-hd{display:grid;grid-template-columns:auto 1fr;gap:calc(2.6*var(--u));align-items:center;padding:calc(2.6*var(--u))}
+.hb2-logo{width:calc(15*var(--u));height:calc(15*var(--u));object-fit:contain;filter:drop-shadow(0 calc(.6*var(--u)) calc(1.4*var(--u)) rgba(0,0,0,.45))}
+.hb2-ph{display:grid;place-items:center;font-style:normal;font-weight:800;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25)}i.hb2-logo{font-size:calc(4*var(--u))}
+.hb2-rec{font-size:calc(7*var(--u));font-weight:300;line-height:1}.hb2-rec small{font-size:calc(2.6*var(--u));color:var(--dim);margin-left:calc(1.2*var(--u))}
+.hb2-chips{display:flex;flex-wrap:wrap;gap:calc(1*var(--u));margin-top:calc(1.4*var(--u))}
+.hb2-chip{font-size:calc(2.1*var(--u));font-weight:700;padding:calc(.6*var(--u)) calc(1.5*var(--u));border-radius:calc(3*var(--u));background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15)}
+.hb2-chip.b{background:rgba(77,139,255,.22);border-color:rgba(77,139,255,.55);color:#dbe7ff}.hb2-chip.g{background:rgba(95,216,138,.2);border-color:rgba(95,216,138,.5);color:#c8f5d6}.hb2-chip.r{background:rgba(255,120,120,.2);border-color:rgba(255,120,120,.5);color:#ffd0d0}
+.hb2-ng{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(1.2*var(--u))}
+.hb2-ng>div{text-align:center;padding:calc(1.4*var(--u)) calc(.4*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06);min-width:0}
+.hb2-ng>div.on{background:rgba(77,139,255,.2);border:1px solid rgba(77,139,255,.5)}
+.hb2-ol{display:block;width:calc(7*var(--u));height:calc(7*var(--u));margin:0 auto calc(.6*var(--u));object-fit:contain}i.hb2-ol{font-size:calc(1.9*var(--u))}
+.hb2-ng b{display:block;font-size:calc(2.2*var(--u))}.hb2-ng span{display:block;font-size:calc(1.75*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb2-ng em{display:block;font-style:normal;font-size:calc(1.6*var(--u));color:#9cc2ff;margin-top:calc(.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gd-card h2 em{font-style:normal;float:right;color:var(--dim);font-weight:500}
+.hb2-lg{display:grid;grid-template-columns:minmax(0,1fr) calc(36*var(--u));gap:calc(2.4*var(--u));align-items:center}.hb2-lg.nov{grid-template-columns:1fr}
+.hb2-sc{font-size:calc(5.4*var(--u));font-weight:300}.hb2-sc b{font-weight:700}.hb2-sc small{font-size:calc(2.2*var(--u));color:var(--dim)}
+.hb2-sc span{font-weight:800}.hb2-sc span.w{color:#8ff0b0}.hb2-sc span.l{color:#ff9aa8}
+.hb2-sub{font-size:calc(2.1*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
+.hb2-stars{margin-top:calc(1.2*var(--u))}.hb2-stars>div{display:flex;align-items:center;gap:calc(1.2*var(--u));padding:calc(.5*var(--u)) 0;font-size:calc(2.3*var(--u));min-width:0}
+.hb2-stars i{font-style:normal;color:#ffd84a;width:calc(6*var(--u));flex:none;font-size:calc(1.9*var(--u))}.hb2-stars .gd-hs{width:calc(5*var(--u));height:calc(5*var(--u))}
+.hb2-stars b{font-weight:600;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hb2-stars b small{font-weight:500;color:var(--dim);margin-left:calc(.8*var(--u));font-size:calc(1.8*var(--u))}
+.hb2-stars span{color:var(--dim);font-size:calc(2*var(--u));margin-left:auto;flex:none}
+.hb2-lg .hl-slot{border-radius:calc(1.4*var(--u))}.hb2-lg .hl-cap{font-size:calc(1.8*var(--u));font-weight:500;color:var(--dim);white-space:normal;line-height:1.3;max-height:calc(4.8*var(--u));overflow:hidden}
+.hb2-ld{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:calc(1.2*var(--u))}
+.hb2-ld>div{text-align:center;padding:calc(1.4*var(--u)) calc(.6*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06);min-width:0}
+.hb2-ld .gd-hs{width:calc(9*var(--u));height:calc(9*var(--u));margin:0 auto calc(.8*var(--u))}
+.hb2-ld small{display:block;font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.1em;color:var(--dim)}.hb2-ld b{display:block;font-size:calc(4.4*var(--u));font-weight:300;line-height:1.1}
+.hb2-ld span{display:block;font-size:calc(2*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb2-two{display:grid;grid-template-columns:1.15fr 1fr;gap:calc(1.8*var(--u))}.hb2-two.one{grid-template-columns:1fr}
+.hb2-rk{display:flex;justify-content:space-between;align-items:baseline;padding:calc(.7*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:calc(2.3*var(--u))}
+.hb2-rk:last-child{border:0}.hb2-rk span{color:var(--dim)}.hb2-rk b{font-weight:600}
+.hb2-rk em{font-style:normal;font-size:calc(1.9*var(--u));font-weight:700;margin-left:calc(1*var(--u));padding:calc(.2*var(--u)) calc(1*var(--u));border-radius:calc(1*var(--u))}
+.hb2-rk em.top{background:rgba(95,216,138,.22);color:#c8f5d6}.hb2-rk em.mid{background:rgba(255,255,255,.12);color:#ddd}.hb2-rk em.low{background:rgba(255,120,120,.22);color:#ffd0d0}
+.hb2-race>div{display:flex;justify-content:space-between;align-items:baseline;gap:calc(1*var(--u));padding:calc(.8*var(--u)) 0;font-size:calc(2.2*var(--u))}.hb2-race span{color:var(--dim)}
+.hb2-race b{font-size:calc(3.2*var(--u));font-weight:600;flex:none}.hb2-race b.g{color:#8ff0b0}.hb2-race b.r{color:#ff9aa8}
+.hb2-mv{display:flex;gap:calc(1.4*var(--u));align-items:baseline;padding:calc(.7*var(--u)) 0;font-size:calc(2.2*var(--u));border-bottom:1px solid rgba(255,255,255,.07)}.hb2-mv:last-child{border:0}
+.hb2-mv b{font-weight:500;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb2-mv em{flex:none;font-style:normal;font-size:calc(1.7*var(--u));font-weight:800;padding:calc(.3*var(--u)) calc(.9*var(--u));border-radius:calc(1*var(--u));background:rgba(77,139,255,.25);color:#cfe0ff}
+.hb2-mv em.inj{background:rgba(255,120,120,.25);color:#ffd0d0}.hb2-mv em.mlb{background:rgba(200,40,28,.3);color:#ffd0cc}.hb2-mv span{color:var(--dim);font-size:calc(1.9*var(--u));flex:none}
 </style>
 </head>
 <body>
@@ -1262,7 +1303,7 @@ function nextPage(force,hold){
   pauseVideos();
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
   {const pe=$(PAGE_EL[p.type]);if(pe){pe.classList.add('enter');clearTimeout(pe._et);pe._et=setTimeout(()=>pe.classList.remove('enter'),1700)}}
-  if(p.type==='hub'&&HUB&&(HUB.videos||[]).length)mountVideo('hub','#hubVid',HUB.videos,true);
+  if(p.type==='hub'&&HUB&&(HUB.videos||[]).length){const v=vidPlayer('hub');if(v._list&&HUB.videos.length>1)v._idx=((v._idx||0)+1)%HUB.videos.length;mountVideo('hub','#hubVid',HUB.videos,true)}
   if(p.type==='live'&&replayOn())renderLive2();
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
@@ -1503,7 +1544,7 @@ function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
   const tm=e=>e.allDay?'All day':fmt(e.start);
   const evRow=e=>{const r=e.loc?rtGet(e.loc):null;if(e.loc&&!r)routeTo(e.loc);
-    return `<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>📍 ${esc(e.loc)}${r?` · <span class="cev-dr">🚗 ${driveTxt(r.min)}</span>`:''}</small>`:''}</div></div>`};
+    return `<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div></div>`};
   let cal='';
   if(calOn()){
     const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
@@ -2234,9 +2275,9 @@ function mountVideo(name,slotSel,list,loop){
   if(!v._idx||v._idx>=list.length)v._idx=0;
   const want=list[v._idx].mp4;if(v.src!==want)v.src=want;
   v.onended=()=>{v._idx=(v._idx+1)%v._list.length;if(!loop&&v._idx===0&&v._list.length===1){v.currentTime=0}v.src=v._list[v._idx].mp4;v.play().catch(()=>{});
-    const cap=document.querySelector(slotSel+'+.hl-cap');if(cap)cap.textContent=v._list[v._idx].title};
+    const cap=document.querySelector(slotSel+'+.hl-cap');if(cap)cap.textContent=(v._list.length>1?`Clip ${v._idx+1} of ${v._list.length} · `:'')+v._list[v._idx].title};
   if(v.parentNode!==slot)slot.appendChild(v);v.play().catch(()=>{});
-  const cap=slot.nextElementSibling;if(cap&&cap.classList.contains('hl-cap'))cap.textContent=list[v._idx].title;
+  const cap=slot.nextElementSibling;if(cap&&cap.classList.contains('hl-cap'))cap.textContent=(list.length>1?`Clip ${v._idx+1} of ${list.length} · `:'')+list[v._idx].title;
 }
 function pauseVideos(){Object.values(vids).forEach(v=>{try{v.pause()}catch(e){}})}
 function paceChart(){
@@ -2253,26 +2294,41 @@ function paceChart(){
     <text x="0" y="${Hh+14}" font-size="8" fill="rgba(255,255,255,.45)">Game 0</text><text x="${W}" y="${Hh+14}" font-size="8" fill="rgba(255,255,255,.45)" text-anchor="end">${N}</text></svg>`;
 }
 function renderHub(){
-  const b=$('hubBody'),T=nick('Maple Leafs');
+  const b=$('hubBody');
   if(!HUB){b.innerHTML=`<div class="jf-title">Leafs hub</div><div class="jf-wait">Loading…</div>`;return}
-  const w=HUB.watch,ppg=HUB.gp?HUB.pts/HUB.gp:0,N=HUB.totalGames||82;
-  const watch=w?`<div class="jf-glass gd-card hb-watch"><div class="hb-wl">${w.oppLogo?`<img class="hb-ol" src="${esc(w.oppLogo)}" alt="" onerror="this.style.visibility='hidden'">`:''}
-      <div><small>NEXT GAME</small><b>${w.home?'vs':'at'} ${esc(w.opp)}</b><span>${new Date(w.start).toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})} · ${fmt(new Date(w.start))}</span></div></div>
-      <div class="hb-nets">${(w.nets&&w.nets.length?w.nets:['Not announced yet']).map(n=>`<span class="hb-net">📺 ${esc(netName(n))}</span>`).join('')}</div></div>`:'';
-  const lg=HUB.lastGame,vids_=HUB.videos||[];
-  const hl=vids_.length?`<div class="jf-glass gd-card hb-hl"><h2>Highlights${lg?` · last game ${lg.win?'W':'L'} ${esc(lg.us)}–${esc(lg.them)} ${lg.home?'vs':'at'} ${esc(lg.opp)}`:''}</h2>
-      <div class="hl-slot" id="hubVid"></div><div class="hl-cap"></div></div>`:'';
-  const stats=`<div class="jf-glass gd-card hb-pace"><h2>Season pace</h2>
-      <div class="hb-nums"><div><b>${esc(HUB.pts)}</b><span>points · ${esc(HUB.record)}</span></div><div><b>${HUB.gp?Math.round(ppg*N):'–'}</b><span>on pace for</span></div>
-      <div><b>${HUB.line?Math.round(HUB.line.ppg*N):'–'}</b><span>playoff line pace</span></div>${HUB.confRank?`<div><b>${HUB.confRank}${['th','st','nd','rd'][HUB.confRank%10>3||[11,12,13].includes(HUB.confRank%100)?0:HUB.confRank%10]}</b><span>in conference</span></div>`:''}</div>
-      ${paceChart()}<div class="lv-leg"><span style="color:#7fb0ff">━ ${esc(T)}</span><span style="color:#7fb0ff">┅ pace</span><span style="color:#ff8da2">┅ playoff line (8th in conf.)</span></div></div>`;
-  const moves=(HUB.moves||[]).map(m=>`<div class="hb-mv"><span class="hb-lg ${m.lg==='MLB'?'mlb':'nhl'}">${m.lg==='MLB'?'⚾ JAYS':'🏒 LEAFS'}</span><div><b>${esc(m.text)}</b><small>${m.date?esc(new Date(m.date).toLocaleDateString([],{month:'short',day:'numeric'})):''}</small></div></div>`).join('');
-  const inj=(HUB.injuries||[]).map(i=>`<div class="hb-inj"><b>${esc(i.name)}</b><span>${esc(i.status)}${i.note?' · '+esc(i.note):''}</span></div>`).join('');
-  const rm=`<div class="jf-glass gd-card hb-moves"><h2>Roster moves</h2>${moves||'<div class="cnote">No recent moves</div>'}${inj?`<div class="gd-sub">INJURIES</div>${inj}`:''}</div>`;
-  const html=`<div class="jf-title">Leafs hub</div><div class="hb-body">${watch}${hl}${stats}${rm}</div>`;
+  const T=nick(HUB.name||'Maple Leafs'),ord=n=>n+(['th','st','nd','rd'][(n%100-20)%10]||['th','st','nd','rd'][n%100]||'th');
+  const lgo=(u,ab,cls)=>u&&/^https?:\/\//i.test(u)?`<img class="${cls}" src="${esc(u)}" alt="" onerror="this.style.visibility='hidden'">`:`<i class="${cls} hb2-ph">${esc(ab)}</i>`;
+  const head=`<div class="jf-glass hb2-hd">${lgo(HUB.logo,HUB.team,'hb2-logo')}<div>
+      <div class="hb2-rec">${esc(HUB.record)}<small>${esc(HUB.pts)} pts · ${esc(HUB.gp)} GP</small></div>
+      <div class="hb2-chips">${HUB.divRank?`<span class="hb2-chip b">${ord(HUB.divRank)} in ${esc(HUB.divName||'division')}</span>`:''}${HUB.confRank?`<span class="hb2-chip">${ord(HUB.confRank)} in ${esc((HUB.confName||'conference').replace(/ern$/,''))}</span>`:''}
+        ${HUB.streak?`<span class="hb2-chip ${/^W/.test(HUB.streak)?'g':/^L/.test(HUB.streak)?'r':''}">${esc(HUB.streak)} streak</span>`:''}${HUB.l10?`<span class="hb2-chip">Last 10: ${esc(HUB.l10)}</span>`:''}</div></div></div>`;
+  const ng=(HUB.next||[]).length?`<div class="jf-glass gd-card"><h2>Next ${HUB.next.length} games</h2><div class="hb2-ng">${HUB.next.map((g,i)=>{const d=new Date(g.start),n=daysUntil(d);
+      return `<div class="${i===0?'on':''}">${lgo(g.logo,g.opp,'hb2-ol')}<b>${g.live?'LIVE':n===0?(d.getHours()>=17?'Tonight':'Today'):n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',day:'numeric'})}</b><span>${g.home?'vs':'at'} ${esc(g.opp)} · ${fmt(d).replace(':00','')}</span><em>${g.nets&&g.nets.length?esc(g.nets.join(', ')):'TBA'}</em></div>`}).join('')}</div></div>`:'';
+  const L=HUB.last,vs=HUB.videos||[];
+  const last=L?`<div class="jf-glass gd-card"><h2>Last game <em>${new Date(L.date).toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</em></h2>
+     <div class="hb2-lg${vs.length?'':' nov'}"><div>
+       <div class="hb2-sc"><span class="${L.res==='W'?'w':'l'}">${L.res==='OTL'?'OTL':L.res}</span> <b>${esc(L.us)}–${esc(L.them)}</b> ${L.home?'vs':'at'} ${esc(L.opp)}${L.ot?' <small>(OT)</small>':''}</div>
+       <div class="hb2-sub">${L.sog&&L.sog[0]!=null?`Shots ${esc(L.sog[0])}–${esc(L.sog[1])}`:''}${L.pp?` · PP ${esc(L.pp)}`:''}</div>
+       ${(L.stars||[]).length?`<div class="hb2-stars">${L.stars.map(s=>`<div><i>${'★'.repeat(s.star||1)}</i>${gdHead(s.img)}<b>${esc(s.name)}<small>${esc(s.team)}</small></b><span>${esc(s.line)}</span></div>`).join('')}</div>`:''}</div>
+       ${vs.length?`<div><div class="hl-slot" id="hubVid"></div><div class="hl-cap"></div></div>`:''}</div></div>`:'';
+  const Ld=HUB.leaders||{},tile=(lab,x)=>x?`<div>${gdHead(x.img)}<small>${lab}</small><b>${esc(x.v)}</b><span>${esc(String(x.name).split(' ').slice(-1)[0])}</span></div>`:'';
+  const leaders=Ld.points?`<div class="jf-glass gd-card"><h2>Team leaders</h2><div class="hb2-ld">${tile('POINTS',Ld.points)}${tile('GOALS',Ld.goals)}${tile('ASSISTS',Ld.assists)}${tile('SAVE %',Ld.save)}</div></div>`:'';
+  const R=HUB.ranks,rk=(lab,v,suf,r)=>`<div class="hb2-rk"><span>${lab}</span><div><b>${esc(v)}${suf}</b><em class="${r<=10?'top':r>(R.of||32)-10?'low':'mid'}">${ord(r)}</em></div></div>`;
+  const ranks=R?`<div class="jf-glass gd-card"><h2>League ranks</h2>${rk('Power play',R.pp[0],'%',R.pp[1])}${rk('Penalty kill',R.pk[0],'%',R.pk[1])}${rk('Goals for / GP',R.gf[0],'',R.gf[1])}${rk('Goals against / GP',R.ga[0],'',R.ga[1])}</div>`:'';
+  const ra=HUB.race,race=ra?`<div class="jf-glass gd-card hb2-race"><h2>Playoff race</h2>
+      <div><span>${ra.behindFirst>0?'Behind 1st'+(ra.leader?' ('+esc(ra.leader)+')':''):'Division lead'}</span><b>${ra.behindFirst>0?ra.behindFirst+' pts':'1st'}</b></div>
+      <div><span>${ra.inSpot?'Above the playoff line':'Below the playoff line'}</span><b class="${ra.inSpot?'g':'r'}">${ra.line>0?'+':''}${ra.line} pts</b></div>
+      ${ra.pace!=null?`<div><span>Points pace</span><b>${ra.pace}</b></div>`:''}</div>`:'';
+  const two=ranks||race?`<div class="hb2-two${ranks&&race?'':' one'}">${ranks}${race}</div>`:'';
+  const mv=[...(HUB.injuries||[]).map(i=>`<div class="hb2-mv"><em class="inj">${/day/i.test(i.status)?'DTD':/out|injured|ir/i.test(i.status)?'OUT':esc(String(i.status).slice(0,4).toUpperCase())}</em><b>${esc(i.name)}${i.note?' · '+esc(i.note):''}</b><span>${esc(i.status)}</span></div>`),
+    ...(HUB.moves||[]).map(m=>`<div class="hb2-mv"><em class="${m.lg==='MLB'?'mlb':''}">${m.lg==='MLB'?'JAYS':'MOVE'}</em><b>${esc(m.text)}</b><span>${m.date?esc(new Date(m.date).toLocaleDateString([],{month:'short',day:'numeric'})):''}</span></div>`)].join('');
+  const moves=mv?`<div class="jf-glass gd-card"><h2>Roster moves &amp; injuries</h2>${mv}</div>`:'';
+  const html=`<div class="jf-title">${esc(T)} hub</div><div class="hb-body">${head}${ng}${last}${leaders}${two}${moves}</div>`;
   if(html!==hubSig){hubSig=html;b.innerHTML=html}
-  if(vids_.length)mountVideo('hub','#hubVid',vids_,true);
-  fitBody('#hubBody .hb-body','.hb-mv,.hb-inj');
+  if(vs.length)mountVideo('hub','#hubVid',vs,true);
+  fitBody('#hubBody .hb-body','.hb2-mv');
+  const dropMoves=()=>{const hb=document.querySelector('#hubBody .hb-body');if(!hb)return;if(hb.scrollHeight>hb.clientHeight+2){const m=hb.querySelector('.hb2-mv');if(m&&hb.querySelectorAll('.hb2-mv').length<=1)m.closest('.gd-card').remove()}};
+  dropMoves();setTimeout(dropMoves,500);
 }
 /* generic "too tall? remove items from the bottom" helper */
 function fitBody(sel,itemSel){const b=document.querySelector(sel);if(!b)return;[...b.children].forEach(c=>c.style.flexShrink='0');
@@ -2280,8 +2336,8 @@ function fitBody(sel,itemSel){const b=document.querySelector(sel);if(!b)return;[
   setTimeout(()=>{for(let g=0;g<20&&over();g++){const x=b.querySelectorAll(itemSel);if(x.length<=1)break;x[x.length-1].remove()}},400)}
 function hubSay(){
   if(!HUB)return 'I\'m still loading the Leafs hub.';
-  let s=`The Leafs have ${HUB.pts} points from ${HUB.gp} games, on pace for ${Math.round((HUB.gp?HUB.pts/HUB.gp:0)*(HUB.totalGames||82))}.`;
-  if(HUB.watch){const w=HUB.watch;s+=` Next game ${w.home?'against':'at'} ${w.opp} ${new Date(w.start).toLocaleDateString([],{weekday:'long'})} at ${fmt(new Date(w.start))}${w.nets&&w.nets.length?', on '+w.nets.map(netName).join(' and '):''}.`}
+  let s=`The Leafs are ${HUB.record} with ${HUB.pts} points${HUB.divRank?', '+HUB.divRank+(['th','st','nd','rd'][HUB.divRank]||'th')+' in the '+(HUB.divName||'division'):''}.`;
+  const w=(HUB.next||[])[0];if(w){s+=` Next game ${w.home?'against':'at'} ${w.opp} ${new Date(w.start).toLocaleDateString([],{weekday:'long'})} at ${fmt(new Date(w.start))}${w.nets&&w.nets.length?', on '+w.nets.join(' and '):''}.`}
   return s;
 }
 
@@ -2446,7 +2502,7 @@ function drawRouteMaps(){document.querySelectorAll('.rm-wrap').forEach(w=>{
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 23';
+document.getElementById('ver').textContent='build nova 24';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
