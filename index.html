@@ -447,6 +447,63 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  .jf-pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
  .jf-strip{flex-wrap:wrap;row-gap:1vw}
 }
+/* ===== Game day + Around town pages ===== */
+.gd-body,.lc-body{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(5*var(--u));display:flex;flex-direction:column;gap:calc(2.2*var(--u));overflow:hidden}
+.gd-body>*,.lc-body>*{flex-shrink:0}
+.gd-card{padding:calc(2.6*var(--u)) calc(3*var(--u));min-width:0}
+.gd-card h2{font-size:calc(2.6*var(--u));font-weight:600;color:var(--dim);letter-spacing:.02em;margin-bottom:calc(1.4*var(--u))}
+.gd-hero{text-align:center;padding:calc(3*var(--u))}
+.gd-kick{font-size:calc(2.6*var(--u));font-weight:800;letter-spacing:.3em;color:#9cc2ff}
+.gd-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:calc(2*var(--u)) 0 calc(1.4*var(--u))}
+.gd-tm{display:flex;flex-direction:column;align-items:center;gap:calc(1*var(--u));min-width:0}
+.gd-lg{width:calc(16*var(--u));height:calc(16*var(--u));object-fit:contain;filter:drop-shadow(0 calc(.6*var(--u)) calc(1.4*var(--u)) rgba(0,0,0,.45))}
+.gd-ph{border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:calc(4.6*var(--u));background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25)}
+.gd-tm b{font-size:calc(4.6*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.gd-tm span{font-size:calc(2.8*var(--u));color:var(--dim)}
+.gd-at{font-size:calc(4*var(--u));color:var(--dim);font-weight:300;padding:0 calc(2*var(--u))}
+.gd-cd{font-size:calc(11*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.gd-cdl{font-size:calc(3*var(--u));color:var(--dim);margin-top:calc(1.4*var(--u))}.gd-cdl b{color:var(--ink);font-weight:600}
+.gd-lm{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:calc(1.4*var(--u)) calc(2*var(--u));margin-top:calc(2*var(--u));font-size:calc(2.7*var(--u));color:var(--dim)}.gd-lm b{color:var(--ink)}
+.gd-pill{font-size:calc(2.4*var(--u));font-weight:700;padding:calc(.9*var(--u)) calc(2*var(--u));border-radius:calc(3*var(--u));background:rgba(77,139,255,.25);border:1px solid rgba(77,139,255,.6);color:#cfe0ff}
+.gd-r{display:grid;grid-template-columns:calc(13*var(--u)) 1fr calc(13*var(--u));align-items:center;gap:calc(2*var(--u));padding:calc(.7*var(--u)) 0}
+.gd-r>span{font-size:calc(3.4*var(--u));font-weight:600;font-variant-numeric:tabular-nums}.gd-r>span:last-child{text-align:right}.gd-r>span.w{color:#9cc2ff}
+.gd-mid{text-align:center}.gd-mid small{display:block;font-size:calc(2.3*var(--u));color:var(--dim);margin-bottom:calc(.8*var(--u))}
+.gd-bar{display:flex;height:calc(1.3*var(--u));border-radius:calc(1*var(--u));overflow:hidden;gap:2px}
+.gd-bar i{display:block;height:100%}.gd-bar i.a{background:#4d8bff}.gd-bar i.b{background:rgba(255,255,255,.35)}
+.gd-two{display:grid;grid-template-columns:1fr 1fr;gap:calc(2.6*var(--u))}
+.gd-form{display:flex;gap:calc(1*var(--u))}
+.gd-form i{width:calc(4.4*var(--u));height:calc(4.4*var(--u));border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:calc(2*var(--u));font-weight:800}
+.gd-form .W{background:#5fd88a;color:#04210f}.gd-form .L{background:rgba(255,120,120,.85);color:#2a0606}.gd-form .O{background:#ffb84d;color:#2a1a02}
+.gd-sub{font-size:calc(2.1*var(--u));font-weight:700;letter-spacing:.1em;color:var(--dim);margin:calc(1.6*var(--u)) 0 calc(.4*var(--u))}
+.gd-p{display:flex;align-items:center;gap:calc(2*var(--u));padding:calc(.8*var(--u)) 0;min-width:0}
+.gd-p>div:last-child{min-width:0}.gd-p b{display:block;font-size:calc(2.7*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gd-p small{display:block;font-size:calc(2.2*var(--u));color:var(--dim)}
+.gd-hs{width:calc(6.4*var(--u));height:calc(6.4*var(--u));border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);flex:none;overflow:hidden;position:relative}
+.gd-hs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.lc-cams{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u))}
+.lc-cam{border-radius:calc(1.8*var(--u));overflow:hidden;position:relative;aspect-ratio:16/10;border:1px solid rgba(255,255,255,.14);background:#1b1f26}
+.lc-cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s}
+.lc-cap{position:absolute;left:0;right:0;bottom:0;padding:calc(4*var(--u)) calc(1.6*var(--u)) calc(1.2*var(--u));background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:calc(2.2*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-cap small{display:block;font-weight:400;color:var(--dim);font-size:calc(1.9*var(--u))}
+.lc-lv{position:absolute;top:calc(1.2*var(--u));left:calc(1.2*var(--u));font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.08em;background:rgba(0,0,0,.55);padding:calc(.4*var(--u)) calc(1*var(--u));border-radius:calc(.8*var(--u))}
+.lc-ev{display:flex;gap:calc(2*var(--u));align-items:flex-start;padding:calc(1.4*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.lc-ev:last-child{border:0}.lc-ev>i{font-style:normal;font-size:calc(4*var(--u));line-height:1}.lc-ev>div{min-width:0;flex:1}
+.lc-ev b{display:block;font-size:calc(2.9*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc-ev small{display:block;font-size:calc(2.3*var(--u));color:var(--dim);margin-top:calc(.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-tag{margin-left:auto;font-size:calc(2.1*var(--u));color:var(--dim);flex:none;text-align:right}.lc-ev.red b{color:#ff9aa8}
+.lc-pl{display:grid;grid-template-columns:calc(34*var(--u)) 1fr;gap:calc(3*var(--u));align-items:center}
+.lc-radar{aspect-ratio:1}.lc-radar svg{width:100%;height:100%;display:block}
+.lc-fl{display:flex;flex-direction:column;min-width:0}
+.lc-f{padding:calc(1.2*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}.lc-f:last-child{border:0}
+.lc-f b{display:block;font-size:calc(2.9*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc-f b span{font-weight:400;color:var(--dim);margin-left:calc(1*var(--u));font-size:calc(2.4*var(--u))}
+.lc-rt{font-size:calc(2.8*var(--u));font-weight:600;margin-top:calc(.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc-rt em{font-style:normal;color:var(--dim);font-weight:400}
+.lc-f small{display:block;font-size:calc(2.2*var(--u));color:var(--dim);margin-top:calc(.3*var(--u))}
+/* wide screens: two columns */
+@media (orientation:landscape){
+ .gd-body{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;align-content:start}
+ .gd-body .gd-hero{grid-column:1}.gd-body .gd-cmp{grid-column:2;grid-row:1}.gd-body .gd-two{grid-column:1/3;grid-row:2;align-self:start}
+ .gd-hero .gd-lg{width:calc(12*var(--u));height:calc(12*var(--u))}.gd-hero .gd-cd{font-size:calc(9*var(--u))}
+ .lc-body{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto 1fr;align-content:start}
+ .lc-camcard{grid-column:1}.lc-evcard{grid-column:1}.lc-plcard{grid-column:2;grid-row:1/3;align-self:start}
+ .lc-pl{grid-template-columns:1fr}.lc-radar{max-width:calc(40*var(--u));margin:0 auto;width:100%}
+}
 </style>
 </head>
 <body>
@@ -474,6 +531,8 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pGameday" class="page"><div id="gdBody"></div></section>
+<section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
 <div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div>
@@ -506,6 +565,8 @@ const CFG={
     {type:'dashboard', secs:30},
     {type:'games',     secs:15},
     {type:'jellyfin',  secs:15},
+    {type:'gameday',   secs:20},
+    {type:'local',     secs:20},
     {type:'forecast',  secs:15},
     {type:'photos',    secs:15},
     {type:'news',      secs:15},
@@ -553,6 +614,10 @@ const CFG={
   // Jellyfin page: data comes through your Worker (secrets JF_URL + JF_KEY), unlocked by this screen's key.
   // jumpWhenPlaying: when someone starts watching, show the Jellyfin page for jumpSecs seconds.
   jellyfin:{on:true, jumpWhenPlaying:true, jumpSecs:30},
+  // Game day board: shows only on days your team plays, until puck drop (team = NHL abbreviation).
+  gameday:{on:true, team:'TOR'},
+  // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
+  local:{on:true, cams:4, roadKm:40, planeKm:40},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
   remote:{holdSecs:60, showAnswers:true, speak:true,
     voice:['Matilda (Premium)','Matilda (Enhanced)','Matilda','Samantha']}   // first voice found on this Mac is used
@@ -993,10 +1058,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn());
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn());
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1018,6 +1083,8 @@ function nextPage(force,hold){
   if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
+  if(p.type==='gameday'){renderGameday();loadGameday()}
+  if(p.type==='local'){renderLocal();loadLocal();loadPlanes()}
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
@@ -1533,6 +1600,8 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(game ?day|matchup|puck drop)\b/)){if(gdToday())showFor('gameday');return reply(gdSay())}
+  if(has(/\b(traffic|planes?|flights?|airplanes?|cameras?|roads?|highway|401|403)\b/)){showFor('local');return reply(locSay())}
   if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
   if(has(/\bunmute\b/)){muted=false;return reply('Goal horn is back on.')}
   if(has(/\b(mute|quiet|silence)\b/)){muted=true;return reply('Goal horn muted.')}
@@ -1560,7 +1629,7 @@ function handleCommand(raw){
   if(has(/\b(next|skip)\b/)){nextPage(undefined,paused?0:undefined);return}
   if(has(/\btime\b/))return reply(`It's ${fmt(new Date())}.`);
   if(has(/\b(thanks|thank you)\b/))return reply('You\'re welcome!');
-  reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings, calendar or Jellyfin.');
+  reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings, calendar, Jellyfin, traffic or game day.');
 }
 function remote(){
   const T=SECRETS.topic;if(!T||!window.EventSource)return;
@@ -1703,10 +1772,142 @@ function jfSay(){
     return `${s.user} is ${s.paused?'paused on':'watching'} ${what}${s.device?' on '+s.device:''}.${!s.paused&&s.dur?` About ${left} minute${left===1?'':'s'} left.`:''}`}).join(' ');
 }
 
+/* ---------- Game day board (your NHL team, only on game days until puck drop) ---------- */
+let GD=null,gdAt=0,gdSig='';
+const gdTeam=()=>((CFG.gameday&&CFG.gameday.team)||'TOR').toUpperCase();
+async function loadGameday(){
+  if(!(CFG.gameday&&CFG.gameday.on!==false)||!CFG.relay)return;
+  try{const r=await tfetch(relayBase()+'/gameday?team='+gdTeam(),15000);const d=await r.json();if(!d.error){GD=d;gdAt=Date.now()}}
+  catch(e){console.warn('gameday',e)}
+  if($('pGameday').classList.contains('on'))renderGameday();
+}
+setInterval(loadGameday,600000);
+const gdToday=()=>{if(!GD||!GD.game)return false;const s=new Date(GD.game.start);
+  return s.toDateString()===new Date().toDateString()&&!/^(LIVE|CRIT|OFF|FINAL)$/.test(GD.game.state||'')&&Date.now()<s.getTime()+10*60000};
+const gdLogo=(u,ab)=>u&&/^https?:\/\//i.test(u)?`<img class="gd-lg" src="${esc(u)}" alt="${esc(ab)}" onerror="this.style.visibility='hidden'">`:`<div class="gd-lg gd-ph">${esc(ab)}</div>`;
+const gdHead=(u,cls='')=>`<div class="gd-hs ${cls}">${u&&/^https?:\/\//i.test(u)?`<img src="${esc(u)}" alt="" onerror="this.remove()">`:''}</div>`;
+function renderGameday(){
+  const b=$('gdBody');
+  if(!GD||!GD.game){b.innerHTML='<div class="jf-wait">No game scheduled</div>';gdSig='';return}
+  const g=GD.game,U=GD.us||{},T=GD.them||{},us=nick(g.us.name),them=nick(g.them.name);
+  const st=new Date(g.start);
+  const row=(label,a,c,hi)=>{if(a==null||c==null)return '';const tot=(+a)+(+c)||1,aw=hi==='low'?(+a)<(+c):(+a)>(+c),cw=hi==='low'?(+c)<(+a):(+c)>(+a);
+    return `<div class="gd-r"><span class="${aw?'w':''}">${esc(a)}${label.pct?'%':''}</span><div class="gd-mid"><small>${label.t}</small><div class="gd-bar"><i class="a" style="width:${(a/tot*100).toFixed(1)}%"></i><i class="b" style="width:${(c/tot*100).toFixed(1)}%"></i></div></div><span class="${cw?'w':''}">${esc(c)}${label.pct?'%':''}</span></div>`};
+  const form=f=>(f||[]).map(x=>`<i class="${x==='W'?'W':x==='OT'?'O':'L'}">${x}</i>`).join('');
+  const team=(X,name)=>`<div class="jf-glass gd-card"><h2>${esc(name)}${X.l10?' · last 10: '+esc(X.l10):''}</h2>${X.form&&X.form.length?`<div class="gd-form">${form(X.form)}</div>`:''}
+    ${X.goalies&&X.goalies.length?`<div class="gd-sub">GOALIES</div>${X.goalies.map(p=>`<div class="gd-p gd-gk">${gdHead(p.img)}<div><b>${esc(p.name)}</b><small>${esc(p.rec)}${p.sv?' · '+esc(p.sv):''}${p.gaa?' · '+esc(p.gaa)+' GAA':''}</small></div></div>`).join('')}`:''}
+    ${X.scorers&&X.scorers.length?`<div class="gd-sub">TOP SCORERS</div>${X.scorers.map(p=>`<div class="gd-p gd-sc">${gdHead(p.img)}<div><b>${esc(p.name)}</b><small>${esc(p.p)} PTS · ${esc(p.g)}G ${esc(p.a)}A</small></div></div>`).join('')}`:''}</div>`;
+  const L=GD.last,S=GD.series||{};
+  const lead=S.played?(S.us>S.them?`${us} lead series ${S.us}–${S.them}`:S.us<S.them?`${them} lead series ${S.them}–${S.us}`:`Series tied ${S.us}–${S.them}`):'';
+  const lastTxt=L?`Last meeting <b>${new Date(L.date).toLocaleDateString([],{month:'short',day:'numeric'})}</b> · ${L.res==='W'?esc(us):esc(them)} <b>${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}</b>${L.res==='OT'?' (OT)':''}`:'First meeting this season';
+  const html=`<div class="jf-title">Game day</div>
+   <div class="gd-body">
+    <div class="jf-glass gd-hero"><div class="gd-kick">${esc(us.toUpperCase())} GAME DAY</div>
+      <div class="gd-vs"><div class="gd-tm">${gdLogo(g.us.logo,g.us.abbr)}<b>${esc(us)}</b><span>${esc(U.rec||'')} · ${esc(U.pts||0)} pts</span></div>
+        <div class="gd-at">${g.home?'vs':'at'}</div>
+        <div class="gd-tm">${gdLogo(g.them.logo,g.them.abbr)}<b>${esc(them)}</b><span>${esc(T.rec||'')} · ${esc(T.pts||0)} pts</span></div></div>
+      <div class="gd-cd" id="gdCd"></div>
+      <div class="gd-cdl">Puck drop <b>${fmt(st)}</b>${g.venue?' · '+esc(g.venue):''}</div>
+      <div class="gd-lm"><span>${lastTxt}</span>${lead?`<span class="gd-pill">${esc(lead)}</span>`:''}</div></div>
+    <div class="jf-glass gd-card gd-cmp"><h2>Head to head this season</h2>
+      ${row({t:'Goals for / game'},U.gfpg,T.gfpg,'high')}${row({t:'Goals against / game'},U.gapg,T.gapg,'low')}
+      ${row({t:'Power play',pct:1},U.pp,T.pp,'high')}${row({t:'Penalty kill',pct:1},U.pk,T.pk,'high')}
+      ${U.streak||T.streak?`<div class="gd-r gd-streak"><span class="w">${esc(U.streak)}</span><div class="gd-mid"><small>Current streak</small></div><span>${esc(T.streak)}</span></div>`:''}</div>
+    <div class="gd-two">${team(U,us)}${team(T,them)}</div>
+   </div>`;
+  if(html!==gdSig){gdSig=html;b.innerHTML=html}
+  fitGameday();setTimeout(fitGameday,400);
+  gdTick();
+}
+/* too tall? drop the 2nd scorer, then the streak row, then the 2nd goalie (each team) */
+function fitGameday(){const b=document.querySelector('#gdBody .gd-body');if(!b)return;const over=()=>b.scrollHeight>b.clientHeight+2;
+  const drop=sel=>{const cards=b.querySelectorAll('.gd-two .gd-card');let did=false;cards.forEach(c=>{const x=c.querySelectorAll(sel);if(x.length>1){x[x.length-1].remove();did=true}});return did};
+  if(over())drop('.gd-sc');if(over()){const r=b.querySelector('.gd-streak');if(r)r.remove()}if(over())drop('.gd-gk');}
+function gdTick(){const el=$('gdCd');if(!el||!GD||!GD.game)return;const ms=new Date(GD.game.start)-Date.now();
+  if(ms<=0){el.textContent='Puck drop!';return}const s=Math.floor(ms/1000);el.textContent=Math.floor(s/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
+setInterval(()=>{if($('pGameday').classList.contains('on'))gdTick()},1000);
+function gdSay(){
+  if(!GD||!GD.game)return 'I don\'t see an upcoming game.';
+  const g=GD.game,us=nick(g.us.name),them=nick(g.them.name),st=new Date(g.start),d=daysUntil(st);
+  const ms=st-Date.now(),h=Math.floor(ms/3600000),m=Math.round(ms%3600000/60000);
+  let s=`The ${us} ${g.home?'host':'visit'} the ${them} ${d===0?'today':d===1?'tomorrow':'on '+st.toLocaleDateString([],{weekday:'long'})} at ${fmt(st)}.`;
+  if(d===0&&ms>0)s+=` Puck drop is in ${h?h+' hour'+(h===1?'':'s')+' and ':''}${m} minute${m===1?'':'s'}.`;
+  if(GD.us&&GD.us.rec)s+=` The ${us} are ${GD.us.rec}${GD.us.streak?', on a '+GD.us.streak.replace(/^W/,'win streak of ').replace(/^L/,'losing streak of ').replace(/^OT/,'overtime loss streak of '):''}.`;
+  return s;
+}
+
+/* ---------- Around town: 511 traffic cameras + road events + planes overhead ---------- */
+let LOC=null,locAt=0,locErr='',PL=null,plAt=0,plErr='',locSig='';
+const locOn=()=>!!(CFG.local&&CFG.local.on!==false&&SECRETS.calkey&&CFG.relay);
+const locQ=()=>{const Lc=CFG.local||{};return `key=${encodeURIComponent(SECRETS.calkey)}&lat=${CFG.lat}&lon=${CFG.lon}`};
+async function loadLocal(){
+  if(!locOn())return;const Lc=CFG.local||{};
+  try{const r=await tfetch(relayBase()+'/local?'+locQ()+'&r='+(Lc.roadKm||40)+'&cams='+(Lc.cams||4),15000),d=await r.json();
+    if(d.error){locErr=/key/i.test(d.error)?'Traffic key not set up':'Traffic info unavailable'}else{LOC=d;locAt=Date.now();locErr=''}}
+  catch(e){locErr='Traffic info unavailable';console.warn('local',e)}
+  if($('pLocal').classList.contains('on'))renderLocal();
+}
+async function loadPlanes(){
+  if(!locOn())return;const Lc=CFG.local||{};
+  try{const r=await tfetch(relayBase()+'/planes?'+locQ()+'&r='+(Lc.planeKm||40),15000),d=await r.json();
+    if(d.error){plErr='Flight data unavailable'}else{PL=d;plAt=Date.now();plErr=''}}
+  catch(e){plErr='Flight data unavailable';console.warn('planes',e)}
+  if($('pLocal').classList.contains('on'))renderLocal();
+}
+setInterval(()=>{const on=$('pLocal').classList.contains('on');if(on||Date.now()-locAt>300000)loadLocal()},120000);
+setInterval(()=>{if($('pLocal').classList.contains('on'))loadPlanes()},20000);
+setInterval(()=>{if($('pLocal').classList.contains('on'))document.querySelectorAll('#locBody .lc-cam img').forEach(i=>{i.src=i.dataset.src+(i.dataset.src.includes('?')?'&':'?')+'t='+Date.now()})},60000);
+const evInfo=e=>{const t=e.type||'';if(/accident|incident/i.test(t))return {i:/collision/i.test(e.sub+e.desc)?'💥':'⚠️',n:/collision/i.test(e.sub+e.desc)?'Collision':'Incident',red:true};
+  if(/closure/i.test(t))return {i:'⛔',n:'Closure',red:!!e.full};return {i:'🚧',n:'Construction',red:false}};
+const shortDir=d=>String(d||'').replace(/bound$/i,'bound');
+const ft=n=>n==null?'':Number(n).toLocaleString()+' ft';
+function renderLocal(){
+  const b=$('locBody'),Lc=CFG.local||{};
+  if(!locOn()){b.innerHTML='<div class="jf-title">Around '+esc(CFG.city)+'</div><div class="jf-wait">Key not set on this screen</div>';return}
+  const cams=(LOC&&LOC.cams)||[],evs=(LOC&&LOC.events)||[],planes=(PL&&PL.planes)||[];
+  const camHTML=cams.length?`<div class="lc-cams">${cams.map(c=>`<div class="lc-cam"><img data-src="${esc(c.img)}" src="${esc(c.img)}" alt="" onerror="this.style.opacity=0"><span class="lc-lv">LIVE</span>
+      <div class="lc-cap">${esc(c.loc||c.road)}<small>${[c.dir,c.dist!=null?c.dist+' km':''].filter(Boolean).map(esc).join(' · ')}</small></div></div>`).join('')}</div>`
+    :`<div class="cnote">${esc(locErr||'Loading cameras…')}</div>`;
+  const evHTML=evs.length?evs.map(e=>{const k=evInfo(e),ago=e.reported?Math.round((Date.now()/1000-e.reported)/60):null;
+      return `<div class="lc-ev${k.red?' red':''}"><i>${k.i}</i><div><b>${k.n}${e.full&&k.n!=='Closure'?' · full closure':''} · ${esc(e.road)}${e.dir?' '+esc(shortDir(e.dir)):''}</b><small>${esc(e.desc)}</small></div>
+      <span class="lc-tag">${esc(e.dist)} km${k.red&&ago!=null&&ago<720?'<br>'+(ago<60?ago+' min ago':Math.round(ago/60)+'h ago'):''}</span></div>`}).join('')
+    :`<div class="jf-good">${locErr?esc(locErr):'✓ No collisions, closures or construction nearby'}</div>`;
+  const R=Lc.planeKm||40,sc=92/R;
+  const dots=planes.map((p,i)=>{const a=p.brg*Math.PI/180,x=(Math.sin(a)*p.dist*sc).toFixed(1),y=(-Math.cos(a)*p.dist*sc).toFixed(1),air=/^[A-Z]{3}\d/.test(p.cs);
+    return `<g transform="translate(${x} ${y}) rotate(${p.trk||0})"><path d="M0-9 L6 7 L0 4 L-6 7Z" fill="${air?'#9cc2ff':'#ffd84a'}"/></g>${i<4?`<text x="${(+x+9).toFixed(1)}" y="${(+y-6).toFixed(1)}" font-size="11" fill="#fff">${esc(p.cs||p.reg||'')}</text>`:''}`}).join('');
+  const radar=`<svg viewBox="-100 -100 200 200"><circle r="96" fill="rgba(110,168,255,.06)" stroke="rgba(255,255,255,.18)"/><circle r="64" fill="none" stroke="rgba(255,255,255,.12)"/><circle r="32" fill="none" stroke="rgba(255,255,255,.12)"/>
+    <line x1="-96" y1="0" x2="96" y2="0" stroke="rgba(255,255,255,.08)"/><line x1="0" y1="-96" x2="0" y2="96" stroke="rgba(255,255,255,.08)"/><circle r="4" fill="#fff"/>
+    <text y="-84" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.5)">N</text><text x="0" y="93" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.4)">${R} km</text>${dots}</svg>`;
+  const plList=planes.slice(0,4).map(p=>{const air=/^[A-Z]{3}\d/.test(p.cs),v=p.vs>500?' ↑':p.vs<-500?' ↓':'';
+    const route=p.from&&p.to?`${esc(p.from.code)} → ${esc(p.to.code)} <em>${esc(p.to.city)}</em>`:`<em>${air?'Route unknown':'Private flight'}</em>`;
+    return `<div class="lc-f"><b>${esc(p.cs||p.reg||'Unknown')}<span>${[p.airline,p.type].filter(Boolean).map(esc).join(' · ')}</span></b><div class="lc-rt">${route}</div>
+      <small>${[ft(p.alt),p.kt!=null?p.kt+' kt'+v:'',p.dist+' km'].filter(Boolean).join(' · ')}</small></div>`}).join('');
+  const html=`<div class="jf-title">Around ${esc(CFG.city)}</div>
+   <div class="lc-body">
+    <div class="jf-glass gd-card lc-camcard"><h2>Traffic cameras${locAt?' · updated '+fmt(new Date(locAt)):''}</h2>${camHTML}</div>
+    <div class="jf-glass gd-card lc-evcard"><h2>Road events within ${Lc.roadKm||40} km</h2>${evHTML}</div>
+    <div class="jf-glass gd-card lc-plcard"><h2>Planes overhead${PL?' · '+planes.length+' within '+R+' km':''}</h2>
+      ${PL||plErr?`<div class="lc-pl"><div class="lc-radar">${radar}</div><div class="lc-fl">${plList||`<div class="cnote">${esc(plErr||'No planes nearby right now')}</div>`}</div></div>`:'<div class="cnote">Looking for planes…</div>'}</div>
+   </div>`;
+  if(html!==locSig){locSig=html;b.innerHTML=html}
+  fitLocal();setTimeout(fitLocal,400);
+}
+/* too much for the screen? trim road events, then the plane list */
+function fitLocal(){const b=document.querySelector('#locBody .lc-body');if(!b)return;[...b.children].forEach(c=>c.style.flexShrink='0');
+  const over=()=>b.scrollHeight>b.clientHeight+2;
+  for(let g=0;g<12&&over();g++){const ev=b.querySelectorAll('.lc-ev'),fl=b.querySelectorAll('.lc-f');if(ev.length>1)ev[ev.length-1].remove();else if(fl.length>1)fl[fl.length-1].remove();else break}}
+function locSay(){
+  const evs=(LOC&&LOC.events)||[],bad=evs.filter(e=>evInfo(e).red),pl=(PL&&PL.planes)||[];
+  let s=bad.length?bad.slice(0,2).map(e=>`There's ${evInfo(e).n==='Incident'?'an incident':'a '+evInfo(e).n.toLowerCase()} on ${e.road}${e.dir?' '+e.dir.toLowerCase():''}, ${Math.round(e.dist)} kilometres away.`).join(' '):
+    locErr?'I can\'t get traffic info right now.':'No collisions or closures nearby.';
+  if(pl.length){const p=pl[0];s+=` ${pl.length} plane${pl.length===1?'':'s'} overhead. The closest is ${p.airline?p.airline+' ':''}${p.cs||'a private plane'}${p.to&&p.to.city?' heading to '+p.to.city:''} at ${Number(p.alt||0).toLocaleString()} feet.`}
+  return s;
+}
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 18';
+document.getElementById('ver').textContent='build nova 19';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -1718,7 +1919,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
