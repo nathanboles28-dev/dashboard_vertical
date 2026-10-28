@@ -247,7 +247,7 @@ body.alt #mini{opacity:.85}
 .nrow b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:calc(2.9*var(--u));font-weight:500;line-height:1.25}
 /* standings */
 .stcard{padding:calc(2.6*var(--u)) calc(3*var(--u))}
-.str{display:grid;grid-template-columns:calc(4*var(--u)) calc(6*var(--u)) minmax(0,1fr) repeat(4,calc(6.5*var(--u))) calc(8*var(--u));align-items:center;column-gap:calc(1.2*var(--u));
+.str{display:grid;grid-template-columns:calc(6.4*var(--u)) calc(6*var(--u)) minmax(0,1fr) repeat(4,calc(6.5*var(--u))) calc(8*var(--u));align-items:center;column-gap:calc(1.2*var(--u));
  font-size:calc(2.9*var(--u));padding:calc(1.15*var(--u)) calc(1.2*var(--u));border-radius:calc(1.2*var(--u));font-variant-numeric:tabular-nums}
 .str span{text-align:center;color:var(--dim)}.str b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .str em{font-style:normal;text-align:right;font-weight:600}.str i{font-style:normal;color:var(--dim);text-align:center}
@@ -302,6 +302,28 @@ body.alt #mini{opacity:.85}
 .de{background:#6ea8ff}.dg{background:#5fd88a}.dh{background:#ffb84d}
 .mleg{font-style:normal;font-size:calc(1.7*var(--u));color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none;display:flex;align-items:center;gap:calc(.6*var(--u))}
 .mleg i{margin-left:calc(1*var(--u))}
+/* player leaders */
+.tlead{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.6*var(--u));margin-top:calc(1.6*var(--u));padding-top:calc(1.6*var(--u));border-top:1px solid rgba(255,255,255,.1)}
+.pl{display:flex;align-items:center;gap:calc(1.2*var(--u));min-width:0}
+.pl img{width:calc(8*var(--u));height:calc(8*var(--u));border-radius:50%;object-fit:cover;object-position:top;background:rgba(255,255,255,.1);flex:none;border:1px solid rgba(255,255,255,.15)}
+.pl div{min-width:0}.pl b{display:block;font-size:calc(2.4*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl span{display:block;font-size:calc(2.2*var(--u));font-weight:700;color:#9cc2ff}.pl em{display:block;font-style:normal;font-size:calc(1.8*var(--u));color:var(--dim)}
+/* playoff race sections */
+.ssec{font-size:calc(1.8*var(--u));font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:calc(1.4*var(--u)) 0 calc(.2*var(--u)) calc(1.2*var(--u))}
+/* live ticker */
+#ticker{position:fixed;left:0;right:0;bottom:0;height:calc(8*var(--u));z-index:6;display:none;align-items:center;gap:calc(2.4*var(--u));padding:0 calc(3.4*var(--u));
+ background:linear-gradient(180deg,rgba(20,22,30,.72),rgba(10,11,16,.85));border-top:1px solid rgba(255,255,255,.14);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%)}
+body.hasTicker #ticker{display:flex}
+body.hasTicker #dots{display:none}
+body.hasTicker .page{bottom:calc(8*var(--u))}
+body.hasTicker #answer,body.hasTicker #toast{bottom:calc(10*var(--u))}
+#tkScore{display:flex;align-items:center;gap:calc(1*var(--u));flex:none;font-size:calc(2.6*var(--u));font-variant-numeric:tabular-nums;padding-right:calc(2.4*var(--u));border-right:1px solid rgba(255,255,255,.15)}
+#tkScore .logo{width:calc(4*var(--u));height:calc(4*var(--u));background:none;padding:0;border-radius:0}
+#tkScore b{font-weight:700}#tkScore span{color:var(--dim)}#tkScore small{font-size:calc(2*var(--u));color:#ff8da2;margin-left:calc(.6*var(--u));font-weight:600}
+#tkPlay{flex:1;min-width:0;font-size:calc(2.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(calc(1*var(--u)))}
+#tkPlay.in{animation:tkIn .5s ease forwards}
+@keyframes tkIn{to{opacity:1;transform:none}}
+.tkw{color:var(--dim);font-size:calc(1.9*var(--u));font-weight:600;margin-right:calc(1.2*var(--u));letter-spacing:.04em}
 /* scorers on the Tonight page */
 .gr .scorers{grid-column:1/4;grid-row:3;display:grid;grid-template-columns:1fr 1fr;column-gap:calc(3*var(--u));padding:0 calc(3*var(--u)) calc(2.4*var(--u));
  font-size:calc(2.2*var(--u));color:var(--dim);text-align:center;line-height:1.55}
@@ -335,6 +357,78 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  .gr .when{grid-row:4}
  .pwrap{max-width:none}
 }
+
+/* ===== Jellyfin page ===== */
+#jfBg{position:absolute;inset:-6%;background-size:cover;background-position:center;opacity:0;transition:opacity 1.5s;filter:blur(calc(4*var(--u))) saturate(1.2) brightness(.55);transform:scale(1.05)}
+#jfBg.on{opacity:1}
+#jfBg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.15) 60%,rgba(0,0,0,.35)),linear-gradient(0deg,rgba(0,0,0,.6),transparent 40%)}
+#pJelly{overflow:hidden}
+.jf-title{position:absolute;top:calc(4*var(--u));left:5%;font-size:calc(3*var(--u));font-weight:600;color:var(--dim);letter-spacing:.04em;display:flex;align-items:center;gap:calc(1.2*var(--u))}
+.jf-live{width:calc(1.3*var(--u));height:calc(1.3*var(--u));border-radius:50%;background:var(--live);animation:pulse 1.4s ease-in-out infinite}
+.jf-wait{position:absolute;inset:0;display:grid;place-items:center;font-size:calc(3.4*var(--u));font-weight:300;color:var(--dim)}
+.jf-glass{background:linear-gradient(180deg,rgba(255,255,255,.115),rgba(255,255,255,.055));border:1px solid rgba(255,255,255,.12);border-radius:calc(2.6*var(--u));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 calc(2*var(--u)) calc(6*var(--u)) rgba(0,0,0,.35);backdrop-filter:blur(40px) saturate(170%);-webkit-backdrop-filter:blur(40px) saturate(170%)}
+.jf-poster{aspect-ratio:2/3;border-radius:calc(1.8*var(--u));overflow:hidden;position:relative;flex:none;box-shadow:0 calc(2*var(--u)) calc(6*var(--u)) rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.18)}
+.jf-poster span{position:absolute;left:8%;right:8%;bottom:8%;font-weight:800;line-height:1.05;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.jf-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.jf-one{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(12*var(--u));display:flex;gap:4%;align-items:center}
+.jf-one .jf-poster{height:100%}.jf-one .jf-poster span{font-size:calc(5*var(--u))}
+.jf-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(2.2*var(--u))}
+.jf-kick{font-size:calc(2*var(--u));font-weight:700;letter-spacing:.14em;color:#9cc2ff}
+.jf-show{font-size:calc(9*var(--u));font-weight:700;letter-spacing:-.02em;line-height:1.02;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jf-ep{font-size:calc(3.6*var(--u));color:rgba(255,255,255,.85)}.jf-ep b{font-weight:600;color:#fff}
+.jf-chips{display:flex;flex-wrap:wrap;gap:calc(1.2*var(--u))}
+.jf-chip{display:flex;align-items:center;gap:calc(1*var(--u));font-size:calc(2.3*var(--u));font-weight:600;padding:calc(.9*var(--u)) calc(1.8*var(--u));border-radius:calc(3*var(--u));background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.jf-chip.dp{background:rgba(95,216,138,.2);border-color:rgba(95,216,138,.5);color:#bff3d0}
+.jf-chip.tc{background:rgba(255,184,77,.2);border-color:rgba(255,184,77,.5);color:#ffe2b0}
+.jf-chip.pz{background:rgba(255,255,255,.22)}
+.jf-av{width:calc(3.4*var(--u));height:calc(3.4*var(--u));border-radius:50%;display:grid;place-items:center;font-size:calc(1.8*var(--u));font-weight:800;color:#000;flex:none}
+.jf-why{font-size:calc(2*var(--u));color:#ffe2b0;opacity:.85}
+.jf-prog{margin-top:calc(1*var(--u))}
+.jf-track{height:calc(1.2*var(--u));border-radius:calc(1*var(--u));background:rgba(255,255,255,.18);overflow:hidden}
+.jf-fill{height:100%;width:0;border-radius:calc(1*var(--u));background:#fff;transition:width 1s linear}.jf-fill.pz{background:rgba(255,255,255,.55)}
+.jf-times{display:flex;justify-content:space-between;font-size:calc(2.3*var(--u));color:var(--dim);margin-top:calc(1*var(--u));font-variant-numeric:tabular-nums}
+.jf-times b{color:var(--ink);font-weight:600}
+.jf-strip{position:absolute;left:5%;right:5%;bottom:calc(4*var(--u));display:flex;align-items:center;gap:calc(3*var(--u));font-size:calc(2.2*var(--u));color:var(--dim);padding:calc(1.4*var(--u)) calc(2.6*var(--u));white-space:nowrap}
+.jf-strip b{color:var(--ink);font-weight:600}.jf-push{margin-left:auto}
+.jf-ok{display:inline-block;width:calc(1.2*var(--u));height:calc(1.2*var(--u));border-radius:50%;background:#34c759;box-shadow:0 0 calc(1.5*var(--u)) #34c759;margin-right:calc(.8*var(--u))}
+.jf-two{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(12*var(--u));display:grid;grid-template-columns:1fr 1fr;gap:calc(3*var(--u));align-content:center}
+.jf-sc{display:flex;gap:calc(3*var(--u));padding:calc(3*var(--u));align-items:center;min-width:0}
+.jf-sc .jf-poster{height:calc(42*var(--u))}.jf-sc .jf-poster span{font-size:calc(3.2*var(--u))}
+.jf-sc .jf-show{font-size:calc(5*var(--u))}.jf-sc .jf-ep{font-size:calc(2.6*var(--u))}.jf-sc .jf-info{gap:calc(1.8*var(--u))}
+.jf-sc .jf-chip{font-size:calc(1.9*var(--u))}.jf-sc .jf-times{font-size:calc(2*var(--u))}
+.jf-two.many .jf-sc{padding:calc(2*var(--u))}.jf-two.many .jf-poster{height:calc(24*var(--u))}.jf-two.many .jf-show{font-size:calc(3.6*var(--u))}
+.jf-two.many .jf-info{gap:calc(1*var(--u))}.jf-two.many .jf-chips:nth-of-type(2){display:none}
+.jf-idle{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(6*var(--u));display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr;gap:calc(3*var(--u))}
+.jf-idle.jf-only{grid-template-rows:auto;align-content:start}
+.jf-title.jf-bad{color:#ff8da2}
+.jf-stat{grid-column:1/-1;display:flex;align-items:center;gap:calc(3*var(--u));padding:calc(3.4*var(--u)) calc(4*var(--u))}
+.jf-big{width:calc(10*var(--u));height:calc(10*var(--u));border-radius:50%;flex:none;display:grid;place-items:center;background:rgba(52,199,89,.18);border:2px solid rgba(52,199,89,.6)}
+.jf-big i{width:calc(4*var(--u));height:calc(4*var(--u));border-radius:50%;background:#34c759;box-shadow:0 0 calc(3*var(--u)) #34c759}
+.jf-stat.down .jf-big{background:rgba(255,92,108,.18);border-color:rgba(255,92,108,.6)}.jf-stat.down .jf-big i{background:#ff5c6c;box-shadow:0 0 calc(3*var(--u)) #ff5c6c}
+.jf-stat h3{font-size:calc(6*var(--u));font-weight:700;letter-spacing:-.02em;line-height:1}
+.jf-stat p{font-size:calc(2.5*var(--u));color:var(--dim);margin-top:calc(1*var(--u))}
+.jf-right{margin-left:auto;text-align:right;font-size:calc(2.4*var(--u));color:var(--dim);line-height:1.6}.jf-right b{color:var(--ink);font-weight:600}.jf-right .jf-note{color:#ffe2b0}
+.jf-lib,.jf-act{padding:calc(3*var(--u)) calc(3.4*var(--u));display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.jf-lib h2,.jf-act h2{font-size:calc(2*var(--u));font-weight:600;color:var(--dim);letter-spacing:.02em;margin-bottom:calc(2*var(--u))}
+.jf-tiles{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(2*var(--u))}
+.jf-tile{border-radius:calc(2*var(--u));background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:calc(.8*var(--u))}
+.jf-tile span{font-size:calc(4.4*var(--u));line-height:1}.jf-tile b{font-size:calc(7*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums}
+.jf-tile em{font-style:normal;font-size:calc(2.2*var(--u));color:var(--dim);font-weight:500}
+.jf-row{display:flex;gap:calc(1.6*var(--u));align-items:baseline;padding:calc(1.4*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:calc(2.4*var(--u))}
+.jf-row:last-child{border:0}.jf-row i{font-style:normal;flex:none}.jf-row b{font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jf-row span{color:var(--dim);flex:none;font-size:calc(2.1*var(--u))}
+.jf-good{display:flex;align-items:center;gap:calc(1.6*var(--u));font-size:calc(2.8*var(--u));color:#bff3d0;padding:calc(2*var(--u)) 0}
+.jf-alert{position:absolute;left:0;right:0;top:0;height:calc(7*var(--u));display:flex;align-items:center;justify-content:center;font-size:calc(2.6*var(--u));font-weight:600;background:rgba(225,40,55,.65);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+@media (orientation:portrait){
+ .jf-one{flex-direction:column;top:16vw;bottom:16vw;gap:4vw;justify-content:center}
+ .jf-one .jf-poster{height:auto;width:46vw}.jf-one .jf-info{flex:none;width:100%}
+ .jf-show{font-size:8vw}
+ .jf-two{grid-template-columns:1fr;top:14vw;bottom:16vw}
+ .jf-sc .jf-poster,.jf-two.many .jf-poster{height:auto;width:22vw}
+ .jf-idle{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;top:14vw}
+ .jf-strip{flex-wrap:wrap;row-gap:1vw}
+}
 </style>
 </head>
 <body>
@@ -362,8 +456,9 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="dimmer"></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -375,7 +470,8 @@ const CFG={
   // Background for the glass theme: 'cycle' (lava-lamp glow that slowly moves through all the colours below),
   // or one fixed colour: 'midnight' (deep navy), 'graphite' (charcoal), 'ocean' (deep teal), 'plum' (dark purple), or 'photo' (blurred photos from your folder)
   background:'cycle',
-  bgMinutes:4,   // cycle: minutes on each colour before it slowly fades to the next
+  bgMinutes:4,
+  gameDayColours:true,   // on days your team plays, the background switches to that team's colours   // cycle: minutes on each colour before it slowly fades to the next
   // Scores: one box per league, shown left to right.
   // type 'espn' covers NHL, MLB, NBA etc. ('sport/league' as ESPN names them).
   // type 'hockeytech' covers the OHL (ESPN doesn't carry it).
@@ -391,6 +487,7 @@ const CFG={
   pages:[
     {type:'dashboard', secs:30},
     {type:'games',     secs:15},
+    {type:'jellyfin',  secs:15},
     {type:'forecast',  secs:15},
     {type:'photos',    secs:15},
     {type:'news',      secs:15},
@@ -425,8 +522,9 @@ const CFG={
   // Relay: your own Cloudflare Worker address (e.g. 'https://nova-relay.yourname.workers.dev'). News and calendar need it,
   // because CBC and Outlook don't let web pages read them directly.
   relay:'https://nova-relay.nathanboles28.workers.dev',
-  // Calendar: your Outlook (or Google) calendar's published ICS link. Leave '' to hide.
-  calendar:{ics:'https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/d16a7d01-55ed-4d96-b1de-76497c13fe4a/cid-3BF3EFA4D13C9889/calendar.ics'},
+  // Calendar: the private ICS link is stored as a secret in your Cloudflare Worker (CAL_ICS), NOT here.
+  // This screen unlocks it with a key it remembers (open the dashboard once with #calkey=YOURKEY on the end).
+  calendar:{private:true},
   // Your own countdowns, e.g. {name:'Florida trip', date:'2027-03-14', emoji:'✈️'}. Holidays and your teams' next games are added automatically.
   countdowns:[],
   // Dims the screen in the evening (level 0 = off, 0.6 = quite dark)
@@ -434,25 +532,51 @@ const CFG={
   // Nova remote + voice: the companion page (remote.html) sends commands on this private channel. Must match remote.html.
   // showAnswers: show Nova's answers in a card on the dashboard. speak: also say them out loud from this computer
   // (comes out of the monitor if its speakers are used; Chrome needs one click on the page first).
-  remote:{topic:'nova-5da4c2f61e34c2fc', holdSecs:60, showAnswers:true, speak:true,
+  // Jellyfin page: data comes through your Worker (secrets JF_URL + JF_KEY), unlocked by this screen's key.
+  // jumpWhenPlaying: when someone starts watching, show the Jellyfin page for jumpSecs seconds.
+  jellyfin:{on:true, jumpWhenPlaying:true, jumpSecs:30},
+  // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
+  remote:{holdSecs:60, showAnswers:true, speak:true,
     voice:['Matilda (Premium)','Matilda (Enhanced)','Matilda','Samantha']}   // first voice found on this Mac is used
 };
 /* ================================ */
 const $=id=>document.getElementById(id);
+/* Private values live only in this screen's browser, never in GitHub. Set them once by opening the dashboard with
+   #calkey=YOURKEY&topic=YOURTOPIC on the end of the address; they're saved and the address is cleaned up. */
+const SECRETS=(()=>{const out={calkey:'',topic:''};try{const h=new URLSearchParams(location.hash.slice(1));let got=false;
+  Object.keys(out).forEach(k=>{const v=h.get(k);if(v){localStorage.setItem('nova-'+k,v.trim());got=true}});
+  if(got)history.replaceState(null,'',location.pathname+location.search);
+  Object.keys(out).forEach(k=>out[k]=localStorage.getItem('nova-'+k)||'')}catch(e){}return out})();
 document.documentElement.dataset.theme=CFG.theme||'dusk';
+const BGP={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
+  ocean:{b:['#0d3a44','#071a20','#020607'],c:['#0f7a86','#1d4f8a','#0d6a5e','#14507a'],o:.58},
+  plum:{b:['#33204a','#150d22','#05030a'],c:['#6b2fa0','#2f3f9a','#8a2f7a','#4a2f9a'],o:.56},
+  graphite:{b:['#2a2d33','#121317','#050506'],c:['#5a6170','#3a3f4a','#4a5262','#2f343e'],o:.42},
+  /* game-day team colours */
+  'NHL:TOR':{b:['#0e2552','#071534','#02060f'],c:['#1d4fb8','#00307a','#3a6fd8','#5c7fc4'],o:.58},
+  'OHL:LDN':{b:['#0f3a26','#082116','#020805'],c:['#1d6b43','#154734','#b8923a','#2f8a58'],o:.55},
+  'MLB:TOR':{b:['#0f2f63','#081a3a','#02060f'],c:['#134a8e','#1d5fb8','#c8281c','#2f6fc8'],o:.52}};
+let bgName='midnight',bgGame='';
+function bgApply(n){const el=document.getElementById('bg'),p=BGP[n]||BGP.midnight;bgName=n;
+  p.b.forEach((c,i)=>el.style.setProperty('--b'+i,c));p.c.forEach((c,i)=>el.style.setProperty('--c'+(i+1),c));el.style.setProperty('--bo',p.o)}
 (function(){
-  const P={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
-    ocean:{b:['#0d3a44','#071a20','#020607'],c:['#0f7a86','#1d4f8a','#0d6a5e','#14507a'],o:.58},
-    plum:{b:['#33204a','#150d22','#05030a'],c:['#6b2fa0','#2f3f9a','#8a2f7a','#4a2f9a'],o:.56},
-    graphite:{b:['#2a2d33','#121317','#050506'],c:['#5a6170','#3a3f4a','#4a5262','#2f343e'],o:.42}};
   const el=document.getElementById('bg'),mode=CFG.background||'cycle';
   el.dataset.bg=mode==='photo'?'photo':(mode==='cycle'?'midnight':mode);
-  const apply=n=>{const p=P[n]||P.midnight;p.b.forEach((c,i)=>el.style.setProperty('--b'+i,c));p.c.forEach((c,i)=>el.style.setProperty('--c'+(i+1),c));el.style.setProperty('--bo',p.o)};
   if(mode==='photo')return;
-  if(mode!=='cycle'){el.style.setProperty('--fade','0s');apply(mode);return}
-  const order=['midnight','ocean','plum','graphite'];let i=0;apply(order[0]);
-  setInterval(()=>{i=(i+1)%order.length;apply(order[i])},Math.max(1,+CFG.bgMinutes||4)*60000);
+  if(mode!=='cycle'){el.style.setProperty('--fade','0s');bgApply(mode);return}
+  const order=['midnight','ocean','plum','graphite'];let i=0;bgApply(order[0]);
+  setInterval(()=>{if(bgGame)return;i=(i+1)%order.length;bgApply(order[i])},Math.max(1,+CFG.bgMinutes||4)*60000);
 })();
+/* called after each scores refresh: is one of your teams playing today? */
+function bgGameDay(){
+  if(CFG.theme!=='glass'||CFG.background==='photo'||CFG.gameDayColours===false)return;
+  const today=new Date().toDateString();let pick=null;
+  lastRes.forEach(r=>r.games.forEach(g=>{if(!isFav(r.L,g)||g.date.toDateString()!==today)return;
+    const me=(r.L.fav||[]).find(f=>f===g.A||f===g.H),k=r.L.label+':'+me;if(BGP[k]&&(!pick||g.date<pick.d))pick={k,d:g.date}}));
+  const k=pick?pick.k:'';
+  if(k&&k!==bgGame){bgGame=k;bgApply(k)}
+  else if(!k&&bgGame){bgGame='';bgApply('midnight')}
+}
 let jpN=0;
 function jsonpObj(url,ms=10000){return new Promise((res,rej)=>{
   const cb='__jp'+(++jpN)+'_'+Date.now(),sc=document.createElement('script');let done=false,t;
@@ -544,14 +668,14 @@ async function nextUp(){
   const pad=n=>String(n).padStart(2,'0'),ymd=d=>d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate());
   const q='?dates='+ymd(new Date())+'-'+ymd(new Date(Date.now()+7*864e5))+'&limit=300';
   const rows=[];
-  const draw=()=>{rows.sort((a,b)=>a.date-b.date);nextRows=rows;$('nextList').innerHTML=rows.map(r=>`<div class="nx"><span class="tm">${logoImg(r.logo)}<span>${r.L.label} · ${r.at} ${r.opp}</span></span><span>${nextTime(r.date)}</span></div>`).join('')||'<div class="none">Checking schedules…</div>'};
+  const draw=()=>{rows.sort((a,b)=>a.date-b.date);nextRows=rows;$('nextList').innerHTML=rows.map(r=>`<div class="nx"><span class="tm">${logoImg(r.logo)}<span>${r.L.label} · ${r.at} ${esc(r.opp)}</span></span><span>${nextTime(r.date)}</span></div>`).join('')||'<div class="none">Checking schedules…</div>'};
   draw();
   await Promise.all(CFG.leagues.filter(L=>L.fav&&L.fav.length).map(async L=>{
     try{
       const gs=L.type==='hockeytech'?await hockeytechGames(L,7,true):await espnWeek(L);
       const g=gs.filter(g=>isFav(L,g)&&g.state==='pre'&&g.date>new Date()).sort((a,b)=>a.date-b.date)[0];
       if(g){const home=L.fav.includes(g.H);rows.push({L,date:g.date,at:home?'vs':'at',opp:nick(home?(g.fA||g.nA):(g.fH||g.nH)),logo:home?g.lH:g.lA,me:nick(home?(g.fH||g.nH):(g.fA||g.nA))});draw()}
-    }catch(e){console.warn('next',L.label,e);if(!rows.length)$('nextList').innerHTML='<div class="none">Schedule unavailable ('+L.label+': '+(e.message||'error').slice(0,60)+')</div>'}
+    }catch(e){console.warn('next',L.label,e);if(!rows.length)$('nextList').innerHTML='<div class="none">Schedule unavailable ('+L.label+': '+esc((e.message||'error').slice(0,60))+')</div>'}
   }));
   if(!rows.length)$('nextList').innerHTML='<div class="none">No games coming up in the next week</div>';
 }
@@ -589,7 +713,8 @@ async function hockeytechGames(L,ahead=1,all=false,back=1){
   for(const key of L.keys){
     const url=`https://lscluster.hockeytech.com/feed/index.php?feed=modulekit&view=scorebar&numberofdaysback=${back}&numberofdaysahead=${ahead}&key=${key}&client_code=${L.code}&fmt=json&lang=en`;
     const enc=encodeURIComponent(url);
-    const routes=[['jsonp',url],['proxy A','https://api.allorigins.win/raw?url='+enc],['proxy B','https://corsproxy.io/?url='+enc],['proxy C','https://api.codetabs.com/v1/proxy?quest='+url]];
+    const relay=String(CFG.relay||'').replace(/\/+$/,'');
+    const routes=[['jsonp',url],...(relay?[['relay',relay+'/?url='+enc]]:[]),['proxy A','https://api.allorigins.win/raw?url='+enc],['proxy B','https://corsproxy.io/?url='+enc],['proxy C','https://api.codetabs.com/v1/proxy?quest='+url]];
     for(const [name,u] of routes){
       try{
         let txt=name==='jsonp'?await jsonpText(u):(await (await tfetch(u)).text()).trim();
@@ -609,7 +734,7 @@ async function hockeytechGames(L,ahead=1,all=false,back=1){
           const A=g.VisitorCode,H=g.HomeCode,perTxt=(g.PeriodNameShort&&!/^\d+$/.test(g.PeriodNameShort))?g.PeriodNameShort:perName(per);
           const brk=state==='in'&&(clockSecs(clock)===null||(clock==='00:00'&&per<3));
           const rec=(w,l,o,so)=>[w,l,(+o||0)+(+so||0)].map(x=>x===undefined||x===''?0:+x).join('-');
-          return {id:g.ID||(A+H+g.Date),recA:rec(g.VisitorWins,g.VisitorRegulationLosses,g.VisitorOTLosses,g.VisitorShootoutLosses),recH:rec(g.HomeWins,g.HomeRegulationLosses,g.HomeOTLosses,g.HomeShootoutLosses),A,H,fA:g.VisitorNickname||g.VisitorCity||A,fH:g.HomeNickname||g.HomeCity||H,nA:A,nH:H,lA:g.VisitorLogo||'',lH:g.HomeLogo||'',arena:g.VenueName||g.venue_name||g.Venue||g.venue||g.FacilityName||g.ArenaName||'',sA:g.VisitorGoals,sH:g.HomeGoals,state,date,
+          return {id:g.ID||(A+H+g.Date),idA:g.VisitorID,idH:g.HomeID,recA:rec(g.VisitorWins,g.VisitorRegulationLosses,g.VisitorOTLosses,g.VisitorShootoutLosses),recH:rec(g.HomeWins,g.HomeRegulationLosses,g.HomeOTLosses,g.HomeShootoutLosses),A,H,fA:g.VisitorNickname||g.VisitorCity||A,fH:g.HomeNickname||g.HomeCity||H,nA:A,nH:H,lA:g.VisitorLogo||'',lH:g.HomeLogo||'',arena:g.VenueName||g.venue_name||g.Venue||g.venue||g.FacilityName||g.ArenaName||'',sA:g.VisitorGoals,sH:g.HomeGoals,state,date,
             line:state==='pre'?`${A} at ${H}`:`${A} ${g.VisitorGoals} – ${g.HomeGoals} ${H}`,
             det:state==='pre'?preLabel(date):state==='post'?postLabel(/final/i.test(g.GameStatus||'')?g.GameStatus:('Final'+(per>3?' '+(g.PeriodNameShort||'OT'):'')),date):(perTxt+' '+clock).trim(),
             live:{hockey:true,clock:brk?null:clockSecs(clock),per:perTxt,text:brk?('End of '+perTxt):(perTxt+' '+clock).trim()},
@@ -651,7 +776,7 @@ async function sports(){
     let show=list.filter(g=>g.today===undefined||g.today),empty='No games today';
     if(!show.length&&list.length){const up=list.filter(g=>g.state==='pre').sort((a,b)=>a.date-b.date);if(up.length){show=up;empty=''}}
     show.sort((a,b)=>rank[a.state]-rank[b.state]||a.date-b.date);
-    return {L,failed,msg,empty,rows:show.map(g=>`<div class="g"><b>${g.line}</b><span class="${g.state==='in'?'live':''}">${g.det}</span></div>`)};
+    return {L,failed,msg,empty,rows:show.map(g=>`<div class="g"><b>${esc(g.line)}</b><span class="${g.state==='in'?'live':''}">${esc(g.det)}</span></div>`)};
   });
   drawLeagues();
 }
@@ -659,15 +784,15 @@ let lgData=[],lgPage=0;const PER=4;
 function drawLeagues(){
   $('leagues').innerHTML=lgData.map(({L,failed,msg,empty,rows})=>{
     const pages=Math.max(1,Math.ceil(rows.length/PER)),pg=lgPage%pages;
-    const body=failed?'<div class="none">Scores unavailable</div><div class="why">'+msg+'</div>':(rows.slice(pg*PER,pg*PER+PER).join('')||'<div class="none">'+empty+'</div>');
+    const body=failed?'<div class="none">Scores unavailable</div><div class="why">'+esc(msg)+'</div>':(rows.slice(pg*PER,pg*PER+PER).join('')||'<div class="none">'+empty+'</div>');
     return `<div class="lg"><h3>${L.label}${pages>1?' <span class="pgn">'+(pg+1)+'/'+pages+'</span>':''}</h3>${body}</div>`;
   }).join('');
 }
 setInterval(()=>{lgPage++;drawLeagues()},7000);
 
 /* Live scorebug: replaces the headlines card while one of your teams is playing */
-const logoImg=u=>{if(!u)return '';const d=u.replace('/500/','/500-dark/');
-  return `<img class="logo" src="${d}" data-f="${d!==u?u:''}" alt="" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}">`};
+const logoImg=u=>{if(!u||!/^https?:\/\//i.test(u))return '';const d=u.replace('/500/','/500-dark/');
+  return `<img class="logo" src="${esc(d)}" data-f="${esc(d!==u?u:'')}" alt="" onerror="if(this.dataset.f){this.src=this.dataset.f;this.dataset.f=''}else{this.style.display='none'}">`};
 const mmss=n=>Math.floor(n/60)+':'+String(n%60).padStart(2,'0');
 function renderLive(){
   const box=$('live'),news=$('news');
@@ -678,8 +803,8 @@ function renderLive(){
   $('lvTag').innerHTML='<i class="dot"></i>'+(pre?'Starting soon':'Live')+' · '+L.label;
   const f=L.fav||[];
   $('lvA').className='lvrow'+(f.includes(g.A)?' fav':'');$('lvH').className='lvrow'+(f.includes(g.H)?' fav':'');
-  $('lvA').innerHTML='<span class="tm">'+logoImg(g.lA)+'<span>'+g.nA+'</span></span><span>'+(pre?'':g.sA)+'</span>';
-  $('lvH').innerHTML='<span class="tm">'+logoImg(g.lH)+'<span>'+g.nH+'</span></span><span>'+(pre?'':g.sH)+'</span>';
+  $('lvA').innerHTML='<span class="tm">'+logoImg(g.lA)+'<span>'+esc(g.nA)+'</span></span><span>'+(pre?'':esc(g.sA))+'</span>';
+  $('lvH').innerHTML='<span class="tm">'+logoImg(g.lH)+'<span>'+esc(g.nH)+'</span></span><span>'+(pre?'':esc(g.sH))+'</span>';
   let txt;
   if(pre){const m=Math.round((g.date-Date.now())/60000);txt=(g.live.hockey?'Puck drop':L.sport==='baseball'?'First pitch':'Starts')+(m>0?' in '+m+' min':' now')}
   else if(g.live.clock!==null){const rem=Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000));txt=mmss(rem)+(g.live.per?' · '+g.live.per:'')}
@@ -690,6 +815,7 @@ setInterval(renderLive,1000);
 setInterval(()=>{liveIdx++},7000);
 async function sportsLoop(){
   try{await sports()}catch(e){console.warn('sports',e)}
+  try{bgGameDay()}catch(e){}
   nextUp();standings();
   const live=favGames.some(x=>x.g.state==='in');
   setTimeout(sportsLoop,live?15000:favGames.length?60000:120000);   /* faster refresh while your team plays */
@@ -697,9 +823,9 @@ async function sportsLoop(){
 
 /* ---------- Standings pages (rotate with Up next) ---------- */
 let stAt=0;
-const stRow=(i,c,gp,pts,me)=>`<div class="st${me?' me':''}"><i>${i}</i><b>${c}</b><span>${gp} GP</span><em>${pts}</em></div>`;
+const stRow=(i,c,gp,pts,me)=>`<div class="st${me?' me':''}"><i>${i}</i><b>${esc(c)}</b><span>${esc(gp)} GP</span><em>${esc(pts)}</em></div>`;
 const stHTML=(rows,fav)=>rows.slice(0,8).map((r,i)=>stRow(i+1,r.c,r.gp,r.pts,fav.includes(r.c))).join('');
-const stFail=(id,e)=>{stAt=Date.now()-1500000;$(id).innerHTML='<div class="none">Standings unavailable<div class="why">'+(e.message||e)+'</div></div>';$(id).style.gridTemplateColumns='1fr'};
+const stFail=(id,e)=>{stAt=Date.now()-1500000;$(id).innerHTML='<div class="none">Standings unavailable<div class="why">'+esc(e.message||e)+'</div></div>';$(id).style.gridTemplateColumns='1fr'};
 async function standings(){
   if(Date.now()-stAt<1800000)return;stAt=Date.now();
   const fav=L=>(L&&L.fav)||[];
@@ -709,7 +835,10 @@ async function standings(){
     const div=find(d);if(!div)throw new Error('Atlantic not found');
     const rows=div.standings.entries.map(e=>{const st=Object.fromEntries((e.stats||[]).map(x=>[x.name,x.value]));return {c:e.team.abbreviation,gp:st.gamesPlayed,pts:st.points,w:st.wins,l:st.losses,otl:st.otLosses!==undefined?st.otLosses:st.overtimeLosses,name:nick(e.team.name||e.team.shortDisplayName||e.team.abbreviation),logo:(e.team.logos&&e.team.logos[0]&&e.team.logos[0].href)||''}})
       .sort((a,b)=>b.pts-a.pts||a.gp-b.gp);
-    stNHL=rows;renderStandings();
+    stNHL=rows;
+    const met=(function f(n){if(/metropolitan/i.test(n.name||'')&&n.standings)return n;for(const c of (n.children||[])){const r=f(c);if(r)return r}})(d);
+    stMet=met?met.standings.entries.map(e=>{const st=Object.fromEntries((e.stats||[]).map(x=>[x.name,x.value]));return {c:e.team.abbreviation,gp:st.gamesPlayed,pts:st.points,w:st.wins,l:st.losses,otl:st.otLosses!==undefined?st.otLosses:st.overtimeLosses,name:nick(e.team.name||e.team.shortDisplayName||e.team.abbreviation),logo:(e.team.logos&&e.team.logos[0]&&e.team.logos[0].href)||''}}).sort((a,b)=>b.pts-a.pts||a.gp-b.gp):[];
+    renderStandings();
     $('stdNHL').innerHTML=stHTML(rows,fav(CFG.leagues.find(l=>l.league==='nhl')));$('stdNHL').style.gridTemplateColumns='';
   }catch(e){stFail('stdNHL',e)}
   const OL=CFG.leagues.find(l=>l.type==='hockeytech');
@@ -729,7 +858,8 @@ async function standings(){
       })(j,'');return out};
     /* every route races; a reply only "wins" if it actually holds team rows, so a junk proxy reply can't end the search */
     const get=url=>{const enc=encodeURIComponent(url);
-      const routes=[['direct',()=>jsonpObj(url,15000)],['proxy A',async()=>parse(await (await tfetch('https://api.allorigins.win/raw?url='+enc,15000)).text())],
+      const relay=String(CFG.relay||'').replace(/\/+$/,'');
+      const routes=[['direct',()=>jsonpObj(url,15000)],...(relay?[['relay',async()=>parse(await (await tfetch(relay+'/?url='+enc,15000)).text())]]:[]),['proxy A',async()=>parse(await (await tfetch('https://api.allorigins.win/raw?url='+enc,15000)).text())],
         ['proxy B',async()=>parse(await (await tfetch('https://corsproxy.io/?url='+enc,15000)).text())],['proxy C',async()=>parse(await (await tfetch('https://api.codetabs.com/v1/proxy?quest='+url,15000)).text())]];
       return new Promise((res,rej)=>{let n=routes.length;const errs=[];
         routes.forEach(([nm,f])=>f().then(j=>{const rows=collect(j);if(rows.length)res(rows);else throw new Error('no teams')})
@@ -832,23 +962,23 @@ function renderGames(){
     else if(live){cls+=' live';
       when=g.live.clock!==null?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-at)/1000)))+(g.live.per?' · '+g.live.per:''):g.live.text}
     else{cls+=' fin';when=g.det}
-    const mid=pre?'<div class="mid">–</div>':`<div class="mid sc">${g.sA} – ${g.sH}</div>`;
-    const tag=(goals[r_key(L,g)]&&goals[r_key(L,g)].until>Date.now())?'🚨 '+(L.sport==='baseball'?'RUN':'GOAL')+' · '+nick(goals[r_key(L,g)].team).toUpperCase():live?'<i class="dot"></i>LIVE · '+L.label:pre?L.label+' · '+(g.live.hockey?'PUCK DROP':L.sport==='baseball'?'FIRST PITCH':'START'):L.label;
+    const mid=pre?'<div class="mid">–</div>':`<div class="mid sc">${esc(g.sA)} – ${esc(g.sH)}</div>`;
+    const tag=(goals[r_key(L,g)]&&goals[r_key(L,g)].until>Date.now())?'🚨 '+(L.sport==='baseball'?'RUN':'GOAL')+' · '+esc(nick(goals[r_key(L,g)].team).toUpperCase()):live?'<i class="dot"></i>LIVE · '+L.label:pre?L.label+' · '+(g.live.hockey?'PUCK DROP':L.sport==='baseball'?'FIRST PITCH':'START'):L.label;
     const gk=goals[r_key(L,g)],isGoal=gk&&gk.until>Date.now();
     return `<div class="gr${isGoal?' goal':''}">
-      <div class="side a">${bigLogo(g.lA)}<div class="nm${f.includes(g.A)?' me':''}">${nick(g.fA||g.nA)}</div></div>${mid}
-      <div class="side h"><div class="nm${f.includes(g.H)?' me':''}">${nick(g.fH||g.nH)}</div>${bigLogo(g.lH)}</div>
-      <div class="${cls}"><small>${tag}</small><b>${when}</b></div>${g.arena?`<div class="arena">${g.arena}</div>`:''}${scorerHTML(L,g)}</div>`;
-  }).join('')+(rows.length>1?'':teamBlocks(rows.length?3:5));
+      <div class="side a">${bigLogo(g.lA)}<div class="nm${f.includes(g.A)?' me':''}">${esc(nick(g.fA||g.nA))}</div></div>${mid}
+      <div class="side h"><div class="nm${f.includes(g.H)?' me':''}">${esc(nick(g.fH||g.nH))}</div>${bigLogo(g.lH)}</div>
+      <div class="${cls}"><small>${tag}</small><b>${esc(when)}</b></div>${g.arena?`<div class="arena">${esc(g.arena)}</div>`:''}${scorerHTML(L,g)}</div>`;
+  }).join('')+(rows.length>1?'':teamBlocks(rows.length?3:4));
   if($('gList').innerHTML!==html)$('gList').innerHTML=html;
 }
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn());
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn());
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -867,8 +997,9 @@ function nextPage(force,hold){
   if(p.type==='photos'){showPhoto();loadPhotos()}
   if(p.type==='games')renderGames();
   if(p.type==='news')renderNews();
-  if(p.type==='standings')renderStandings();
+  if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
+  if(p.type==='jellyfin'){renderJelly();loadJelly()}
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
@@ -879,7 +1010,7 @@ function nextPage(force,hold){
 
 
 /* ================= New features ================= */
-let WXD=null,stNHL=[],stOHL=[],newsItems=[],calEvents=[],calAt=0,calErr='',wxAlerts=[];
+let stMet=[],stView=0,WXD=null,stNHL=[],stOHL=[],newsItems=[],calEvents=[],calAt=0,calErr='',wxAlerts=[];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dayStart=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 const daysUntil=d=>Math.round((dayStart(d)-dayStart(new Date()))/864e5);
@@ -963,11 +1094,20 @@ function renderNews(){
 function renderStandings(){
   const nhlL=CFG.leagues.find(l=>l.league==='nhl'),ohlL=CFG.leagues.find(l=>l.type==='hockeytech');
   const ohlLogo={};lastRes.forEach(r=>{if(r.L===ohlL)r.games.forEach(g=>{if(g.lA)ohlLogo[g.A]=g.lA;if(g.lH)ohlLogo[g.H]=g.lH})});
-  const v=x=>x===undefined||x===null||x===''?'–':x;
+  const v=x=>x===undefined||x===null||x===''?'–':esc(x);
   const table=(title,rows,fav,logoOf,cut,max)=>rows.length?`<div class="card stcard"><h2>${title}</h2>
     <div class="str hd"><i>#</i><span></span><b>TEAM</b><span>GP</span><span>W</span><span>L</span><span>OTL</span><em>PTS</em></div>
     ${rows.slice(0,max).map((r,i)=>`<div class="str${fav.includes(r.c)?' me':''}${i+1===cut?' cut':''}"><i>${i+1}</i>${logoImg(logoOf(r))||'<span style="height:calc(4.6*var(--u))"></span>'}<b>${esc(r.name||r.c)}</b><span>${v(r.gp)}</span><span>${v(r.w)}</span><span>${v(r.l)}</span><span>${v(r.otl)}</span><em>${v(r.pts)}</em></div>`).join('')}</div>`:'';
-  const html=table('NHL · Atlantic Division',stNHL,(nhlL&&nhlL.fav)||[],r=>r.logo,3,8)+table('OHL · Western Conference',stOHL,(ohlL&&ohlL.fav)||[],r=>ohlLogo[r.c]||'',8,10);
+  const race=()=>{if(!stNHL.length||!stMet.length)return '';const fav=(nhlL&&nhlL.fav)||[];
+    const row=(r,lab,cls='')=>`<div class="str${fav.includes(r.c)?' me':''}${cls}"><i>${lab}</i>${logoImg(r.logo)||'<span></span>'}<b>${esc(r.name||r.c)}</b><span>${v(r.gp)}</span><span>${v(r.w)}</span><span>${v(r.l)}</span><span>${v(r.otl)}</span><em>${v(r.pts)}</em></div>`;
+    const wc=[...stNHL.slice(3),...stMet.slice(3)].sort((a,b)=>b.pts-a.pts||a.gp-b.gp);
+    return `<div class="card stcard"><h2>NHL · Eastern Conference playoff race</h2>
+      <div class="str hd"><i></i><span></span><b>TEAM</b><span>GP</span><span>W</span><span>L</span><span>OTL</span><em>PTS</em></div>
+      <div class="ssec">Atlantic</div>${stNHL.slice(0,3).map((r,i)=>row(r,'A'+(i+1))).join('')}
+      <div class="ssec">Metropolitan</div>${stMet.slice(0,3).map((r,i)=>row(r,'M'+(i+1))).join('')}
+      <div class="ssec">Wild card</div>${wc.slice(0,2).map((r,i)=>row(r,'WC'+(i+1),i===1?' cut':'')).join('')}${wc.slice(2,5).map(r=>row(r,'')).join('')}</div>`};
+  const nhlCard=stView&&race()?race():table('NHL · Atlantic Division',stNHL,(nhlL&&nhlL.fav)||[],r=>r.logo,3,8);
+  const html=nhlCard+(stView&&race()?'':table('OHL · Western Conference',stOHL,(ohlL&&ohlL.fav)||[],r=>ohlLogo[r.c]||'',8,10));
   $('standBody').innerHTML=html||'<div class="gnone">Standings unavailable right now</div>';
   $('standBody').style.cssText='display:flex;flex-direction:column;gap:calc(3*var(--u))';
 }
@@ -1034,13 +1174,28 @@ function icsExpand(evs,from,to){
   }
   return out.sort((a,b)=>a.start-b.start||(b.allDay-a.allDay));
 }
+const calOn=()=>!!(CFG.calendar&&(CFG.calendar.private||CFG.calendar.ics));
+/* the calendar key lives only in this screen's browser: open the dashboard once with #calkey=YOURKEY and it's remembered */
+const calKey=()=>SECRETS.calkey;
+async function calText(){
+  const C=CFG.calendar||{};
+  if(C.private){
+    const key=calKey(),relay=String(CFG.relay||'').replace(/\/+$/,'');
+    if(!key)throw new Error('Calendar key not set on this screen');
+    const r=await tfetch(relay+'/calendar?key='+encodeURIComponent(key),20000);
+    if(r.status===403)throw new Error('Calendar key is wrong');
+    const t=await r.text();if(!r.ok||!/BEGIN:VCALENDAR/.test(t))throw new Error('Calendar unavailable right now');return t;
+  }
+  const u=String(C.ics||'').trim().replace(/^webcal:/i,'https:');
+  return anyText(u,t=>/BEGIN:VCALENDAR/.test(t),20000);
+}
 async function loadCalendar(){
-  const u=String((CFG.calendar&&CFG.calendar.ics)||'').trim().replace(/^webcal:/i,'https:');if(!u)return;
+  if(!calOn())return;
   try{
-    const evs=icsParse(await anyText(u,t=>/BEGIN:VCALENDAR/.test(t),20000));
+    const evs=icsParse(await calText());
     const from=new Date(new Date().getFullYear(),new Date().getMonth(),1),to=new Date(dayStart(new Date()).getTime()+45*864e5);
     calEvents=icsExpand(evs,from,to);calErr='';calAt=Date.now();
-  }catch(e){calErr='Calendar unavailable right now';console.warn('calendar',e)}
+  }catch(e){calErr=(e&&/key/i.test(e.message))?e.message:'Calendar unavailable right now';console.warn('calendar',e)}
   if($('pComing').classList.contains('on'))renderComing();
 }
 
@@ -1084,7 +1239,7 @@ function renderComing(){
   const tm=e=>e.allDay?'All day':fmt(e.start);
   const evRow=e=>`<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${esc(e.loc)}</small>`:''}</div></div>`;
   let cal='';
-  if(CFG.calendar&&CFG.calendar.ics){
+  if(calOn()){
     const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
     let days='',last='';
     later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday"><span>${daysUntil(e.start)===1?'Tomorrow':e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${dayWx(e.start)}</div>`}days+=evRow(e)});
@@ -1166,16 +1321,17 @@ async function loadSchedules(){
               done:!!st.completed,us:sc(us),them:sc(them),win:us.winner,tag:(st.shortDetail||'').replace(/^Final\/?/,'')}}).filter(Boolean);
           sched[key]={L,ab,name:nick(name||T.displayName||ab),logo,rec:T.recordSummary||'',stand:T.standingSummary||'',games};
         }else{
-          const gs=await hockeytechGames(L,21,true,14),games=[];let name='',logo='',rec='';
+          const gs=await hockeytechGames(L,21,true,14),games=[];let name='',logo='',rec='',tid='';
           gs.filter(g=>g.A===ab||g.H===ab).sort((a,b)=>a.date-b.date).forEach(g=>{const home=g.H===ab;
-            name=home?g.fH:g.fA;logo=home?g.lH:g.lA;if(g.state==='post'||!rec)rec=home?g.recH:g.recA;
+            name=home?g.fH:g.fA;logo=home?g.lH:g.lA;tid=tid||(home?g.idH:g.idA);if(g.state==='post'||!rec)rec=home?g.recH:g.recA;
             games.push({date:g.date,home,opp:nick(home?g.fA:g.fH),oppLogo:home?g.lA:g.lH,done:g.state==='post',us:home?g.sH:g.sA,them:home?g.sA:g.sH,win:g.state==='post'?(+(home?g.sH:g.sA)>+(home?g.sA:g.sH)):undefined,tag:''})});
           const i=stOHL.findIndex(r=>r.c===ab);
-          sched[key]={L,ab,name:nick(name||ab),logo,rec,stand:i>=0?`${i+1}${['st','nd','rd'][i]||'th'} in Western Conference`:'',games};
+          sched[key]={L,ab,tid,name:nick(name||ab),logo,rec,stand:i>=0?`${i+1}${['st','nd','rd'][i]||'th'} in Western Conference`:'',games};
         }
       }catch(e){console.warn('schedule',L.label,ab,e);schedAt=Date.now()-1500000}
     }
   }));
+  loadLeaders();
   if($('pGames').classList.contains('on'))renderGames();
 }
 function teamBlocks(n){
@@ -1186,9 +1342,74 @@ function teamBlocks(n){
     if(!up.length&&!last)return '';            /* off-season: hide */
     const res=last?`<div class="tlast"><small>LAST</small><b class="${last.win?'w':'l'}">${last.win?'W':'L'} ${esc(last.us)}–${esc(last.them)}${last.tag?' '+esc(last.tag):''}</b><span>${last.home?'vs':'at'} ${esc(last.opp)}</span></div>`:'';
     const rows=up.map(g=>{const d=daysUntil(g.date);return `<div class="tg"><span class="td">${d===1?'Tomorrow':g.date.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</span><span class="to">${logoImg(g.oppLogo)}<b>${g.home?'vs':'at'} ${esc(g.opp)}</b></span><span class="tt">${fmt(g.date)}</span></div>`}).join('');
-    return `<div class="card tblock"><div class="thead">${logoImg(T.logo)}<div class="tname"><b>${esc(T.name)}</b><span>${[T.rec,T.stand].filter(Boolean).map(esc).join(' · ')}</span></div>${res}</div>${rows||'<div class="cnote">No games in the next three weeks</div>'}</div>`;
+    const ld=n>=4&&leaders[L_key(T)]&&leaders[L_key(T)].length?`<div class="tlead">${leaders[L_key(T)].map(p=>`<div class="pl"><img src="${esc(p.img)}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.last)}</b><span>${esc(p.pts)} PTS</span><em>${esc(p.g)}G · ${esc(p.a)}A</em></div></div>`).join('')}</div>`:'';
+    return `<div class="card tblock"><div class="thead">${logoImg(T.logo)}<div class="tname"><b>${esc(T.name)}</b><span>${[T.rec,T.stand].filter(Boolean).map(esc).join(' · ')}</span></div>${res}</div>${rows||'<div class="cnote">No games in the next three weeks</div>'}${ld}</div>`;
   }).join('');
 }
+
+/* ---------- Player leaders (top 3 scorers per team, with headshots) ---------- */
+const leaders={};let leadAt=0;
+const L_key=T=>T.L.label+T.ab;
+async function loadLeaders(){
+  if(Date.now()-leadAt<3*3600e3)return;leadAt=Date.now();
+  await Promise.all(Object.values(sched).map(async T=>{
+    try{
+      if(T.L.type==='espn'&&T.L.league==='nhl'){
+        const j=JSON.parse(await anyText(`https://api-web.nhle.com/v1/club-stats/${T.ab}/now`,t=>/"skaters"/.test(t)));
+        leaders[L_key(T)]=(j.skaters||[]).sort((a,b)=>b.points-a.points||b.goals-a.goals).slice(0,3).map(x=>({last:(x.lastName&&x.lastName.default)||'',g:x.goals,a:x.assists,pts:x.points,img:x.headshot||''}));
+      }else if(T.L.type==='hockeytech'&&T.tid&&T.L.seasonId){
+        for(const key of T.L.keys){try{
+          const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=players&season=${T.L.seasonId}&team=${T.tid}&position=skaters&rookies=0&statsType=standard&rosterstatus=undefined&site_id=2&first=0&limit=3&sort=points&league_id=1&lang=en&division=-1&key=${key}&client_code=${T.L.code}`,12000);
+          const rows=((((j||[])[0]||{}).sections||[])[0]||{}).data||[];
+          leaders[L_key(T)]=rows.slice(0,3).map(x=>{const r=x.row||{};return {last:String(r.name||'').split(' ').slice(-1)[0],g:r.goals,a:r.assists,pts:r.points,img:`https://assets.leaguestat.com/${T.L.code}/120x160/${r.player_id}.jpg`}});
+          break}catch(e){}}
+      }
+    }catch(e){console.warn('leaders',T.name,e);leadAt=Date.now()-2.5*3600e3}
+  }));
+  if($('pGames').classList.contains('on'))renderGames();
+}
+
+/* ---------- Live play-by-play ticker (bottom of the screen while your team plays) ---------- */
+const pbp={};let tkIdx=0;
+function loadPBP(L,g){
+  const k=r_key(L,g),c=pbp[k];if(c&&(c.busy||Date.now()-c.at<20000))return;
+  pbp[k]=Object.assign(c||{list:[]},{busy:true});
+  (async()=>{let list=null;
+    try{
+      if(L.type==='espn'){
+        const d=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${L.sport}/${L.league}/summary?event=${g.id}`,10000)).json();
+        const keep=/^(Goal|Shot|Penalty|Fighting|Hit|Period End|Home Run|Strikeout|Single|Double|Triple|Walk|Pitching Change)/i;
+        list=(d.plays||[]).filter(p=>keep.test((p.type&&p.type.text)||'')||p.scoringPlay).slice(-8).map(p=>({goal:!!p.scoringPlay,txt:String(p.text||'').replace(/\s+/g,' '),
+          when:[(p.period&&p.period.displayValue)||'',(p.clock&&p.clock.displayValue)||''].join(' ').trim()}));
+      }else{
+        for(const key of L.keys){try{
+          const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=gc&key=${key}&client_code=${L.code}&game_id=${g.id}&lang_code=en&fmt=json&tab=pxpverbose`,10000);
+          const ev=((j||{}).GC||{}).Pxpverbose||[];
+          const nm=o=>o?(o.last_name||o.lastName||''):'',per=x=>x.period||(x.period_id?perName(+x.period_id):'');
+          list=ev.map(x=>{
+            if(x.event==='goal'){const sc=x.goal_scorer||x.scorer||{};return {goal:true,txt:`GOAL — ${(x.team_code||'')} ${nm(sc)}${x.power_play==='1'?' (power play)':''}`.trim(),when:per(x)+' '+(x.time_formatted||x.time||'')}}
+            if(x.event==='shot')return {txt:`${nm(x.player)} ${String(x.shot_type_description||'').toLowerCase()} shot${x.goalie?', saved by '+nm(x.goalie):''}`.replace(/\s+/g,' ').trim(),when:per(x)+' '+(x.time_formatted||'')};
+            if(x.event==='penalty'){const pp=x.player_penalized_info||{};return {txt:`Penalty — ${pp.team_code||''} ${nm(pp)}, ${x.minutes_formatted||''} ${x.lang_penalty_description||''}`.replace(/\s+/g,' ').trim(),when:per(x)+' '+(x.time_off_formatted||'')}}
+            return null}).filter(Boolean).slice(-8);
+          break}catch(e){}}
+      }
+    }catch(e){console.warn('pbp',e)}
+    pbp[k]={list:list||(c&&c.list)||[],at:Date.now(),busy:false};drawTicker();
+  })();
+}
+function drawTicker(){
+  const live=[];lastRes.forEach(r=>r.games.forEach(g=>{if(g.state==='in'&&isFav(r.L,g))live.push({L:r.L,g,at:r.at})}));
+  document.body.classList.toggle('hasTicker',live.length>0);
+  if(!live.length)return;
+  live.forEach(x=>loadPBP(x.L,x.g));
+  const it=live[Math.floor(tkIdx/3)%live.length],L=it.L,g=it.g,plays=(pbp[r_key(L,g)]||{list:[]}).list;
+  const clk=g.live.clock!==null?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000)))+(g.live.per?' '+g.live.per:''):g.live.text;
+  const p=plays.length?plays[plays.length-1-(tkIdx%Math.min(3,plays.length))]:null;
+  $('tkScore').innerHTML=`<i class="dot"></i>${logoImg(g.lA)}<b>${esc(g.A)} ${esc(g.sA)}</b><span>–</span><b>${esc(g.sH)} ${esc(g.H)}</b>${logoImg(g.lH)}<small>${esc(clk)}</small>`;
+  const txt=p?`<span class="tkw">${esc(p.when)}</span>${p.goal?'<b class="tkg">🚨</b> ':''}${esc(p.txt)}`:'<span class="tkw">LIVE</span>Waiting for the next play…';
+  if($('tkPlay').dataset.t!==txt){$('tkPlay').dataset.t=txt;$('tkPlay').classList.remove('in');void $('tkPlay').offsetWidth;$('tkPlay').innerHTML=txt;$('tkPlay').classList.add('in')}
+}
+setInterval(()=>{tkIdx++;drawTicker()},5000);
 
 /* ---------- Goal horn (made with the browser's audio, no sound file) ---------- */
 let actx=null;
@@ -1241,7 +1462,7 @@ let toastT;
 function toast(html){$('toast').innerHTML=html;$('toast').classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('on'),5000)}
 let ansT;
 function reply(text){
-  const RM=CFG.remote||{},T=RM.topic;if(!text)return;
+  const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;
   if(RM.showAnswers!==false){
     $('answer').innerHTML=`<small>NOVA</small><p>${esc(text)}</p>`;$('answer').classList.add('on');$('toast').classList.remove('on');
     clearTimeout(ansT);ansT=setTimeout(()=>$('answer').classList.remove('on'),Math.max(8000,text.split(' ').length*450));
@@ -1294,6 +1515,7 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
   if(has(/\bunmute\b/)){muted=false;return reply('Goal horn is back on.')}
   if(has(/\b(mute|quiet|silence)\b/)){muted=true;return reply('Goal horn muted.')}
   const team=teamIn(t);
@@ -1311,7 +1533,7 @@ function handleCommand(raw){
     if(hit){const n=daysUntil(hit.date);return reply(n===0?`${hit.name} is today!`:`${n} day${n===1?'':'s'} until ${hit.name}.`)}
     return reply(cds.slice(0,3).map(c=>`${daysUntil(c.date)} days until ${c.name}`).join('. ')+'.')}
   if(has(/\b(calendar|schedule|agenda|plans|appointments?|events?|busy|coming up|what'?s on|today|tomorrow)\b/)){showFor('coming');
-    if(!(CFG.calendar&&CFG.calendar.ics))return reply('Your calendar isn\'t connected yet.');
+    if(!calOn())return reply('Your calendar isn\'t connected yet.');
     const tom=has(/\btomorrow\b/),d0=dayStart(new Date()),a=new Date(d0.getTime()+(tom?864e5:0)),b=new Date(a.getTime()+864e5);
     const ev=calEvents.filter(e=>e.start>=a&&e.start<b);
     return reply(ev.length?`${tom?'Tomorrow':'Today'} you have ${ev.length} thing${ev.length>1?'s':''}: `+ev.map(e=>`${e.title}${e.allDay?'':' at '+fmt(e.start)}`).join(', ')+'.':`Nothing on your calendar ${tom?'tomorrow':'today'}.`)}
@@ -1320,20 +1542,144 @@ function handleCommand(raw){
   if(has(/\b(next|skip)\b/)){nextPage(undefined,paused?0:undefined);return}
   if(has(/\btime\b/))return reply(`It's ${fmt(new Date())}.`);
   if(has(/\b(thanks|thank you)\b/))return reply('You\'re welcome!');
-  reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings or calendar.');
+  reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings, calendar or Jellyfin.');
 }
 function remote(){
-  const T=CFG.remote&&CFG.remote.topic;if(!T||!window.EventSource)return;
+  const T=SECRETS.topic;if(!T||!window.EventSource)return;
   const es=new EventSource(`https://ntfy.sh/${T}/sse`);
   es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
     let m=d.message;try{const j=JSON.parse(m);m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
 }
 
+/* ---------- Jellyfin page: who's watching what, server status, warnings (data comes through your Worker) ---------- */
+let JF=null,jfAt=0,jfErr='',jfLastUp=0,jfSeen=null,jfBusy=false,jfSig='',jfBg='';
+const relayBase=()=>String(CFG.relay||'').replace(/\/+$/,'');
+const jfOn=()=>!!(CFG.jellyfin&&CFG.jellyfin.on!==false&&SECRETS.calkey&&CFG.relay);
+const jfImg=(id,type)=>/^[0-9a-f]{32}$/i.test(id||'')?relayBase()+'/jellyfin/img?key='+encodeURIComponent(SECRETS.calkey)+'&id='+id+'&type='+type:'';
+const jfKey=s=>s.user+'|'+s.device+'|'+(s.series||s.title);
+async function loadJelly(){
+  if(!jfOn()||jfBusy)return;jfBusy=true;
+  try{
+    const r=await tfetch(relayBase()+'/jellyfin?key='+encodeURIComponent(SECRETS.calkey),12000);
+    if(r.status===403){jfErr='Jellyfin key is wrong on this screen';JF=null}
+    else{
+      const d=await r.json();JF=d;jfAt=Date.now();jfErr='';if(d.up)jfLastUp=Date.now();
+      const st=d.streams||[];
+      if(jfSeen&&d.up){
+        const fresh=st.filter(s=>!jfSeen.has(jfKey(s))&&!s.paused),J=CFG.jellyfin||{};
+        const goalOn=Object.values(goals).some(x=>x.until>Date.now());
+        if(fresh.length&&J.jumpWhenPlaying!==false&&!paused&&!goalOn){
+          const s=fresh[0];toast(`<b>Jellyfin</b>${esc(s.user)} started ${esc(s.series||s.title)}`);
+          if(!$('pJelly').classList.contains('on'))nextPage('jellyfin',J.jumpSecs||30);
+        }
+      }
+      jfSeen=new Set(st.map(jfKey));
+    }
+  }catch(e){jfErr='Can\'t reach the relay right now';console.warn('jellyfin',e)}
+  jfBusy=false;
+  if($('pJelly').classList.contains('on'))renderJelly();
+}
+setInterval(()=>{if($('pJelly').classList.contains('on')||Date.now()-jfAt>30000)loadJelly()},10000);
+
+const jfPad=n=>String(n).padStart(2,'0');
+const hms=x=>{x=Math.max(0,Math.floor(x||0));const h=Math.floor(x/3600),m=Math.floor(x%3600/60),s=x%60;return h?h+':'+jfPad(m)+':'+jfPad(s):m+':'+jfPad(s)};
+const leftTxt=(left,short)=>{const m=Math.round(left/60),t=m>=60?Math.floor(m/60)+'h '+(m%60)+'m left':short?m+'m left':m+' min left';
+  return short?t:t+' · ends '+fmt(new Date(Date.now()+left*1000))};
+const jfPos=s=>Math.min(s.dur||Infinity,(s.pos||0)+(s.paused?0:(Date.now()-jfAt)/1000));
+const jfHash=t=>{let h=0;for(const c of String(t))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)};
+const jfCol=u=>['#6ea8ff','#ffb84d','#5fd88a','#ff8ad1','#b18cff','#5fd3e0'][jfHash(u)%6];
+const jfHead=s=>esc(s.type==='Episode'?(s.series||s.title):s.title);
+const jfKick=s=>({Episode:'TV SHOW',Movie:'MOVIE',Audio:'MUSIC',MusicVideo:'MUSIC VIDEO'})[s.type]||'NOW PLAYING';
+const jfEp=(s,short)=>{const sn=s.season!=null?s.season:'?',en=s.episode!=null?s.episode:'?';
+  if(s.type==='Episode')return short?`S${sn} · E${en} · <b>${esc(s.title)}</b>`:`Season ${sn} · Episode ${en} · <b>${esc(s.title)}</b>${s.year?' · '+esc(s.year):''}`;
+  return (s.year?esc(s.year)+' · ':'')+(s.type==='Movie'?'Movie':esc(s.type||''))};
+const jfDev=s=>{const t=(s.client||'')+' '+(s.device||'');return /tv|shield|roku|fire/i.test(t)?'📺':/iphone|ipad|ios|android|mobile/i.test(t)?'📱':/web|chrome|firefox|safari|edge/i.test(t)?'💻':'📺'};
+const jfMethod=s=>/transcode/i.test(s.method||'')?'<span class="jf-chip tc">⚙ Transcoding</span>':`<span class="jf-chip dp">✓ ${/stream/i.test(s.method||'')?'Direct Stream':'Direct Play'}</span>`;
+const jfMbps=b=>b?(b/1e6).toFixed(1)+' Mbps':'';
+const jfWhy=r=>(r||[]).map(x=>String(x).replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase()).join(', ');
+const jfUser=s=>`<span class="jf-chip"><span class="jf-av" style="background:${jfCol(s.user)}">${esc(String(s.user||'?').charAt(0).toUpperCase())}</span>${esc(s.user)}</span>`;
+const jfPoster=s=>{const u=jfImg(s.poster,'Primary'),h=jfHash(s.series||s.title)%360;
+  return `<div class="jf-poster" style="background:linear-gradient(170deg,hsl(${h} 35% 32%),hsl(${h} 40% 12%))"><span>${jfHead(s)}</span>${u?`<img src="${esc(u)}" alt="" onerror="this.remove()">`:''}</div>`};
+const jfProg=(s,i,short)=>`<div class="jf-prog" data-i="${i}"${short?' data-short="1"':''}><div class="jf-track"><div class="jf-fill${s.paused?' pz':''}"></div></div>
+  <div class="jf-times"><span><b class="jf-cur"></b> / ${hms(s.dur)}</span><span class="jf-left"></span></div></div>`;
+const jfNum=n=>Number(n||0).toLocaleString();
+
+function renderJelly(){
+  const body=$('jfBody');let html='',bg='';
+  const ok='<i class="jf-ok"></i>';
+  if(!JF&&!jfErr){
+    html=`<div class="jf-title">Jellyfin</div><div class="jf-wait">${jfOn()?'Connecting to Jellyfin…':'Jellyfin key not set on this screen'}</div>`;
+  }else if(jfErr||!JF.up){
+    const relay=!!jfErr&&!/key/i.test(jfErr);
+    html=`<div class="jf-title jf-bad">⚠️ ${esc(jfErr||'Jellyfin isn\'t responding')}</div>
+      <div class="jf-idle jf-only"><div class="jf-stat jf-glass down"><div class="jf-big"><i></i></div>
+      <div><h3>${relay?'Can\'t check':'Offline'}</h3><p>${esc((JF&&JF.server)||'Your Jellyfin server')} ${relay?'status is unknown':'isn\'t answering'}</p></div>
+      <div class="jf-right">${relay?'Check the internet connection':'Check the iMac is on and awake'}${jfLastUp?`<br>Last seen <b data-ago="${jfLastUp}"></b>`:''}</div></div></div>`;
+  }else{
+    const st=JF.streams||[],lib=`${jfNum(JF.library.movies)} movies · ${jfNum(JF.library.shows)} shows · ${jfNum(JF.library.episodes)} episodes`;
+    if(st.length===1){
+      const s=st[0];bg=jfImg(s.backdrop,'Backdrop');
+      html=`<div class="jf-title"><i class="jf-live"></i>Now playing · Jellyfin</div>
+        <div class="jf-one">${jfPoster(s)}<div class="jf-info">
+          <div class="jf-kick">${jfKick(s)}</div><div class="jf-show">${jfHead(s)}</div><div class="jf-ep">${jfEp(s)}</div>
+          <div class="jf-chips">${jfUser(s)}<span class="jf-chip">${jfDev(s)} ${esc(s.device)}</span>${jfMethod(s)}${s.bitrate?`<span class="jf-chip">${jfMbps(s.bitrate)}</span>`:''}${s.paused?'<span class="jf-chip pz">❚❚ Paused</span>':''}</div>
+          ${s.reasons&&s.reasons.length?`<div class="jf-why">Transcoding because: ${esc(jfWhy(s.reasons))}</div>`:''}
+          ${jfProg(s,0)}</div></div>
+        <div class="jf-strip jf-glass"><span>${ok}<b>${esc(JF.server)}</b> online</span><span>${esc(JF.ping)} ms</span><span>${JF.devices} device${JF.devices===1?'':'s'} connected</span><span class="jf-push">${lib}</span></div>`;
+    }else if(st.length>1){
+      const show=st.slice(0,4),tc=st.filter(s=>/transcode/i.test(s.method||'')).length,tot=st.reduce((a,s)=>a+(s.bitrate||0),0);
+      bg=jfImg((show.find(s=>!s.paused)||show[0]).backdrop,'Backdrop');
+      html=`<div class="jf-title"><i class="jf-live"></i>Now playing · ${st.length} streams</div>
+        <div class="jf-two${show.length>2?' many':''}">${show.map((s,i)=>`<div class="jf-sc jf-glass">${jfPoster(s)}<div class="jf-info">
+          <div class="jf-show">${jfHead(s)}</div><div class="jf-ep">${jfEp(s,true)}</div>
+          <div class="jf-chips">${jfUser(s)}${jfMethod(s)}</div>
+          <div class="jf-chips"><span class="jf-chip">${jfDev(s)} ${esc(s.device)}</span>${s.paused?'<span class="jf-chip pz">❚❚ Paused</span>':''}</div>
+          ${jfProg(s,i,true)}</div></div>`).join('')}</div>
+        <div class="jf-strip jf-glass"><span>${ok}<b>${esc(JF.server)}</b> online</span><span>${esc(JF.ping)} ms</span>${tot?`<span>Streaming ${jfMbps(tot)}</span>`:''}<span class="jf-push">${tc?tc+' transcoding':'All direct play'}${st.length>4?' · '+(st.length-4)+' more not shown':''}</span></div>`;
+    }else{
+      const probs=JF.problems||[],notes=[JF.update?'Update available':'',JF.restart?'Restart pending':''].filter(Boolean);
+      const when=d=>{const x=new Date(d);return isNaN(x)?'':x.toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})};
+      html=`<div class="jf-title">Jellyfin</div>
+        <div class="jf-idle"><div class="jf-stat jf-glass"><div class="jf-big"><i></i></div>
+          <div><h3>Online</h3><p>${esc(JF.server)} · version ${esc(JF.version)} · answering in ${esc(JF.ping)} ms</p></div>
+          <div class="jf-right">Nothing playing right now<br><b>${JF.devices}</b> device${JF.devices===1?'':'s'} connected${notes.length?'<br><b class="jf-note">'+notes.join(' · ')+'</b>':''}</div></div>
+          <div class="jf-lib jf-glass"><h2>Library</h2><div class="jf-tiles">
+            <div class="jf-tile"><span>🎬</span><b>${jfNum(JF.library.movies)}</b><em>Movies</em></div>
+            <div class="jf-tile"><span>📺</span><b>${jfNum(JF.library.shows)}</b><em>Shows</em></div>
+            <div class="jf-tile"><span>🎞️</span><b>${jfNum(JF.library.episodes)}</b><em>Episodes</em></div></div></div>
+          <div class="jf-act jf-glass"><h2>Warnings and errors</h2>${probs.length?probs.map(p=>`<div class="jf-row"><i>${/warn/i.test(p.level)?'⚠️':'⛔'}</i><b>${esc(p.text)}</b><span>${esc(when(p.date))}</span></div>`).join(''):'<div class="jf-good">✓ Nothing to report</div>'}</div></div>`;
+    }
+  }
+  if(html!==jfSig){jfSig=html;body.innerHTML=html}
+  if(bg!==jfBg){jfBg=bg;const b=$('jfBg');b.style.backgroundImage=bg?`url("${bg}")`:'';b.classList.toggle('on',!!bg)}
+  jfTick();
+}
+function jfTick(){
+  const st=(JF&&JF.streams)||[];
+  document.querySelectorAll('#jfBody [data-i]').forEach(el=>{const s=st[+el.dataset.i];if(!s)return;
+    const p=jfPos(s),left=Math.max(0,(s.dur||0)-p),f=el.querySelector('.jf-fill'),c=el.querySelector('.jf-cur'),l=el.querySelector('.jf-left');
+    if(f)f.style.width=(s.dur?Math.min(100,p/s.dur*100):0).toFixed(2)+'%';
+    if(c)c.textContent=hms(p);
+    if(l)l.textContent=s.paused?'Paused':(s.dur?leftTxt(left,el.dataset.short==='1'):'');});
+  document.querySelectorAll('#jfBody [data-ago]').forEach(el=>{const m=Math.round((Date.now()-+el.dataset.ago)/60000);el.textContent=m<1?'just now':m<60?m+' min ago':Math.round(m/60)+'h ago'});
+}
+setInterval(()=>{if($('pJelly').classList.contains('on'))jfTick()},1000);
+function jfSay(){
+  if(!jfOn())return 'Jellyfin isn\'t connected on this screen yet.';
+  if(!JF||jfErr)return jfErr||'I\'m still checking Jellyfin.';
+  if(!JF.up)return 'Jellyfin isn\'t responding right now.';
+  const st=JF.streams||[];
+  if(!st.length)return 'Nothing\'s playing on Jellyfin right now. The server is online.';
+  return st.map(s=>{const left=Math.round(Math.max(0,(s.dur||0)-jfPos(s))/60);
+    const what=s.type==='Episode'?`${s.series}, season ${s.season} episode ${s.episode}, ${s.title}`:s.title;
+    return `${s.user} is ${s.paused?'paused on':'watching'} ${what}${s.device?' on '+s.device:''}.${!s.paused&&s.dur?` About ${left} minute${left===1?'':'s'} left.`:''}`}).join(' ');
+}
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 14';
+document.getElementById('ver').textContent='build nova 17';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -1345,7 +1691,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);

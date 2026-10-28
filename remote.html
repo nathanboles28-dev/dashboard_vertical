@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#000000">
 <title>Nova Remote</title>
 <script>
-/* ===== SETTINGS: topic must match the dashboard's remote.topic ===== */
+/* ===== SETTINGS =====
+   The private channel name (topic) is NOT stored here, so it isn't visible on GitHub.
+   Open this page once on each phone/computer with #topic=YOURTOPIC on the end of the address; it's remembered after that. */
 const NOVA={
-  topic:'nova-5da4c2f61e34c2fc',
   wake:['nova','novah','noba','nava','novo','no va'],  // what counts as "Nova" (speech-to-text often hears these)
   speak:false,                                  // also read Nova's answers out loud on THIS device (answers always show on the dashboard)
   voice:['Samantha','Ava','Allison','Karen','Google US English','Google UK English Female'],  // first one found is used
@@ -52,7 +53,9 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 .toggle{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-size:15px}
 .sw{width:50px;height:30px;border-radius:15px;background:rgba(255,255,255,.18);position:relative;cursor:pointer;transition:background .2s;flex:none}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
-.sw.on{background:#34c759}.sw.on::after{transform:translateX(20px)}
+.sw.on{background:#34c759}
+.grid button.wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;padding:14px 6px}
+.grid button.wide span{font-size:22px}.sw.on::after{transform:translateX(20px)}
 </style>
 </head>
 <body>
@@ -77,6 +80,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
     <button data-c="photos"><span>🖼️</span><b>Photos</b></button>
     <button data-c="when do my teams play next"><span>🗓️</span><b>Next games</b></button>
     <button data-c="countdown"><span>⏳</span><b>Countdowns</b></button>
+    <button data-c="jellyfin" class="wide"><span>🍿</span><b>Jellyfin · what's playing</b></button>
   </div>
   <div class="row">
     <button data-c="back">‹ Back</button>
@@ -91,9 +95,12 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 
 <script>
 const $=id=>document.getElementById(id);
-const T=NOVA.topic;
+const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('topic');
+  if(v){localStorage.setItem('nova-topic',v.trim());history.replaceState(null,'',location.pathname+location.search)}
+  return localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
 /* ---------- send a command to the dashboard ---------- */
 function send(text){
+  if(!T){setConn(false,'Not set up');$('heard').textContent='Open this page once with #topic=… on the end of the address.';return}
   $('heard').textContent='“'+text+'”';
   fetch('https://ntfy.sh/'+T,{method:'POST',body:text}).then(r=>{if(!r.ok)throw 0;setConn(true)}).catch(()=>setConn(false,'Can\'t reach relay'));
 }
@@ -105,6 +112,7 @@ let speakOn=NOVA.speak;try{const v=localStorage.getItem('nova-speak-v2');if(v!==
 $('speakSw').classList.toggle('on',speakOn);
 $('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak-v2',speakOn?'1':'0')}catch(e){}};
 function listen(){
+  if(!T){setConn(false,'Not set up');$('heard').textContent='Open this page once with #topic=… on the end of the address.';return}
   const es=new EventSource('https://ntfy.sh/'+T+'-reply/sse');
   es.onopen=()=>setConn(true);
   es.onerror=()=>setConn(false,'Reconnecting…');
