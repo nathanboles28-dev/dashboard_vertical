@@ -246,6 +246,21 @@ body.alt #mini{opacity:.85}
 .cd b small{font-size:calc(2.2*var(--u));font-weight:400;color:var(--dim);margin-left:calc(.6*var(--u))}
 .cd span{display:block;font-size:calc(2.4*var(--u));font-weight:500;margin-top:calc(.6*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cd em{display:block;font-style:normal;font-size:calc(1.9*var(--u));color:var(--dim);margin-top:calc(.3*var(--u))}
+/* team blocks on the Games page */
+.tblock{padding:calc(2.6*var(--u)) calc(3*var(--u));margin-bottom:calc(2.4*var(--u))}
+.thead{display:flex;align-items:center;gap:calc(2.2*var(--u));padding-bottom:calc(1.8*var(--u));border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:calc(.6*var(--u))}
+.thead .logo{width:calc(9*var(--u));height:calc(9*var(--u));background:none;padding:0;border-radius:0}
+.tname{flex:1;min-width:0}.tname b{display:block;font-size:calc(4.2*var(--u));font-weight:700;letter-spacing:-.01em}
+.tname span{display:block;font-size:calc(2.2*var(--u));color:var(--dim);margin-top:calc(.3*var(--u))}
+.tlast{text-align:right;flex:none}.tlast small{display:block;font-size:calc(1.7*var(--u));font-weight:600;letter-spacing:.08em;color:var(--dim)}
+.tlast b{display:block;font-size:calc(3*var(--u));font-weight:600;font-variant-numeric:tabular-nums}.tlast b.w{color:#5fd88a}.tlast b.l{color:#ff8a8a}
+.tlast span{display:block;font-size:calc(2*var(--u));color:var(--dim)}
+.tg{display:grid;grid-template-columns:calc(22*var(--u)) minmax(0,1fr) auto;align-items:center;gap:calc(1.6*var(--u));padding:calc(1.3*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:calc(2.8*var(--u))}
+.tg:last-child{border:0}
+.tg .td{color:var(--dim)}.tg .to{display:flex;align-items:center;gap:calc(1.4*var(--u));min-width:0}.tg .to b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg .logo{width:calc(5*var(--u));height:calc(5*var(--u));background:none;padding:0;border-radius:0}
+.tg .tt{font-variant-numeric:tabular-nums}
+#pGames .gwrap{align-self:flex-start}
 /* scorers on the Tonight page */
 .gr .scorers{grid-column:1/4;grid-row:3;display:grid;grid-template-columns:1fr 1fr;column-gap:calc(3*var(--u));padding:0 calc(3*var(--u)) calc(2.4*var(--u));
  font-size:calc(2.2*var(--u));color:var(--dim);text-align:center;line-height:1.55}
@@ -345,6 +360,9 @@ const CFG={
     {name:'CBC News',   url:'https://www.cbc.ca/webfeed/rss/rss-topstories'},
     {name:'CBC London', url:'https://www.cbc.ca/webfeed/rss/rss-canada-london'}
   ]},
+  // Relay: your own Cloudflare Worker address (e.g. 'https://nova-relay.yourname.workers.dev'). News and calendar need it,
+  // because CBC and Outlook don't let web pages read them directly.
+  relay:'https://nova-relay.nathanboles28.workers.dev',
   // Calendar: your Outlook (or Google) calendar's published ICS link. Leave '' to hide.
   calendar:{ics:'https://outlook.live.com/owa/calendar/00000000-0000-0000-0000-000000000000/d16a7d01-55ed-4d96-b1de-76497c13fe4a/cid-3BF3EFA4D13C9889/calendar.ics'},
   // Your own countdowns, e.g. {name:'Florida trip', date:'2027-03-14', emoji:'✈️'}. Holidays and your teams' next games are added automatically.
@@ -454,7 +472,7 @@ async function nextUp(){
     try{
       const gs=L.type==='hockeytech'?await hockeytechGames(L,7,true):await espnWeek(L);
       const g=gs.filter(g=>isFav(L,g)&&g.state==='pre'&&g.date>new Date()).sort((a,b)=>a.date-b.date)[0];
-      if(g){const home=L.fav.includes(g.H);rows.push({L,date:g.date,at:home?'vs':'at',opp:home?g.nA:g.nH,logo:home?g.lH:g.lA,me:nick(home?(g.fH||g.nH):(g.fA||g.nA))});draw()}
+      if(g){const home=L.fav.includes(g.H);rows.push({L,date:g.date,at:home?'vs':'at',opp:nick(home?(g.fA||g.nA):(g.fH||g.nH)),logo:home?g.lH:g.lA,me:nick(home?(g.fH||g.nH):(g.fA||g.nA))});draw()}
     }catch(e){console.warn('next',L.label,e);if(!rows.length)$('nextList').innerHTML='<div class="none">Schedule unavailable ('+L.label+': '+(e.message||'error').slice(0,60)+')</div>'}
   }));
   if(!rows.length)$('nextList').innerHTML='<div class="none">No games coming up in the next week</div>';
@@ -488,10 +506,10 @@ function htDate(g){
   if(m&&y){let h=+m[1];if(m[3])h=h%12+(/p/i.test(m[3])?12:0);return new Date(y,mo-1,da,h,+m[2])}
   return y?new Date(y,mo-1,da,12):new Date();
 }
-async function hockeytechGames(L,ahead=1,all=false){
+async function hockeytechGames(L,ahead=1,all=false,back=1){
   const why={};
   for(const key of L.keys){
-    const url=`https://lscluster.hockeytech.com/feed/index.php?feed=modulekit&view=scorebar&numberofdaysback=1&numberofdaysahead=${ahead}&key=${key}&client_code=${L.code}&fmt=json&lang=en`;
+    const url=`https://lscluster.hockeytech.com/feed/index.php?feed=modulekit&view=scorebar&numberofdaysback=${back}&numberofdaysahead=${ahead}&key=${key}&client_code=${L.code}&fmt=json&lang=en`;
     const enc=encodeURIComponent(url);
     const routes=[['jsonp',url],['proxy A','https://api.allorigins.win/raw?url='+enc],['proxy B','https://corsproxy.io/?url='+enc],['proxy C','https://api.codetabs.com/v1/proxy?quest='+url]];
     for(const [name,u] of routes){
@@ -512,7 +530,8 @@ async function hockeytechGames(L,ahead=1,all=false){
           const date=htDate(g);if(g.SeasonID)L.seasonId=g.SeasonID;
           const A=g.VisitorCode,H=g.HomeCode,perTxt=(g.PeriodNameShort&&!/^\d+$/.test(g.PeriodNameShort))?g.PeriodNameShort:perName(per);
           const brk=state==='in'&&(clockSecs(clock)===null||(clock==='00:00'&&per<3));
-          return {id:g.ID||(A+H+g.Date),A,H,fA:g.VisitorNickname||g.VisitorCity||A,fH:g.HomeNickname||g.HomeCity||H,nA:A,nH:H,lA:g.VisitorLogo||'',lH:g.HomeLogo||'',arena:g.VenueName||g.venue_name||g.Venue||g.venue||g.FacilityName||g.ArenaName||'',sA:g.VisitorGoals,sH:g.HomeGoals,state,date,
+          const rec=(w,l,o,so)=>[w,l,(+o||0)+(+so||0)].map(x=>x===undefined||x===''?0:+x).join('-');
+          return {id:g.ID||(A+H+g.Date),recA:rec(g.VisitorWins,g.VisitorRegulationLosses,g.VisitorOTLosses,g.VisitorShootoutLosses),recH:rec(g.HomeWins,g.HomeRegulationLosses,g.HomeOTLosses,g.HomeShootoutLosses),A,H,fA:g.VisitorNickname||g.VisitorCity||A,fH:g.HomeNickname||g.HomeCity||H,nA:A,nH:H,lA:g.VisitorLogo||'',lH:g.HomeLogo||'',arena:g.VenueName||g.venue_name||g.Venue||g.venue||g.FacilityName||g.ArenaName||'',sA:g.VisitorGoals,sH:g.HomeGoals,state,date,
             line:state==='pre'?`${A} at ${H}`:`${A} ${g.VisitorGoals} – ${g.HomeGoals} ${H}`,
             det:state==='pre'?preLabel(date):state==='post'?postLabel(/final/i.test(g.GameStatus||'')?g.GameStatus:('Final'+(per>3?' '+(g.PeriodNameShort||'OT'):'')),date):(perTxt+' '+clock).trim(),
             live:{hockey:true,clock:brk?null:clockSecs(clock),per:perTxt,text:brk?('End of '+perTxt):(perTxt+' '+clock).trim()},
@@ -726,13 +745,8 @@ function renderGames(){
     rows.push({L:r.L,g,at:r.at});
   }));
   rows.sort((a,b)=>a.g.date-b.g.date);
-  if(!rows.length){
-    $('gTitle').textContent='Up next';
-    $('gList').innerHTML=(nextRows.length?'':'<div class="gnone">No games coming up</div>')+
-      (nextRows.length?nextRows.map(r=>`<div class="gnext">${logoImg(r.logo)}<span>${r.L.label} · ${r.at} ${r.opp}</span><span>${nextTime(r.date)}</span></div>`).join(''):'');
-    return;
-  }
-  $('gTitle').textContent=(new Date().getHours()<16?'Today':'Tonight');
+  $('gTitle').textContent=rows.length?(new Date().getHours()<16?'Today':'Tonight'):'Your teams';
+  loadSchedules();
   const html=rows.map(({L,g,at})=>{
     const f=L.fav||[],pre=g.state==='pre',live=g.state==='in';if(!pre)loadScorers(L,g);
     let when,cls='when';
@@ -747,7 +761,7 @@ function renderGames(){
       <div class="side a">${bigLogo(g.lA)}<div class="nm${f.includes(g.A)?' me':''}">${nick(g.fA||g.nA)}</div></div>${mid}
       <div class="side h"><div class="nm${f.includes(g.H)?' me':''}">${nick(g.fH||g.nH)}</div>${bigLogo(g.lH)}</div>
       <div class="${cls}"><small>${tag}</small><b>${when}</b></div>${g.arena?`<div class="arena">${g.arena}</div>`:''}${scorerHTML(L,g)}</div>`;
-  }).join('');
+  }).join('')+(rows.length>1?'':teamBlocks(rows.length?3:5));
   if($('gList').innerHTML!==html)$('gList').innerHTML=html;
 }
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
@@ -794,7 +808,8 @@ const daysUntil=d=>Math.round((dayStart(d)-dayStart(new Date()))/864e5);
 /* fetch text from a site that doesn't allow direct browser requests: try direct, then free relays, first good answer wins */
 function anyText(url,ok,ms=15000){
   const enc=encodeURIComponent(url);
-  const routes=[url,'https://api.allorigins.win/raw?url='+enc,'https://corsproxy.io/?url='+enc,'https://api.codetabs.com/v1/proxy?quest='+url];
+  const relay=String(CFG.relay||'').replace(/\/+$/,'');
+  const routes=[...(relay?[relay+'/?url='+enc]:[]),url,'https://api.allorigins.win/raw?url='+enc,'https://api.codetabs.com/v1/proxy?quest='+url];
   return Promise.any(routes.map(u=>tfetch(u,ms).then(async r=>{if(!r.ok)throw new Error(r.status);const t=await r.text();if(!ok(t))throw new Error('bad reply');return t})))
     .catch(()=>{throw new Error('unreachable')});
 }
@@ -989,20 +1004,17 @@ function loadScorers(L,g){
         const d=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${L.sport}/${L.league}/summary?event=${g.id}`,10000)).json();
         const tm={};((((d.header||{}).competitions||[])[0]||{}).competitors||[]).forEach(x=>{if(x.team)tm[x.team.id]=x.team.abbreviation});
         const plays=d.scoringPlays||(d.plays||[]).filter(p=>p.scoringPlay);
-        list=plays.map(p=>{const t=String(p.text||''),m=t.match(/^([^(,]+?)\s*\((\d+)\)/),nm=(m?m[1]:t.split(/[,(]/)[0]).trim();
-          const ath=(p.participants&&p.participants[0]&&p.participants[0].athlete)||null;
-          const name=(ath&&(ath.shortName||ath.displayName))||nm;
-          return {team:tm[p.team&&p.team.id]||'',who:name.split(' ').slice(-1)[0]+(m?` (${m[2]})`:''),per:perName(p.period&&p.period.number),clock:(p.clock&&p.clock.displayValue)||''}});
+        list=plays.map(p=>{const sc=(p.participants||[]).find(x=>x.type==='scorer')||(p.participants||[])[0]||{},ath=sc.athlete||{};
+          let name=ath.displayName||String(p.text||'').replace(/\s+Goal\b.*$/,'').replace(/\s*\(.*$/,'');
+          const n=sc.ytdGoals||((String(p.text||'').match(/\((\d+)\)/)||[])[1]||'');
+          return {team:tm[p.team&&p.team.id]||'',who:name.trim().split(' ').slice(-1)[0]+(n?` (${n})`:''),per:(p.period&&p.period.displayValue)||perName(p.period&&p.period.number),clock:(p.clock&&p.clock.displayValue)||''}});
       }else{
         for(const key of L.keys){
           try{
-            const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=modulekit&view=gamesummary&game_id=${g.id}&key=${key}&client_code=${L.code}&fmt=json&lang=en`,10000);
-            const gs=(j&&j.SiteKit&&(j.SiteKit.Gamesummary||j.SiteKit.GameSummary))||{};
-            const hid=String((gs.home&&(gs.home.team_id||gs.home.id))||''),gl=[];
-            (function w(n){if(Array.isArray(n))return n.forEach(w);if(!n||typeof n!=='object')return;if(n.goal_scorer||n.scorer){gl.push(n);return}Object.values(n).forEach(w)})(gs.goals||gs);
-            list=gl.map(x=>{const sc=x.goal_scorer||x.scorer||{},home=String(x.team_id||'')===hid||x.home==='1'||x.home===1;
-              const last=sc.last_name||sc.lastName||String(sc.name||'').split(' ').slice(-1)[0]||'';
-              return {team:home?g.H:g.A,who:last+(sc.goal_count||sc.goals?` (${sc.goal_count||sc.goals})`:''),per:perName(parseInt(x.period_id||x.period,10)||0),clock:x.time||''}});
+            const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=gameSummary&game_id=${g.id}&key=${key}&site_id=2&client_code=${L.code}&lang=en&league_id=`,12000);
+            if(!j||!j.periods)throw new Error('no periods');
+            list=[];j.periods.forEach(pe=>(pe.goals||[]).forEach(x=>{const sb=x.scoredBy||{};
+              list.push({team:(x.team&&x.team.abbreviation)||'',who:(sb.lastName||'')+(x.scorerGoalNumber?` (${x.scorerGoalNumber})`:''),per:(x.period&&x.period.longName)||(pe.info&&pe.info.longName)||'',clock:x.time||''})}));
             break;
           }catch(e){}
         }
@@ -1016,6 +1028,48 @@ function scorerHTML(L,g){
   const c=scorers[r_key(L,g)];if(!c||!c.list.length)return '';
   const col=t=>c.list.filter(x=>x.team===t).map(x=>`<div><b>${esc(x.who)}</b> · ${esc(x.per)} ${esc(x.clock)}</div>`).join('');
   return `<div class="scorers"><div>${col(g.A)}</div><div>${col(g.H)}</div></div>`;
+}
+
+/* ---------- Team schedules (Games page blocks) ---------- */
+const sched={};let schedAt=0;
+async function loadSchedules(){
+  if(Date.now()-schedAt<1800000)return;schedAt=Date.now();
+  await Promise.all(CFG.leagues.filter(L=>L.fav&&L.fav.length).map(async L=>{
+    for(const ab of L.fav){
+      const key=L.label+ab;
+      try{
+        if(L.type==='espn'){
+          const d=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${L.sport}/${L.league}/teams/${ab.toLowerCase()}/schedule`,12000)).json();
+          const T=d.team||{};let name='',logo=T.logo||'';
+          const games=(d.events||[]).map(e=>{const c=e.competitions[0],us=c.competitors.find(x=>x.team.abbreviation===ab),them=c.competitors.find(x=>x!==us);if(!us||!them)return null;
+            name=name||us.team.shortDisplayName||us.team.displayName;logo=logo||((us.team.logos||[])[0]||{}).href||'';
+            const st=(c.status&&c.status.type)||{},sc=x=>x.score&&typeof x.score==='object'?x.score.displayValue:x.score;
+            return {date:new Date(e.date),home:us.homeAway==='home',opp:nick(them.team.shortDisplayName||them.team.displayName||them.team.abbreviation),oppLogo:((them.team.logos||[])[0]||{}).href||them.team.logo||'',
+              done:!!st.completed,us:sc(us),them:sc(them),win:us.winner,tag:(st.shortDetail||'').replace(/^Final\/?/,'')}}).filter(Boolean);
+          sched[key]={L,ab,name:nick(name||T.displayName||ab),logo,rec:T.recordSummary||'',stand:T.standingSummary||'',games};
+        }else{
+          const gs=await hockeytechGames(L,21,true,14),games=[];let name='',logo='',rec='';
+          gs.filter(g=>g.A===ab||g.H===ab).sort((a,b)=>a.date-b.date).forEach(g=>{const home=g.H===ab;
+            name=home?g.fH:g.fA;logo=home?g.lH:g.lA;if(g.state==='post'||!rec)rec=home?g.recH:g.recA;
+            games.push({date:g.date,home,opp:nick(home?g.fA:g.fH),oppLogo:home?g.lA:g.lH,done:g.state==='post',us:home?g.sH:g.sA,them:home?g.sA:g.sH,win:g.state==='post'?(+(home?g.sH:g.sA)>+(home?g.sA:g.sH)):undefined,tag:''})});
+          const i=stOHL.findIndex(r=>r.c===ab);
+          sched[key]={L,ab,name:nick(name||ab),logo,rec,stand:i>=0?`${i+1}${['st','nd','rd'][i]||'th'} in Western Conference`:'',games};
+        }
+      }catch(e){console.warn('schedule',L.label,ab,e);schedAt=Date.now()-1500000}
+    }
+  }));
+  if($('pGames').classList.contains('on'))renderGames();
+}
+function teamBlocks(n){
+  const now=Date.now(),soon=now+21*864e5,today=new Date().toDateString();
+  return Object.values(sched).map(T=>{
+    const up=T.games.filter(g=>!g.done&&g.date>now-4*3600e3&&g.date<soon&&g.date.toDateString()!==today).slice(0,n);
+    const last=T.games.filter(g=>g.done&&g.date>now-14*864e5).slice(-1)[0];
+    if(!up.length&&!last)return '';            /* off-season: hide */
+    const res=last?`<div class="tlast"><small>LAST</small><b class="${last.win?'w':'l'}">${last.win?'W':'L'} ${esc(last.us)}–${esc(last.them)}${last.tag?' '+esc(last.tag):''}</b><span>${last.home?'vs':'at'} ${esc(last.opp)}</span></div>`:'';
+    const rows=up.map(g=>{const d=daysUntil(g.date);return `<div class="tg"><span class="td">${d===1?'Tomorrow':g.date.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</span><span class="to">${logoImg(g.oppLogo)}<b>${g.home?'vs':'at'} ${esc(g.opp)}</b></span><span class="tt">${fmt(g.date)}</span></div>`}).join('');
+    return `<div class="card tblock"><div class="thead">${logoImg(T.logo)}<div class="tname"><b>${esc(T.name)}</b><span>${[T.rec,T.stand].filter(Boolean).map(esc).join(' · ')}</span></div>${res}</div>${rows||'<div class="cnote">No games in the next three weeks</div>'}</div>`;
+  }).join('');
 }
 
 /* ---------- Goal horn (made with the browser's audio, no sound file) ---------- */
@@ -1130,7 +1184,7 @@ function remote(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 3';
+document.getElementById('ver').textContent='build nova 5';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
