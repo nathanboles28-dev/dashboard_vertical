@@ -399,7 +399,24 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .jf-sc .jf-chip{font-size:calc(1.9*var(--u))}.jf-sc .jf-times{font-size:calc(2*var(--u))}
 .jf-two.many .jf-sc{padding:calc(2*var(--u))}.jf-two.many .jf-poster{height:calc(24*var(--u))}.jf-two.many .jf-show{font-size:calc(3.6*var(--u))}
 .jf-two.many .jf-info{gap:calc(1*var(--u))}.jf-two.many .jf-chips:nth-of-type(2){display:none}
-.jf-idle{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(6*var(--u));display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr;gap:calc(3*var(--u))}
+.jf-idle{position:absolute;left:5%;right:5%;top:calc(13*var(--u));bottom:calc(6*var(--u));display:grid;grid-template-columns:1fr 1.25fr;grid-template-rows:auto auto minmax(0,1fr) auto;gap:calc(2.4*var(--u));
+ grid-template-areas:"stat stat" "lib rec" "ppl rec" "act act"}
+.jf-idle .jf-act{padding:calc(2*var(--u)) calc(3*var(--u))}.jf-idle .jf-act h2{margin-bottom:calc(.6*var(--u))}.jf-idle .jf-act .jf-row{padding:calc(.8*var(--u)) 0}.jf-idle .jf-act .jf-good{padding:calc(.6*var(--u)) 0}
+.jf-idle .jf-stat{grid-area:stat}.jf-idle .jf-lib{grid-area:lib}.jf-idle .jf-ppl{grid-area:ppl}.jf-idle .jf-rec{grid-area:rec}.jf-idle .jf-act{grid-area:act}
+.jf-ppl,.jf-rec{padding:calc(2.6*var(--u)) calc(3*var(--u));display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.jf-ppl h2,.jf-rec h2{font-size:calc(2*var(--u));font-weight:600;color:var(--dim);letter-spacing:.02em;margin-bottom:calc(1.6*var(--u))}
+.jf-pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(1.4*var(--u)) calc(2*var(--u))}
+.jf-pp{display:flex;align-items:center;gap:calc(1.2*var(--u));min-width:0}
+.jf-pp div{min-width:0}.jf-pp b{display:block;font-size:calc(2.2*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jf-pp small,.jf-rw small{display:block;font-size:calc(1.8*var(--u));color:var(--dim)}.jf-pp small.on{color:#bff3d0}
+.jf-rr{display:flex;align-items:center;gap:calc(1.8*var(--u));padding:calc(1.1*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.jf-rr:last-child{border:0}
+.jf-th{width:calc(5.6*var(--u));aspect-ratio:2/3;border-radius:calc(.8*var(--u));overflow:hidden;position:relative;flex:none;border:1px solid rgba(255,255,255,.14)}
+.jf-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.jf-rt{flex:1;min-width:0}.jf-rt b{display:block;font-size:calc(2.4*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jf-rt small{display:block;font-size:calc(1.9*var(--u));color:var(--dim);margin-top:calc(.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jf-rw{display:flex;align-items:center;gap:calc(1*var(--u));flex:none;text-align:left;min-width:calc(16*var(--u))}
+.jf-rw b{display:block;font-size:calc(2*var(--u));font-weight:600}
 .jf-idle.jf-only{grid-template-rows:auto;align-content:start}
 .jf-title.jf-bad{color:#ff8da2}
 .jf-stat{grid-column:1/-1;display:flex;align-items:center;gap:calc(3*var(--u));padding:calc(3.4*var(--u)) calc(4*var(--u))}
@@ -413,8 +430,8 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .jf-lib h2,.jf-act h2{font-size:calc(2*var(--u));font-weight:600;color:var(--dim);letter-spacing:.02em;margin-bottom:calc(2*var(--u))}
 .jf-tiles{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(2*var(--u))}
 .jf-tile{border-radius:calc(2*var(--u));background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:calc(.8*var(--u))}
-.jf-tile span{font-size:calc(4.4*var(--u));line-height:1}.jf-tile b{font-size:calc(7*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums}
-.jf-tile em{font-style:normal;font-size:calc(2.2*var(--u));color:var(--dim);font-weight:500}
+.jf-tile{padding:calc(1.6*var(--u)) calc(.6*var(--u))}.jf-tile span{font-size:calc(3*var(--u));line-height:1}.jf-tile b{font-size:calc(4.6*var(--u));font-weight:300;line-height:1.05;font-variant-numeric:tabular-nums}
+.jf-tile em{font-style:normal;font-size:calc(1.9*var(--u));color:var(--dim);font-weight:500}
 .jf-row{display:flex;gap:calc(1.6*var(--u));align-items:baseline;padding:calc(1.4*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:calc(2.4*var(--u))}
 .jf-row:last-child{border:0}.jf-row i{font-style:normal;flex:none}.jf-row b{font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jf-row span{color:var(--dim);flex:none;font-size:calc(2.1*var(--u))}
@@ -426,7 +443,8 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  .jf-show{font-size:8vw}
  .jf-two{grid-template-columns:1fr;top:14vw;bottom:16vw}
  .jf-sc .jf-poster,.jf-two.many .jf-poster{height:auto;width:22vw}
- .jf-idle{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;top:14vw}
+ .jf-idle{grid-template-columns:1fr;grid-template-rows:auto auto auto 1fr auto;grid-template-areas:"stat" "lib" "ppl" "rec" "act";top:14vw}
+ .jf-pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
  .jf-strip{flex-wrap:wrap;row-gap:1vw}
 }
 </style>
@@ -1640,6 +1658,13 @@ function renderJelly(){
     }else{
       const probs=JF.problems||[],notes=[JF.update?'Update available':'',JF.restart?'Restart pending':''].filter(Boolean);
       const when=d=>{const x=new Date(d);return isNaN(x)?'':x.toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})};
+      const ms=d=>{const x=Date.parse(d||'');return isNaN(x)?0:x};
+      const rec=(JF.recent||[]).map(r=>{const u=jfImg(r.poster||r.item,'Primary'),h=jfHash(r.title||r.text)%360;
+        return `<div class="jf-rr"><div class="jf-th" style="background:linear-gradient(170deg,hsl(${h} 35% 32%),hsl(${h} 40% 12%))">${u?`<img src="${esc(u)}&size=s" alt="" onerror="this.remove()">`:''}</div>
+          <div class="jf-rt"><b>${esc(r.title||r.text)}</b>${r.sub?`<small>${esc(r.sub)}</small>`:''}</div>
+          <div class="jf-rw">${r.user?`<span class="jf-av" style="background:${jfCol(r.user)}">${esc(r.user.charAt(0).toUpperCase())}</span>`:''}<div><b>${esc(r.user||'')}</b>${ms(r.date)?`<small data-ago="${ms(r.date)}"></small>`:''}</div></div></div>`}).join('');
+      const ppl=(JF.people||[]).slice(0,8).map(p=>{const t=ms(p.last),live=(JF.streams||[]).some(s=>s.user===p.name);
+        return `<div class="jf-pp"><span class="jf-av" style="background:${jfCol(p.name)}">${esc(String(p.name||'?').charAt(0).toUpperCase())}</span><div><b>${esc(p.name)}</b>${live?'<small class="on">Watching now</small>':t?`<small data-ago="${t}" data-pre="Active "></small>`:'<small>Never</small>'}</div></div>`}).join('');
       html=`<div class="jf-title">Jellyfin</div>
         <div class="jf-idle"><div class="jf-stat jf-glass"><div class="jf-big"><i></i></div>
           <div><h3>Online</h3><p>${esc(JF.server)} · version ${esc(JF.version)} · answering in ${esc(JF.ping)} ms</p></div>
@@ -1648,10 +1673,12 @@ function renderJelly(){
             <div class="jf-tile"><span>🎬</span><b>${jfNum(JF.library.movies)}</b><em>Movies</em></div>
             <div class="jf-tile"><span>📺</span><b>${jfNum(JF.library.shows)}</b><em>Shows</em></div>
             <div class="jf-tile"><span>🎞️</span><b>${jfNum(JF.library.episodes)}</b><em>Episodes</em></div></div></div>
-          <div class="jf-act jf-glass"><h2>Warnings and errors</h2>${probs.length?probs.map(p=>`<div class="jf-row"><i>${/warn/i.test(p.level)?'⚠️':'⛔'}</i><b>${esc(p.text)}</b><span>${esc(when(p.date))}</span></div>`).join(''):'<div class="jf-good">✓ Nothing to report</div>'}</div></div>`;
+          ${ppl?`<div class="jf-ppl jf-glass"><h2>People</h2><div class="jf-pgrid">${ppl}</div></div>`:''}
+          <div class="jf-rec jf-glass"><h2>Recently watched</h2>${rec||'<div class="jf-good" style="color:var(--dim)">Nothing watched recently</div>'}</div>
+          <div class="jf-act jf-glass"><h2>Warnings and errors</h2>${probs.length?probs.slice(0,3).map(p=>`<div class="jf-row"><i>${/warn/i.test(p.level)?'⚠️':'⛔'}</i><b>${esc(p.text)}</b><span>${esc(when(p.date))}</span></div>`).join(''):'<div class="jf-good">✓ Nothing to report</div>'}</div></div>`;
     }
   }
-  if(html!==jfSig){jfSig=html;body.innerHTML=html}
+  if(html!==jfSig){jfSig=html;body.innerHTML=html;const r=body.querySelector('.jf-rec');if(r){r.style.minHeight='0';for(let g=0;g<10&&r.scrollHeight>r.clientHeight+2;g++){const x=r.querySelectorAll('.jf-rr');if(x.length<=1)break;x[x.length-1].remove()}}}
   if(bg!==jfBg){jfBg=bg;const b=$('jfBg');b.style.backgroundImage=bg?`url("${bg}")`:'';b.classList.toggle('on',!!bg)}
   jfTick();
 }
@@ -1662,7 +1689,7 @@ function jfTick(){
     if(f)f.style.width=(s.dur?Math.min(100,p/s.dur*100):0).toFixed(2)+'%';
     if(c)c.textContent=hms(p);
     if(l)l.textContent=s.paused?'Paused':(s.dur?leftTxt(left,el.dataset.short==='1'):'');});
-  document.querySelectorAll('#jfBody [data-ago]').forEach(el=>{const m=Math.round((Date.now()-+el.dataset.ago)/60000);el.textContent=m<1?'just now':m<60?m+' min ago':Math.round(m/60)+'h ago'});
+  document.querySelectorAll('#jfBody [data-ago]').forEach(el=>{const m=Math.round((Date.now()-+el.dataset.ago)/60000);const t=m<5?'just now':m<60?m+' min ago':m<2880?Math.round(m/60)+'h ago':Math.round(m/1440)+' days ago';el.textContent=(el.dataset.pre&&m<5?'Active ':el.dataset.pre||'')+t});
 }
 setInterval(()=>{if($('pJelly').classList.contains('on'))jfTick()},1000);
 function jfSay(){
@@ -1679,7 +1706,7 @@ function jfSay(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 17';
+document.getElementById('ver').textContent='build nova 18';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
