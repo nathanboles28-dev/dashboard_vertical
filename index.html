@@ -504,6 +504,51 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
  .lc-camcard{grid-column:1}.lc-evcard{grid-column:1}.lc-plcard{grid-column:2;grid-row:1/3;align-self:start}
  .lc-pl{grid-template-columns:1fr}.lc-radar{max-width:calc(40*var(--u));margin:0 auto;width:100%}
 }
+/* ===== Live game page ===== */
+.lv-body{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u));overflow:hidden}
+.lv-body>*{flex-shrink:0}
+.lv-sb{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:calc(2.4*var(--u)) calc(2.2*var(--u))}
+.lv-tm{display:flex;align-items:center;gap:calc(1.4*var(--u));min-width:0}.lv-tm.h{flex-direction:row-reverse}
+.lv-lg{width:calc(9.5*var(--u));height:calc(9.5*var(--u));object-fit:contain;flex:none;filter:drop-shadow(0 calc(.5*var(--u)) calc(1.2*var(--u)) rgba(0,0,0,.45))}
+.lv-ph{border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:calc(3.4*var(--u));background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25)}
+.lv-nm{display:flex;flex-direction:column;min-width:0}.lv-tm.h .lv-nm{align-items:flex-end}
+.lv-nm b{font-size:calc(3.1*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-nm small{font-size:calc(2.2*var(--u));color:var(--dim)}
+.lv-sc{font-size:calc(9*var(--u));font-weight:300;font-variant-numeric:tabular-nums;line-height:1;margin-left:auto}.lv-tm.h .lv-sc{margin-left:0;margin-right:auto}
+.lv-mid{text-align:center;padding:0 calc(1*var(--u))}
+.lv-per{font-size:calc(2.4*var(--u));font-weight:700;letter-spacing:.12em;color:#ff8da2;text-transform:uppercase}
+.lv-clk{font-size:calc(4.6*var(--u));font-weight:500;font-variant-numeric:tabular-nums;margin-top:calc(.4*var(--u));white-space:nowrap}
+.lv-pp{display:inline-block;margin-top:calc(1*var(--u));font-size:calc(2*var(--u));font-weight:800;letter-spacing:.04em;padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(2*var(--u));background:#ffd84a;color:#2a1f00;white-space:nowrap}
+.lv-rink svg{width:100%;display:block}
+.lv-leg{display:flex;justify-content:center;flex-wrap:wrap;gap:calc(1*var(--u)) calc(3*var(--u));font-size:calc(2*var(--u));color:var(--dim);margin-top:calc(1*var(--u))}
+.lv-pt,.lv-ls{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.lv-pt th,.lv-ls th{font-size:calc(2*var(--u));color:var(--dim);font-weight:600;padding-bottom:calc(.8*var(--u));text-align:center}
+.lv-pt td{font-size:calc(2.8*var(--u));text-align:center;padding:calc(.6*var(--u)) 0}.lv-ls td{font-size:calc(2.6*var(--u));text-align:center;padding:calc(.6*var(--u)) 0}
+.lv-pt td:first-child,.lv-pt th:first-child,.lv-ls td:first-child{text-align:left;font-weight:700}
+.lv-pt td.t,.lv-ls td.rhe{font-weight:800}.lv-pt td.sog{color:var(--dim);font-size:calc(2.4*var(--u))}.lv-ls td.now{background:rgba(255,255,255,.14);border-radius:4px}
+.lv-pl{display:flex;justify-content:space-between;align-items:baseline;gap:calc(1*var(--u));padding:calc(.7*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:calc(2.5*var(--u))}
+.lv-pl:last-of-type{border:0}.lv-pl b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-pl span{color:var(--dim);font-size:calc(2.2*var(--u));flex:none}
+.lv-gk{margin-top:calc(1.2*var(--u));padding-top:calc(1.2*var(--u));border-top:1px solid rgba(255,255,255,.12);font-size:calc(2.4*var(--u))}
+.lv-gk b{display:block;font-weight:600}.lv-gk span{color:var(--dim);font-size:calc(2.2*var(--u))}
+.lv-f{display:flex;gap:calc(1.6*var(--u));align-items:baseline;padding:calc(.8*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:calc(2.5*var(--u))}
+.lv-f:last-child{border:0}.lv-f em{font-style:normal;color:var(--dim);font-size:calc(2.1*var(--u));flex:none;width:calc(14*var(--u))}
+.lv-f span{min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.lv-f.lv-big{color:#ffe08a;font-weight:700}
+.lv-sit{display:grid;grid-template-columns:auto 1fr;gap:calc(3*var(--u));align-items:center}
+.lv-dia svg{width:calc(26*var(--u));display:block}
+.lv-cnt{display:flex;flex-direction:column;gap:calc(1*var(--u))}
+.lv-cnt div{display:flex;align-items:center;gap:calc(1*var(--u));font-size:calc(2.2*var(--u));color:var(--dim);font-weight:700}
+.lv-cnt i{width:calc(2.6*var(--u));height:calc(2.6*var(--u));border-radius:50%;border:2px solid rgba(255,255,255,.35)}
+.lv-cnt i.b{background:#5fd88a;border-color:#5fd88a}.lv-cnt i.s{background:#ffb84d;border-color:#ffb84d}.lv-cnt i.o{background:#ff6b7a;border-color:#ff6b7a}
+.lv-ab{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u));margin-top:calc(1.6*var(--u))}
+.lv-who{display:flex;gap:calc(1.6*var(--u));align-items:center;min-width:0}.lv-who .gd-hs{width:calc(9*var(--u));height:calc(9*var(--u))}.lv-who>div:last-child{min-width:0}
+.lv-who small{display:block;font-size:calc(1.9*var(--u));color:var(--dim);font-weight:700;letter-spacing:.08em}
+.lv-who b{display:block;font-size:calc(2.8*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-who span{display:block;font-size:calc(2.2*var(--u));color:var(--dim)}
+.lv-zones{display:grid;grid-template-columns:1fr 1.25fr;gap:calc(2*var(--u))}.lv-zones svg{width:100%;display:block}
+.lv-pz{font-size:calc(2.1*var(--u));color:var(--dim);margin-top:calc(.8*var(--u));line-height:1.45}
+@media (orientation:landscape){
+ .lv-body{display:grid;grid-template-columns:1.15fr 1fr;align-content:start}
+ .lv-body .lv-sb{grid-column:1/-1}.lv-body .lv-feed{grid-column:2}
+ .lv-lg{width:calc(9*var(--u));height:calc(9*var(--u))}.lv-sc{font-size:calc(8*var(--u))}
+}
 </style>
 </head>
 <body>
@@ -531,6 +576,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
@@ -563,10 +609,11 @@ const CFG={
   // hue (optional) tints the background on that page, in degrees (e.g. 60, 140, -40). Remove a line to drop that page.
   pages:[
     {type:'dashboard', secs:30},
+    {type:'live',      secs:60},
     {type:'games',     secs:15},
     {type:'jellyfin',  secs:15},
-    {type:'gameday',   secs:20},
-    {type:'local',     secs:20},
+    {type:'gameday',   secs:40},
+    {type:'local',     secs:40},
     {type:'forecast',  secs:15},
     {type:'photos',    secs:15},
     {type:'news',      secs:15},
@@ -616,6 +663,9 @@ const CFG={
   jellyfin:{on:true, jumpWhenPlaying:true, jumpSecs:30},
   // Game day board: shows only on days your team plays, until puck drop (team = NHL abbreviation).
   gameday:{on:true, team:'TOR'},
+  // Live game page: while one of your teams is playing. secs = time on the live page; otherSecs = time on every other page during the game.
+  // mlbTeamId: your MLB team's number (Blue Jays = 141).
+  live:{on:true, secs:60, otherSecs:10, mlbTeamId:141},
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
   local:{on:true, cams:4, roadKm:40, planeKm:40},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
@@ -1058,10 +1108,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn());
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn());
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1069,8 +1119,10 @@ function goalAlert(key,team,mine){
   const secs=G.secs||25;goals[key]={team,until:Date.now()+secs*1000};
   const fx=$('goalFx');fx.classList.remove('on');void fx.offsetWidth;fx.classList.add('on');
   clearTimeout(fx._t);fx._t=setTimeout(()=>fx.classList.remove('on'),secs*1000);
-  nextPage('games',secs);
+  nextPage(liveOn()?'live':'games',secs);
 }
+/* during one of your teams' live games: more time on the Live page, less on the rest */
+function pageSecs(p){const LC=CFG.live||{};if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
 function nextPage(force,hold){
   const list=(CFG.pages&&CFG.pages.length)?CFG.pages:[{type:'dashboard',secs:60}];
   let p;
@@ -1085,12 +1137,13 @@ function nextPage(force,hold){
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
   if(p.type==='gameday'){renderGameday();loadGameday()}
   if(p.type==='local'){renderLocal();loadLocal();loadPlanes()}
+  if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
   $('dots').innerHTML=list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx?'on':''}"></i>`:'').join(''):'';
-  clearTimeout(pTimer);if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||p.secs||15)*1000);
+  clearTimeout(pTimer);if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
 }
 
 
@@ -1608,7 +1661,7 @@ function handleCommand(raw){
   const team=teamIn(t);
   if(has(/\b(when|next)\b/)&&has(/\b(play|playing|game|games|match)\b/)){showFor('games');const now=team?gameSay(team):'';return reply(now&&!/^Final/.test(now)?now:nextSay(team))}
   if(has(/\b(weather|forecast|temperature|outside|rain|raining|snow|snowing|cold|warm|hot|umbrella|jacket|degrees)\b/)){showFor('forecast');return reply(wxSay(has(/\btomorrow\b/)))}
-  if(has(/\b(score|scores|game|games|playing|hockey|baseball|leafs|knights|jays)\b/)){showFor('games');return reply(gameSay(team)||(team?nextSay(team):'None of your teams play today. '+nextSay('')))}
+  if(has(/\b(score|scores|game|games|playing|hockey|baseball|leafs|knights|jays)\b/)){if(liveOn()){showFor('live');return reply(liveSay())}showFor('games');return reply(gameSay(team)||(team?nextSay(team):'None of your teams play today. '+nextSay('')))}
   if(has(/\b(news|headlines|happening)\b/)){showFor('news');{const sp=newsItems.filter(i=>i.grp==='sports').slice(0,2),lo=newsItems.filter(i=>i.grp==='local').slice(0,2);return reply(newsItems.length?(sp.length?'In sports: '+sp.map(i=>i.title).join('. ')+'. ':'')+(lo.length?'Around southern Ontario: '+lo.map(i=>i.title).join('. ')+'.':''):'Sorry, I can\'t get the news right now.')}}
   if(has(/\b(standings?|table|division|conference|rank|ranked|place)\b/)){showFor('standings');
     const pos=(rows,fav,lbl)=>{const i=rows.findIndex(r=>fav.includes(r.c));return i<0?'':`The ${rows[i].name||rows[i].c} are ${i+1}${['st','nd','rd'][i]||'th'} in the ${lbl} with ${rows[i].pts} points.`};
@@ -1904,10 +1957,129 @@ function locSay(){
   return s;
 }
 
+/* ---------- Live game page: full scoreboard, shot map / diamond, stats and play-by-play for your team's live game ---------- */
+let LV=null,lvAt=0,lvErr='',lvSig='',lvPick=0,lvBusy=false;
+/* which of your teams is playing right now (from the scores the dashboard already loads) */
+function liveGames(){const out=[];lastRes.forEach(r=>r.games.forEach(g=>{if(g.state==='in'&&isFav(r.L,g))out.push({L:r.L,g,at:r.at})}));return out}
+const liveOn=()=>CFG.live&&CFG.live.on!==false&&!!CFG.relay&&liveGames().length>0;
+function liveQuery(x){
+  const L=x.L,me=(L.fav||[]).find(f=>f===x.g.A||f===x.g.H)||'';
+  if(L.type==='hockeytech')return `league=ohl&id=${encodeURIComponent(x.g.id)}&code=${encodeURIComponent(L.code)}&ht=${encodeURIComponent(L.keys[0])}`;
+  if(L.league==='mlb')return `league=mlb&team=${(CFG.live&&CFG.live.mlbTeamId)||141}`;
+  if(L.league==='nhl')return `league=nhl&team=${encodeURIComponent(me||'TOR')}`;
+  return '';
+}
+async function loadLive(){
+  const gs=liveGames();if(!gs.length||lvBusy){if(!gs.length)LV=null;return}
+  const x=gs[lvPick%gs.length],q=liveQuery(x);if(!q)return;lvBusy=true;
+  try{const r=await tfetch(relayBase()+'/live?'+q,12000),d=await r.json();
+    if(d.error||d.none){lvErr=d.error?'Live stats unavailable right now':'';if(d.none)LV=null}else{LV=d;LV._L=x.L;LV._g=x.g;LV._at=x.at;lvAt=Date.now();lvErr=''}}
+  catch(e){lvErr='Live stats unavailable right now';console.warn('live',e)}
+  lvBusy=false;
+  if($('pLive').classList.contains('on'))renderLive2();
+}
+setInterval(()=>{if($('pLive').classList.contains('on'))loadLive()},10000);
+const lvFav=s=>{if(!LV)return false;const f=(LV._L&&LV._L.fav)||[],T=s==='h'?LV.home:LV.away;return f.includes(T.abbr)||(LV._g&&f.includes(s==='h'?LV._g.H:LV._g.A))};
+const lvCol=s=>lvFav(s)?'#4d8bff':'#e8e8ee';
+const lvLogo=T=>T.logo&&/^https?:\/\//i.test(T.logo)?`<img class="lv-lg" src="${esc(T.logo)}" alt="" onerror="this.style.visibility='hidden'">`:`<div class="lv-lg lv-ph">${esc(T.abbr)}</div>`;
+function lvRink(){
+  const sh=LV.shots||[],dot=p=>{const c=lvCol(p.s),x=(+p.x).toFixed(1),y=(-p.y).toFixed(1);
+    return p.t==='goal'?'':p.t==='sog'?`<circle cx="${x}" cy="${y}" r="2.2" fill="${c}"/>`:p.t==='miss'?`<circle cx="${x}" cy="${y}" r="2" fill="none" stroke="${c}" stroke-width=".9"/>`
+      :`<path d="M${x-1.6} ${y-1.6}L${+x+1.6} ${+y+1.6}M${+x+1.6} ${y-1.6}L${x-1.6} ${+y+1.6}" stroke="${c}" stroke-width=".9" opacity=".7"/>`};
+  const goals=sh.filter(p=>p.t==='goal').map(p=>`<text x="${(+p.x).toFixed(1)}" y="${(-p.y+2.4).toFixed(1)}" font-size="7" text-anchor="middle" fill="#ffd84a" stroke="#000" stroke-width=".3">★</text>`).join('');
+  const fc=(cx,cy)=>`<circle cx="${cx}" cy="${cy}" r="15" fill="none" stroke="rgba(255,92,108,.5)" stroke-width=".5"/><circle cx="${cx}" cy="${cy}" r="1" fill="rgba(255,92,108,.7)"/>`;
+  return `<svg viewBox="-102 -45 204 92"><rect x="-100" y="-42.5" width="200" height="85" rx="28" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.45)" stroke-width=".8"/>
+    <line x1="0" y1="-42.5" x2="0" y2="42.5" stroke="#ff5c6c" stroke-width="1" opacity=".7"/><line x1="-25" y1="-42.5" x2="-25" y2="42.5" stroke="#4d8bff" stroke-width="1" opacity=".7"/><line x1="25" y1="-42.5" x2="25" y2="42.5" stroke="#4d8bff" stroke-width="1" opacity=".7"/>
+    <line x1="-89" y1="-37" x2="-89" y2="37" stroke="#ff5c6c" stroke-width=".5" opacity=".6"/><line x1="89" y1="-37" x2="89" y2="37" stroke="#ff5c6c" stroke-width=".5" opacity=".6"/>
+    <circle r="15" fill="none" stroke="rgba(77,139,255,.6)" stroke-width=".5"/>${fc(-69,-22)}${fc(-69,22)}${fc(69,-22)}${fc(69,22)}
+    <path d="M-89 -4 A6 6 0 0 1 -89 4Z" fill="rgba(77,139,255,.35)"/><path d="M89 -4 A6 6 0 0 0 89 4Z" fill="rgba(77,139,255,.35)"/>
+    ${sh.map(dot).join('')}${goals}
+    <text x="-60" y="46" font-size="4" fill="rgba(255,255,255,.55)" text-anchor="middle">${esc(LV.away.abbr)} shooting ←</text><text x="60" y="46" font-size="4" fill="rgba(255,255,255,.55)" text-anchor="middle">→ ${esc(LV.home.abbr)} shooting</text></svg>`;
+}
+function lvDiamond(){const b=LV.bases||[],base=(x,y,on)=>`<rect x="-8" y="-8" width="16" height="16" transform="translate(${x} ${y}) rotate(45)" fill="${on?'#ffd84a':'rgba(255,255,255,.14)'}" stroke="rgba(255,255,255,.45)"/>`;
+  return `<svg viewBox="-50 -50 100 100"><path d="M0 34 L34 0 L0 -34 L-34 0Z" fill="none" stroke="rgba(255,255,255,.25)"/>${base(34,0,b[0])}${base(0,-34,b[1])}${base(-34,0,b[2])}<path d="M-6 30 L6 30 L6 36 L0 41 L-6 36Z" fill="rgba(255,255,255,.6)"/></svg>`}
+function lvZone(){const z=LV.zone||{top:3.4,bot:1.6},sx=x=>(x*17).toFixed(1),sz=v=>(50-(v-z.bot)/(z.top-z.bot)*36-9).toFixed(1);
+  const col={B:'#5fd88a',S:'#ffb84d',X:'#9cc2ff'};
+  const dots=(LV.pitches||[]).filter(p=>p.x!=null&&p.z!=null).map(p=>`<circle cx="${sx(p.x)}" cy="${sz(p.z)}" r="3.4" fill="${col[p.call]||'#fff'}"/><text x="${sx(p.x)}" y="${(+sz(p.z)+1.4).toFixed(1)}" font-size="4" text-anchor="middle" font-weight="700" fill="#000">${p.n}</text>`).join('');
+  return `<svg viewBox="-30 -10 60 70"><rect x="-14" y="5" width="28" height="36" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.5)" stroke-width=".8"/>
+    <line x1="-4.7" y1="5" x2="-4.7" y2="41" stroke="rgba(255,255,255,.15)" stroke-width=".5"/><line x1="4.7" y1="5" x2="4.7" y2="41" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+    <line x1="-14" y1="17" x2="14" y2="17" stroke="rgba(255,255,255,.15)" stroke-width=".5"/><line x1="-14" y1="29" x2="14" y2="29" stroke="rgba(255,255,255,.15)" stroke-width=".5"/>
+    <path d="M-10 52 L10 52 L10 55 L0 59 L-10 55Z" fill="rgba(255,255,255,.3)"/>${dots}</svg>`}
+function lvSpray(){const pts=(LV.hits||[]).map(h=>{const x=Math.max(-48,Math.min(48,(h.x-125)*.38)).toFixed(1),y=Math.max(-49,(h.y-204)*.38+8).toFixed(1),c=h.res==='HR'?'#ffd84a':lvCol(h.s);
+    return h.res==='out'?`<circle cx="${x}" cy="${y}" r="2" fill="none" stroke="${c}" stroke-width=".9"/>`:`<circle cx="${x}" cy="${y}" r="${h.res==='HR'?2.8:2.2}" fill="${c}"/>`}).join('');
+  return `<svg viewBox="-50 -52 100 64"><path d="M0 8 L-44 -36 A62 62 0 0 1 44 -36 Z" fill="rgba(95,216,138,.12)" stroke="rgba(255,255,255,.3)" stroke-width=".6"/>
+    <path d="M0 8 L-14 -6 L0 -20 L14 -6Z" fill="rgba(200,150,90,.35)" stroke="rgba(255,255,255,.4)" stroke-width=".5"/>${pts}</svg>`}
+function lvFeed(){const f=LV.feed||[];return f.length?f.map(x=>`<div class="lv-f${x.goal?' lv-big':''}"><em>${esc(x.when)}</em><span>${x.goal&&LV.sport==='hockey'?'🚨 ':''}${esc(x.text)}</span></div>`).join(''):'<div class="cnote">Waiting for the first play…</div>'}
+function lvClockTxt(){
+  if(!LV)return '';
+  if(LV.sport==='baseball')return LV.state==='final'?'Final':`${LV.outs} out`;
+  if(LV.state==='final')return 'Final';if(LV.state==='int')return 'Intermission';
+  if(LV._g&&LV._g.live&&LV._g.live.clock!==null&&LV.league==='OHL')return mmss(Math.max(0,LV._g.live.clock-Math.floor((Date.now()-LV._at)/1000)));
+  return LV.clock||'';
+}
+function renderLive2(){
+  const b=$('lvBody');
+  if(!LV){b.innerHTML=`<div class="jf-title"><i class="jf-live"></i>Live</div><div class="jf-wait">${esc(lvErr||'Loading the game…')}</div>`;lvSig='';return}
+  const A=LV.away,H=LV.home,base=LV.sport==='baseball';
+  const per=base?esc(LV.inning||LV.detail||''):LV.league==='OHL'&&LV._g?esc(LV._g.live.per||''):esc(LV.per||'');
+  const sub=T=>base?`H ${T.hits} · E ${T.errors}`:`SOG ${T.sog}`;
+  const sb=`<div class="jf-glass lv-sb"><div class="lv-tm">${lvLogo(A)}<div class="lv-nm"><b>${esc(nick(A.name))}</b><small>${sub(A)}</small></div><div class="lv-sc">${esc(base?A.runs:A.score)}</div></div>
+    <div class="lv-mid"><div class="lv-per">${per}</div><div class="lv-clk" id="lvClk">${esc(lvClockTxt())}</div>${LV.pp?`<span class="lv-pp">${esc((LV.pp.s==='h'?H:A).abbr)} PP${LV.pp.time?' '+esc(String(LV.pp.time).replace(/^0(\d:)/,'$1')):''}</span>`:''}</div>
+    <div class="lv-tm h">${lvLogo(H)}<div class="lv-nm"><b>${esc(nick(H.name))}</b><small>${sub(H)}</small></div><div class="lv-sc">${esc(base?H.runs:H.score)}</div></div></div>`;
+  let mid='';
+  if(!base){
+    const P=LV.periods||[],tot=s=>P.reduce((a,p)=>a+(+p[s]||0),0);
+    const rinkCard=(LV.shots||[]).length?`<div class="jf-glass gd-card lv-rink"><h2>Shot map · all periods</h2>${lvRink()}<div class="lv-leg"><span style="color:#ffd84a">★ Goal</span><span>● Shot on goal</span><span>○ Missed</span><span>× Blocked</span></div></div>`
+      :`<div class="jf-glass gd-card lv-rink"><h2>Shot map</h2>${lvRink()}<div class="lv-leg"><span>${LV.league==='OHL'?'Shot locations aren\'t provided for this game':'Waiting for the first shot…'}</span></div></div>`;
+    const pt=P.length?`<div class="jf-glass gd-card"><table class="lv-pt"><tr><th></th>${P.map(p=>`<th>${esc(p.p)}</th>`).join('')}<th>T</th><th>SOG</th></tr>
+      <tr><td>${esc(A.abbr)}</td>${P.map(p=>`<td>${esc(p.a)}</td>`).join('')}<td class="t">${esc(A.score)}</td><td class="sog">${esc(A.sog||tot('as'))}</td></tr>
+      <tr><td>${esc(H.abbr)}</td>${P.map(p=>`<td>${esc(p.h)}</td>`).join('')}<td class="t">${esc(H.score)}</td><td class="sog">${esc(H.sog||tot('hs'))}</td></tr></table></div>`:'';
+    const tcard=(s,T)=>{const tp=(LV.top||{})[s]||[],gk=(LV.goalies||{})[s];
+      return `<div class="jf-glass gd-card"><h2>${esc(nick(T.name))}</h2>${tp.map(p=>{const bits=[p.g?p.g+'G':'',p.a?p.a+'A':''].filter(Boolean).join(' ');
+        return `<div class="lv-pl"><b>${esc(p.name)}</b><span>${[bits,p.sog?p.sog+' SOG':'',!bits&&!p.sog&&p.hits?p.hits+' hits':''].filter(Boolean).join(' · ')||'–'}</span></div>`}).join('')}
+        ${gk?`<div class="lv-gk"><b>${esc(gk.name)}</b><span>${esc(gk.saves)} saves${gk.sv?' · '+esc(gk.sv):''}</span></div>`:''}</div>`};
+    mid=rinkCard+pt+`<div class="gd-two">${tcard('a',A)}${tcard('h',H)}</div>`;
+  }else{
+    const inn=LV.innings||[],n=Math.max(9,inn.length),cells=s=>Array.from({length:n},(_,i)=>{const x=inn[i],v=x?x[s]:'';const now=i===inn.length-1&&LV.state==='live'&&((s==='a')===!!LV.top);
+      return `<td${now?' class="now"':''}>${v==null?'':esc(v)}</td>`}).join('');
+    const ls=`<div class="jf-glass gd-card"><table class="lv-ls"><tr><th></th>${Array.from({length:n},(_,i)=>`<th>${i+1}</th>`).join('')}<th>R</th><th>H</th><th>E</th></tr>
+      <tr><td>${esc(A.abbr)}</td>${cells('a')}<td class="rhe">${esc(A.runs)}</td><td class="rhe">${esc(A.hits)}</td><td class="rhe">${esc(A.errors)}</td></tr>
+      <tr><td>${esc(H.abbr)}</td>${cells('h')}<td class="rhe">${esc(H.runs)}</td><td class="rhe">${esc(H.hits)}</td><td class="rhe">${esc(H.errors)}</td></tr></table></div>`;
+    const dots=(n,on,c)=>Array.from({length:n},(_,i)=>`<i class="${i<on?c:''}"></i>`).join('');
+    const who=(lab,p,line)=>p?`<div class="lv-who"><div class="gd-hs">${p.img?`<img src="${esc(p.img)}" alt="" onerror="this.remove()">`:''}</div><div><small>${lab}</small><b>${esc(p.name)}</b><span>${esc(line)}</span></div></div>`:'';
+    const sit=`<div class="jf-glass gd-card"><div class="lv-sit"><div class="lv-dia">${lvDiamond()}</div>
+      <div class="lv-cnt"><div>B ${dots(4,LV.balls,'b')}</div><div>S ${dots(3,LV.strikes,'s')}</div><div>O ${dots(3,LV.outs,'o')}</div></div></div>
+      <div class="lv-ab">${who('AT BAT',LV.batter,LV.batter?[LV.batter.line,LV.batter.avg?LV.batter.avg+' AVG':''].filter(Boolean).join(' · '):'')}
+      ${who('PITCHING',LV.pitcher,LV.pitcher?[LV.pitcher.pitches+' pitches',LV.pitcher.k+' K'].join(' · '):'')}</div></div>`;
+    const pz=(LV.pitches||[]).slice(-4).map(p=>`${p.n} ${p.call==='B'?'Ball':p.call==='X'?'In play':'Strike'}${p.mph?' · '+p.mph:''}${p.type?' '+esc(p.type.toLowerCase()):''}`).join('<br>');
+    const zones=`<div class="lv-zones"><div class="jf-glass gd-card"><h2>This at-bat</h2>${lvZone()}<div class="lv-pz">${pz||'No pitches yet'}</div></div>
+      <div class="jf-glass gd-card"><h2>Balls in play</h2>${lvSpray()}<div class="lv-pz"><span style="color:#ffd84a">●</span> Home run · ● Hit · ○ Out</div></div></div>`;
+    mid=ls+sit+zones;
+  }
+  const html=`<div class="jf-title"><i class="jf-live"></i>${LV.state==='final'?'Final':'Live'} · ${esc(LV.league)}</div>
+    <div class="lv-body">${sb}${mid}<div class="jf-glass gd-card lv-feed"><h2>Play by play</h2>${lvFeed()}</div></div>`;
+  if(html!==lvSig){lvSig=html;b.innerHTML=html}
+  fitLive();setTimeout(fitLive,400);
+}
+/* too tall? trim the play-by-play, then a player per team */
+function fitLive(){const b=document.querySelector('#lvBody .lv-body');if(!b)return;const over=()=>b.scrollHeight>b.clientHeight+2;
+  for(let g=0;g<14&&over();g++){const f=b.querySelectorAll('.lv-f');if(f.length>1){f[f.length-1].remove();continue}
+    let did=false;b.querySelectorAll('.gd-two .gd-card').forEach(c=>{const x=c.querySelectorAll('.lv-pl');if(x.length>1){x[x.length-1].remove();did=true}});if(!did)break}}
+setInterval(()=>{if($('pLive').classList.contains('on')){const c=$('lvClk');if(c)c.textContent=lvClockTxt()}},1000);
+function liveSay(){
+  if(!LV)return 'None of your teams are playing right now.';
+  const A=LV.away,H=LV.home,base=LV.sport==='baseball',sa=base?A.runs:A.score,sh=base?H.runs:H.score;
+  let s=`${nick(A.name)} ${sa}, ${nick(H.name)} ${sh}`;
+  s+=base?(LV.inning?`, ${LV.top?'top':'bottom'} of the ${LV.inning.replace(/[▲▼]\s*/,'').toLowerCase()}, ${LV.outs} out.`:'.'):(LV.per?`, ${LV.state==='int'?'intermission after the '+LV.per:lvClockTxt()+' left in the '+LV.per}.`:'.');
+  if(!base&&A.sog!=null)s+=` Shots ${A.sog} to ${H.sog}.`;
+  return s;
+}
+
+setInterval(()=>{if(liveGames().length&&!$('pLive').classList.contains('on')&&Date.now()-lvAt>50000)loadLive()},30000);
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 19';
+document.getElementById('ver').textContent='build nova 20';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
