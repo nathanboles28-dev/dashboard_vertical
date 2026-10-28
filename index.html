@@ -591,7 +591,8 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .gd-tv{margin-top:calc(1.4*var(--u));display:flex;justify-content:center;flex-wrap:wrap;gap:calc(1*var(--u))}
 /* ===== Weather extras ===== */
 #wxfx{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;opacity:0;transition:opacity 2s}
-.dayl{font-size:calc(1.8*var(--u));color:var(--dim);margin-top:calc(1.2*var(--u))}.dayl b{color:var(--ink);font-weight:600}
+.dayl{font-size:calc(1.75*var(--u));color:var(--dim);margin-top:calc(.8*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sun .moonrow{margin-top:calc(1.2*var(--u))}#sun #moon{font-size:calc(3.6*var(--u))}#sun .row{margin-top:calc(.2*var(--u))}.dayl b{color:var(--ink);font-weight:600}
 .chip-snow,.chip-bday{display:inline-block;margin-top:calc(1*var(--u));font-size:calc(1.9*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(2*var(--u))}
 .chip-snow{background:rgba(160,200,255,.22);border:1px solid rgba(160,200,255,.5)}
 .chip-bday{background:linear-gradient(90deg,rgba(255,92,138,.35),rgba(255,184,77,.35));border:1px solid rgba(255,160,180,.6);font-size:calc(2.4*var(--u))}
@@ -903,7 +904,7 @@ function moon(){
   const names=['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
   const i=Math.round(p*8)%8, lit=Math.round((1-Math.cos(2*Math.PI*p))/2*100);
   moonIcon=['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'][i];$('moon').textContent=moonIcon;
-  $('moontxt').innerHTML=names[i]+'<br>'+lit+'% lit';
+  $('moontxt').innerHTML=names[i]+' · '+lit+'% lit';
 }
 
 async function weather(){
@@ -2389,7 +2390,7 @@ function daylight(){const n=new Date(),t=dayLen(n),y=dayLen(new Date(n.getTime()
   return {len:hm(t),diff,diffTxt:diff===0?'same as yesterday':ms(diff)+(diff<0?' less':' more')+' than yesterday',
     turn:toLonger!==null?(toLonger===0?'Shortest day of the year — longer days from tomorrow':`Days start getting longer in ${toLonger} day${toLonger===1?'':'s'}`):(toShorter===0?'Longest day of the year':`Longest day in ${toShorter} day${toShorter===1?'':'s'}`)}}
 function weatherExtras(){
-  const d=daylight();$('dayl').innerHTML=`☀️ <b>${d.len}</b> of daylight · ${esc(d.diffTxt)}`;
+  const d=daylight();$('dayl').innerHTML=`☀️ <b>${d.len}</b> daylight · ${d.diff<0?'−':'+'}${esc(d.diffTxt.replace(/ (less|more) than yesterday/,'').replace('same as yesterday','0s'))}`;
   const s=snowInfo(),chip=$('snowChip');
   if(s&&s.s24>=((CFG.snow&&CFG.snow.alertCm)||5)){chip.style.display='';chip.innerHTML=`❄️ ${Math.round(s.s24)} cm of snow coming`}else chip.style.display='none';
   $('fxSnow').innerHTML=s&&s.s48>=0.2?`<div class="sn-big">${s.s48<1?'<1':Math.round(s.s48)}<small> cm</small></div><div class="sn-txt">expected in the next 48 hours${s.first?`<br>starting ${dayTag(s.first)||'today'} ${fmt(s.first)}`:''}</div>
@@ -2502,7 +2503,7 @@ function drawRouteMaps(){document.querySelectorAll('.rm-wrap').forEach(w=>{
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 24';
+document.getElementById('ver').textContent='build nova 25';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
