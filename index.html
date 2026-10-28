@@ -129,6 +129,14 @@ body.alt #mini{opacity:.85}
 .st.me b,.st.me em{font-weight:600;color:#ffd1ec}
 .pgn{font-weight:400;color:var(--dim);font-size:calc(1.5*var(--u));margin-left:.6vw}
 .none{font-size:calc(1.8*var(--u));color:var(--dim)}
+#news{display:flex;flex-direction:column}
+#news [hidden]{display:none!important}
+#miniCal{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);text-align:center;align-items:center}
+#miniCal .mcd{font-size:calc(1.8*var(--u));font-weight:600;color:var(--dim);padding-bottom:calc(.6*var(--u))}
+#miniCal .mcn{display:flex;justify-content:center;align-items:center;min-height:0}
+#miniCal .mcn b{display:grid;place-items:center;width:calc(4.4*var(--u));height:calc(4.4*var(--u));border-radius:50%;font-size:calc(2.3*var(--u));font-weight:400;font-variant-numeric:tabular-nums}
+#miniCal .we{color:var(--dim)}#miniCal .ps b{opacity:.4}
+#miniCal .td b{background:#fff;color:#000;font-weight:700;opacity:1}
 .why{font-size:calc(1.4*var(--u));color:var(--dim);opacity:.75;margin-top:calc(.6*var(--u));line-height:1.3}
 #live{grid-area:news;display:none;flex-direction:column;justify-content:space-between;border-color:rgba(255,110,120,.5)}
 .lvtag{font-size:calc(1.8*var(--u));font-weight:600;color:var(--dim);display:flex;align-items:center;gap:.6vw}
@@ -563,7 +571,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
   <div class="moonrow"><div id="moon"></div><div id="moontxt"></div></div></section>
  <section id="air" class="card"><h2>Next 12 hours</h2>
 <div class="hours" id="hours"></div></section>
- <section id="news" class="card"><h2 id="pgTitle">Up next · your teams</h2><div id="nextList"></div><div class="stg" id="stdNHL"><div class="none">Loading standings…</div></div><div class="stg" id="stdOHL"><div class="none">Loading standings…</div></div></section>
+ <section id="news" class="card"><h2 id="pgTitle"></h2><div id="miniCal"></div><div id="nextList" hidden></div><div class="stg" id="stdNHL" hidden></div><div class="stg" id="stdOHL" hidden></div></section>
  <section id="live" class="card"><div class="lvtag" id="lvTag"></div><div><div class="lvrow" id="lvA"></div><div class="lvrow" id="lvH"></div></div><div id="lvClock"></div></section>
  <section id="sports" class="card"><h2>Scores</h2><div class="leagues" id="leagues"></div></section>
 </main>
@@ -1026,7 +1034,19 @@ async function standings(){
 }
 const pages=[['Up next · your teams','nextList'],['NHL · Atlantic Division','stdNHL'],['OHL · Western Conference','stdOHL']];let pg=0;
 function showPage(){pages.forEach(([t,id],i)=>$(id).style.display=i===pg?'':'none');$('pgTitle').textContent=pages[pg][0]}
-showPage();setInterval(()=>{pg=(pg+1)%pages.length;showPage()},10000);
+/* the old rotating "Up next / standings" card is now a plain month calendar (standings have their own page) */
+let calDay='';
+function miniCal(){
+  const n=new Date(),k=n.toDateString();if(k===calDay)return;calDay=k;
+  const y=n.getFullYear(),m=n.getMonth(),lead=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),rows=Math.ceil((lead+dim)/7);
+  $('pgTitle').textContent=n.toLocaleDateString([],{month:'long',year:'numeric'});
+  let h=['S','M','T','W','T','F','S'].map((d,i)=>`<div class="mcd${i===0||i===6?' we':''}">${d}</div>`).join('');
+  for(let i=0;i<lead;i++)h+='<div></div>';
+  for(let d=1;d<=dim;d++){const w=(lead+d-1)%7;h+=`<div class="mcn${d===n.getDate()?' td':d<n.getDate()?' ps':''}${w===0||w===6?' we':''}"><b>${d}</b></div>`}
+  $('miniCal').style.gridTemplateRows=`auto repeat(${rows},1fr)`;
+  $('miniCal').innerHTML=h;
+}
+miniCal();setInterval(miniCal,60000);
 
 /* ---------- Radar centred on your city (Rain Viewer free tier + CARTO base map) ---------- */
 const RZ=7;let rFrames=[],rIdx=0;
@@ -2079,7 +2099,7 @@ setInterval(()=>{if(liveGames().length&&!$('pLive').classList.contains('on')&&Da
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 20';
+document.getElementById('ver').textContent='build nova 21';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
