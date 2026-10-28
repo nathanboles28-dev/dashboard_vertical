@@ -380,7 +380,8 @@ const CFG={
   // Nova remote + voice: the companion page (remote.html) sends commands on this private channel. Must match remote.html.
   // showAnswers: show Nova's answers in a card on the dashboard. speak: also say them out loud from this computer
   // (comes out of the monitor if its speakers are used; Chrome needs one click on the page first).
-  remote:{topic:'nova-5da4c2f61e34c2fc', holdSecs:60, showAnswers:true, speak:true}
+  remote:{topic:'nova-5da4c2f61e34c2fc', holdSecs:60, showAnswers:true, speak:true,
+    voice:['Matilda (Premium)','Matilda (Enhanced)','Matilda','Samantha']}   // first voice found on this Mac is used
 };
 /* ================================ */
 const $=id=>document.getElementById(id);
@@ -1086,6 +1087,7 @@ function teamBlocks(n){
 let actx=null;
 const audio=()=>{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}return actx};
 ['click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,audio,{passive:true}));
+if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices()}
 function horn(){
   const vol=+(CFG.goalAlert&&CFG.goalAlert.horn);if(!vol||muted)return;
   const a=audio();if(!a)return;
@@ -1115,7 +1117,8 @@ function reply(text){
     clearTimeout(ansT);ansT=setTimeout(()=>$('answer').classList.remove('on'),Math.max(8000,text.split(' ').length*450));
   }
   if(RM.speak&&'speechSynthesis' in window){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);
-    const v=speechSynthesis.getVoices().find(v=>/^(Samantha|Ava|Allison|Karen)/.test(v.name))||speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+    const vs=speechSynthesis.getVoices();let v=null;for(const n of (RM.voice||[])){v=vs.find(x=>x.name===n)||vs.find(x=>x.name.startsWith(n));if(v)break}
+    v=v||vs.find(x=>/^en/i.test(x.lang));if(v){u.voice=v;u.lang=v.lang}speechSynthesis.speak(u)}catch(e){}}
   if(!T)return;
   fetch(`https://ntfy.sh/${T}-reply`,{method:'POST',body:text}).catch(()=>{});
 }
@@ -1202,7 +1205,7 @@ function remote(){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 7';
+document.getElementById('ver').textContent='build nova 8';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
