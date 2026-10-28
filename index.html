@@ -156,7 +156,7 @@ body.alt #mini{opacity:.85}
  .aurora i{width:70vh;height:70vh}
  .aurora i:nth-child(1){left:-30vh;top:-20vh}.aurora i:nth-child(2){right:-35vh;top:30vh}.aurora i:nth-child(3){left:0;bottom:-30vh}
  #shift{--u:1.14vw;padding:5vw 5vw 6vw;gap:2vw 2vw;grid-template-columns:1fr 1fr;
-  grid-template-rows:auto 1.05fr .95fr .8fr 1.2fr 1.1fr;
+  grid-template-rows:auto 1fr 1.12fr .75fr 1.12fr 1.05fr;
   grid-template-areas:"clock clock" "wx wx" "fc sun" "air air" "news news" "sports sports"}
  .card{padding:2vw 2.6vw}
  #clock{padding:2vw 0 1vw}
@@ -679,6 +679,14 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .hb2-mv b{font-weight:500;min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hb2-mv em{flex:none;font-style:normal;font-size:calc(1.7*var(--u));font-weight:800;padding:calc(.3*var(--u)) calc(.9*var(--u));border-radius:calc(1*var(--u));background:rgba(77,139,255,.25);color:#cfe0ff}
 .hb2-mv em.inj{background:rgba(255,120,120,.25);color:#ffd0d0}.hb2-mv em.mlb{background:rgba(200,40,28,.3);color:#ffd0cc}.hb2-mv span{color:var(--dim);font-size:calc(1.9*var(--u));flex:none}
+
+/* ===== One consistent frame for every page: title top-left, content starts at the same height ===== */
+.page .ptitle{position:absolute;top:calc(4*var(--u));left:5%;margin:0!important;z-index:2}
+.pwrap{padding:calc(12.5*var(--u)) 4% calc(5*var(--u))!important;max-width:none!important;gap:calc(2*var(--u))!important}
+#pGames{align-items:flex-start!important;justify-content:center!important;padding:calc(12.5*var(--u)) 4% calc(5*var(--u))!important}
+#pGames .gwrap{max-width:none;width:100%}
+#pFc{padding-top:calc(12.5*var(--u))!important;padding-left:4%!important;padding-right:4%!important}
+#pFc .jf-title{left:5%}
 </style>
 </head>
 <body>
@@ -742,19 +750,22 @@ const CFG={
   // Pages: shown in this order, then it loops. secs = how long each stays up.
   // hue (optional) tints the background on that page, in degrees (e.g. 60, 140, -40). Remove a line to drop that page.
   pages:[
+    // your day
     {type:'dashboard', secs:30},
-    {type:'live',      secs:60},
-    {type:'games',     secs:15},
-    {type:'jellyfin',  secs:15},
-    {type:'gameday',   secs:40},
+    {type:'forecast',  secs:20},
+    {type:'coming',    secs:25},
     {type:'local',     secs:40},
+    {type:'news',      secs:20},
+    // sports (game day / live only show when there's a game)
+    {type:'gameday',   secs:40},
+    {type:'live',      secs:60},
+    {type:'games',     secs:20},
     {type:'hub',       secs:40},
+    {type:'standings', secs:25},
+    // media
+    {type:'jellyfin',  secs:20},
     {type:'wrapped',   secs:30},
-    {type:'forecast',  secs:15},
-    {type:'photos',    secs:15},
-    {type:'news',      secs:15},
-    {type:'standings', secs:15},
-    {type:'coming',    secs:15}
+    {type:'photos',    secs:15}
   ],
   // Photos from a Google Drive folder (shared as "Anyone with the link can view").
   // folderId: the long ID at the end of the folder's link (drive.google.com/drive/folders/THIS_PART)
@@ -933,6 +944,7 @@ async function weather(){
       const day=i?new Date(t+'T12:00').toLocaleDateString([],{weekday:'long'}):'Today';
       return `<div class="fdr"><b>${day}</b><span class="ic">${wx(dl.weather_code[i])[0]}</span><span class="pp">${pp>=10?'💧 '+pp+'%':''}</span><span class="lo">${Math.round(mn)}°</span><div class="rng"><div style="left:${((mn-lo)/sp*100).toFixed(1)}%;right:${((hi-mx)/sp*100).toFixed(1)}%"></div></div><span>${Math.round(mx)}°</span></div>`}).join('');
     try{weatherExtras()}catch(e){console.warn('wx extras',e)}
+    setTimeout(()=>{try{fitSun()}catch(e){}},300);
   }catch(e){console.warn('weather',e)}
 }
 
@@ -2399,6 +2411,9 @@ function weatherExtras(){
   $('fxDay').innerHTML=`<div class="sn-big">${d.len}</div><div class="sn-txt">${esc(d.diffTxt)}<br>${esc(d.turn)}</div>`;
 }
 setInterval(weatherExtras,600000);
+/* Sun and moon card: if the screen is short on room, drop the daylight line, then the moon line */
+function fitSun(){const s=$('sun'),d=$('dayl'),m=s.querySelector('.moonrow');if(!s)return;d.style.display='';m.style.display='';const over=()=>s.scrollHeight>s.clientHeight+1;if(over())d.style.display='none';if(over())m.style.display='none'}
+setInterval(fitSun,30000);addEventListener('resize',()=>setTimeout(fitSun,300));
 
 /* ================= Birthday mode ================= */
 const bdayName=t=>{let s=String(t||'').replace(/\b(happy|birthday|bday|b-day|day)\b/gi,'').replace(/['’]s\b/g,'').replace(/[-–:!🎂🎉]/g,' ').replace(/\s+/g,' ').trim();return s||'someone special'};
@@ -2503,7 +2518,7 @@ function drawRouteMaps(){document.querySelectorAll('.rm-wrap').forEach(w=>{
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 25';
+document.getElementById('ver').textContent='build nova 26';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
