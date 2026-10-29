@@ -340,6 +340,7 @@ body.hasTicker #answer,body.hasTicker #toast{bottom:calc(10*var(--u))}
 #tkScore b{font-weight:700}#tkScore span{color:var(--dim)}#tkScore small{font-size:calc(2*var(--u));color:#ff8da2;margin-left:calc(.6*var(--u));font-weight:600}
 #tkPlay{flex:1;min-width:0;font-size:calc(2.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transform:translateY(calc(1*var(--u)))}
 #tkPlay.in{animation:tkIn .5s ease forwards}
+#tkPlay b{font-weight:700}#tkPlay .tkpp{color:#ffd84a!important}
 @keyframes tkIn{to{opacity:1;transform:none}}
 .tkw{color:var(--dim);font-size:calc(1.9*var(--u));font-weight:600;margin-right:calc(1.2*var(--u));letter-spacing:.04em}
 /* scorers on the Tonight page */
@@ -1787,7 +1788,23 @@ function drawTicker(){
   const clk=g.live.clock!==null?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000)))+(g.live.per?' '+g.live.per:''):g.live.text;
   const p=plays.length?plays[plays.length-1-(tkIdx%Math.min(3,plays.length))]:null;
   $('tkScore').innerHTML=`<i class="dot"></i>${logoImg(g.lA)}<b>${esc(g.A)} ${esc(g.sA)}</b><span>–</span><b>${esc(g.sH)} ${esc(g.H)}</b>${logoImg(g.lH)}<small>${esc(clk)}</small>`;
-  const txt=p?`<span class="tkw">${esc(p.when)}</span>${p.goal?'<b class="tkg">🚨</b> ':''}${esc(p.txt)}`:'<span class="tkw">LIVE</span>Waiting for the next play…';
+  /* rotating game info instead of a play-by-play: shots, power play, last goal, at bat, other scores */
+  const items=[],lv=LV&&LV.away&&LV.home&&[LV.away.abbr,LV.home.abbr].some(x=>x===g.A||x===g.H)?LV:null;
+  if(lv&&lv.sport==='hockey'){
+    if(lv.away.sog!=null)items.push(`<span class="tkw">SHOTS</span>${esc(lv.away.abbr)} <b>${esc(lv.away.sog)}</b> · ${esc(lv.home.abbr)} <b>${esc(lv.home.sog)}</b>`);
+    if(lv.pp)items.push(`<span class="tkw tkpp">POWER PLAY</span>${esc((lv.pp.s==='h'?lv.home:lv.away).abbr)}${lv.pp.time?' · '+esc(String(lv.pp.time).replace(/^0(\d:)/,'$1'))+' left':''}`);
+    const lg=(lv.feed||[]).find(x=>x.goal);if(lg)items.push(`<span class="tkw">LAST GOAL</span>${esc(lg.text.replace(/^GOAL\s*/,''))} · ${esc(lg.when)}`);
+    const gk=lv.goalies||{};if(gk.a&&gk.h)items.push(`<span class="tkw">SAVES</span>${esc(gk.a.name)} <b>${esc(gk.a.saves)}</b> · ${esc(gk.h.name)} <b>${esc(gk.h.saves)}</b>`);
+  }else if(lv&&lv.sport==='baseball'){
+    if(lv.batter)items.push(`<span class="tkw">AT BAT</span>${esc(lv.batter.name)}${lv.batter.line?' · '+esc(lv.batter.line):''}`);
+    if(lv.pitcher)items.push(`<span class="tkw">PITCHING</span>${esc(lv.pitcher.name)} · ${esc(lv.pitcher.pitches)} pitches`);
+    items.push(`<span class="tkw">HITS</span>${esc(lv.away.abbr)} <b>${esc(lv.away.hits)}</b> · ${esc(lv.home.abbr)} <b>${esc(lv.home.hits)}</b>`);
+  }
+  if(p&&p.goal&&!(lv&&lv.sport==='hockey'))items.push(`<span class="tkw">${esc(p.when)}</span><b class="tkg">🚨</b> ${esc(p.txt)}`);
+  lastRes.forEach(r=>{if(r.L!==L)return;r.games.forEach(o=>{if(o===g||o.state!=='in')return;
+    items.push(`<span class="tkw">ELSEWHERE</span>${esc(o.A)} <b>${esc(o.sA)}–${esc(o.sH)}</b> ${esc(o.H)} · ${esc(o.live&&o.live.per||o.live&&o.live.text||'')}`)})});
+  const txt=items.length?items[tkIdx%items.length]:'';
+  $('tkPlay').style.visibility=txt?'':'hidden';
   if($('tkPlay').dataset.t!==txt){$('tkPlay').dataset.t=txt;$('tkPlay').classList.remove('in');void $('tkPlay').offsetWidth;$('tkPlay').innerHTML=txt;$('tkPlay').classList.add('in')}
 }
 setInterval(()=>{tkIdx++;drawTicker()},5000);
@@ -2663,7 +2680,7 @@ setInterval(()=>{if($('pWS').classList.contains('on'))wsTick()},1000);
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 30';
+document.getElementById('ver').textContent='build nova 31';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
