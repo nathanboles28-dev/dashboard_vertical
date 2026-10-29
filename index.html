@@ -689,31 +689,53 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 #pFc .jf-title{left:5%}
 
 /* ===== World Series ===== */
-.ws-body .lv-zones svg{max-height:calc(30*var(--u))}.ws-body .lv-sb{padding:calc(1.8*var(--u)) calc(2.2*var(--u))}.ws-body .ws-tiles{margin-top:calc(1.4*var(--u))}
-.ws-body .ws-hd{padding:calc(2*var(--u)) calc(2.4*var(--u))}.ws-body .ws-lg{width:calc(10*var(--u));height:calc(10*var(--u))}.ws-body .ws-wins{font-size:calc(10*var(--u))}
-.ws-hd{padding:calc(2.6*var(--u)) calc(2.4*var(--u));text-align:center;background:linear-gradient(160deg,rgba(255,216,74,.16),rgba(255,255,255,.05))!important}
+.ws-body .lv-zones svg{max-height:calc(30*var(--u))}.ws-body .lv-sb{padding:calc(1.8*var(--u)) calc(2.2*var(--u))}
+.ws-hd{padding:calc(2.2*var(--u)) calc(2.6*var(--u));background:linear-gradient(160deg,rgba(255,216,74,.14),rgba(255,255,255,.05))!important}
 .ws-hd.champ{background:linear-gradient(160deg,rgba(255,216,74,.35),rgba(255,140,60,.12))!important}
-.ws-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
-.ws-teams>div:not(.ws-wins){display:flex;flex-direction:column;align-items:center;gap:calc(.8*var(--u));min-width:0}
-.ws-lg{width:calc(13*var(--u));height:calc(13*var(--u));object-fit:contain;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(3.4*var(--u));filter:drop-shadow(0 calc(.5*var(--u)) calc(1.2*var(--u)) rgba(0,0,0,.45))}
-i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25)}
-.ws-teams b{font-size:calc(3.6*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.ws-wins{display:flex;align-items:center;gap:calc(1.6*var(--u));font-size:calc(12*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums}
-.ws-wins em{font-style:normal;color:var(--dim);font-size:calc(6*var(--u))}.ws-wins span.up{font-weight:500;color:#ffe08a}
-.ws-status{font-size:calc(2.8*var(--u));font-weight:700;color:#ffe08a;margin-top:calc(1.4*var(--u))}
-.ws-tiles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:calc(1*var(--u));margin-top:calc(2*var(--u))}
-.ws-t{padding:calc(1*var(--u)) 0;border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.07)}
+.ws-race{display:flex;align-items:center;justify-content:space-between;gap:calc(3*var(--u))}
+.ws-rows{display:flex;flex-direction:column;gap:calc(1*var(--u))}
+.ws-row{display:flex;align-items:center;gap:calc(1.4*var(--u))}
+.ws-lg{width:calc(5.2*var(--u));height:calc(5.2*var(--u));object-fit:contain;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(1.6*var(--u))}
+i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
+.ws-row>b{font-size:calc(2.8*var(--u));font-weight:800;width:calc(7*var(--u));letter-spacing:.04em}
+.ws-pips{display:flex;gap:calc(.9*var(--u))}.ws-pips i{width:calc(3.4*var(--u));height:calc(3.4*var(--u));border-radius:50%;border:2px solid rgba(255,255,255,.25)}
+.ws-pips i.on{background:#ffd84a;border-color:#ffd84a;box-shadow:0 0 calc(1.2*var(--u)) rgba(255,216,74,.6)}
+.ws-row.won>b{color:#ffe08a}
+.ws-status{text-align:right;font-size:calc(3.6*var(--u));font-weight:700;color:#ffe08a;line-height:1.15}.ws-status small{display:block;font-size:calc(2*var(--u));font-weight:500;color:var(--dim);margin-top:calc(.5*var(--u))}
+.ws-tiles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:calc(1*var(--u));margin-top:calc(1.8*var(--u))}
+.ws-t{padding:calc(.9*var(--u)) 0;border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.07);text-align:center}
 .ws-t.cur{background:rgba(255,216,74,.22);border:1px solid rgba(255,216,74,.6)}.ws-t.dim{opacity:.45}
-.ws-t small{display:block;font-size:calc(1.7*var(--u));font-weight:800;color:var(--dim)}.ws-t b{display:block;font-size:calc(2.5*var(--u));font-weight:600;font-variant-numeric:tabular-nums}
-.ws-t b.lv{color:#ff8da2}.ws-t span{display:block;font-size:calc(1.6*var(--u));color:var(--dim)}
+.ws-t small{display:block;font-size:calc(1.6*var(--u));font-weight:800;color:var(--dim)}.ws-t b{display:block;font-size:calc(2.3*var(--u));font-weight:700}
+.ws-t b.lv{color:#ff8da2}.ws-t span{display:block;font-size:calc(1.7*var(--u));color:var(--dim);font-variant-numeric:tabular-nums}
 .ws-next{text-align:center}.ws-when{font-size:calc(4*var(--u));font-weight:300}.ws-when b{font-weight:600}
 .ws-sub{font-size:calc(2.4*var(--u));color:var(--dim);margin-top:calc(.8*var(--u))}
 .ws-pp{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:calc(2.4*var(--u))}.ws-pp em{font-style:normal;color:var(--dim)}
 .ws-pp small{display:block;font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.1em;color:var(--dim)}.ws-pp b{display:block;font-size:calc(3*var(--u));font-weight:600}.ws-pp span{font-size:calc(2*var(--u));color:var(--dim)}
 .ws-cd{font-size:calc(9*var(--u));font-weight:200;margin-top:calc(2*var(--u));font-variant-numeric:tabular-nums}
 .ws-champ{text-align:center;padding:calc(5*var(--u))}.ws-trophy{font-size:calc(20*var(--u));line-height:1}.ws-cn{font-size:calc(8*var(--u));font-weight:800;color:#ffe08a}
+/* keep every page's content clear of the navigation dots */
+.lv-body,.gd-body,.lc-body,.hb-body,.wr-body,.jf-idle,.jf-one,.jf-two{bottom:calc(7.5*var(--u))!important}
+.jf-strip{bottom:calc(7.5*var(--u))!important}.jf-one,.jf-two{bottom:calc(15*var(--u))!important}
+.pwrap{padding-bottom:calc(7.5*var(--u))!important}#pGames,#pFc{padding-bottom:calc(7.5*var(--u))!important}
 .lv-run{display:flex;flex-wrap:wrap;gap:calc(.6*var(--u)) calc(1.6*var(--u));font-size:calc(2*var(--u));color:var(--ink)!important;font-weight:500!important}
 .lv-run b{color:#ffd84a;font-weight:800;margin-right:calc(.4*var(--u))}
+
+/* pitcher today card + roomier diamond */
+.lv-dia{padding:calc(1*var(--u)) 0}.lv-dia svg{overflow:visible}
+.lv-pc h2{margin-bottom:calc(1*var(--u))}
+.lv-pch{display:flex;align-items:center;gap:calc(1.4*var(--u));min-width:0}.lv-pch .gd-hs{width:calc(6.4*var(--u));height:calc(6.4*var(--u))}
+.lv-pch>div:last-child{min-width:0}.lv-pch b{display:block;font-size:calc(2.6*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-pch span{font-size:calc(1.9*var(--u));color:var(--dim)}
+.lv-pcn{display:flex;align-items:baseline;gap:calc(1.2*var(--u));margin-top:calc(1.4*var(--u))}.lv-pcn b{font-size:calc(6*var(--u));font-weight:300;line-height:1}.lv-pcn span{font-size:calc(1.9*var(--u));color:var(--dim)}
+.lv-pbar{position:relative;height:calc(1.2*var(--u));border-radius:calc(1*var(--u));background:rgba(255,255,255,.12);margin-top:calc(.8*var(--u))}
+.lv-pbar i{display:block;height:100%;border-radius:calc(1*var(--u))}.lv-pbar em{position:absolute;top:-2px;bottom:-2px;width:2px;background:rgba(255,255,255,.35)}
+.lv-pline{display:grid;grid-template-columns:repeat(5,1fr);margin-top:calc(1.6*var(--u));text-align:center}
+.lv-pline b{display:block;font-size:calc(3*var(--u));font-weight:600}.lv-pline small{font-size:calc(1.7*var(--u));color:var(--dim);font-weight:700}
+.lv-mix{margin-top:calc(1.4*var(--u));display:flex;flex-direction:column;gap:calc(.7*var(--u))}
+.lv-mix>div{display:grid;grid-template-columns:calc(14*var(--u)) 1fr auto;align-items:center;gap:calc(1*var(--u));font-size:calc(1.85*var(--u))}
+.lv-mix span{display:flex;align-items:center;gap:calc(.6*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv-mix span i{width:calc(1.3*var(--u));height:calc(1.3*var(--u));border-radius:50%;flex:none}
+.lv-mb{height:calc(.9*var(--u));border-radius:calc(.6*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.lv-mb i{display:block;height:100%}
+.lv-mix em{font-style:normal;color:var(--dim);font-variant-numeric:tabular-nums}
+.lv-zones{grid-template-columns:1fr 1.15fr!important}
 </style>
 </head>
 <body>
@@ -2218,7 +2240,7 @@ function lvRink(){
     <text x="-60" y="46" font-size="4" fill="rgba(255,255,255,.55)" text-anchor="middle">${esc(LV.away.abbr)} shooting ←</text><text x="60" y="46" font-size="4" fill="rgba(255,255,255,.55)" text-anchor="middle">→ ${esc(LV.home.abbr)} shooting</text></svg>`;
 }
 function lvDiamond(){const b=LV.bases||[],base=(x,y,on)=>`<rect x="-8" y="-8" width="16" height="16" transform="translate(${x} ${y}) rotate(45)" fill="${on?'#ffd84a':'rgba(255,255,255,.14)'}" stroke="rgba(255,255,255,.45)"/>`;
-  return `<svg viewBox="-50 -50 100 100"><path d="M0 34 L34 0 L0 -34 L-34 0Z" fill="none" stroke="rgba(255,255,255,.25)"/>${base(34,0,b[0])}${base(0,-34,b[1])}${base(-34,0,b[2])}<path d="M-6 30 L6 30 L6 36 L0 41 L-6 36Z" fill="rgba(255,255,255,.6)"/></svg>`}
+  return `<svg viewBox="-58 -58 116 112" overflow="visible"><path d="M0 34 L34 0 L0 -34 L-34 0Z" fill="none" stroke="rgba(255,255,255,.25)"/>${base(34,0,b[0])}${base(0,-34,b[1])}${base(-34,0,b[2])}<path d="M-6 30 L6 30 L6 36 L0 41 L-6 36Z" fill="rgba(255,255,255,.6)"/></svg>`}
 function lvZone(){const z=LV.zone||{top:3.4,bot:1.6},sx=x=>(x*17).toFixed(1),sz=v=>(50-(v-z.bot)/(z.top-z.bot)*36-9).toFixed(1);
   const col={B:'#5fd88a',S:'#ffb84d',X:'#9cc2ff'};
   const dots=(LV.pitches||[]).filter(p=>p.x!=null&&p.z!=null).map(p=>`<circle cx="${sx(p.x)}" cy="${sz(p.z)}" r="3.4" fill="${col[p.call]||'#fff'}"/><text x="${sx(p.x)}" y="${(+sz(p.z)+1.4).toFixed(1)}" font-size="4" text-anchor="middle" font-weight="700" fill="#000">${p.n}</text>`).join('');
@@ -2239,6 +2261,16 @@ function lvClockTxt(){
   return LV.clock||'';
 }
 /* baseball blocks (line score, bases/count/at-bat, strike zone + spray chart) built from LV; shared by the Live and World Series pages */
+/* current pitcher today: pitch count bar, line, pitch mix */
+function pitcherCard(){const P=LV.pitcher;if(!P)return `<div class="jf-glass gd-card"><h2>Pitcher today</h2><div class="cnote">Waiting for the first pitch…</div></div>`;
+  const n=+P.pitches||0,pct=Math.min(100,n/110*100),col=n>=100?'#ff6b7a':n>=90?'#ffb84d':'#5fd88a';
+  const mixCols=['#7fb0ff','#ffd84a','#5fd88a','#ff9fb8','#b18cff'];
+  return `<div class="jf-glass gd-card lv-pc"><h2>Pitcher today</h2>
+    <div class="lv-pch">${gdHead(P.img)}<div><b>${esc(P.name)}</b><span>${P.era?esc(P.era)+' ERA':''}</span></div></div>
+    <div class="lv-pcn"><b style="color:${col}">${n}</b><span>pitches${P.strikes?' · '+Math.round(P.strikes/Math.max(1,n)*100)+'% strikes':''}</span></div>
+    <div class="lv-pbar"><i style="width:${pct.toFixed(1)}%;background:${col}"></i><em style="left:${(90/110*100).toFixed(1)}%"></em><em style="left:${(100/110*100).toFixed(1)}%"></em></div>
+    <div class="lv-pline">${[['IP',P.ip],['H',P.h],['R',P.r],['BB',P.bb],['K',P.k]].map(([k,v])=>`<div><b>${v==null||v===''?'–':esc(v)}</b><small>${k}</small></div>`).join('')}</div>
+    ${(P.mix||[]).length?`<div class="lv-mix">${P.mix.map((m,i)=>`<div><span><i style="background:${mixCols[i]}"></i>${esc(m.type.replace(/Four-Seam /,'4-Seam ').replace(/ Fastball$/,' FB'))}</span><div class="lv-mb"><i style="width:${m.pct}%;background:${mixCols[i]}"></i></div><em>${m.pct}%${m.mph?' · '+m.mph:''}</em></div>`).join('')}</div>`:''}</div>`}
 function baseballParts(A,H){
     const inn=LV.innings||[],n=Math.max(9,inn.length),cells=s=>Array.from({length:n},(_,i)=>{const x=inn[i],v=x?x[s]:'';const now=i===inn.length-1&&LV.state==='live'&&((s==='a')===!!LV.top);
       return `<td${now?' class="now"':''}>${v==null?'':esc(v)}</td>`}).join('');
@@ -2255,7 +2287,7 @@ function baseballParts(A,H){
       ${who('PITCHING',LV.pitcher,LV.pitcher?[LV.pitcher.pitches+' pitches',LV.pitcher.k+' K'].join(' · '):'')}</div></div>`;
     const pz=(LV.pitches||[]).slice(-4).map(p=>`${p.n} ${p.call==='B'?'Ball':p.call==='X'?'In play':'Strike'}${p.mph?' · '+p.mph:''}${p.type?' '+esc(p.type.toLowerCase()):''}`).join('<br>');
     const zones=`<div class="lv-zones"><div class="jf-glass gd-card"><h2>This at-bat</h2>${lvZone()}<div class="lv-pz">${pz||'No pitches yet'}</div></div>
-      <div class="jf-glass gd-card"><h2>Balls in play</h2>${lvSpray()}<div class="lv-pz"><span style="color:#ffd84a">●</span> Home run · ● Hit · ○ Out</div></div></div>`;
+      ${pitcherCard()}</div>`;
     return {ls,sit,zones};
 }
 function renderLive2(){
@@ -2584,10 +2616,10 @@ function renderWS(){
   const tiles=[];for(let n=1;n<=7;n++){const g=(WS.games||[]).find(x=>x.n===n);
     if(!g){tiles.push(`<div class="ws-t dim"><small>G${n}</small><b>–</b></div>`);continue}
     const w=g.winner?byId[g.winner]:null,cur=WS.cur&&WS.cur.n===n;
-    tiles.push(`<div class="ws-t${cur?' cur':''}${g.ifNec&&g.state==='pre'?' dim':''}"><small>G${n}${g.ifNec&&g.state==='pre'?' *':''}</small>${g.state==='final'?`<b>${esc(g.away.score)}–${esc(g.home.score)}</b><span>${esc(w?w.abbr:'')} win</span>`:g.state==='live'?`<b class="lv">${esc(g.away.score)}–${esc(g.home.score)}</b><span>LIVE</span>`:`<b>${new Date(g.date).toLocaleDateString([],{weekday:'short'})}</b><span>${fmt(new Date(g.date)).replace(':00','')}</span>`}</div>`)}
-  const head=`<div class="jf-glass ws-hd${champ?' champ':''}"><div class="ws-teams"><div>${tlogo(a)}<b>${esc(a.name||'')}</b></div>
-      <div class="ws-wins"><span class="${a.wins>c.wins?'up':''}">${a.wins||0}</span><em>–</em><span class="${c.wins>a.wins?'up':''}">${c.wins||0}</span></div>
-      <div>${tlogo(c)}<b>${esc(c.name||'')}</b></div></div><div class="ws-status">${status}</div><div class="ws-tiles">${tiles.join('')}</div></div>`;
+    tiles.push(`<div class="ws-t${cur?' cur':''}${g.ifNec&&g.state==='pre'?' dim':''}"><small>G${n}${g.ifNec&&g.state==='pre'?' *':''}</small>${g.state==='final'?`<b>${esc(w?w.abbr:'')}</b><span>${esc(Math.max(g.away.score,g.home.score))}–${esc(Math.min(g.away.score,g.home.score))}</span>`:g.state==='live'?`<b class="lv">LIVE</b><span>${esc(g.away.score)}–${esc(g.home.score)}</span>`:`<b>${new Date(g.date).toLocaleDateString([],{weekday:'short'})}</b><span>${fmt(new Date(g.date)).replace(':00','')}</span>`}</div>`)}
+  const pips=t=>`<div class="ws-row${champ&&champ.id===t.id?' won':''}">${tlogo(t)}<b>${esc(t.abbr||'')}</b><div class="ws-pips">${[0,1,2,3].map(i=>`<i class="${i<(t.wins||0)?'on':''}"></i>`).join('')}</div></div>`;
+  const head=`<div class="jf-glass ws-hd${champ?' champ':''}"><div class="ws-race"><div class="ws-rows">${pips(a)}${pips(c)}</div><div class="ws-status">${status}<small>${champ?'Final':'First to 4 wins'}</small></div></div>
+      <div class="ws-tiles">${tiles.join('')}</div></div>`;
   let mid='';const G=WS.game;
   if(G&&(G.state==='live'||G.state==='final')){
     const keep=LV;LV=Object.assign({},G,{ws:true});
@@ -2624,7 +2656,7 @@ setInterval(()=>{if($('pWS').classList.contains('on'))wsTick()},1000);
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 27';
+document.getElementById('ver').textContent='build nova 29';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
