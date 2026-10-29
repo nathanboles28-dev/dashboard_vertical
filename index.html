@@ -947,7 +947,9 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .sat-wrap,.cam-wrap{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u))}
 .sat-card{padding:calc(1.6*var(--u));flex:1;min-height:0;display:flex;flex-direction:column}
 .sat-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#000}
-.sat-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}.sat-img.on{opacity:1}
+.sat-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
+.sat-img.on{opacity:1}.sat-img.under{z-index:1;opacity:1}.sat-img.top{z-index:2}.sat-img.fade{animation:satIn 1.2s ease-in-out both}
+@keyframes satIn{from{opacity:0}to{opacity:1}}
 .sat-bar{display:flex;align-items:center;gap:calc(1.6*var(--u));margin-top:calc(1.2*var(--u));font-size:calc(2.2*var(--u))}
 .sat-live{color:#ff6b7a;font-weight:800;letter-spacing:.08em;font-size:calc(1.9*var(--u))}.sat-src{margin-left:auto;color:var(--dim);font-size:calc(1.9*var(--u))}
 .sat-prog{display:flex;gap:4px;margin-top:calc(1*var(--u))}.sat-prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.15)}.sat-prog i.on{background:#5fd3e0}
@@ -3299,7 +3301,7 @@ async function celebrate(L,g,side){
 /* ================= Satellite (NOAA GOES-East, Great Lakes) ================= */
 const SAT={frames:[],idx:0,at:0};
 const satURL=()=>((CFG.satellite&&CFG.satellite.url)||'https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/cgl/GEOCOLOR/latest.jpg');
-function satGrab(){const im=new Image();im.decoding='async';im.onload=()=>{SAT.frames.push({im,at:Date.now()});if(SAT.frames.length>12)SAT.frames.shift();SAT.at=Date.now();if($('pSat').classList.contains('on'))renderSat()};
+function satGrab(){const im=new Image();im.decoding='async';im.onload=async()=>{try{await im.decode()}catch(e){}SAT.frames.push({im,at:Date.now()});if(SAT.frames.length>12)SAT.frames.shift();SAT.at=Date.now();if($('pSat').classList.contains('on'))renderSat()};
   im.onerror=()=>{SAT.err=true;if($('pSat').classList.contains('on'))renderSat()};im.src=satURL()+(satURL().includes('?')?'&':'?')+'t='+Math.floor(Date.now()/600000)}
 setInterval(satGrab,600000);
 let satT=null;
@@ -3313,10 +3315,16 @@ function renderSat(){
   F.forEach(f=>{if(f.im.parentNode!==st){f.im.className='sat-img';st.appendChild(f.im)}});
   [...st.children].forEach(c=>{if(!F.some(f=>f.im===c))c.remove()});
   clearInterval(satT);SAT.idx=F.length-1;
-  const show=i=>{F.forEach((f,j)=>f.im.classList.toggle('on',j===i));const t=$('satTime');if(t)t.textContent=(i===F.length-1?'Latest · ':'')+fmt(new Date(F[i].at));
-    const p=$('satProg');if(p)p.innerHTML=F.length>1?F.map((f,j)=>`<i class="${j===i?'on':''}"></i>`).join(''):''};
+  /* crossfade: the new frame fades in on top while the old one stays solid underneath, so there's no flash of black */
+  const show=i=>{const t=$('satTime');if(t)t.textContent=(i===F.length-1?'Latest · ':'')+fmt(new Date(F[i].at));
+    const p=$('satProg');if(p)p.innerHTML=F.length>1?F.map((f,j)=>`<i class="${j===i?'on':''}"></i>`).join(''):'';
+    const im=F[i].im;if(im===SAT.cur)return;const prev=SAT.cur&&SAT.cur.parentNode?SAT.cur:null;SAT.cur=im;
+    F.forEach(f=>f.im.classList.remove('top'));if(prev){prev.classList.remove('fade');prev.classList.add('under')}
+    im.classList.remove('under','fade');void im.offsetWidth;im.classList.add('on','top');if(prev)im.classList.add('fade');
+    const clean=()=>{if(SAT.cur!==im)return;clearTimeout(window._satC);F.forEach(f=>{if(f.im!==im)f.im.classList.remove('on','under')})};
+    clearTimeout(window._satC);if(prev){im.addEventListener('animationend',clean,{once:true});window._satC=setTimeout(clean,8000)}else clean()};
   show(SAT.idx);
-  if(F.length>1)satT=setInterval(()=>{if(!$('pSat').classList.contains('on')){clearInterval(satT);return}SAT.idx=(SAT.idx+1)%(F.length+3);show(Math.min(SAT.idx,F.length-1))},700);
+  if(F.length>1)satT=setInterval(()=>{if(!$('pSat').classList.contains('on')){clearInterval(satT);return}SAT.idx=(SAT.idx+1)%(F.length+3);show(Math.min(SAT.idx,F.length-1))},1600);
 }
 
 /* ================= Live cams ================= */
@@ -3356,7 +3364,7 @@ function renderCams(on){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 41';
+document.getElementById('ver').textContent='build nova 42';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
