@@ -624,7 +624,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 /* ===== Visual refresh: page accent colours, icons, glow and entrance animation ===== */
 #shift{--acc:#6ea8ff}#pLive{--acc:#ff5c6c}#pGames{--acc:#4d8bff;--ico:'🏒'}#pJelly{--acc:#b18cff;--ico:'🍿'}#pGameday{--acc:#4d8bff;--ico:'🍁'}
 #pLocal{--acc:#2fd3c0;--ico:'🚗'}#pFc{--acc:#5db7ff;--ico:'⛅'}#pNews{--acc:#ff9f43;--ico:'📰'}#pStand{--acc:#5fd88a;--ico:'📊'}
-#pComing{--acc:#ffd84a;--ico:'📅'}#pHub{--acc:#4d8bff;--ico:'🏒'}#pWrap{--acc:#ff5c8a;--ico:'🎬'}#pPhotos{--acc:#ffb84d}
+#pComing{--acc:#ffd84a;--ico:'📅'}#pHub{--acc:#4d8bff;--ico:'🏒'}#pWS{--acc:#ffd84a;--ico:'⚾'}#pWrap{--acc:#ff5c8a;--ico:'🎬'}#pPhotos{--acc:#ffb84d}
 .page::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
  background:radial-gradient(70% 40% at 8% -6%,color-mix(in srgb,var(--acc,#6ea8ff) 30%,transparent),transparent 70%),radial-gradient(60% 35% at 100% 106%,color-mix(in srgb,var(--acc,#6ea8ff) 20%,transparent),transparent 70%)}
 .jf-title,.ptitle{color:color-mix(in srgb,var(--acc,#fff) 45%,#fff)!important;font-size:calc(3.4*var(--u))!important;font-weight:700!important;letter-spacing:.02em!important;
@@ -687,6 +687,33 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 #pGames .gwrap{max-width:none;width:100%}
 #pFc{padding-top:calc(12.5*var(--u))!important;padding-left:4%!important;padding-right:4%!important}
 #pFc .jf-title{left:5%}
+
+/* ===== World Series ===== */
+.ws-body .lv-zones svg{max-height:calc(30*var(--u))}.ws-body .lv-sb{padding:calc(1.8*var(--u)) calc(2.2*var(--u))}.ws-body .ws-tiles{margin-top:calc(1.4*var(--u))}
+.ws-body .ws-hd{padding:calc(2*var(--u)) calc(2.4*var(--u))}.ws-body .ws-lg{width:calc(10*var(--u));height:calc(10*var(--u))}.ws-body .ws-wins{font-size:calc(10*var(--u))}
+.ws-hd{padding:calc(2.6*var(--u)) calc(2.4*var(--u));text-align:center;background:linear-gradient(160deg,rgba(255,216,74,.16),rgba(255,255,255,.05))!important}
+.ws-hd.champ{background:linear-gradient(160deg,rgba(255,216,74,.35),rgba(255,140,60,.12))!important}
+.ws-teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.ws-teams>div:not(.ws-wins){display:flex;flex-direction:column;align-items:center;gap:calc(.8*var(--u));min-width:0}
+.ws-lg{width:calc(13*var(--u));height:calc(13*var(--u));object-fit:contain;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(3.4*var(--u));filter:drop-shadow(0 calc(.5*var(--u)) calc(1.2*var(--u)) rgba(0,0,0,.45))}
+i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25)}
+.ws-teams b{font-size:calc(3.6*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ws-wins{display:flex;align-items:center;gap:calc(1.6*var(--u));font-size:calc(12*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums}
+.ws-wins em{font-style:normal;color:var(--dim);font-size:calc(6*var(--u))}.ws-wins span.up{font-weight:500;color:#ffe08a}
+.ws-status{font-size:calc(2.8*var(--u));font-weight:700;color:#ffe08a;margin-top:calc(1.4*var(--u))}
+.ws-tiles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:calc(1*var(--u));margin-top:calc(2*var(--u))}
+.ws-t{padding:calc(1*var(--u)) 0;border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.07)}
+.ws-t.cur{background:rgba(255,216,74,.22);border:1px solid rgba(255,216,74,.6)}.ws-t.dim{opacity:.45}
+.ws-t small{display:block;font-size:calc(1.7*var(--u));font-weight:800;color:var(--dim)}.ws-t b{display:block;font-size:calc(2.5*var(--u));font-weight:600;font-variant-numeric:tabular-nums}
+.ws-t b.lv{color:#ff8da2}.ws-t span{display:block;font-size:calc(1.6*var(--u));color:var(--dim)}
+.ws-next{text-align:center}.ws-when{font-size:calc(4*var(--u));font-weight:300}.ws-when b{font-weight:600}
+.ws-sub{font-size:calc(2.4*var(--u));color:var(--dim);margin-top:calc(.8*var(--u))}
+.ws-pp{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:calc(2.4*var(--u))}.ws-pp em{font-style:normal;color:var(--dim)}
+.ws-pp small{display:block;font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.1em;color:var(--dim)}.ws-pp b{display:block;font-size:calc(3*var(--u));font-weight:600}.ws-pp span{font-size:calc(2*var(--u));color:var(--dim)}
+.ws-cd{font-size:calc(9*var(--u));font-weight:200;margin-top:calc(2*var(--u));font-variant-numeric:tabular-nums}
+.ws-champ{text-align:center;padding:calc(5*var(--u))}.ws-trophy{font-size:calc(20*var(--u));line-height:1}.ws-cn{font-size:calc(8*var(--u));font-weight:800;color:#ffe08a}
+.lv-run{display:flex;flex-wrap:wrap;gap:calc(.6*var(--u)) calc(1.6*var(--u));font-size:calc(2*var(--u));color:var(--ink)!important;font-weight:500!important}
+.lv-run b{color:#ffd84a;font-weight:800;margin-right:calc(.4*var(--u))}
 </style>
 </head>
 <body>
@@ -716,6 +743,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pWS" class="page"><div id="wsBody"></div></section>
 <section id="pHub" class="page"><div id="hubBody"></div></section>
 <section id="pWrap" class="page"><div id="wrBody"></div></section>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
@@ -756,7 +784,8 @@ const CFG={
     {type:'coming',    secs:25},
     {type:'local',     secs:40},
     {type:'news',      secs:20},
-    // sports (game day / live only show when there's a game)
+    // sports (game day / live / World Series only show when they're on)
+    {type:'ws',        secs:30},
     {type:'gameday',   secs:40},
     {type:'live',      secs:60},
     {type:'games',     secs:20},
@@ -815,6 +844,8 @@ const CFG={
   live:{on:true, secs:60, otherSecs:10, mlbTeamId:141, replaySecs:180},   // replaySecs: how long a new goal replay plays on the live page
   // Leafs hub page: where to watch, highlights, season pace, roster moves
   hub:{on:true, team:'TOR'},
+  // World Series page: shows while the Series is on (keepHours after it ends). liveSecs = time on the page during a game
+  ws:{on:true, liveSecs:60, keepHours:30},
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
   // Snow alert chip on the main page when at least alertCm is expected in the next 24 hours
@@ -1281,10 +1312,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1295,7 +1326,7 @@ function goalAlert(key,team,mine){
   nextPage(liveOn()?'live':'games',secs);
 }
 /* during one of your teams' live games: more time on the Live page, less on the rest */
-function pageSecs(p){const LC=CFG.live||{};if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
+function pageSecs(p){const LC=CFG.live||{};if(p.type==='ws'&&typeof wsLive==='function'&&wsLive())return (CFG.ws&&CFG.ws.liveSecs)||60;if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
 function nextPage(force,hold){
   const list=(CFG.pages&&CFG.pages.length)?CFG.pages:[{type:'dashboard',secs:60}];
   let p;
@@ -1311,6 +1342,7 @@ function nextPage(force,hold){
   if(p.type==='gameday'){renderGameday();loadGameday()}
   if(p.type==='local'){renderLocal();loadLocal();loadPlanes()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
+  if(p.type==='ws'){renderWS();loadWS()}
   if(p.type==='hub'){renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
   pauseVideos();
@@ -1838,6 +1870,7 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(world series|series|brewers|rays|fall classic)\b/)){if(wsShow())showFor('ws');return reply(wsSay())}
   if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
   if(has(/\b(hub|highlights?|injur(y|ies|ed)|roster|trades?|channel|what channel)\b/)){showFor('hub');return reply(hubSay())}
   if(has(/\b(game ?day|matchup|puck drop)\b/)){if(gdToday())showFor('gameday');return reply(gdSay())}
@@ -2168,7 +2201,7 @@ async function loadLive(){
 }
 setInterval(()=>{if($('pLive').classList.contains('on'))loadLive()},10000);
 const lvFav=s=>{if(!LV)return false;const f=(LV._L&&LV._L.fav)||[],T=s==='h'?LV.home:LV.away;return f.includes(T.abbr)||(LV._g&&f.includes(s==='h'?LV._g.H:LV._g.A))};
-const lvCol=s=>lvFav(s)?'#4d8bff':'#e8e8ee';
+const lvCol=s=>LV&&LV.ws?(s==='h'?'#ffd84a':'#7fb0ff'):lvFav(s)?'#4d8bff':'#e8e8ee';
 const lvLogo=T=>T.logo&&/^https?:\/\//i.test(T.logo)?`<img class="lv-lg" src="${esc(T.logo)}" alt="" onerror="this.style.visibility='hidden'">`:`<div class="lv-lg lv-ph">${esc(T.abbr)}</div>`;
 function lvRink(){
   const sh=LV.shots||[],dot=p=>{const c=lvCol(p.s),x=(+p.x).toFixed(1),y=(-p.y).toFixed(1);
@@ -2205,6 +2238,26 @@ function lvClockTxt(){
   if(LV._g&&LV._g.live&&LV._g.live.clock!==null&&LV.league==='OHL')return mmss(Math.max(0,LV._g.live.clock-Math.floor((Date.now()-LV._at)/1000)));
   return LV.clock||'';
 }
+/* baseball blocks (line score, bases/count/at-bat, strike zone + spray chart) built from LV; shared by the Live and World Series pages */
+function baseballParts(A,H){
+    const inn=LV.innings||[],n=Math.max(9,inn.length),cells=s=>Array.from({length:n},(_,i)=>{const x=inn[i],v=x?x[s]:'';const now=i===inn.length-1&&LV.state==='live'&&((s==='a')===!!LV.top);
+      return `<td${now?' class="now"':''}>${v==null?'':esc(v)}</td>`}).join('');
+    const ls=`<div class="jf-glass gd-card"><table class="lv-ls"><tr><th></th>${Array.from({length:n},(_,i)=>`<th>${i+1}</th>`).join('')}<th>R</th><th>H</th><th>E</th></tr>
+      <tr><td>${esc(A.abbr)}</td>${cells('a')}<td class="rhe">${esc(A.runs)}</td><td class="rhe">${esc(A.hits)}</td><td class="rhe">${esc(A.errors)}</td></tr>
+      <tr><td>${esc(H.abbr)}</td>${cells('h')}<td class="rhe">${esc(H.runs)}</td><td class="rhe">${esc(H.hits)}</td><td class="rhe">${esc(H.errors)}</td></tr></table></div>`;
+    const dots=(n,on,c)=>Array.from({length:n},(_,i)=>`<i class="${i<on?c:''}"></i>`).join('');
+    const who=(lab,p,line)=>p?`<div class="lv-who"><div class="gd-hs">${p.img?`<img src="${esc(p.img)}" alt="" onerror="this.remove()">`:''}</div><div><small>${lab}</small><b>${esc(p.name)}</b><span>${esc(line)}</span></div></div>`:'';
+    const sit=`<div class="jf-glass gd-card"><div class="lv-sit"><div class="lv-dia">${lvDiamond()}</div>
+      <div class="lv-cnt"><div>B ${dots(4,LV.balls,'b')}</div><div>S ${dots(3,LV.strikes,'s')}</div><div>O ${dots(3,LV.outs,'o')}</div>
+        ${(LV.runners||[]).some(Boolean)?`<div class="lv-run">${['1st','2nd','3rd'].map((b,i)=>LV.runners[i]?`<span><b>${b}</b> ${esc(String(LV.runners[i]).split(' ').slice(-1)[0])}</span>`:'').join('')}</div>`:''}
+        ${LV.onDeck?`<div class="lv-run"><span><b>On deck</b> ${esc(LV.onDeck)}</span></div>`:''}</div></div>
+      <div class="lv-ab">${who('AT BAT',LV.batter,LV.batter?[LV.batter.line,LV.batter.avg?LV.batter.avg+' AVG':''].filter(Boolean).join(' · '):'')}
+      ${who('PITCHING',LV.pitcher,LV.pitcher?[LV.pitcher.pitches+' pitches',LV.pitcher.k+' K'].join(' · '):'')}</div></div>`;
+    const pz=(LV.pitches||[]).slice(-4).map(p=>`${p.n} ${p.call==='B'?'Ball':p.call==='X'?'In play':'Strike'}${p.mph?' · '+p.mph:''}${p.type?' '+esc(p.type.toLowerCase()):''}`).join('<br>');
+    const zones=`<div class="lv-zones"><div class="jf-glass gd-card"><h2>This at-bat</h2>${lvZone()}<div class="lv-pz">${pz||'No pitches yet'}</div></div>
+      <div class="jf-glass gd-card"><h2>Balls in play</h2>${lvSpray()}<div class="lv-pz"><span style="color:#ffd84a">●</span> Home run · ● Hit · ○ Out</div></div></div>`;
+    return {ls,sit,zones};
+}
 function renderLive2(){
   const b=$('lvBody');
   if(!LV){b.innerHTML=`<div class="jf-title"><i class="jf-live"></i>Live</div><div class="jf-wait">${esc(lvErr||'Loading the game…')}</div>`;lvSig='';return}
@@ -2228,21 +2281,8 @@ function renderLive2(){
         ${gk?`<div class="lv-gk"><b>${esc(gk.name)}</b><span>${esc(gk.saves)} saves${gk.sv?' · '+esc(gk.sv):''}</span></div>`:''}</div>`};
     mid=(replayOn()?lvReplayCard():rinkCard)+pt+`<div class="gd-two">${tcard('a',A)}${tcard('h',H)}</div>`;
   }else{
-    const inn=LV.innings||[],n=Math.max(9,inn.length),cells=s=>Array.from({length:n},(_,i)=>{const x=inn[i],v=x?x[s]:'';const now=i===inn.length-1&&LV.state==='live'&&((s==='a')===!!LV.top);
-      return `<td${now?' class="now"':''}>${v==null?'':esc(v)}</td>`}).join('');
-    const ls=`<div class="jf-glass gd-card"><table class="lv-ls"><tr><th></th>${Array.from({length:n},(_,i)=>`<th>${i+1}</th>`).join('')}<th>R</th><th>H</th><th>E</th></tr>
-      <tr><td>${esc(A.abbr)}</td>${cells('a')}<td class="rhe">${esc(A.runs)}</td><td class="rhe">${esc(A.hits)}</td><td class="rhe">${esc(A.errors)}</td></tr>
-      <tr><td>${esc(H.abbr)}</td>${cells('h')}<td class="rhe">${esc(H.runs)}</td><td class="rhe">${esc(H.hits)}</td><td class="rhe">${esc(H.errors)}</td></tr></table></div>`;
-    const dots=(n,on,c)=>Array.from({length:n},(_,i)=>`<i class="${i<on?c:''}"></i>`).join('');
-    const who=(lab,p,line)=>p?`<div class="lv-who"><div class="gd-hs">${p.img?`<img src="${esc(p.img)}" alt="" onerror="this.remove()">`:''}</div><div><small>${lab}</small><b>${esc(p.name)}</b><span>${esc(line)}</span></div></div>`:'';
-    const sit=`<div class="jf-glass gd-card"><div class="lv-sit"><div class="lv-dia">${lvDiamond()}</div>
-      <div class="lv-cnt"><div>B ${dots(4,LV.balls,'b')}</div><div>S ${dots(3,LV.strikes,'s')}</div><div>O ${dots(3,LV.outs,'o')}</div></div></div>
-      <div class="lv-ab">${who('AT BAT',LV.batter,LV.batter?[LV.batter.line,LV.batter.avg?LV.batter.avg+' AVG':''].filter(Boolean).join(' · '):'')}
-      ${who('PITCHING',LV.pitcher,LV.pitcher?[LV.pitcher.pitches+' pitches',LV.pitcher.k+' K'].join(' · '):'')}</div></div>`;
-    const pz=(LV.pitches||[]).slice(-4).map(p=>`${p.n} ${p.call==='B'?'Ball':p.call==='X'?'In play':'Strike'}${p.mph?' · '+p.mph:''}${p.type?' '+esc(p.type.toLowerCase()):''}`).join('<br>');
-    const zones=`<div class="lv-zones"><div class="jf-glass gd-card"><h2>This at-bat</h2>${lvZone()}<div class="lv-pz">${pz||'No pitches yet'}</div></div>
-      <div class="jf-glass gd-card"><h2>Balls in play</h2>${lvSpray()}<div class="lv-pz"><span style="color:#ffd84a">●</span> Home run · ● Hit · ○ Out</div></div></div>`;
-    mid=ls+sit+(replayOn()?lvReplayCard():zones);
+    const bb=baseballParts(A,H);
+    mid=bb.ls+bb.sit+(replayOn()?lvReplayCard():bb.zones);
   }
   const html=`<div class="jf-title"><i class="jf-live"></i>${LV.state==='final'?'Final':'Live'} · ${esc(LV.league)}</div>
     <div class="lv-body">${sb}${mid}<div class="jf-glass gd-card lv-feed"><h2>Play by play</h2>${lvFeed()}</div></div>`;
@@ -2515,10 +2555,76 @@ function drawRouteMaps(){document.querySelectorAll('.rm-wrap').forEach(w=>{
   const sc=()=>{const s=w.clientWidth/W;w.firstChild.style.transform=`scale(${s})`};sc();setTimeout(sc,300);
 })}
 
+/* ================= World Series page (shows while the Series is on, plus a day after it ends) ================= */
+let WS=null,wsAt=0,wsSig='';
+const wsShow=()=>!!(CFG.ws&&CFG.ws.on!==false&&CFG.relay&&WS&&!WS.none&&WS.games&&WS.games.length&&(!WS.ended||Date.now()-Date.parse(WS.ended)<((CFG.ws&&CFG.ws.keepHours)||30)*3600e3));
+const wsLive=()=>!!(WS&&WS.cur&&WS.cur.state==='live');
+async function loadWS(){
+  if(!(CFG.ws&&CFG.ws.on!==false)||!CFG.relay)return;
+  try{const r=await tfetch(relayBase()+'/ws',15000),d=await r.json();if(!d.error){WS=d;wsAt=Date.now()}}catch(e){console.warn('ws',e)}
+  if($('pWS').classList.contains('on'))renderWS();
+}
+setInterval(()=>{const on=$('pWS').classList.contains('on');if(on||(wsLive()&&Date.now()-wsAt>60000)||Date.now()-wsAt>300000)loadWS()},10000);
+function wsSay(){
+  if(!WS||WS.none)return 'There\'s no World Series going on right now.';
+  const T=WS.teams||[],a=T[0],b=T[1];if(!a||!b)return 'Loading the World Series.';
+  const ser=a.wins===b.wins?`The series is tied ${a.wins} to ${b.wins}.`:`The ${a.wins>b.wins?a.name:b.name} lead the series ${Math.max(a.wins,b.wins)} to ${Math.min(a.wins,b.wins)}.`;
+  if(WS.champ){const c=T.find(t=>t.id===WS.champ);return `The ${c?c.name:'champions'} won the World Series, ${Math.max(a.wins,b.wins)} games to ${Math.min(a.wins,b.wins)}.`}
+  const g=WS.game;if(g&&g.state==='live')return `${g.away.name} ${g.away.runs}, ${g.home.name} ${g.home.runs}, ${g.top?'top':'bottom'} of the ${String(g.inning).replace(/[▲▼]\s*/,'').toLowerCase()}. ${ser}`;
+  const c=WS.cur;if(c&&c.state==='pre'){const d=new Date(c.date);return `Game ${c.n} is ${daysUntil(d)===0?'tonight':d.toLocaleDateString([],{weekday:'long'})} at ${fmt(d)}. ${ser}`}
+  return ser;
+}
+function renderWS(){
+  const b=$('wsBody');
+  if(!WS||WS.none){b.innerHTML='<div class="jf-title">World Series</div><div class="jf-wait">Loading…</div>';return}
+  const T=WS.teams||[],byId={};T.forEach(t=>byId[t.id]=t);const a=T[0]||{},c=T[1]||{};
+  const champ=WS.champ?byId[WS.champ]:null;
+  const status=champ?`🏆 ${esc(champ.name)} win the World Series ${Math.max(a.wins,c.wins)}–${Math.min(a.wins,c.wins)}`:a.wins===c.wins?`Series tied ${a.wins}–${c.wins}`:`${esc((a.wins>c.wins?a:c).name)} lead ${Math.max(a.wins,c.wins)}–${Math.min(a.wins,c.wins)}`;
+  const tlogo=t=>t&&t.logo?`<img class="ws-lg" src="${esc(t.logo)}" alt="" onerror="this.style.visibility='hidden'">`:`<i class="ws-lg">${esc(t?t.abbr:'')}</i>`;
+  const tiles=[];for(let n=1;n<=7;n++){const g=(WS.games||[]).find(x=>x.n===n);
+    if(!g){tiles.push(`<div class="ws-t dim"><small>G${n}</small><b>–</b></div>`);continue}
+    const w=g.winner?byId[g.winner]:null,cur=WS.cur&&WS.cur.n===n;
+    tiles.push(`<div class="ws-t${cur?' cur':''}${g.ifNec&&g.state==='pre'?' dim':''}"><small>G${n}${g.ifNec&&g.state==='pre'?' *':''}</small>${g.state==='final'?`<b>${esc(g.away.score)}–${esc(g.home.score)}</b><span>${esc(w?w.abbr:'')} win</span>`:g.state==='live'?`<b class="lv">${esc(g.away.score)}–${esc(g.home.score)}</b><span>LIVE</span>`:`<b>${new Date(g.date).toLocaleDateString([],{weekday:'short'})}</b><span>${fmt(new Date(g.date)).replace(':00','')}</span>`}</div>`)}
+  const head=`<div class="jf-glass ws-hd${champ?' champ':''}"><div class="ws-teams"><div>${tlogo(a)}<b>${esc(a.name||'')}</b></div>
+      <div class="ws-wins"><span class="${a.wins>c.wins?'up':''}">${a.wins||0}</span><em>–</em><span class="${c.wins>a.wins?'up':''}">${c.wins||0}</span></div>
+      <div>${tlogo(c)}<b>${esc(c.name||'')}</b></div></div><div class="ws-status">${status}</div><div class="ws-tiles">${tiles.join('')}</div></div>`;
+  let mid='';const G=WS.game;
+  if(G&&(G.state==='live'||G.state==='final')){
+    const keep=LV;LV=Object.assign({},G,{ws:true});
+    try{
+      const A=G.away,H=G.home,per=G.state==='final'?'FINAL':esc(G.inning||G.detail||'');
+      const sb=`<div class="jf-glass lv-sb"><div class="lv-tm">${lvLogo(A)}<div class="lv-nm"><b>${esc(A.name)}</b><small>H ${A.hits} · E ${A.errors}</small></div><div class="lv-sc">${esc(A.runs)}</div></div>
+        <div class="lv-mid"><div class="lv-per">${WS.cur?'GAME '+WS.cur.n+' · ':''}${per}</div><div class="lv-clk">${G.state==='final'?'Final':esc(G.outs)+' out'}</div></div>
+        <div class="lv-tm h">${lvLogo(H)}<div class="lv-nm"><b>${esc(H.name)}</b><small>H ${H.hits} · E ${H.errors}</small></div><div class="lv-sc">${esc(H.runs)}</div></div></div>`;
+      const bb=baseballParts(A,H);
+      mid=sb+bb.ls+(G.state==='live'?bb.sit+bb.zones:'')+`<div class="jf-glass gd-card lv-feed"><h2>${G.state==='live'?'Play by play':'Last plays'}</h2>${lvFeed()}</div>`;
+    }finally{LV=keep}
+  }else if(WS.cur&&WS.cur.state==='pre'){
+    const g=WS.cur,d=new Date(g.date),pp=(G&&G.probable)||{};const A=byId[g.away.id]||{},H=byId[g.home.id]||{};
+    mid=`<div class="jf-glass gd-card ws-next"><h2>Next up · Game ${g.n}</h2><div class="ws-when">${daysUntil(d)===0?'Tonight':d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})} · <b>${fmt(d)}</b></div>
+      <div class="ws-sub">${esc(A.name||g.away.abbr)} at ${esc(H.name||g.home.abbr)}${g.venue?' · '+esc(g.venue):''}</div>
+      ${pp.a||pp.h?`<div class="ws-pp"><div><small>PROBABLE</small><b>${esc(pp.a||'TBD')}</b><span>${esc(A.abbr||'')}</span></div><em>vs</em><div><small>PROBABLE</small><b>${esc(pp.h||'TBD')}</b><span>${esc(H.abbr||'')}</span></div></div>`:''}
+      <div class="ws-cd" id="wsCd"></div></div>`;
+  }else if(champ){
+    mid=`<div class="jf-glass gd-card ws-champ"><div class="ws-trophy">🏆</div><div class="ws-cn">${esc(champ.name)}</div><div class="ws-sub">${WS.season} World Series champions</div></div>`;
+  }
+  const html=`<div class="jf-title">${WS.season} World Series</div><div class="lv-body ws-body">${head}${mid}</div>`;
+  if(html!==wsSig){wsSig=html;b.innerHTML=html}
+  wsTick();
+  const fit=()=>{const x=document.querySelector('#wsBody .ws-body');if(!x)return;const over=()=>x.scrollHeight>x.clientHeight+2;
+    for(let g=0;g<14&&over();g++){const f=x.querySelectorAll('.lv-f');if(f.length>3)f[f.length-1].remove();else break}
+    if(over()){const ls=x.querySelector('.lv-ls');if(ls)ls.closest('.gd-card').remove()}
+    for(let g=0;g<14&&over();g++){const f=x.querySelectorAll('.lv-f');if(f.length>1)f[f.length-1].remove();else break}};
+  fit();setTimeout(fit,400);
+}
+function wsTick(){const el=$('wsCd');if(!el||!WS||!WS.cur||WS.cur.state!=='pre')return;const ms=new Date(WS.cur.date)-Date.now();
+  if(ms<=0){el.textContent='First pitch!';return}const s=Math.floor(ms/1000),d=Math.floor(s/86400);el.textContent=(d?d+'d ':'')+Math.floor(s%86400/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
+setInterval(()=>{if($('pWS').classList.contains('on'))wsTick()},1000);
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 26';
+document.getElementById('ver').textContent='build nova 27';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -2530,7 +2636,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
