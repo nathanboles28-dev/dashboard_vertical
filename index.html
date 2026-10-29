@@ -3252,7 +3252,7 @@ function gameIntro(L,g){
 /* ================= Goal celebration (your team scores) ================= */
 async function celebrate(L,g,side){
   const C=CFG.cinema||{};if(C.goal===false)return false;
-  const el=$('celeb'),T=side==='A'?{ab:g.A,n:g.fA||g.nA,lg:g.lA}:{ab:g.H,n:g.fH||g.nH,lg:g.lH},hockey=L.sport==='hockey';
+  const el=$('celeb'),T=side==='A'?{ab:g.A,n:g.fA||g.nA,lg:g.lA}:{ab:g.H,n:g.fH||g.nH,lg:g.lH},hockey=L.sport==='hockey'||L.type==='hockeytech';
   if(!hockey)return false;
   el.innerHTML=`<div class="cb-red"></div><div class="cb-light"><div class="cb-beam"></div><i></i></div>
     <div class="cb-logo">${T.lg?`<img src="${esc(T.lg)}" alt="" onerror="this.remove()">`:''}</div><div class="cb-goal">GOAL!</div>
@@ -3309,7 +3309,7 @@ function renderCams(on){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 37';
+document.getElementById('ver').textContent='build nova 38';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
