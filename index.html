@@ -886,6 +886,81 @@ body[data-hol="halloween"] #time{color:#ffd9a8;text-shadow:0 0 calc(2*var(--u)) 
 body[data-hol="halloween"] #date{color:#ffbf80}
 body[data-hol="halloween"] .chip-hol{font-size:calc(2.8*var(--u));background:linear-gradient(90deg,#ff7a1a,#b0379a 70%,#5a1f8f)!important;border-color:rgba(255,190,120,.7)!important;box-shadow:0 0 calc(2*var(--u)) rgba(255,122,26,.5)}
 body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{background:#ff8a1f!important}
+/* ===== Health dot ===== */
+#hdot{position:fixed;right:calc(1.2*var(--u));bottom:calc(4.2*var(--u));z-index:6;width:calc(1.4*var(--u));height:calc(1.4*var(--u));border-radius:50%;background:#555;opacity:.75;transition:background .5s}
+#hdot.ok{background:#34c759;box-shadow:0 0 calc(1*var(--u)) rgba(52,199,89,.6);opacity:.45}#hdot.warn{background:#ffb84d;box-shadow:0 0 calc(1.2*var(--u)) #ffb84d}
+#hdot.bad{background:#ff5c6c;box-shadow:0 0 calc(1.4*var(--u)) #ff5c6c;animation:pulse 1.4s ease-in-out infinite}
+#hpanel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);z-index:23;width:min(86vw,90vh);padding:calc(3*var(--u));border-radius:calc(3*var(--u));opacity:0;pointer-events:none;transition:.4s;
+ background:rgba(16,18,28,.92);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#hpanel.on{opacity:1;transform:translate(-50%,-50%)}
+#hpanel h3{font-size:calc(4*var(--u));font-weight:700;margin-bottom:calc(2*var(--u))}
+#hpanel>div{display:flex;align-items:center;gap:calc(1.4*var(--u));padding:calc(1*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:calc(2.6*var(--u))}
+#hpanel>div i{width:calc(1.6*var(--u));height:calc(1.6*var(--u));border-radius:50%;flex:none}#hpanel .ok i{background:#34c759}#hpanel .bad i{background:#ff5c6c}
+#hpanel>div span{margin-left:auto;color:var(--dim);font-size:calc(2.2*var(--u))}#hpanel .bad span{color:#ff9aa8}
+#hpanel small{display:block;margin-top:calc(1.6*var(--u));color:var(--dim);font-size:calc(1.8*var(--u))}
+/* ===== Puck-drop intro ===== */
+#intro{position:fixed;inset:0;z-index:24;display:none;overflow:hidden;background:#000}
+#intro.on{display:block;animation:bdIn .4s ease both}#intro.out{animation:mnOut .9s ease forwards}
+.in-floor{position:absolute;left:-20%;right:-20%;bottom:-10%;height:55%;background:radial-gradient(60% 70% at 50% 100%,rgba(180,220,255,.55),rgba(60,110,200,.18) 55%,transparent 75%);opacity:0;animation:inFloor 2s .3s ease forwards}
+.in-floor.grass{background:radial-gradient(60% 70% at 50% 100%,rgba(120,220,120,.5),rgba(40,120,60,.2) 55%,transparent 75%)}
+@keyframes inFloor{to{opacity:1}}
+.in-beam{position:absolute;bottom:-10%;width:30vmax;height:150vh;background:linear-gradient(0deg,rgba(255,255,255,.55),rgba(255,255,255,.08) 60%,transparent);filter:blur(10px);transform-origin:50% 100%;opacity:0}
+.in-beam.l{left:-6vmax;animation:inBeamL 3.2s .2s ease-in-out forwards}.in-beam.r{right:-6vmax;animation:inBeamR 3.2s .2s ease-in-out forwards}
+@keyframes inBeamL{0%{opacity:0;transform:rotate(-40deg)}20%{opacity:.9}60%{transform:rotate(30deg)}100%{opacity:.35;transform:rotate(12deg)}}
+@keyframes inBeamR{0%{opacity:0;transform:rotate(40deg)}20%{opacity:.9}60%{transform:rotate(-30deg)}100%{opacity:.35;transform:rotate(-12deg)}}
+.in-logo{position:absolute;top:34%;width:30vmin;height:30vmin;display:grid;place-items:center;filter:drop-shadow(0 0 4vmin rgba(255,255,255,.35))}
+.in-logo img{width:100%;height:100%;object-fit:contain}.in-logo i{font-style:normal;font-weight:900;font-size:9vmin;color:#fff}
+.in-logo.a{left:50%;margin-left:-30vmin;transform:translateX(-80vw);animation:inA 1.2s 2.4s cubic-bezier(.2,.9,.3,1.2) forwards}
+.in-logo.h{left:50%;transform:translateX(80vw);animation:inH 1.2s 2.4s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes inA{to{transform:translateX(-2vmin)}}@keyframes inH{to{transform:translateX(2vmin)}}
+.in-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:inFlash .9s 3.4s ease-out forwards}@keyframes inFlash{0%{opacity:.9}100%{opacity:0}}
+.in-ring{position:absolute;left:50%;top:calc(34% + 15vmin);width:10vmin;height:10vmin;margin:-5vmin;border-radius:50%;border:4px solid rgba(255,255,255,.9);opacity:0;animation:inRing 1.2s 3.4s ease-out forwards}
+@keyframes inRing{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(12)}}
+.in-txt{position:absolute;left:0;right:0;top:66%;text-align:center;color:#fff}
+.in-big{font-size:calc(13*var(--u));font-weight:900;letter-spacing:.06em;opacity:0;transform:scale(1.6);animation:inBig .9s 3.6s cubic-bezier(.2,.8,.2,1) forwards;text-shadow:0 0 4vmin rgba(120,180,255,.8)}
+@keyframes inBig{to{opacity:1;transform:none}}
+.in-sub{font-size:calc(4*var(--u));font-weight:600;margin-top:calc(1.4*var(--u));opacity:0;animation:mnUp .8s 4.3s ease forwards}.in-sub em{font-style:normal;color:rgba(255,255,255,.6);margin:0 .4em}
+.in-sm{font-size:calc(2.6*var(--u));color:rgba(255,255,255,.7);margin-top:calc(1*var(--u));opacity:0;animation:mnUp .8s 4.7s ease forwards}
+/* ===== Goal celebration ===== */
+#celeb{position:fixed;inset:0;z-index:24;display:none;overflow:hidden;background:rgba(40,0,6,.82)}
+#celeb.on{display:block;animation:bdIn .2s ease both}#celeb.out{animation:mnOut .9s ease forwards}
+.cb-red{position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 40%,rgba(255,40,50,.55),transparent 70%);animation:cbPulse .5s ease-in-out infinite alternate}
+@keyframes cbPulse{from{opacity:.35}to{opacity:1}}
+.cb-light{position:absolute;left:50%;top:3vmin;width:12vmin;height:12vmin;margin-left:-6vmin}
+.cb-light i{position:absolute;inset:18%;border-radius:50% 50% 30% 30%;background:radial-gradient(circle at 50% 40%,#fff,#ff3b3b 45%,#a40010);box-shadow:0 0 6vmin 2vmin rgba(255,40,40,.9)}
+.cb-beam{position:absolute;left:50%;top:50%;width:200vmax;height:200vmax;margin:-100vmax;background:conic-gradient(from 0deg,rgba(255,60,60,.55) 0deg,transparent 30deg,transparent 180deg,rgba(255,60,60,.55) 180deg,transparent 210deg,transparent 360deg);animation:cbSpin 1.1s linear infinite;mix-blend-mode:screen}
+@keyframes cbSpin{to{transform:rotate(360deg)}}
+.cb-logo{position:absolute;left:50%;top:24%;width:34vmin;height:34vmin;margin-left:-17vmin;animation:cbLogo .7s cubic-bezier(.2,1.6,.4,1) both}
+.cb-logo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 4vmin rgba(255,255,255,.4))}
+@keyframes cbLogo{from{transform:scale(.2) rotate(-25deg);opacity:0}}
+.cb-goal{position:absolute;left:0;right:0;top:56%;text-align:center;font-size:calc(19*var(--u));font-weight:900;letter-spacing:.04em;color:#fff;
+ text-shadow:0 0 3vmin #ff2a2a,0 0 8vmin #ff2a2a;animation:cbGoal .6s .15s cubic-bezier(.2,1.6,.4,1) both,cbShake .12s .8s 6 linear}
+@keyframes cbGoal{from{transform:scale(3);opacity:0}}@keyframes cbShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1vmin)}75%{transform:translateX(1vmin)}}
+.cb-card{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);display:flex;align-items:center;gap:calc(2.4*var(--u));padding:calc(2*var(--u)) calc(3.4*var(--u));min-width:min(80vw,80vh);
+ border-radius:calc(3*var(--u));background:rgba(20,6,10,.7);border:1px solid rgba(255,140,140,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);animation:mnUp .7s 1s ease both;opacity:0}
+.cb-ph{width:calc(14*var(--u));height:calc(14*var(--u));border-radius:50%;overflow:hidden;flex:none;background:rgba(255,255,255,.12)}.cb-ph img{width:100%;height:100%;object-fit:cover}
+.cb-card small{display:block;font-size:calc(2.2*var(--u));font-weight:800;letter-spacing:.2em;color:#ff9aa8}.cb-card b{display:block;font-size:calc(5*var(--u));font-weight:700}.cb-card b em{font-style:normal;color:rgba(255,255,255,.65);font-weight:500}
+.cb-card span{display:block;font-size:calc(2.5*var(--u));color:rgba(255,255,255,.75)}
+.cb-card.named{animation:cbIn .5s ease both}@keyframes cbIn{from{transform:translate(-50%,20%);opacity:0}to{transform:translateX(-50%);opacity:1}}
+/* ===== Satellite + cams ===== */
+#pSat{--acc:#5fd3e0;--ico:'🛰️'}#pCams{--acc:#ff9f43;--ico:'📹'}
+.sat-wrap,.cam-wrap{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u))}
+.sat-card{padding:calc(1.6*var(--u));flex:1;min-height:0;display:flex;flex-direction:column}
+.sat-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#000}
+.sat-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}.sat-img.on{opacity:1}
+.sat-bar{display:flex;align-items:center;gap:calc(1.6*var(--u));margin-top:calc(1.2*var(--u));font-size:calc(2.2*var(--u))}
+.sat-live{color:#ff6b7a;font-weight:800;letter-spacing:.08em;font-size:calc(1.9*var(--u))}.sat-src{margin-left:auto;color:var(--dim);font-size:calc(1.9*var(--u))}
+.sat-prog{display:flex;gap:4px;margin-top:calc(1*var(--u))}.sat-prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.15)}.sat-prog i.on{background:#5fd3e0}
+.sat-tip b{display:block;font-size:calc(2.4*var(--u));margin-bottom:calc(.6*var(--u))}.sat-tip span{font-size:calc(2.1*var(--u));color:var(--dim);line-height:1.45}
+.cam-card{padding:calc(1.4*var(--u));flex:1;min-height:0;display:flex;flex-direction:column}
+.cam-frame{position:relative;flex:1;min-height:0;border-radius:calc(1.6*var(--u));overflow:hidden;background:#000}
+.cam-frame iframe,.cam-frame img{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+.cam-cap{display:flex;align-items:baseline;gap:calc(1.4*var(--u));margin-top:calc(1*var(--u));font-size:calc(2.4*var(--u))}.cam-cap b{font-weight:700}.cam-cap>span:last-child{color:var(--dim);font-size:calc(2*var(--u))}
+/* ===== Leafs headlines ===== */
+.hb2-nw{display:grid;grid-template-columns:calc(16*var(--u)) 1fr;gap:calc(1.6*var(--u));align-items:center;padding:calc(.8*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.hb2-nw:last-child{border:0}.hb2-nw .th{aspect-ratio:16/10;border-radius:calc(1*var(--u));overflow:hidden;background:rgba(255,255,255,.08)}.hb2-nw .th img{width:100%;height:100%;object-fit:cover}
+.hb2-nw b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:calc(2.4*var(--u));font-weight:600;line-height:1.25}
+.hb2-nw small{display:block;font-size:calc(1.8*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
 </style>
 </head>
 <body>
@@ -930,6 +1005,8 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pSat" class="page"><div id="satBody"></div></section>
+<section id="pCams" class="page"><div id="camBody"></div></section>
 <section id="pRecap" class="page"><div id="rcBody"></div></section>
 <section id="pKHub" class="page"><div id="khBody"></div></section>
 <section id="pWeek" class="page"><div id="wkBody"></div></section>
@@ -941,7 +1018,7 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div><div id="night"></div><div id="morning"></div><div id="lwf"><div class="p">🌺</div><b>Lest we forget</b><span>Two minutes of silence · Remembrance Day</span></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="hdot" title=""></div><div id="hpanel"></div><div id="intro"></div><div id="celeb"></div><div id="bday"></div><div id="night"></div><div id="morning"></div><div id="lwf"><div class="p">🌺</div><b>Lest we forget</b><span>Two minutes of silence · Remembrance Day</span></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -974,6 +1051,8 @@ const CFG={
     {type:'coming',    secs:25},
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
+    {type:'sat',       secs:30},
+    {type:'cams',      secs:40},
     {type:'news',      secs:20},
     // sports (game day / live / World Series only show when they're on)
     {type:'recap',     secs:40},   // morning after a Leafs/Knights game, until noon
@@ -1047,6 +1126,15 @@ const CFG={
   week:{on:true, fromHour:15},
   // Holiday themes switch on by themselves. To preview one, open the dashboard with ?holiday=halloween (or christmas, newyear, valentines, stpat, easter, canada, thanksgiving, remembrance)
   holidays:{on:true},
+  // Game-start intro and goal celebration for your teams (sayScorer: Nova reads out the goal scorer)
+  cinema:{intro:true, introSecs:9, goal:true, goalSecs:11, sayScorer:true},
+  // Satellite page: NOAA GOES-East Great Lakes picture (refreshes every 10 minutes)
+  satellite:{on:true},
+  // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
+  cams:{on:true, list:[
+    {name:'Niagara Falls', sub:'Horseshoe Falls from the Fallsview District', youtube:'UC15QFO-cdISk-4Sn5CPd78g'},
+    {name:'Toronto · CN Tower', sub:'EarthCam', iframe:'https://www.earthcam.com/cams/includes/twittercards/container.php?name=9299.flv&timezone=America/New_York&metar=CYYZ'}
+  ]},
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
   // Snow alert chip on the main page when at least alertCm is expected in the next 24 hours
@@ -1284,6 +1372,7 @@ async function sports(){
     return {L,games,failed,msg,at:Date.now()};
   }));
   lastRes=res;
+  try{watchStarts(res)}catch(e){}
   /* your teams: live now, or starting within 30 minutes */
   const fav=[];
   res.forEach(r=>r.games.forEach(g=>{
@@ -1293,7 +1382,7 @@ async function sports(){
     const key=r.L.label+g.id,sc=g.sA+'-'+g.sH;
     if(g.state==='in'&&prevScore[key]!==undefined&&prevScore[key]!==sc){flashUntil=Date.now()+5000;
       const [oA,oH]=prevScore[key].split('-').map(Number),side=(+g.sA>oA)?'A':(+g.sH>oH)?'H':'';
-      if(side)goalAlert(key,side==='A'?(g.fA||g.nA):(g.fH||g.nH),(r.L.fav||[]).includes(side==='A'?g.A:g.H))}
+      if(side){const mine=(r.L.fav||[]).includes(side==='A'?g.A:g.H);goalAlert(key,side==='A'?(g.fA||g.nA):(g.fH||g.nH),mine);if(mine)celebrate(r.L,g,side)}}
     prevScore[key]=sc;
   }));
   fav.sort((a,b)=>b.f-a.f);favGames=fav;renderLive();
@@ -1515,10 +1604,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',cams:'pCams'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1549,7 +1638,9 @@ function nextPage(force,hold){
   if(p.type==='recap'){if(!force)rcPick++;renderRecap()}
   if(p.type==='khub'){renderKHub();loadKGoalie()}
   if(p.type==='week')renderWeek();
-  if(p.type==='hub'){renderHub();if(Date.now()-hubAt>600000)loadHub()}
+  if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
+  renderCams(p.type==='cams');
+  if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSig='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
   pauseVideos();
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
@@ -1963,7 +2054,7 @@ function drawTicker(){
   if(!live.length)return;
   live.forEach(x=>loadPBP(x.L,x.g));
   const it=live[Math.floor(tkIdx/3)%live.length],L=it.L,g=it.g,plays=(pbp[r_key(L,g)]||{list:[]}).list;
-  const clk=g.live.clock!==null?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000)))+(g.live.per?' '+g.live.per:''):g.live.text;
+  const clk=g.live&&g.live.clock!=null&&isFinite(g.live.clock)?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000)))+(g.live.per?' '+g.live.per:''):((g.live&&(g.live.text||g.live.per))||'');
   const p=plays.length?plays[plays.length-1-(tkIdx%Math.min(3,plays.length))]:null;
   $('tkScore').innerHTML=`<i class="dot"></i>${logoImg(g.lA)}<b>${esc(g.A)} ${esc(g.sA)}</b><span>–</span><b>${esc(g.sH)} ${esc(g.H)}</b>${logoImg(g.lH)}<small>${esc(clk)}</small>`;
   /* rotating game info instead of a play-by-play: shots, power play, last goal, at bat, other scores */
@@ -2100,6 +2191,10 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){showHealth(25);return reply(healthSay())}
+  if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
+  if(has(/\b(cams?|webcams?|niagara|cn tower)\b/)){showFor('cams');return reply('Here are the live cams.')}
+  if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
   if(has(/\b(recap|last night|how did (the )?(leafs|knights) do)\b/)){rcDemand=Date.now()+3600e3;if(recapOn())showFor('recap');return reply(recapSay())}
   if(has(/\b(week ahead|this week|the week|weekly)\b/)){window._wkDemand=Date.now()+1800e3;showFor('week');return reply(weekSay())}
   if(has(/\bknights\b/)&&khOn()){showFor('khub');return reply(khSay())}
@@ -2142,6 +2237,7 @@ function handleCommand(raw){
 function remote(){
   const T=SECRETS.topic;if(!T||!window.EventSource)return;
   const es=new EventSource(`https://ntfy.sh/${T}/sse`);
+  es.onopen=()=>{remoteUp=true};es.onerror=()=>{remoteUp=es.readyState===1};
   es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
     let m=d.message;try{const j=JSON.parse(m);m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
@@ -2623,11 +2719,15 @@ function renderHub(){
   const mv=[...(HUB.injuries||[]).map(i=>`<div class="hb2-mv"><em class="inj">${/day/i.test(i.status)?'DTD':/out|injured|ir/i.test(i.status)?'OUT':esc(String(i.status).slice(0,4).toUpperCase())}</em><b>${esc(i.name)}${i.note?' · '+esc(i.note):''}</b><span>${esc(i.status)}</span></div>`),
     ...(HUB.moves||[]).map(m=>`<div class="hb2-mv"><em class="${m.lg==='MLB'?'mlb':''}">${m.lg==='MLB'?'JAYS':'MOVE'}</em><b>${esc(m.text)}</b><span>${m.date?esc(new Date(m.date).toLocaleDateString([],{month:'short',day:'numeric'})):''}</span></div>`)].join('');
   const moves=mv?`<div class="jf-glass gd-card"><h2>Roster moves &amp; injuries</h2>${mv}</div>`:'';
-  const html=`<div class="jf-title">${esc(T)} hub</div><div class="hb-body">${head}${ng}${last}${leaders}${two}${moves}</div>`;
+  const ago=d=>{const m=Math.round((Date.now()-Date.parse(d))/60000);return isNaN(m)?'':m<60?m+' min ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago'};
+  const NW=HUB.news||[],hv=window._hubNews=(window._hubNews||0);
+  const news=NW.length?`<div class="jf-glass gd-card hb2-news"><h2>📰 Leafs headlines</h2>${[0,1].map(i=>NW[(hv*2+i)%NW.length]).filter((x,i,a)=>x&&a.indexOf(x)===i).map(n=>`<div class="hb2-nw"><div class="th">${n.img?`<img src="${esc(n.img)}" alt="" onerror="this.remove()">`:''}</div><div><b>${esc(n.title)}</b><small>${esc(ago(n.date))}${n.by?' · '+esc(n.by):''} · ESPN</small></div></div>`).join('')}</div>`:'';
+  const html=`<div class="jf-title">${esc(T)} hub</div><div class="hb-body">${head}${ng}${last}${news}${leaders}${two}${moves}</div>`;
   if(html!==hubSig){hubSig=html;b.innerHTML=html}
   if(vs.length)mountVideo('hub','#hubVid',vs,true);
   fitBody('#hubBody .hb-body','.hb2-mv');
-  const dropMoves=()=>{const hb=document.querySelector('#hubBody .hb-body');if(!hb)return;if(hb.scrollHeight>hb.clientHeight+2){const m=hb.querySelector('.hb2-mv');if(m&&hb.querySelectorAll('.hb2-mv').length<=1)m.closest('.gd-card').remove()}};
+  const dropMoves=()=>{const hb=document.querySelector('#hubBody .hb-body');if(!hb)return;const over=()=>hb.scrollHeight>hb.clientHeight+2;if(over()){const m=hb.querySelector('.hb2-mv');if(m&&hb.querySelectorAll('.hb2-mv').length<=1)m.closest('.gd-card').remove()}
+    if(over()){const n=hb.querySelectorAll('.hb2-nw');if(n.length>1)n[n.length-1].remove()}if(over()){const n=hb.querySelector('.hb2-news');if(n)n.remove()}};
   dropMoves();setTimeout(dropMoves,500);
 }
 /* generic "too tall? remove items from the bottom" helper */
@@ -3107,10 +3207,109 @@ setInterval(()=>{const n=new Date();if(!(CFG.holidays&&CFG.holidays.on===false)&
   const el=$('bday');el.innerHTML=`<canvas id="confetti"></canvas><div class="bd-card"><div class="bd-cake">🎆</div><div class="bd-k">${n.getFullYear()}</div><div class="bd-n">Happy New Year!</div></div>`;
   el.classList.add('on');confetti($('confetti'));setTimeout(()=>el.classList.remove('on'),90000)}},1000);
 
+/* ================= Health check: a status dot in the corner + "Nova, status" ================= */
+const HC={relay:{ok:null,at:0}};
+async function pingRelay(){if(!CFG.relay)return;try{const r=await tfetch(relayBase()+'/',10000),t=await r.text();HC.relay={ok:/running/i.test(t),at:Date.now(),v:(t.match(/\(v\d+\)/)||[''])[0]}}catch(e){HC.relay={ok:false,at:Date.now(),err:'not reachable'}}}
+setInterval(pingRelay,300000);
+function healthList(){
+  const out=[],add=(name,ok,why,crit)=>out.push({name,ok,why,crit});
+  if(CFG.relay)add('Relay (Cloudflare Worker)',HC.relay.ok!==false,HC.relay.ok===false?'not answering':'',true);
+  add('Weather',!!WXD,WXD?'':'not loaded',true);
+  if(typeof calOn==='function'&&calOn())add('Calendar',!calErr&&calAt>0,calErr||(calAt?'':'not loaded yet'));
+  lastRes.forEach(r=>add(r.L.label+' scores',!r.failed,r.failed?'not loading':''));
+  add('News',newsItems.length>0,newsItems.length?'':'no headlines');
+  if(typeof jfOn==='function'&&jfOn())add('Jellyfin',!!(JF&&JF.up&&!jfErr),jfErr||(JF&&!JF.up?'server offline':JF?'':'not loaded'));
+  if(typeof locOn==='function'&&locOn())add('Traffic cams',!locErr&&!!LOC,locErr||(LOC?'':'not loaded'));
+  if(typeof hubOn==='function'&&hubOn())add('Leafs hub',!!HUB,HUB?'':'not loaded');
+  if(SECRETS.topic)add('Remote',remoteUp!==false,remoteUp===false?'disconnected':''); else add('Remote',false,'topic not set on this screen');
+  return out;
+}
+let remoteUp=null;
+function healthDot(){const L=healthList(),bad=L.filter(x=>!x.ok),crit=bad.some(x=>x.crit);
+  const d=$('hdot');d.className=bad.length?(crit?'bad':'warn'):'ok';d.title=bad.length?bad.map(x=>x.name+': '+x.why).join('\n'):'All good';
+  if($('hpanel').classList.contains('on'))healthPanel()}
+setInterval(healthDot,30000);
+function healthPanel(){const L=healthList();$('hpanel').innerHTML=`<h3>🩺 Status</h3>${L.map(x=>`<div class="${x.ok?'ok':'bad'}"><i></i><b>${esc(x.name)}</b><span>${x.ok?'OK':esc(x.why||'problem')}</span></div>`).join('')}<small>${esc(HC.relay.v||'')} · ${esc($('ver')?$('ver').textContent:'')}</small>`}
+function showHealth(secs=20){healthPanel();const p=$('hpanel');p.classList.add('on');clearTimeout(p._t);p._t=setTimeout(()=>p.classList.remove('on'),secs*1000)}
+function healthSay(){const bad=healthList().filter(x=>!x.ok);return bad.length?`${bad.length} thing${bad.length===1?'':'s'} need${bad.length===1?'s':''} attention: ${bad.map(x=>x.name+', '+(x.why||'problem')).join('; ')}.`:'Everything is working.'}
+
+/* ================= Puck-drop intro ================= */
+const prevState={};
+function watchStarts(res){res.forEach(r=>r.games.forEach(g=>{if(!isFav(r.L,g))return;const k=r.L.label+g.id,was=prevState[k];prevState[k]=g.state;
+  if(was==='pre'&&g.state==='in')gameIntro(r.L,g)}))}
+function gameIntro(L,g){
+  const C=CFG.cinema||{};if(C.intro===false)return;const el=$('intro'),base=L.sport==='baseball';
+  const lg=(u,ab)=>u?`<img src="${esc(u)}" alt="" onerror="this.outerHTML='<i>${esc(ab)}</i>'">`:`<i>${esc(ab)}</i>`;
+  el.innerHTML=`<div class="in-floor ${base?'grass':''}"></div><div class="in-beam l"></div><div class="in-beam r"></div><div class="in-flash"></div><div class="in-ring"></div>
+    <div class="in-logo a">${lg(g.lA,g.A)}</div><div class="in-logo h">${lg(g.lH,g.H)}</div>
+    <div class="in-txt"><div class="in-big">${base?'PLAY BALL':'GAME TIME'}</div><div class="in-sub">${esc(g.nA||g.A)} <em>${base?'at':'at'}</em> ${esc(g.nH||g.H)}</div><div class="in-sm">${esc(L.label)} · ${base?'First pitch':'Puck drop'}${g.arena?' · '+esc(g.arena):''}</div></div>`;
+  el.classList.remove('on','out');void el.offsetWidth;el.classList.add('on');
+  try{const a=audio();if(a&&!muted&&(CFG.goalAlert||{}).horn){const t=a.currentTime,o=a.createOscillator(),gn=a.createGain();o.type='sawtooth';o.frequency.setValueAtTime(60,t);o.frequency.exponentialRampToValueAtTime(140,t+1.6);
+    gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(.12*(CFG.goalAlert.horn||.5),t+1.2);gn.gain.linearRampToValueAtTime(0,t+2);o.connect(gn).connect(a.destination);o.start(t);o.stop(t+2.1)}}catch(e){}
+  clearTimeout(el._t);el._t=setTimeout(()=>{el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');if(liveOn())nextPage('live',60)},900)},(C.introSecs||9)*1000);
+}
+
+/* ================= Goal celebration (your team scores) ================= */
+async function celebrate(L,g,side){
+  const C=CFG.cinema||{};if(C.goal===false)return false;
+  const el=$('celeb'),T=side==='A'?{ab:g.A,n:g.fA||g.nA,lg:g.lA}:{ab:g.H,n:g.fH||g.nH,lg:g.lH},hockey=L.sport==='hockey';
+  if(!hockey)return false;
+  el.innerHTML=`<div class="cb-red"></div><div class="cb-light"><div class="cb-beam"></div><i></i></div>
+    <div class="cb-logo">${T.lg?`<img src="${esc(T.lg)}" alt="" onerror="this.remove()">`:''}</div><div class="cb-goal">GOAL!</div>
+    <div class="cb-card" id="cbCard"><div class="cb-ph"></div><div><b>${esc(nick(T.n))} score!</b><span>${esc(g.A)} ${esc(g.sA)} – ${esc(g.sH)} ${esc(g.H)}</span></div></div>`;
+  el.classList.remove('on','out');void el.offsetWidth;el.classList.add('on');
+  /* fill in the scorer once the play-by-play catches up */
+  const fill=()=>{let sc=null;
+    if(LV&&LV.sport==='hockey'){if(LV.lastGoal&&LV.lastGoal.team===T.ab)sc={name:LV.lastGoal.name,n:LV.lastGoal.n,assists:LV.lastGoal.assists||[],img:LV.lastGoal.img};
+      else if(LV.league==='OHL'&&(LV.goals||[]).length){const x=LV.goals[LV.goals.length-1],m=String(x.text).match(/·\s*(.+?)(?:\s*\((\d+)\))?(?:,\s*assists\s+(.+))?$/);if(m)sc={name:m[1],n:m[2],assists:m[3]?m[3].split(/,\s*/):[],img:''}}}
+    if(!sc)return false;
+    $('cbCard').innerHTML=`<div class="cb-ph">${sc.img?`<img src="${esc(sc.img)}" alt="" onerror="this.remove()">`:''}</div><div><small>${esc(T.ab)} GOAL</small><b>${esc(sc.name)}${sc.n?` <em>(${esc(sc.n)})</em>`:''}</b><span>${sc.assists.length?'Assists: '+esc(sc.assists.join(', ')):'Unassisted'} · ${esc(g.A)} ${esc(g.sA)}–${esc(g.sH)} ${esc(g.H)}</span></div>`;
+    $('cbCard').classList.add('named');
+    if(CFG.remote&&CFG.remote.speak&&C.sayScorer!==false)speak(`${nick(T.n)} goal! Scored by ${sc.name}.`);return true};
+  try{loadLive()}catch(e){}
+  let tries=0;const iv=setInterval(()=>{if(fill()||++tries>8)clearInterval(iv)},1500);
+  const secs=C.goalSecs||11;clearTimeout(el._t);el._t=setTimeout(()=>{clearInterval(iv);el.classList.add('out');setTimeout(()=>el.classList.remove('on','out'),900)},secs*1000);
+  return true;
+}
+
+/* ================= Satellite (NOAA GOES-East, Great Lakes) ================= */
+const SAT={frames:[],idx:0,at:0};
+const satURL=()=>((CFG.satellite&&CFG.satellite.url)||'https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/cgl/GEOCOLOR/latest.jpg');
+function satGrab(){const im=new Image();im.decoding='async';im.onload=()=>{SAT.frames.push({im,at:Date.now()});if(SAT.frames.length>12)SAT.frames.shift();SAT.at=Date.now();if($('pSat').classList.contains('on'))renderSat()};
+  im.onerror=()=>{SAT.err=true;if($('pSat').classList.contains('on'))renderSat()};im.src=satURL()+(satURL().includes('?')?'&':'?')+'t='+Math.floor(Date.now()/600000)}
+setInterval(satGrab,600000);
+let satT=null;
+function renderSat(){
+  const b=$('satBody');const F=SAT.frames;
+  if(!F.length){b.innerHTML=`<div class="jf-title">Satellite · Great Lakes</div><div class="jf-wait">${SAT.err?'Satellite image unavailable':'Loading satellite…'}</div>`;return}
+  if(!b.querySelector('.sat-stage')){b.innerHTML=`<div class="jf-title">Satellite · Great Lakes</div><div class="sat-wrap"><div class="jf-glass sat-card"><div class="sat-stage"></div>
+      <div class="sat-bar"><span class="sat-live">● LIVE</span><span id="satTime"></span><span class="sat-src">NOAA GOES-East · GeoColor</span></div><div class="sat-prog" id="satProg"></div></div>
+      <div class="jf-glass gd-card sat-tip"><b>What you're seeing</b><span>Real colour by day, city lights and low cloud at night. Woodstock is on the land between Lake Huron and Lake Erie, just north of Lake Erie's eastern half. The dashboard keeps the last ${F.length>1?F.length+' pictures':'pictures'} it saw and plays them as a loop, so you can watch clouds and lake-effect snow move.</span></div></div>`}
+  const st=b.querySelector('.sat-stage');
+  F.forEach(f=>{if(f.im.parentNode!==st){f.im.className='sat-img';st.appendChild(f.im)}});
+  [...st.children].forEach(c=>{if(!F.some(f=>f.im===c))c.remove()});
+  clearInterval(satT);SAT.idx=F.length-1;
+  const show=i=>{F.forEach((f,j)=>f.im.classList.toggle('on',j===i));const t=$('satTime');if(t)t.textContent=(i===F.length-1?'Latest · ':'')+fmt(new Date(F[i].at));
+    const p=$('satProg');if(p)p.innerHTML=F.length>1?F.map((f,j)=>`<i class="${j===i?'on':''}"></i>`).join(''):''};
+  show(SAT.idx);
+  if(F.length>1)satT=setInterval(()=>{if(!$('pSat').classList.contains('on')){clearInterval(satT);return}SAT.idx=(SAT.idx+1)%(F.length+3);show(Math.min(SAT.idx,F.length-1))},700);
+}
+
+/* ================= Live cams ================= */
+const camsList=()=>(CFG.cams&&CFG.cams.list)||[];
+function renderCams(on){
+  const b=$('camBody');
+  if(!on){b.querySelectorAll('iframe').forEach(f=>f.src='about:blank');return}
+  const L=camsList();
+  b.innerHTML=`<div class="jf-title">Live cams</div><div class="cam-wrap">${L.map(c=>{const src=c.youtube?`https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(c.youtube)}&autoplay=1&mute=1&controls=0&playsinline=1&modestbranding=1&rel=0`:c.iframe||'';
+    return `<div class="jf-glass cam-card"><div class="cam-frame">${src?`<iframe src="${esc(src)}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" loading="eager"></iframe>`:c.image?`<img src="${esc(c.image)}" alt="">`:''}</div>
+      <div class="cam-cap"><span class="sat-live">● LIVE</span><b>${esc(c.name)}</b>${c.sub?`<span>${esc(c.sub)}</span>`:''}</div></div>`}).join('')}</div>`;
+}
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 36';
+document.getElementById('ver').textContent='build nova 37';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -3122,7 +3321,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
