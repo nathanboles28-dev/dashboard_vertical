@@ -972,6 +972,10 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .kh-gk{display:flex;align-items:center;gap:calc(1.4*var(--u));margin-top:calc(1.4*var(--u));padding:calc(1*var(--u)) calc(1.4*var(--u));border-radius:calc(1.4*var(--u));background:rgba(255,206,84,.1)}
 .kh-gk .kh-ph.sm{width:calc(6*var(--u));height:calc(6*var(--u));margin:0}
 .kh-gk small{font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.12em;color:#ffe08a}.kh-gk b{font-size:calc(2.5*var(--u))}.kh-gk span{margin-left:auto;color:var(--dim);font-size:calc(2.1*var(--u))}
+
+.kh-fl{width:calc(9*var(--u));height:calc(9*var(--u));margin:calc(.6*var(--u)) auto;display:grid;place-items:center;font-weight:800;font-size:calc(2*var(--u));color:var(--dim)}
+.kh-fl img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 calc(.4*var(--u)) calc(.8*var(--u)) rgba(0,0,0,.4))}
+.kh-form>div{padding:calc(1.4*var(--u)) 0!important}
 </style>
 </head>
 <body>
@@ -3052,7 +3056,7 @@ function renderKHub(){
     ${live?'':`<div class="kh-cd" id="khCd"></div><div class="kh-sub">Puck drop <b>${fmt(g.date)}</b>${sg&&sg.arena?' · '+esc(sg.arena):''}</div>`}</div>`;
   /* recent form + last meeting */
   const done=T.games.filter(x=>x.done).slice(-5);
-  const form=done.length?`<div class="jf-glass gd-card"><h2>Last ${done.length} games</h2><div class="kh-form">${done.map(x=>`<div class="${x.win?'w':'l'}"><b>${x.win?'W':'L'}</b><span>${esc(x.us)}–${esc(x.them)}</span><em>${x.home?'vs':'at'} ${esc(x.opp)}</em></div>`).join('')}</div>
+  const form=done.length?`<div class="jf-glass gd-card"><h2>Last ${done.length} games</h2><div class="kh-form">${done.map(x=>`<div class="${x.win?'w':'l'}"><b>${x.win?'W':'L'}</b><div class="kh-fl">${x.oppLogo&&/^https?:/i.test(x.oppLogo)?`<img src="${esc(x.oppLogo)}" alt="" onerror="this.parentNode.textContent='${esc(String(x.opp).slice(0,3).toUpperCase())}'">`:esc(String(x.opp).slice(0,3).toUpperCase())}</div><span>${esc(x.us)}–${esc(x.them)}</span><em>${x.home?'vs':'at'} ${esc(x.opp)}</em></div>`).join('')}</div>
       ${(()=>{const m=T.games.filter(x=>x.done&&x.opp===opp).pop();return m?`<div class="kh-lm">Last meeting with the ${esc(opp)}: <b class="${m.win?'w':'l'}">${m.win?'W':'L'} ${esc(m.us)}–${esc(m.them)}</b> · ${m.date.toLocaleDateString([],{month:'short',day:'numeric'})}</div>`:''})()}</div>`:'';
   /* category leaders: points, goals, assists, penalty minutes + starting goalie */
   const Ld=leaders[L_key(T)]||[],last=n=>String(n||'').split(' ').slice(-1)[0];
@@ -3364,7 +3368,7 @@ function renderCams(on){
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 42';
+document.getElementById('ver').textContent='build nova 43';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
