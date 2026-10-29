@@ -1172,7 +1172,7 @@ const CFG={
   trafficMap:{on:true, quietFrom:23, quietTo:6, views:[
     {name:'Woodstock & the 401', lat:43.1180, lon:-80.7450, z:12, pin:true},
     {name:'Downtown', lat:43.1312, lon:-80.7470, z:15},
-    {name:'401 & 403 split', lat:43.1120, lon:-80.7100, z:14}
+    {name:'London · downtown', lat:42.9836, lon:-81.2497, z:13}   // around Canada Life Place
   ]},
   // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
   cams:{on:true, list:[
@@ -3428,7 +3428,7 @@ function tmSay(){const n=((typeof LOC!=='undefined'&&LOC&&LOC.events)||[]).filte
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 45';
+document.getElementById('ver').textContent='build nova 46';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
