@@ -743,6 +743,29 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 .gd-hs.mlb img{object-fit:contain;object-position:center bottom;top:12%;height:88%}
 .gd-hs.mlb.port img{object-fit:cover;object-position:center 22%;top:0;height:100%;transform:scale(1.02)}
 #night{position:fixed;inset:0;z-index:20;background:#000;opacity:0;pointer-events:none;transition:opacity 2.5s}#night.on{opacity:1;pointer-events:auto;cursor:none}
+
+/* ===== Sunrise wake-up ===== */
+#morning{position:fixed;inset:0;z-index:21;display:none;overflow:hidden;background:#02040b}
+#morning.on{display:block}#morning.out{animation:mnOut 1.6s ease forwards}@keyframes mnOut{to{opacity:0}}
+.mn-sky{position:absolute;inset:0;background:linear-gradient(180deg,#02040b 0%,#06102a 60%,#0b1a3a 100%)}
+.mn-sky::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#2a63b5 0%,#6fa1dc 42%,#f4a35a 76%,#ffd791 100%);opacity:0;animation:mnDay 6.5s 1s ease-in-out forwards}
+@keyframes mnDay{to{opacity:1}}
+.mn-stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:mnTw 1.6s ease-in-out infinite alternate,mnFade 3s 2.5s ease forwards}
+@keyframes mnTw{from{opacity:.25}to{opacity:1}}@keyframes mnFade{to{opacity:0;visibility:hidden}}
+.mn-glow{position:absolute;left:-20%;right:-20%;bottom:0;height:75%;background:radial-gradient(50% 55% at 50% 78%,rgba(255,170,90,.85),rgba(255,120,60,.35) 45%,transparent 70%);opacity:0;animation:mnGlow 5s .6s ease-out forwards}
+@keyframes mnGlow{to{opacity:1}}
+.mn-sun{position:absolute;left:50%;width:34vmin;height:34vmin;margin-left:-17vmin;bottom:2%;border-radius:50%;
+ background:radial-gradient(circle at 50% 45%,#fffbe6,#ffe08a 45%,#ffb347 75%,#ff8c42);box-shadow:0 0 12vmin 4vmin rgba(255,190,90,.6),0 0 30vmin 12vmin rgba(255,150,70,.3);
+ transform:translateY(40vmin);animation:mnRise 6.5s .8s cubic-bezier(.25,.6,.3,1) forwards}
+@keyframes mnRise{to{transform:translateY(-34vh)}}
+.mn-hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:24%}
+.mn-text{position:absolute;left:6%;right:6%;top:12%;text-align:center;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.mn-hi{font-size:calc(11*var(--u));font-weight:700;letter-spacing:-.02em;opacity:0;transform:translateY(3vh);animation:mnUp 1.4s 3.6s cubic-bezier(.2,.8,.2,1) forwards}
+.mn-date{font-size:calc(3.4*var(--u));font-weight:500;margin-top:calc(1.2*var(--u));opacity:0;animation:mnUp 1.2s 4.3s ease forwards}
+.mn-lines{margin:calc(4*var(--u)) auto 0;max-width:min(92%,90vh);display:flex;flex-direction:column;gap:calc(1.4*var(--u))}
+.mn-lines div{font-size:calc(3*var(--u));padding:calc(1.4*var(--u)) calc(2.4*var(--u));border-radius:calc(2.4*var(--u));background:rgba(10,25,55,.35);border:1px solid rgba(255,255,255,.25);
+ backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);opacity:0;transform:translateY(2vh);animation:mnUp 1s ease forwards}
+@keyframes mnUp{to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -780,7 +803,7 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div><div id="night"></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div><div id="night"></div><div id="morning"></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -881,6 +904,8 @@ const CFG={
   snow:{alertCm:5},
   // Birthday mode: calendar events with "birthday" in the title get a big celebration at this time (secs = how long)
   birthday:{on:true, time:'09:00', secs:90},
+  // Sunrise wake-up animation: time should match the Mac's morning wake-up (7:00). speak = Nova says good morning out loud
+  morning:{on:true, time:'07:00', secs:25, speak:false},
   // Jellyfin Wrapped page: this month's most watched (first 3 days of a month show last month)
   wrapped:{on:true},
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
@@ -1931,7 +1956,7 @@ function handleCommand(raw){
   if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
   if(has(/\bunmute\b/)){muted=false;return reply('Goal horn is back on.')}
   if(has(/\b(good ?night|night night|go to sleep|screen off|turn (it )?off|lights out)\b/)){goodnight();return reply('Goodnight! Turning the screen off.')}
-  if(has(/\b(wake( up)?|screen on|turn (it )?on|good morning)\b/)){wakeScreen();if(SECRETS.topic)fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});return reply('Waking up! The screen will be on within a minute.')}
+  if(has(/\b(wake( up)?|screen on|turn (it )?on|good morning)\b/)){wakeScreen();if(SECRETS.topic)fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});morningAtScreenOn();return reply('Waking up! The screen will be on within a minute.')}
   if(has(/\b(mute|quiet|silence)\b/)){muted=true;return reply('Goal horn muted.')}
   const team=teamIn(t);
   if(has(/\b(when|next)\b/)&&has(/\b(play|playing|game|games|match)\b/)){showFor('games');const now=team?gameSay(team):'';return reply(now&&!/^Final/.test(now)?now:nextSay(team))}
@@ -2688,10 +2713,40 @@ function wsTick(){const el=$('wsCd');if(!el||!WS||!WS.cur||WS.cur.state!=='pre')
   if(ms<=0){el.textContent='First pitch!';return}const s=Math.floor(ms/1000),d=Math.floor(s/86400);el.textContent=(d?d+'d ':'')+Math.floor(s%86400/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
 setInterval(()=>{if($('pWS').classList.contains('on'))wsTick()},1000);
 
+/* ---------- Sunrise wake-up: plays at the wake-up time and on "wake up", synced to when the Mac turns the screen on ---------- */
+let mornT=null,mornAt=0;
+function morningLines(){
+  const L=[],t0=dayStart(new Date()),t1=new Date(t0.getTime()+864e5);
+  if(WXD){const c=WXD.c,dl=WXD.dl;L.push(`${wx(c.weather_code,c.is_day===0)[0]} <b>${Math.round(c.temperature_2m)}°</b> and ${esc(String(WXD.tx).toLowerCase())} · high ${Math.round(dl.temperature_2m_max[0])}°${dl.precipitation_probability_max&&dl.precipitation_probability_max[0]>=50?` · ${dl.precipitation_probability_max[0]}% chance of ${(dl.snowfall_sum&&dl.snowfall_sum[0]>0)?'snow':'rain'}`:''}`)}
+  const ev=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.allDay||e.end>new Date()));
+  if(ev.length){const e=ev.find(x=>!x.allDay)||ev[0],r=e.loc?rtGet(e.loc):null;L.push(`📅 ${esc(e.title)}${e.allDay?'':' at <b>'+fmt(e.start)+'</b>'}${r&&!e.allDay?` · leave by ${fmt(leaveBy(e,r))}`:''}${ev.length>1?` · +${ev.length-1} more`:''}`)}
+  else L.push('📅 Nothing on the calendar today');
+  const ng=HUB&&(HUB.next||[])[0];if(ng&&daysUntil(new Date(ng.start))===0)L.push(`🏒 Leafs ${ng.home?'vs':'at'} ${esc(ng.opp)} tonight at <b>${fmt(new Date(ng.start))}</b>${ng.nets&&ng.nets.length?' · '+esc(ng.nets[0]):''}`);
+  try{const b=birthdaysToday();if(b.length)L.push(`🎂 ${esc(b.join(' & '))}'s birthday today`)}catch(e){}
+  return L;
+}
+function playMorning(){
+  const M=CFG.morning||{};if(M.on===false)return;mornAt=Date.now();
+  const el=$('morning'),h=new Date().getHours();
+  const hi=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  el.innerHTML=`<div class="mn-sky"></div><div class="mn-stars">${Array.from({length:70},()=>`<i style="left:${(Math.random()*100).toFixed(1)}%;top:${(Math.random()*62).toFixed(1)}%;animation-delay:${(Math.random()*3).toFixed(2)}s;transform:scale(${(.4+Math.random()).toFixed(2)})"></i>`).join('')}</div>
+    <div class="mn-glow"></div><div class="mn-sun"></div>
+    <svg class="mn-hills" viewBox="0 0 1000 300" preserveAspectRatio="none"><path d="M0 170 C150 120 260 150 380 130 C520 105 600 160 740 135 C850 115 930 140 1000 125 L1000 300 L0 300Z" fill="#0d1a2c"/><path d="M0 220 C170 180 300 215 450 195 C620 172 760 225 1000 190 L1000 300 L0 300Z" fill="#081220"/></svg>
+    <div class="mn-text"><div class="mn-hi">${hi}</div><div class="mn-date">${new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})} · ${fmt(new Date())}</div>
+      <div class="mn-lines">${morningLines().map((l,i)=>`<div style="animation-delay:${(5.2+i*.5).toFixed(1)}s">${l}</div>`).join('')}</div></div>`;
+  el.classList.remove('on','out');void el.offsetWidth;el.classList.add('on');
+  if(M.speak&&CFG.remote&&CFG.remote.speak){setTimeout(()=>speak(`${hi}! ${morningLines()[0].replace(/<[^>]+>/g,'').replace(/^\S+\s/,'It\'s ')}.`),5500)}
+  clearTimeout(el._t);el._t=setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.classList.remove('on','out'),1600)},(M.secs||25)*1000);
+}
+/* start when the Mac actually turns the screen on: it checks at the top of each minute, so wait for the next one */
+function morningAtScreenOn(){clearTimeout(mornT);const n=new Date(),ms=(60-n.getSeconds())*1000-n.getMilliseconds()+4000;mornT=setTimeout(playMorning,ms)}
+setInterval(()=>{const M=CFG.morning||{};if(M.on===false)return;const n=new Date(),[h,m]=String(M.time||'07:00').split(':').map(Number);
+  if(n.getHours()===h&&n.getMinutes()===m&&n.getSeconds()>=4&&Date.now()-mornAt>600000){let k='nova-morning-'+n.toDateString(),done=false;try{done=localStorage.getItem(k)==='1';localStorage.setItem(k,'1')}catch(e){}if(!done){wakeScreen();playMorning()}}},1000);
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 33';
+document.getElementById('ver').textContent='build nova 34';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
