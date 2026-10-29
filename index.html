@@ -1602,18 +1602,27 @@ function miniCal(){
 miniCal();setInterval(miniCal,60000);
 
 /* ---------- Radar centred on your city (Rain Viewer free tier + CARTO base map) ---------- */
-const RZ=7;let rFrames=[],rIdx=0;
+const RZ=8;let rFrames=[],rIdx=0;const RS={ec:null,rv:null};
+/* two rain sources so a gap in one doesn't hide the rain: Environment Canada (1 km radar) + RainViewer (worldwide, max zoom 7) */
+function radarStatus(){const t=$('rsrc');if(t)t.innerHTML=`EC ${RS.ec===true?'✓':RS.ec===false?'✕':'…'} · RainViewer ${RS.rv===true?'✓':RS.rv===false?'✕':'…'}`}
 async function radar(){
   try{
     const r=CFG.lat*Math.PI/180,n=2**RZ,x=(CFG.lon+180)/360*n,y=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n,cx=Math.floor(x),cy=Math.floor(y);
     const pos=(tx,ty)=>`left:${((tx-x)*256).toFixed(1)}px;top:${((ty-y)*256).toFixed(1)}px`;
     let h='<div class="rt">';
     for(let tx=cx-1;tx<=cx+1;tx++)for(let ty=cy-1;ty<=cy+1;ty++)h+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${RZ}/${ty}/${tx}" style="${pos(tx,ty)}" alt="" onerror="this.remove()">`;
-    const W=40075016.68/n,O=20037508.34,bb=[O-0,0].length&&[-O+(cx-1)*W,O-(cy+2)*W,-O+(cx+2)*W,O-(cy-1)*W];
+    h+='<div id="rvLayer"></div>';
+    const W=40075016.68/n,O=20037508.34,bb=[-O+(cx-1)*W,O-(cy+2)*W,-O+(cx+2)*W,O-(cy-1)*W];
     const wms=`https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=RADAR_1KM_RRAI,RADAR_1KM_RSNO&styles=&crs=EPSG:3857&bbox=${bb.join(',')}&width=768&height=768&format=image/png&transparent=true&_=${Date.now()}`;
-    h+=`<img src="${wms}" style="${pos(cx-1,cy-1)};width:768px;height:768px;opacity:.8" alt="" onerror="this.remove()">`;
-    h+='</div><div class="pin"></div><div class="mtime">Radar · '+fmt(new Date())+'</div><div class="mcap">Environment Canada radar · Map © Esri</div>';
-    $('radar').innerHTML=h;rFrames=[];
+    h+=`<img src="${wms}" style="${pos(cx-1,cy-1)};width:768px;height:768px;opacity:.85" alt="" onload="RS.ec=true;radarStatus()" onerror="RS.ec=false;radarStatus();this.remove()">`;
+    h+='</div><div class="pin"></div><div class="mtime">Radar · '+fmt(new Date())+'</div><div class="mcap"><span id="rsrc"></span> · Map © Esri</div>';
+    $('radar').innerHTML=h;rFrames=[];RS.ec=null;radarStatus();
+    /* RainViewer: newest frame, drawn at zoom 7 and doubled to line up with the zoom-8 map */
+    try{const j=await (await tfetch('https://api.rainviewer.com/public/weather-maps.json',10000)).json(),fr=((j.radar||{}).past||[]).slice(-1)[0];
+      if(!fr)throw 0;const z=7,n7=2**z,x7=(CFG.lon+180)/360*n7,y7=(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*n7,c7x=Math.floor(x7),c7y=Math.floor(y7);let t='';
+      for(let tx=c7x-1;tx<=c7x+1;tx++)for(let ty=c7y-1;ty<=c7y+1;ty++)t+=`<img src="${j.host}${fr.path}/256/${z}/${tx}/${ty}/2/1_1.png" style="left:${((tx-x7)*512).toFixed(1)}px;top:${((ty-y7)*512).toFixed(1)}px;width:512px;height:512px;opacity:.75" alt="" onload="RS.rv=true;radarStatus()" onerror="this.remove()">`;
+      const L=$('rvLayer');if(L){L.innerHTML=t;setTimeout(()=>{if(RS.rv!==true){RS.rv=false;radarStatus()}},8000)}}
+    catch(e){RS.rv=false;radarStatus()}
   }catch(e){console.warn('radar',e)}
 }
 setInterval(radar,300000);
@@ -3307,6 +3316,7 @@ function healthList(){
   const out=[],add=(name,ok,why,crit)=>out.push({name,ok,why,crit});
   if(CFG.relay)add('Relay (Cloudflare Worker)',HC.relay.ok!==false,HC.relay.ok===false?'not answering':'',true);
   add('Weather',!!WXD,WXD?'':'not loaded',true);
+  add('Rain radar',RS.ec!==false||RS.rv===true,RS.ec===false&&RS.rv===false?'both sources down':RS.ec===false?'Environment Canada down (RainViewer OK)':'');
   if(typeof calOn==='function'&&calOn())add('Calendar',!calErr&&calAt>0,calErr||(calAt?'':'not loaded yet'));
   lastRes.forEach(r=>add(r.L.label+' scores',!r.failed,r.failed?'not loading':''));
   add('News',newsItems.length>0,newsItems.length?'':'no headlines');
@@ -3560,7 +3570,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 47';
+document.getElementById('ver').textContent='build nova 48';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
