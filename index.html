@@ -997,6 +997,32 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .lc-cams.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.lc-evcard .lc-ev{padding:calc(1*var(--u)) 0}.lc-cams.c3 .lc-cap{font-size:calc(1.9*var(--u))}.lc-cams.c3 .lc-cap small{font-size:calc(1.6*var(--u))}
 .lc-cams.c1{grid-template-columns:1fr}
 @media (orientation:landscape){.lc-body{grid-template-columns:1.3fr 1fr!important}.lc-map{grid-row:1/3}.lc-mbig{height:calc(34*var(--u))}.lc-mrow .tm-map{height:calc(20*var(--u))}}
+
+/* bigger cams: one large + two stacked */
+.lc-cams.hero.c3{grid-template-columns:1.9fr 1fr;grid-template-rows:1fr 1fr;gap:calc(1.4*var(--u))}
+.lc-cams.hero.c3 .lc-cam:first-child{grid-row:1/3;aspect-ratio:auto}.lc-cams.hero.c3 .lc-cam{aspect-ratio:16/9}
+.lc-cams.hero.c3 .lc-cam:first-child .lc-cap{font-size:calc(2.4*var(--u))}.lc-cams.hero.c3 .lc-cam:first-child .lc-cap small{font-size:calc(1.9*var(--u))}
+.lc-cams.hero.c2{grid-template-columns:1fr 1fr}
+.lc-mbig{height:calc(36*var(--u))!important}.lc-mrow .tm-map{height:calc(21*var(--u))!important}
+/* ===== Plane radar ===== */
+#pRadar{--acc:#3dffb0;--ico:'✈️'}
+.rd-wrap{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u))}
+.rd-card{padding:calc(1.2*var(--u));flex:1;min-height:0;display:flex}
+.rd-stage{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:calc(1.8*var(--u));background:#0b0f12}
+.rd-map{position:absolute;inset:0;filter:brightness(.85) saturate(.6) hue-rotate(110deg)}
+.rd-map img{position:absolute;width:256px;height:256px;max-width:none}.rd-map img.ref{opacity:.85;filter:hue-rotate(-110deg) saturate(.2) brightness(1.3)}
+#rdCan{position:absolute;inset:0;width:100%;height:100%}
+.rd-hud{position:absolute;z-index:2;font-size:calc(2*var(--u));color:rgba(160,255,215,.85);font-weight:700;letter-spacing:.06em;padding:calc(.8*var(--u)) calc(1.4*var(--u));border-radius:calc(1.4*var(--u));background:rgba(0,20,14,.55);border:1px solid rgba(80,255,180,.3)}
+.rd-hud.tl{left:calc(1.6*var(--u));top:calc(1.6*var(--u));display:flex;align-items:baseline;gap:calc(.8*var(--u))}.rd-hud.tl b{font-size:calc(4.4*var(--u));font-weight:300;color:#fff}
+.rd-hud.tr{right:calc(1.6*var(--u));top:calc(1.6*var(--u));display:flex;align-items:center;gap:calc(.8*var(--u))}
+.rd-dot{width:calc(1.2*var(--u));height:calc(1.2*var(--u));border-radius:50%;background:#3dffb0;box-shadow:0 0 10px #3dffb0;animation:pulse 1.4s infinite}
+.rd-key{position:absolute;z-index:2;left:calc(1.6*var(--u));bottom:calc(1.6*var(--u));display:flex;gap:calc(1.6*var(--u));font-size:calc(1.8*var(--u));color:rgba(200,255,230,.8);padding:calc(.6*var(--u)) calc(1.2*var(--u));border-radius:calc(1.4*var(--u));background:rgba(0,20,14,.55)}
+.rd-key span{display:flex;align-items:center;gap:calc(.6*var(--u))}.rd-key i{width:calc(1.4*var(--u));height:calc(1.4*var(--u));border-radius:50%}
+.rd-list{display:flex;flex-direction:column;gap:calc(1*var(--u))}
+.rd-f{display:grid;grid-template-columns:auto 1.1fr 1.2fr 1fr;align-items:center;gap:calc(1.6*var(--u));padding:calc(1.2*var(--u)) calc(2*var(--u))!important}
+.rd-f>i{width:calc(1.6*var(--u));height:calc(1.6*var(--u));border-radius:50%}
+.rd-f b{display:block;font-size:calc(2.5*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rd-f span{display:block;font-size:calc(1.85*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-fm,.rd-rt,.rd-nm{min-width:0}.rd-nm{text-align:right}
 </style>
 </head>
 <body>
@@ -1042,6 +1068,7 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pTMap" class="page"><div id="tmBody"></div></section>
+<section id="pRadar" class="page"><div id="rdBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
 <section id="pRecap" class="page"><div id="rcBody"></div></section>
@@ -1088,6 +1115,7 @@ const CFG={
     {type:'coming',    secs:25},
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
+    {type:'radar',     secs:40},
     {type:'sat',       secs:30},
     {type:'cams',      secs:40},
     {type:'news',      secs:20},
@@ -1193,7 +1221,9 @@ const CFG={
   wrapped:{on:true},
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
   // Around Woodstock page: cams = how many traffic cameras; road events shown only if within nearKm of town, on the 401/403 within hwyKm, or a full closure within closureKm
-  local:{on:true, cams:3, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
+  local:{on:true, cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
+  // Plane radar page: radiusKm = how far out it looks, cards = how many flights listed under the radar
+  planes:{on:true, radiusKm:40, cards:4},
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
   commute:{bufferMin:10},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
@@ -1651,10 +1681,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',cams:'pCams',tmap:'pTMap'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',cams:'pCams',tmap:'pTMap',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='tmap'||tmOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='tmap'||tmOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1686,6 +1716,7 @@ function nextPage(force,hold){
   if(p.type==='khub'){renderKHub();loadKGoalie()}
   if(p.type==='week')renderWeek();
   if(p.type==='tmap')renderTMap();
+  if(p.type==='radar'){renderRadar();loadRadar()}
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   renderCams(p.type==='cams');
   if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSig='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
@@ -2240,6 +2271,7 @@ function handleCommand(raw){
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
   if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){showHealth(25);return reply(healthSay())}
+  if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|niagara|cn tower)\b/)){showFor('cams');return reply('Here are the live cams.')}
   if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
@@ -2523,13 +2555,13 @@ function renderLocal(){
   const b=$('locBody'),Lc=CFG.local||{},V=(CFG.trafficMap&&CFG.trafficMap.views)||[];
   if(!locOn()){b.innerHTML='<div class="jf-title">Around '+esc(CFG.city)+'</div><div class="jf-wait">Key not set on this screen</div>';return}
   const cams=((LOC&&LOC.cams)||[]).slice(0,Lc.cams||3),rank={accidentsAndIncidents:0,closures:1,roadwork:2};
-  const evs=((LOC&&LOC.events)||[]).filter(affectsMe).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||(b.full-a.full)||a.dist-b.dist);
+  const evs=((LOC&&LOC.events)||[]).filter(affectsMe).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||(b.full-a.full)||a.dist-b.dist).slice(0,Lc.maxEvents||2);
   const mapOK=tmOn();
   const mapHTML=mapOK?`<div class="jf-glass gd-card lc-map"><h2>Live traffic</h2><div class="lc-mbig tm-map" id="lm0"><span class="tm-name">${esc((V[0]||{}).name||'Woodstock')}</span></div>
       <div class="lc-mrow">${V.slice(1,3).map((v,i)=>`<div class="tm-map" id="lm${i+1}"><span class="tm-name">${esc(v.name)}</span></div>`).join('')}</div>
       <div class="tm-leg"><span><i style="background:#3fd27a"></i>Moving</span><span><i style="background:#ffb000"></i>Slow</span><span><i style="background:#ff3b30"></i>Heavy</span><span><i style="background:#8e0e1a"></i>Stopped</span><em id="lmUpd">Updated ${fmt(new Date())}</em></div></div>`
     :`<div class="jf-glass gd-card lc-map off"><h2>Live traffic</h2><div class="cnote">${(CFG.trafficMap||{}).on===false?'Traffic map is turned off':'The traffic map rests overnight and comes back at '+(((CFG.trafficMap||{}).quietTo??6))+' AM'}</div></div>`;
-  const camHTML=cams.length?`<div class="lc-cams c${cams.length}">${cams.map(c=>`<div class="lc-cam"><img data-src="${esc(c.img)}" src="${esc(c.img)}" alt="" onerror="this.style.opacity=0"><span class="lc-lv">LIVE</span>
+  const camHTML=cams.length?`<div class="lc-cams c${cams.length} hero">${cams.map(c=>`<div class="lc-cam"><img data-src="${esc(c.img)}" src="${esc(c.img)}" alt="" onerror="this.style.opacity=0"><span class="lc-lv">LIVE</span>
       <div class="lc-cap">${esc(c.loc||c.road)}<small>${[c.dir,c.dist!=null?c.dist+' km':''].filter(Boolean).map(esc).join(' · ')}</small></div></div>`).join('')}</div>`
     :`<div class="cnote">${esc(locErr||'Loading cameras…')}</div>`;
   const evHTML=evs.length?evs.map(e=>{const k=evInfo(e),ago=e.reported?Math.round((Date.now()/1000-e.reported)/60):null;
@@ -3425,10 +3457,110 @@ function renderTMap(){
 setInterval(()=>{if($('pTMap').classList.contains('on')&&Date.now()-tmAt>300000)renderTMap()},30000);
 function tmSay(){const n=((typeof LOC!=='undefined'&&LOC&&LOC.events)||[]).filter(e=>/accident|incident|closure/i.test(e.type||'')).length;return 'Here\'s live traffic around Woodstock.'+(n?` There ${n===1?'is':'are'} ${n} incident${n===1?'':'s'} or closure${n===1?'':'s'} nearby.`:'')}
 
+/* ================= Plane radar: animated scope over a dark map, planes glide between updates ================= */
+const RD={planes:{},at:0,canvas:null,ctx:null,raf:0,scale:1,W:0,H:0,cx:0,cy:0,sweep:0,last:0};
+const rdOn=()=>!!(CFG.planes&&CFG.planes.on!==false&&CFG.relay&&SECRETS.calkey);
+const rdR=()=>(CFG.planes&&CFG.planes.radiusKm)||40;
+async function loadRadar(){
+  if(!rdOn())return;
+  try{const r=await tfetch(relayBase()+'/planes?'+locQ()+'&r='+rdR(),15000),d=await r.json();
+    if(d.error){plErr='Flight data unavailable';return}PL=d;plErr='';const now=Date.now(),seen=new Set();
+    (d.planes||[]).forEach(p=>{const id=p.cs||p.reg||(p.type+p.dist);seen.add(id);const a=p.brg*Math.PI/180,x=Math.sin(a)*p.dist,y=Math.cos(a)*p.dist;
+      const o=RD.planes[id];
+      if(o){const cur=rdPos(o,now);o.bx=cur[0];o.by=cur[1];o.blend=now}else RD.planes[id]={trail:[],born:now};
+      Object.assign(RD.planes[id],{p,x,y,t:now,id})});
+    Object.keys(RD.planes).forEach(k=>{if(!seen.has(k)){RD.planes[k].gone=RD.planes[k].gone||now;if(now-RD.planes[k].gone>8000)delete RD.planes[k]}else delete RD.planes[k].gone});
+    RD.at=now;if($('pRadar').classList.contains('on'))rdList()}
+  catch(e){plErr='Flight data unavailable';console.warn('radar',e)}
+}
+/* where a plane is now: last fix + speed along its track (dead reckoning), blended in smoothly after each update */
+function rdPos(o,now){const p=o.p,dt=Math.min(40,(now-o.t)/1000),v=(p.kt||0)*1.852/3600,h=(p.trk||0)*Math.PI/180;
+  let x=o.x+Math.sin(h)*v*dt,y=o.y+Math.cos(h)*v*dt;
+  if(o.blend&&now-o.blend<2500){const k=(now-o.blend)/2500,e=k*k*(3-2*k);x=o.bx+(x-o.bx)*e;y=o.by+(y-o.by)*e}return [x,y]}
+function rdAltCol(alt){if(alt==null)return '#9cc2ff';if(alt<10000)return '#ffd84a';if(alt<25000)return '#5ff0b0';return '#8fd3ff'}
+function renderRadar(){
+  const b=$('rdBody');
+  if(!rdOn()){b.innerHTML='<div class="jf-title">Planes overhead</div><div class="jf-wait">Key not set on this screen</div>';return}
+  b.innerHTML=`<div class="jf-title">Planes overhead</div><div class="rd-wrap"><div class="jf-glass rd-card"><div class="rd-stage" id="rdStage"><div class="rd-map" id="rdMap"></div><canvas id="rdCan"></canvas>
+      <div class="rd-hud tl"><b id="rdCount">–</b><span>aircraft within ${rdR()} km</span></div><div class="rd-hud tr"><span class="rd-dot"></span>LIVE ADS-B</div>
+      <div class="rd-key"><span><i style="background:#ffd84a"></i>&lt;10k ft</span><span><i style="background:#5ff0b0"></i>10–25k</span><span><i style="background:#8fd3ff"></i>25k+</span></div></div></div>
+    <div class="rd-list" id="rdList"></div></div>`;
+  requestAnimationFrame(()=>{rdMap();rdCanvas();rdList();cancelAnimationFrame(RD.raf);RD.raf=requestAnimationFrame(rdLoop)});
+}
+function rdMap(){
+  const st=$('rdStage'),el=$('rdMap');if(!st||!el)return;const W=st.clientWidth,H=st.clientHeight;RD.W=W;RD.H=H;RD.cx=W/2;RD.cy=H/2;
+  const R=rdR(),lat=CFG.lat,lon=CFG.lon,mpp0=156543.03*Math.cos(lat*Math.PI/180);
+  /* the outer ring fills ~92% of the shorter side; the map is drawn at the nearest zoom below and scaled up to match */
+  const k=(Math.min(W,H)/2*.92)/R,z=Math.max(4,Math.min(14,Math.floor(Math.log2(k*mpp0/1000)))),kz=1000/(mpp0/2**z),f=k/kz;RD.scale=k;
+  const wp=(lo,la)=>{const n=256*2**z,s=Math.sin(la*Math.PI/180);return [(lo+180)/360*n,(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n]};
+  const Wz=W/f,Hz=H/f,[cx,cy]=wp(lon,lat),ox=cx-Wz/2,oy=cy-Hz/2;let h='',r='';
+  el.style.width=Wz+'px';el.style.height=Hz+'px';el.style.transform=`scale(${f})`;el.style.transformOrigin='0 0';el.style.right='auto';el.style.bottom='auto';
+  for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+Wz)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+Hz)/256);ty++){
+    const s=`left:${(tx*256-ox).toFixed(1)}px;top:${(ty*256-oy).toFixed(1)}px`;
+    h+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${ty}/${tx}" style="${s}" alt="" onerror="this.remove()">`;
+    r+=`<img class="ref" src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/${z}/${ty}/${tx}" style="${s}" alt="" onerror="this.remove()">`}
+  el.innerHTML=h+r;
+}
+function rdCanvas(){const c=$('rdCan'),st=$('rdStage');if(!c||!st)return;const d=devicePixelRatio||1;c.width=st.clientWidth*d;c.height=st.clientHeight*d;RD.canvas=c;RD.ctx=c.getContext('2d');RD.ctx.setTransform(d,0,0,d,0,0)}
+function rdLoop(t){
+  if(!$('pRadar').classList.contains('on')||!RD.ctx){RD.raf=0;return}RD.raf=requestAnimationFrame(rdLoop);
+  if(t-RD.last<33)return;const dt=RD.last?(t-RD.last)/1000:0;RD.last=t;
+  const c=RD.ctx,W=RD.W,H=RD.H,cx=RD.cx,cy=RD.cy,k=RD.scale,R=rdR(),now=Date.now(),rr=R*k;
+  c.clearRect(0,0,W,H);
+  /* tint outside the scope, scope glow */
+  c.save();c.fillStyle='rgba(2,10,14,.55)';c.beginPath();c.rect(0,0,W,H);c.arc(cx,cy,rr,0,Math.PI*2,true);c.fill();c.restore();
+  const g=c.createRadialGradient(cx,cy,rr*.2,cx,cy,rr);g.addColorStop(0,'rgba(40,255,170,0)');g.addColorStop(1,'rgba(40,255,170,.07)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,rr,0,Math.PI*2);c.fill();
+  /* rings + labels */
+  c.strokeStyle='rgba(80,255,180,.28)';c.lineWidth=1;c.font='600 13px -apple-system,Helvetica,Arial';c.fillStyle='rgba(120,255,200,.6)';c.textAlign='left';
+  const step=R<=30?10:R<=60?10:25;for(let d=step;d<=R+.1;d+=step){c.beginPath();c.arc(cx,cy,d*k,0,Math.PI*2);c.stroke();c.fillText(d+' km',cx+4,cy-d*k+14)}
+  c.beginPath();c.moveTo(cx-rr,cy);c.lineTo(cx+rr,cy);c.moveTo(cx,cy-rr);c.lineTo(cx,cy+rr);c.strokeStyle='rgba(80,255,180,.14)';c.stroke();
+  c.fillStyle='rgba(150,255,210,.85)';c.font='700 16px -apple-system,Helvetica,Arial';c.textAlign='center';
+  [['N',0,-1],['E',1,0],['S',0,1],['W',-1,0]].forEach(([l,x,y])=>c.fillText(l,cx+x*(rr+14),cy+y*(rr+14)+5));
+  /* sweep */
+  RD.sweep=(RD.sweep+dt*(Math.PI*2/4.5))%(Math.PI*2);const sw=RD.sweep-Math.PI/2;
+  c.save();c.beginPath();c.moveTo(cx,cy);c.arc(cx,cy,rr,sw-.7,sw);c.closePath();
+  const sg=c.createConicGradient?c.createConicGradient(sw-.7,cx,cy):null;
+  if(sg){sg.addColorStop(0,'rgba(40,255,170,0)');sg.addColorStop(.11,'rgba(40,255,170,.22)');sg.addColorStop(.111,'rgba(40,255,170,0)');c.fillStyle=sg}else c.fillStyle='rgba(40,255,170,.12)';
+  c.fill();c.strokeStyle='rgba(120,255,200,.75)';c.lineWidth=2;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(sw)*rr,cy+Math.sin(sw)*rr);c.stroke();c.restore();
+  /* home */
+  c.fillStyle='#6ea8ff';c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(cx,cy,6,0,Math.PI*2);c.fill();c.stroke();
+  c.fillStyle='rgba(255,255,255,.9)';c.font='700 15px -apple-system,Helvetica,Arial';c.fillText(CFG.city||'Home',cx,cy+24);
+  /* planes */
+  let n=0;
+  Object.values(RD.planes).forEach(o=>{const [x,y]=rdPos(o,now),px=cx+x*k,py=cy-y*k,dk=Math.hypot(x,y);if(dk>R*1.05)return;n++;
+    if(!o.lastTrail||now-o.lastTrail>1500){o.trail.push([x,y]);o.lastTrail=now;if(o.trail.length>14)o.trail.shift()}
+    const col=rdAltCol(o.p.alt),fade=o.gone?Math.max(0,1-(now-o.gone)/8000):Math.min(1,(now-o.born)/1200);
+    /* glow when the sweep passes */
+    let ang=Math.atan2(px-cx,-(py-cy));if(ang<0)ang+=Math.PI*2;let since=(RD.sweep-ang+Math.PI*2)%(Math.PI*2);const hit=since<1?1-since:0;
+    c.save();c.globalAlpha=fade;
+    if(o.trail.length>1){c.beginPath();o.trail.forEach(([tx,ty],i)=>{const X=cx+tx*k,Y=cy-ty*k;i?c.lineTo(X,Y):c.moveTo(X,Y)});c.lineTo(px,py);
+      const lg=c.createLinearGradient(cx+o.trail[0][0]*k,cy-o.trail[0][1]*k,px,py);lg.addColorStop(0,'rgba(255,255,255,0)');lg.addColorStop(1,col);c.strokeStyle=lg;c.lineWidth=2;c.stroke()}
+    c.translate(px,py);c.shadowColor=col;c.shadowBlur=10+hit*24;c.rotate((o.p.trk||0)*Math.PI/180);c.fillStyle=col;
+    const s=1.35+hit*.35;c.scale(s,s);c.beginPath();
+    c.moveTo(0,-11);c.lineTo(2,-4);c.lineTo(10,1);c.lineTo(10,3);c.lineTo(2,1);c.lineTo(1.5,7);c.lineTo(4,9);c.lineTo(4,10.5);c.lineTo(0,9.5);c.lineTo(-4,10.5);c.lineTo(-4,9);c.lineTo(-1.5,7);c.lineTo(-2,1);c.lineTo(-10,3);c.lineTo(-10,1);c.lineTo(-2,-4);c.closePath();c.fill();
+    c.restore();
+    c.save();c.globalAlpha=fade*(.75+hit*.25);c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=4;
+    c.fillText(o.p.cs||o.p.reg||'',px+15,py-4);c.font='600 13px -apple-system,Helvetica,Arial';c.fillStyle=col;
+    c.fillText([o.p.alt!=null?Math.round(o.p.alt/100)*100>=18000?'FL'+Math.round(o.p.alt/100):Number(o.p.alt).toLocaleString()+' ft':'',o.p.to&&o.p.to.code?'→ '+o.p.to.code:''].filter(Boolean).join(' '),px+15,py+13);c.restore()});
+  const cn=$('rdCount');if(cn&&cn.textContent!==String(n))cn.textContent=n;
+}
+function rdList(){
+  const el=$('rdList');if(!el)return;const P=((PL&&PL.planes)||[]).slice(0,(CFG.planes&&CFG.planes.cards)||4);
+  if(!P.length){el.innerHTML=`<div class="jf-glass gd-card"><div class="cnote">${esc(plErr||'Scanning the skies…')}</div></div>`;return}
+  el.innerHTML=P.map(p=>{const air=/^[A-Z]{3}\d/.test(p.cs),col=rdAltCol(p.alt),vs=p.vs>500?'↑ climbing':p.vs<-500?'↓ descending':'';
+    return `<div class="jf-glass rd-f"><i style="background:${col};box-shadow:0 0 12px ${col}"></i><div class="rd-fm"><b>${esc(p.cs||p.reg||'Unknown')}</b><span>${esc([p.airline,p.type].filter(Boolean).join(' · ')||(air?'':'Private flight'))}</span></div>
+      <div class="rd-rt">${p.from&&p.to?`<b>${esc(p.from.code)} → ${esc(p.to.code)}</b><span>${esc(p.from.city||'')} to ${esc(p.to.city||'')}</span>`:`<b>${air?'Route unknown':'Local flight'}</b><span>&nbsp;</span>`}</div>
+      <div class="rd-nm"><b>${p.alt!=null?Number(p.alt).toLocaleString()+' ft':'–'}</b><span>${[p.kt!=null?p.kt+' kt':'',p.dist+' km',vs].filter(Boolean).join(' · ')}</span></div></div>`}).join('');
+}
+setInterval(()=>{if($('pRadar').classList.contains('on'))loadRadar()},15000);
+addEventListener('resize',()=>{if($('pRadar').classList.contains('on'))renderRadar()});
+function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes on the radar right now.';const p=P[0];
+  return `${P.length} plane${P.length===1?'':'s'} within ${rdR()} kilometres. The closest is ${p.airline?p.airline+' ':''}${p.cs||'a private plane'}${p.to&&p.to.city?' heading to '+p.to.city:''}, at ${Number(p.alt||0).toLocaleString()} feet.`}
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 46';
+document.getElementById('ver').textContent='build nova 47';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
