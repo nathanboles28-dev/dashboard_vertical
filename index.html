@@ -961,6 +961,14 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .hb2-nw:last-child{border:0}.hb2-nw .th{aspect-ratio:16/10;border-radius:calc(1*var(--u));overflow:hidden;background:rgba(255,255,255,.08)}.hb2-nw .th img{width:100%;height:100%;object-fit:cover}
 .hb2-nw b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:calc(2.4*var(--u));font-weight:600;line-height:1.25}
 .hb2-nw small{display:block;font-size:calc(1.8*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
+
+.kh-ld.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kh-ld small{display:block;font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.12em;color:var(--dim)}
+.kh-ld b.kh-n{display:block;font-size:calc(5*var(--u));font-weight:300;line-height:1.1;color:var(--ink)}
+.kh-ld>div>span{display:block;font-size:calc(2.2*var(--u))!important;font-weight:600!important;color:#9be8b6!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kh-gk{display:flex;align-items:center;gap:calc(1.4*var(--u));margin-top:calc(1.4*var(--u));padding:calc(1*var(--u)) calc(1.4*var(--u));border-radius:calc(1.4*var(--u));background:rgba(255,206,84,.1)}
+.kh-gk .kh-ph.sm{width:calc(6*var(--u));height:calc(6*var(--u));margin:0}
+.kh-gk small{font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.12em;color:#ffe08a}.kh-gk b{font-size:calc(2.5*var(--u))}.kh-gk span{margin-left:auto;color:var(--dim);font-size:calc(2.1*var(--u))}
 </style>
 </head>
 <body>
@@ -1133,7 +1141,8 @@ const CFG={
   // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
   cams:{on:true, list:[
     {name:'Niagara Falls', sub:'Horseshoe Falls from the Fallsview District', youtube:'UC15QFO-cdISk-4Sn5CPd78g'},
-    {name:'Toronto · CN Tower', sub:'EarthCam', iframe:'https://www.earthcam.com/cams/includes/twittercards/container.php?name=9299.flv&timezone=America/New_York&metar=CYYZ'}
+    {name:'Toronto · CN Tower', sub:'CN Tower & Lake Ontario · TorontoLive4k', youtube:'UC28IT4ghbKO988OzkIfRCbw'},
+    {name:'Downtown Toronto', sub:'Gardiner Expressway traffic cam nearest the CN Tower', near:[43.6426,-79.3871]}   // near = closest Ontario 511 camera to these coordinates
   ]},
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
@@ -3005,8 +3014,18 @@ const kT=()=>Object.values(sched).find(T=>T.L.type==='hockeytech'&&T.ab===khTeam
 function kToday(){const T=kT();if(!T)return null;const t=new Date().toDateString();return T.games.find(g=>g.date.toDateString()===t)||null}
 function kLive(){let x=null;lastRes.forEach(r=>{if(r.L.type!=='hockeytech')return;r.games.forEach(g=>{if((g.A===khTeam()||g.H===khTeam())&&g.date.toDateString()===new Date().toDateString())x={L:r.L,g}})});return x}
 const khOn=()=>!!(CFG.khub&&CFG.khub.on!==false&&kToday()&&!kToday().done);
+let KL=null;
+async function loadKLeaders(T){
+  for(const key of T.L.keys){try{
+    const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=players&season=${T.L.seasonId}&team=${T.tid}&position=skaters&rookies=0&statsType=standard&rosterstatus=undefined&site_id=2&first=0&limit=60&sort=points&league_id=1&lang=en&division=-1&key=${key}&client_code=${T.L.code}`,12000);
+    const rows=((((j||[])[0]||{}).sections||[])[0]||{}).data||[];
+    const ps=rows.map(x=>{const r=x.row||{},n=v=>+(v==null||v===''?0:v)||0;return {name:String(r.name||''),pts:n(r.points),g:n(r.goals),a:n(r.assists),pim:n(r.penalty_minutes!=null?r.penalty_minutes:r.pim!=null?r.pim:r.penalties_in_minutes),gp:n(r.games_played),
+      img:r.player_id?`https://assets.leaguestat.com/${T.L.code}/120x160/${r.player_id}.jpg`:''}}).filter(p=>p.name);
+    if(ps.length){const top=k=>ps.slice().sort((x,y)=>y[k]-x[k]||y.pts-x.pts)[0];KL={pts:top('pts'),g:top('g'),a:top('a'),pim:top('pim')};break}}catch(e){}}
+}
 async function loadKGoalie(){
   const T=kT();if(!T||!T.tid||!T.L.seasonId||Date.now()-kgAt<3*3600e3)return;kgAt=Date.now();
+  await loadKLeaders(T);
   for(const key of T.L.keys){try{
     const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=players&season=${T.L.seasonId}&team=${T.tid}&position=goalies&rookies=0&statsType=standard&rosterstatus=undefined&site_id=2&first=0&limit=3&sort=gaa&league_id=1&lang=en&division=-1&key=${key}&client_code=${T.L.code}&qualified=all`,12000);
     const rows=((((j||[])[0]||{}).sections||[])[0]||{}).data||[];
@@ -3031,10 +3050,13 @@ function renderKHub(){
   const done=T.games.filter(x=>x.done).slice(-5);
   const form=done.length?`<div class="jf-glass gd-card"><h2>Last ${done.length} games</h2><div class="kh-form">${done.map(x=>`<div class="${x.win?'w':'l'}"><b>${x.win?'W':'L'}</b><span>${esc(x.us)}–${esc(x.them)}</span><em>${x.home?'vs':'at'} ${esc(x.opp)}</em></div>`).join('')}</div>
       ${(()=>{const m=T.games.filter(x=>x.done&&x.opp===opp).pop();return m?`<div class="kh-lm">Last meeting with the ${esc(opp)}: <b class="${m.win?'w':'l'}">${m.win?'W':'L'} ${esc(m.us)}–${esc(m.them)}</b> · ${m.date.toLocaleDateString([],{month:'short',day:'numeric'})}</div>`:''})()}</div>`:'';
-  /* leaders */
-  const Ld=leaders[L_key(T)]||[];
-  const lead=Ld.length||KG?`<div class="jf-glass gd-card"><h2>Knights leaders</h2><div class="kh-ld">${Ld.map(p=>`<div><div class="kh-ph"><img src="${esc(p.img)}" alt="" onerror="this.remove()"></div><b>${esc(p.last)}</b><span>${esc(p.pts)} PTS</span><em>${esc(p.g)}G · ${esc(p.a)}A</em></div>`).join('')}
-      ${KG?`<div class="gk"><div class="kh-ph"><img src="${esc(KG.img)}" alt="" onerror="this.remove()"></div><b>${esc(String(KG.name).split(' ').slice(-1)[0])}</b><span>${KG.sv?esc(String(KG.sv).replace(/^0/,''))+' SV%':'Goalie'}</span><em>${KG.gaa?esc(KG.gaa)+' GAA':''}${KG.w!=null?' · '+esc(KG.w)+'W':''}</em></div>`:''}</div></div>`:'';
+  /* category leaders: points, goals, assists, penalty minutes + starting goalie */
+  const Ld=leaders[L_key(T)]||[],last=n=>String(n||'').split(' ').slice(-1)[0];
+  const cats=KL?[['POINTS',KL.pts,'pts'],['GOALS',KL.g,'g'],['ASSISTS',KL.a,'a'],['PIM',KL.pim,'pim']]
+    :Ld.length?[['POINTS',Ld.slice().sort((a,b)=>b.pts-a.pts)[0],'pts'],['GOALS',Ld.slice().sort((a,b)=>b.g-a.g)[0],'g'],['ASSISTS',Ld.slice().sort((a,b)=>b.a-a.a)[0],'a']]:[];
+  const tile=([lab,p,k])=>p?`<div><div class="kh-ph"><img src="${esc(p.img)}" alt="" onerror="this.remove()"></div><small>${lab}</small><b class="kh-n">${esc(p[k])}</b><span>${esc(last(p.name||p.last))}</span></div>`:'';
+  const lead=cats.length||KG?`<div class="jf-glass gd-card"><h2>Knights leaders</h2>${cats.length?`<div class="kh-ld c${cats.length}">${cats.map(tile).join('')}</div>`:''}
+      ${KG?`<div class="kh-gk"><div class="kh-ph sm"><img src="${esc(KG.img)}" alt="" onerror="this.remove()"></div><small>GOALIE</small><b>${esc(KG.name)}</b><span>${[KG.sv?String(KG.sv).replace(/^0/,'')+' SV%':'',KG.gaa?KG.gaa+' GAA':'',KG.w!=null?KG.w+'-'+(KG.l||0):''].filter(Boolean).map(esc).join(' · ')}</span></div>`:''}</div>`:'';
   /* western conference table, Knights + opponent highlighted */
   const tbl=stOHL.length?`<div class="jf-glass gd-card"><h2>Western Conference</h2><div class="kh-st">${stOHL.slice(0,10).map((r,i)=>`<div class="${r.c===T.ab?'me':r.c===oppCode?'op':''}"><i>${i+1}</i><b>${esc(nick(r.name||r.c))}</b><span>${esc(r.gp)} GP</span><em>${esc(r.pts)}</em></div>`).join('')}</div></div>`:'';
   const nx=T.games.filter(x=>!x.done&&x.date>Date.now()&&x.date.toDateString()!==new Date().toDateString()).slice(0,3);
@@ -3297,19 +3319,27 @@ function renderSat(){
 
 /* ================= Live cams ================= */
 const camsList=()=>(CFG.cams&&CFG.cams.list)||[];
+/* 511 cameras near a spot: ask the relay for the closest one, refresh the picture every minute */
+const cam511={};
+async function fill511(){document.querySelectorAll('#camBody .cam-511').forEach(async im=>{const k=im.dataset.near;
+  try{if(!cam511[k]||Date.now()-cam511[k].at>3600e3){const [la,lo]=k.split(',');const r=await tfetch(relayBase()+`/local?key=${encodeURIComponent(SECRETS.calkey)}&lat=${la}&lon=${lo}&r=10&cams=1`,15000),d=await r.json();
+      if(d.cams&&d.cams[0])cam511[k]={url:d.cams[0].img,loc:d.cams[0].loc,at:Date.now()}}
+    const c=cam511[k];if(c){im.src=c.url+(c.url.includes('?')?'&':'?')+'t='+Math.floor(Date.now()/60000);const cap=im.closest('.cam-card').querySelector('.cam-cap>span:last-child');if(cap&&c.loc)cap.textContent=c.loc}}catch(e){}})}
+setInterval(()=>{if($('pCams').classList.contains('on'))fill511()},60000);
 function renderCams(on){
   const b=$('camBody');
   if(!on){b.querySelectorAll('iframe').forEach(f=>f.src='about:blank');return}
   const L=camsList();
   b.innerHTML=`<div class="jf-title">Live cams</div><div class="cam-wrap">${L.map(c=>{const src=c.youtube?`https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(c.youtube)}&autoplay=1&mute=1&controls=0&playsinline=1&modestbranding=1&rel=0`:c.iframe||'';
-    return `<div class="jf-glass cam-card"><div class="cam-frame">${src?`<iframe src="${esc(src)}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" loading="eager"></iframe>`:c.image?`<img src="${esc(c.image)}" alt="">`:''}</div>
+    return `<div class="jf-glass cam-card"><div class="cam-frame">${src?`<iframe src="${esc(src)}" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" loading="eager"></iframe>`:c.image?`<img src="${esc(c.image)}" alt="">`:c.near?`<img class="cam-511" data-near="${esc(c.near.join(','))}" alt="">`:''}</div>
       <div class="cam-cap"><span class="sat-live">● LIVE</span><b>${esc(c.name)}</b>${c.sub?`<span>${esc(c.sub)}</span>`:''}</div></div>`}).join('')}</div>`;
+  fill511();
 }
 
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 38';
+document.getElementById('ver').textContent='build nova 40';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
