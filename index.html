@@ -766,12 +766,102 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 .mn-lines div{font-size:calc(3*var(--u));padding:calc(1.4*var(--u)) calc(2.4*var(--u));border-radius:calc(2.4*var(--u));background:rgba(10,25,55,.35);border:1px solid rgba(255,255,255,.25);
  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);opacity:0;transform:translateY(2vh);animation:mnUp 1s ease forwards}
 @keyframes mnUp{to{opacity:1;transform:none}}
+/* ===== Knights hub ===== */
+#pKHub{--acc:#3fbf6f;--ico:'🏒'}#pRecap{--acc:#ffd84a;--ico:'🔁'}#pWeek{--acc:#7fb0ff;--ico:'🗓️'}
+.kh-hero{text-align:center;padding:calc(2.8*var(--u)) calc(2.6*var(--u));background:linear-gradient(160deg,rgba(63,191,111,.22),rgba(255,206,84,.08))!important}
+.kh-k{font-size:calc(2.4*var(--u));font-weight:800;letter-spacing:.3em;color:#9be8b6;display:flex;justify-content:center;align-items:center;gap:calc(1*var(--u))}
+.kh-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:calc(2*var(--u))}
+.kh-tm{display:flex;flex-direction:column;align-items:center;gap:calc(.8*var(--u));min-width:0}.kh-tm .logo{width:calc(14*var(--u))!important;height:calc(14*var(--u))!important}
+.kh-tm b{font-size:calc(4.2*var(--u));font-weight:700}.kh-tm span{font-size:calc(2.2*var(--u));color:var(--dim)}
+.kh-at{font-size:calc(4*var(--u));color:var(--dim);font-weight:300;padding:0 calc(2*var(--u))}
+.kh-sc{font-size:calc(10*var(--u));font-weight:300;font-variant-numeric:tabular-nums}.kh-sc em{font-style:normal;color:var(--dim);margin:0 calc(1.4*var(--u))}
+.kh-cl{font-size:calc(2.6*var(--u));color:#ff8da2;font-weight:700}
+.kh-cd{font-size:calc(10*var(--u));font-weight:200;line-height:1;margin-top:calc(2*var(--u));font-variant-numeric:tabular-nums}
+.kh-sub{font-size:calc(2.6*var(--u));color:var(--dim);margin-top:calc(1*var(--u))}.kh-sub b{color:var(--ink)}
+.kh-form{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(1*var(--u))}
+.kh-form>div{text-align:center;padding:calc(1.2*var(--u)) 0;border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.06)}
+.kh-form b{display:block;font-size:calc(3*var(--u));font-weight:800}.kh-form .w b{color:#8ff0b0}.kh-form .l b{color:#ff9aa8}
+.kh-form span{display:block;font-size:calc(2.2*var(--u));font-weight:600}.kh-form em{display:block;font-style:normal;font-size:calc(1.7*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kh-lm{font-size:calc(2.2*var(--u));color:var(--dim);margin-top:calc(1.4*var(--u))}.kh-lm b.w{color:#8ff0b0}.kh-lm b.l{color:#ff9aa8}
+.kh-ld{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:calc(1.2*var(--u))}
+.kh-ld>div{text-align:center;padding:calc(1.2*var(--u)) calc(.4*var(--u));border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.06);min-width:0}
+.kh-ld>div.gk{background:rgba(255,206,84,.1)}
+.kh-ph{width:calc(9*var(--u));height:calc(9*var(--u));border-radius:50%;overflow:hidden;margin:0 auto calc(.8*var(--u));background:rgba(255,255,255,.12)}
+.kh-ph img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.kh-ld b{display:block;font-size:calc(2.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kh-ld span{display:block;font-size:calc(2.1*var(--u));font-weight:700;color:#9be8b6}.kh-ld em{display:block;font-style:normal;font-size:calc(1.8*var(--u));color:var(--dim)}
+.kh-st>div{display:grid;grid-template-columns:calc(4*var(--u)) 1fr auto calc(7*var(--u));align-items:center;gap:calc(1.2*var(--u));padding:calc(.6*var(--u)) calc(1*var(--u));border-radius:calc(1*var(--u));font-size:calc(2.3*var(--u))}
+.kh-st i{font-style:normal;color:var(--dim);font-weight:700}.kh-st span{color:var(--dim);font-size:calc(2*var(--u))}.kh-st em{font-style:normal;font-weight:700;text-align:right}
+.kh-st .me{background:rgba(63,191,111,.25);border:1px solid rgba(63,191,111,.6)}.kh-st .op{background:rgba(255,255,255,.1)}
+.kh-nx>div{display:flex;align-items:center;gap:calc(1.4*var(--u));padding:calc(.7*var(--u)) 0;font-size:calc(2.4*var(--u))}.kh-nx span{margin-left:auto;color:var(--dim);font-size:calc(2.1*var(--u))}
+/* ===== Recap ===== */
+.rc-hero{text-align:center;padding:calc(2.8*var(--u)) calc(2.6*var(--u))}
+.rc-hero.win{background:linear-gradient(160deg,rgba(95,216,138,.22),rgba(255,255,255,.05))!important}.rc-hero.loss{background:linear-gradient(160deg,rgba(255,110,120,.16),rgba(255,255,255,.05))!important}
+.rc-k{font-size:calc(2.3*var(--u));font-weight:800;letter-spacing:.28em;color:var(--dim)}
+.rc-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:calc(1.6*var(--u))}
+.rc-lg{width:calc(15*var(--u));height:calc(15*var(--u));object-fit:contain;justify-self:center;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:calc(3.6*var(--u))}
+i.rc-lg{border-radius:50%;background:rgba(255,255,255,.12)}
+.rc-sc{font-size:calc(13*var(--u));font-weight:200;line-height:1;font-variant-numeric:tabular-nums}.rc-sc b{font-weight:200;opacity:.6}.rc-sc b.w{font-weight:500;opacity:1}.rc-sc em{font-style:normal;color:var(--dim);margin:0 calc(1.6*var(--u))}
+.rc-res{font-size:calc(2.5*var(--u));color:var(--dim);margin-top:calc(1.4*var(--u))}.rc-res span{font-weight:800;letter-spacing:.08em}.rc-res span.w{color:#8ff0b0}.rc-res span.l{color:#ff9aa8}
+.rc-per{font-size:calc(1.9*var(--u));font-weight:800;letter-spacing:.14em;color:var(--dim);margin:calc(1*var(--u)) 0 calc(.4*var(--u));text-transform:uppercase}
+.rc-g{display:grid;grid-template-columns:calc(8*var(--u)) calc(7*var(--u)) 1fr auto;align-items:center;gap:calc(1.2*var(--u));padding:calc(.8*var(--u)) calc(1*var(--u));border-radius:calc(1.2*var(--u));font-size:calc(2.4*var(--u))}
+.rc-g.us{background:rgba(77,139,255,.14)}.rc-t{color:var(--dim);font-variant-numeric:tabular-nums;font-size:calc(2.1*var(--u))}.rc-team{font-weight:800;font-size:calc(2*var(--u))}
+.rc-g>div{min-width:0}.rc-g b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc-g b small{color:var(--dim);font-weight:500}
+.rc-g>div>small{display:block;font-size:calc(1.9*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-g em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}.rc-str{font-style:normal;font-size:calc(1.6*var(--u));font-weight:800;padding:0 calc(.8*var(--u));border-radius:calc(.8*var(--u));background:#ffd84a;color:#2a1f00}
+.rc-stars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(1.2*var(--u))}
+.rc-stars>div{text-align:center;padding:calc(1.2*var(--u)) calc(.4*var(--u));border-radius:calc(1.4*var(--u));background:rgba(255,255,255,.06);min-width:0}
+.rc-stars .gd-hs{width:calc(9*var(--u));height:calc(9*var(--u));margin:0 auto calc(.6*var(--u))}.rc-stars i{display:block;font-style:normal;color:#ffd84a;font-size:calc(1.9*var(--u))}
+.rc-stars b{display:block;font-size:calc(2.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rc-stars span{font-size:calc(1.8*var(--u));color:var(--dim)}
+.rc-pair{display:grid;grid-template-columns:1.25fr 1fr;gap:calc(2*var(--u))}.rc-pair.one{grid-template-columns:1fr}
+.rc-pair .rc-gk{grid-template-columns:1fr;align-content:center;gap:calc(1.6*var(--u))}.rc-pair.one .rc-gk{grid-template-columns:1fr 1fr}
+.rc-vid .hl-cap{font-size:calc(1.9*var(--u));font-weight:500;color:var(--dim)}
+.rc-gk{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u))}.rc-gk small{display:block;font-size:calc(1.7*var(--u));font-weight:800;letter-spacing:.1em;color:var(--dim)}
+.rc-gk b{display:block;font-size:calc(2.6*var(--u))}.rc-gk span{font-size:calc(2.1*var(--u));color:var(--dim)}
+.rc-next{text-align:center;font-size:calc(2.4*var(--u));color:var(--dim)}.rc-next b{color:var(--ink)}
+/* ===== Week ahead ===== */
+.wk-hd{padding:calc(2.4*var(--u)) calc(2.8*var(--u))}.wk-range{font-size:calc(5*var(--u));font-weight:300}
+.wk-chips{display:flex;gap:calc(1*var(--u));margin-top:calc(1*var(--u))}.wk-chips span{font-size:calc(2.2*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(3*var(--u));background:rgba(127,176,255,.2);border:1px solid rgba(127,176,255,.45)}
+.wk-wx{font-size:calc(2.3*var(--u));color:var(--dim);margin-top:calc(1*var(--u))}
+.wk-day{display:grid;grid-template-columns:calc(9*var(--u)) calc(14*var(--u)) 1fr;align-items:center;gap:calc(1.6*var(--u));padding:calc(1.4*var(--u)) calc(2*var(--u))!important}
+.wk-day.today{border-color:rgba(127,176,255,.7)!important}.wk-day.empty{opacity:.6}
+.wk-d{text-align:center}.wk-d b{display:block;font-size:calc(2.2*var(--u));font-weight:800;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}.wk-d span{display:block;font-size:calc(5*var(--u));font-weight:300;line-height:1}
+.wk-w .dwx{font-style:normal;font-size:calc(2.6*var(--u))}.wk-w .dwx i{font-style:normal;color:var(--dim)}
+.wk-its{display:flex;flex-direction:column;gap:calc(.6*var(--u));min-width:0}
+.wk-i{font-size:calc(2.25*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wk-i small{color:#9cc2ff;font-weight:600}
+.wk-i.gm{color:#cfe0ff}.wk-i.bd{color:#ffd1e0}.wk-i.hol{color:#ffe08a}.wk-free{font-size:calc(2.1*var(--u));color:var(--dim)}
+/* ===== Holiday themes ===== */
+#holfx{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+#holbg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 3s}
+body[data-hol="halloween"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(255,122,26,.32),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(123,47,191,.38),transparent 70%)}
+body[data-hol="christmas"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(220,40,60,.28),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(30,150,80,.3),transparent 70%)}
+body[data-hol="newyear"] #holbg{opacity:1;background:radial-gradient(60% 40% at 50% 0%,rgba(255,216,74,.22),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(140,90,255,.25),transparent 70%)}
+body[data-hol="valentines"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(255,92,138,.32),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(200,50,120,.28),transparent 70%)}
+body[data-hol="stpat"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(40,190,90,.32),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(255,206,84,.18),transparent 70%)}
+body[data-hol="easter"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(255,180,220,.26),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(160,220,255,.24),transparent 70%)}
+body[data-hol="canada"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(230,30,40,.35),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(255,255,255,.12),transparent 70%)}
+body[data-hol="thanksgiving"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(230,120,30,.3),transparent 70%),radial-gradient(70% 45% at 100% 100%,rgba(160,60,20,.3),transparent 70%)}
+body[data-hol="remembrance"] #holbg{opacity:1;background:radial-gradient(60% 40% at 0% 0%,rgba(200,20,30,.22),transparent 70%)}
+.chip-hol{display:inline-block;margin-top:calc(1*var(--u));margin-right:calc(1*var(--u));font-size:calc(2.4*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.6*var(--u));border-radius:calc(2*var(--u));background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
+body[data-hol="halloween"] .chip-hol{background:linear-gradient(90deg,rgba(255,122,26,.4),rgba(123,47,191,.4));border-color:rgba(255,160,80,.6)}
+body[data-hol="christmas"] .chip-hol{background:linear-gradient(90deg,rgba(220,40,60,.4),rgba(30,150,80,.4));border-color:rgba(255,255,255,.4)}
+body[data-hol="canada"] .chip-hol,body[data-hol="remembrance"] .chip-hol{background:rgba(220,30,40,.4);border-color:rgba(255,120,120,.6)}
+body[data-hol="halloween"] #clock,body[data-hol="halloween"] .jf-title{text-shadow:0 0 calc(3*var(--u)) rgba(255,122,26,.55)}
+body[data-hol="christmas"] #clock{text-shadow:0 0 calc(3*var(--u)) rgba(255,80,80,.45)}
+.xlights{position:fixed;left:0;right:0;top:-6px;height:44px;z-index:4;pointer-events:none;display:none;justify-content:space-around}
+body[data-hol="christmas"] .xlights{display:flex}
+.xlights::before{content:"";position:absolute;left:0;right:0;top:10px;height:14px;border-bottom:2px solid rgba(40,60,40,.9);border-radius:0 0 50% 50%/0 0 100% 100%}
+.xlights i{position:relative;top:16px;width:10px;height:16px;border-radius:50% 50% 50% 50%/40% 40% 60% 60%;animation:xl 1.6s ease-in-out infinite alternate}
+.xlights i:nth-child(4n+1){background:#ff4d5e;box-shadow:0 4px 14px #ff4d5e;animation-delay:.2s}.xlights i:nth-child(4n+2){background:#ffd84a;box-shadow:0 4px 14px #ffd84a;animation-delay:.6s}
+.xlights i:nth-child(4n+3){background:#4dd17a;box-shadow:0 4px 14px #4dd17a;animation-delay:1s}.xlights i:nth-child(4n){background:#5aa0ff;box-shadow:0 4px 14px #5aa0ff;animation-delay:1.3s}
+@keyframes xl{from{opacity:.35;filter:brightness(.6)}to{opacity:1;filter:brightness(1.2)}}
+#lwf{position:fixed;inset:0;z-index:22;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(5,5,8,.94);color:#fff;text-align:center}
+#lwf.on{display:flex;animation:bdIn 2s ease both}#lwf .p{font-size:calc(16*var(--u))}#lwf b{font-size:calc(7*var(--u));font-weight:300;margin-top:calc(2*var(--u))}#lwf span{font-size:calc(2.8*var(--u));color:rgba(255,255,255,.65);margin-top:calc(1.4*var(--u))}
 </style>
 </head>
 <body>
-<div id="bg"><b class="l1"></b><b class="l2"></b><b class="l3"></b><b class="l4"></b><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div><canvas id="wxfx"></canvas>
+<div id="bg"><b class="l1"></b><b class="l2"></b><b class="l3"></b><b class="l4"></b><i></i><i></i></div><div class="aurora"><i></i><i></i><i></i></div><canvas id="wxfx"></canvas><div id="holbg"></div><canvas id="holfx"></canvas><div class="xlights"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <main id="shift" class="page on">
- <section id="clock" class="card"><div id="time"></div><div id="date"></div><div id="bdayChip" class="chip-bday" style="display:none"></div></section>
+ <section id="clock" class="card"><div id="time"></div><div id="date"></div><div id="holChip" class="chip-hol" style="display:none"></div><div id="bdayChip" class="chip-bday" style="display:none"></div></section>
  <section id="wx" class="card"><div id="wxicon">⛅</div><div><div id="temp">--°</div><div id="wxdesc">Loading…</div><div id="wxsub"></div><div id="snowChip" class="chip-snow" style="display:none"></div></div><div class="map" id="radar"></div></section>
  <section id="fc" class="card"><h2>Next 5 days</h2><div class="days"></div></section>
  <section id="sun" class="card"><h2>Sun and moon</h2>
@@ -795,6 +885,9 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 </section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">News</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
+<section id="pRecap" class="page"><div id="rcBody"></div></section>
+<section id="pKHub" class="page"><div id="khBody"></div></section>
+<section id="pWeek" class="page"><div id="wkBody"></div></section>
 <section id="pWS" class="page"><div id="wsBody"></div></section>
 <section id="pHub" class="page"><div id="hubBody"></div></section>
 <section id="pWrap" class="page"><div id="wrBody"></div></section>
@@ -803,7 +896,7 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
-<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div><div id="night"></div><div id="morning"></div>
+<div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="dimmer"></div><div id="bday"></div><div id="night"></div><div id="morning"></div><div id="lwf"><div class="p">🌺</div><b>Lest we forget</b><span>Two minutes of silence · Remembrance Day</span></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
 /* ===== SETTINGS: edit these ===== */
@@ -834,11 +927,14 @@ const CFG={
     {type:'dashboard', secs:30},
     {type:'forecast',  secs:20},
     {type:'coming',    secs:25},
+    {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
     {type:'news',      secs:20},
     // sports (game day / live / World Series only show when they're on)
+    {type:'recap',     secs:40},   // morning after a Leafs/Knights game, until noon
     {type:'ws',        secs:30},
     {type:'gameday',   secs:40},
+    {type:'khub',      secs:40},   // Knights game days
     {type:'live',      secs:60},
     {type:'games',     secs:20},
     {type:'hub',       secs:40},
@@ -898,6 +994,14 @@ const CFG={
   hub:{on:true, team:'TOR'},
   // World Series page: shows while the Series is on (keepHours after it ends). liveSecs = time on the page during a game
   ws:{on:true, liveSecs:60, keepHours:30},
+  // Knights hub: shows on Knights game days until the game ends
+  khub:{on:true, team:'LDN'},
+  // Morning-after recap: shows from 6 AM until untilHour the day after a Leafs or Knights game
+  recap:{on:true, untilHour:12},
+  // Week ahead: Sunday from fromHour until Monday 10 AM
+  week:{on:true, fromHour:15},
+  // Holiday themes switch on by themselves. To preview one, open the dashboard with ?holiday=halloween (or christmas, newyear, valentines, stpat, easter, canada, thanksgiving, remembrance)
+  holidays:{on:true},
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
   // Snow alert chip on the main page when at least alertCm is expected in the next 24 hours
@@ -1366,10 +1470,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1397,6 +1501,9 @@ function nextPage(force,hold){
   if(p.type==='local'){renderLocal();loadLocal();loadPlanes()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   if(p.type==='ws'){renderWS();loadWS()}
+  if(p.type==='recap'){if(!force)rcPick++;renderRecap()}
+  if(p.type==='khub'){renderKHub();loadKGoalie()}
+  if(p.type==='week')renderWeek();
   if(p.type==='hub'){renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
   pauseVideos();
@@ -1729,10 +1836,10 @@ async function loadSchedules(){
               done:!!st.completed,us:sc(us),them:sc(them),win:us.winner,tag:(st.shortDetail||'').replace(/^Final\/?/,'')}}).filter(Boolean);
           sched[key]={L,ab,name:nick(name||T.displayName||ab),logo,rec:T.recordSummary||'',stand:T.standingSummary||'',games};
         }else{
-          const gs=await hockeytechGames(L,21,true,14),games=[];let name='',logo='',rec='',tid='';
+          const gs=await hockeytechGames(L,21,true,30),games=[];let name='',logo='',rec='',tid='';
           gs.filter(g=>g.A===ab||g.H===ab).sort((a,b)=>a.date-b.date).forEach(g=>{const home=g.H===ab;
             name=home?g.fH:g.fA;logo=home?g.lH:g.lA;tid=tid||(home?g.idH:g.idA);if(g.state==='post'||!rec)rec=home?g.recH:g.recA;
-            games.push({date:g.date,home,opp:nick(home?g.fA:g.fH),oppLogo:home?g.lA:g.lH,done:g.state==='post',us:home?g.sH:g.sA,them:home?g.sA:g.sH,win:g.state==='post'?(+(home?g.sH:g.sA)>+(home?g.sA:g.sH)):undefined,tag:''})});
+            games.push({id:g.id,date:g.date,home,opp:nick(home?g.fA:g.fH),oppLogo:home?g.lA:g.lH,done:g.state==='post',us:home?g.sH:g.sA,them:home?g.sA:g.sH,win:g.state==='post'?(+(home?g.sH:g.sA)>+(home?g.sA:g.sH)):undefined,tag:''})});
           const i=stOHL.findIndex(r=>r.c===ab);
           sched[key]={L,ab,tid,name:nick(name||ab),logo,rec,stand:i>=0?`${i+1}${['st','nd','rd'][i]||'th'} in Western Conference`:'',games};
         }
@@ -1948,6 +2055,9 @@ function handleCommand(raw){
   const has=re=>re.test(t);
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(recap|last night|how did (the )?(leafs|knights) do)\b/)){rcDemand=Date.now()+3600e3;if(recapOn())showFor('recap');return reply(recapSay())}
+  if(has(/\b(week ahead|this week|the week|weekly)\b/)){window._wkDemand=Date.now()+1800e3;showFor('week');return reply(weekSay())}
+  if(has(/\bknights\b/)&&khOn()){showFor('khub');return reply(khSay())}
   if(has(/\b(world series|series|brewers|rays|fall classic)\b/)){if(wsShow())showFor('ws');return reply(wsSay())}
   if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
   if(has(/\b(hub|highlights?|injur(y|ies|ed)|roster|trades?|channel|what channel)\b/)){showFor('hub');return reply(hubSay())}
@@ -2743,10 +2853,219 @@ function morningAtScreenOn(){clearTimeout(mornT);const n=new Date(),ms=(60-n.get
 setInterval(()=>{const M=CFG.morning||{};if(M.on===false)return;const n=new Date(),[h,m]=String(M.time||'07:00').split(':').map(Number);
   if(n.getHours()===h&&n.getMinutes()===m&&n.getSeconds()>=4&&Date.now()-mornAt>600000){let k='nova-morning-'+n.toDateString(),done=false;try{done=localStorage.getItem(k)==='1';localStorage.setItem(k,'1')}catch(e){}if(!done){wakeScreen();playMorning()}}},1000);
 
+/* ================= Knights hub (shows on Knights game days) ================= */
+let KG=null,kgAt=0,khSig='';
+const khTeam=()=>((CFG.khub&&CFG.khub.team)||'LDN').toUpperCase();
+const kT=()=>Object.values(sched).find(T=>T.L.type==='hockeytech'&&T.ab===khTeam())||null;
+function kToday(){const T=kT();if(!T)return null;const t=new Date().toDateString();return T.games.find(g=>g.date.toDateString()===t)||null}
+function kLive(){let x=null;lastRes.forEach(r=>{if(r.L.type!=='hockeytech')return;r.games.forEach(g=>{if((g.A===khTeam()||g.H===khTeam())&&g.date.toDateString()===new Date().toDateString())x={L:r.L,g}})});return x}
+const khOn=()=>!!(CFG.khub&&CFG.khub.on!==false&&kToday()&&!kToday().done);
+async function loadKGoalie(){
+  const T=kT();if(!T||!T.tid||!T.L.seasonId||Date.now()-kgAt<3*3600e3)return;kgAt=Date.now();
+  for(const key of T.L.keys){try{
+    const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=players&season=${T.L.seasonId}&team=${T.tid}&position=goalies&rookies=0&statsType=standard&rosterstatus=undefined&site_id=2&first=0&limit=3&sort=gaa&league_id=1&lang=en&division=-1&key=${key}&client_code=${T.L.code}&qualified=all`,12000);
+    const rows=((((j||[])[0]||{}).sections||[])[0]||{}).data||[];
+    const gs=rows.map(x=>{const r=x.row||{};return {name:String(r.name||''),gp:+(r.games_played||0),w:r.wins,l:r.losses,gaa:r.gaa||r.goals_against_average||'',sv:r.savepct||r.save_percentage||r.svpct||'',img:r.player_id?`https://assets.leaguestat.com/${T.L.code}/120x160/${r.player_id}.jpg`:''}}).filter(g=>g.name);
+    if(gs.length){KG=gs.sort((a,b)=>b.gp-a.gp)[0];break}}catch(e){}}
+  if($('pKHub').classList.contains('on'))renderKHub();
+}
+function renderKHub(){
+  const b=$('khBody'),T=kT(),g=kToday();
+  if(!T||!g){b.innerHTML='<div class="jf-title">Knights game day</div><div class="jf-wait">No Knights game today</div>';khSig='';return}
+  const lv=kLive(),sg=lv&&lv.g,home=g.home,opp=g.opp,ord=n=>n+(['th','st','nd','rd'][(n%100-20)%10]||['th','st','nd','rd'][n%100]||'th');
+  const usRec=sg?(home?sg.recH:sg.recA):T.rec,themRec=sg?(home?sg.recA:sg.recH):'';
+  const rank=c=>{const i=stOHL.findIndex(r=>r.c===c);return i<0?null:i+1};
+  const oppCode=sg?(home?sg.A:sg.H):'',myRank=rank(T.ab),opRank=oppCode?rank(oppCode):null;
+  const live=sg&&sg.state==='in';
+  const hero=`<div class="jf-glass kh-hero"><div class="kh-k">${live?'<i class="jf-live"></i> LIVE NOW':'KNIGHTS GAME DAY'}</div>
+    <div class="kh-vs"><div class="kh-tm">${logoImg(T.logo)}<b>${esc(T.name)}</b><span>${esc(usRec||'')}${myRank?' · '+ord(myRank)+' West':''}</span></div>
+      <div class="kh-mid">${live?`<div class="kh-sc">${esc(home?sg.sH:sg.sA)}<em>–</em>${esc(home?sg.sA:sg.sH)}</div><div class="kh-cl">${esc(sg.live&&sg.live.per||'')} ${sg.live&&sg.live.clock!=null?mmss(Math.max(0,sg.live.clock-Math.floor((Date.now()-(lastRes.find(r=>r.L===lv.L)||{at:Date.now()}).at)/1000))):''}</div>`:`<div class="kh-at">${home?'vs':'at'}</div>`}</div>
+      <div class="kh-tm">${logoImg(g.oppLogo)}<b>${esc(opp)}</b><span>${esc(themRec||'')}${opRank?' · '+ord(opRank)+' West':''}</span></div></div>
+    ${live?'':`<div class="kh-cd" id="khCd"></div><div class="kh-sub">Puck drop <b>${fmt(g.date)}</b>${sg&&sg.arena?' · '+esc(sg.arena):''}</div>`}</div>`;
+  /* recent form + last meeting */
+  const done=T.games.filter(x=>x.done).slice(-5);
+  const form=done.length?`<div class="jf-glass gd-card"><h2>Last ${done.length} games</h2><div class="kh-form">${done.map(x=>`<div class="${x.win?'w':'l'}"><b>${x.win?'W':'L'}</b><span>${esc(x.us)}–${esc(x.them)}</span><em>${x.home?'vs':'at'} ${esc(x.opp)}</em></div>`).join('')}</div>
+      ${(()=>{const m=T.games.filter(x=>x.done&&x.opp===opp).pop();return m?`<div class="kh-lm">Last meeting with the ${esc(opp)}: <b class="${m.win?'w':'l'}">${m.win?'W':'L'} ${esc(m.us)}–${esc(m.them)}</b> · ${m.date.toLocaleDateString([],{month:'short',day:'numeric'})}</div>`:''})()}</div>`:'';
+  /* leaders */
+  const Ld=leaders[L_key(T)]||[];
+  const lead=Ld.length||KG?`<div class="jf-glass gd-card"><h2>Knights leaders</h2><div class="kh-ld">${Ld.map(p=>`<div><div class="kh-ph"><img src="${esc(p.img)}" alt="" onerror="this.remove()"></div><b>${esc(p.last)}</b><span>${esc(p.pts)} PTS</span><em>${esc(p.g)}G · ${esc(p.a)}A</em></div>`).join('')}
+      ${KG?`<div class="gk"><div class="kh-ph"><img src="${esc(KG.img)}" alt="" onerror="this.remove()"></div><b>${esc(String(KG.name).split(' ').slice(-1)[0])}</b><span>${KG.sv?esc(String(KG.sv).replace(/^0/,''))+' SV%':'Goalie'}</span><em>${KG.gaa?esc(KG.gaa)+' GAA':''}${KG.w!=null?' · '+esc(KG.w)+'W':''}</em></div>`:''}</div></div>`:'';
+  /* western conference table, Knights + opponent highlighted */
+  const tbl=stOHL.length?`<div class="jf-glass gd-card"><h2>Western Conference</h2><div class="kh-st">${stOHL.slice(0,10).map((r,i)=>`<div class="${r.c===T.ab?'me':r.c===oppCode?'op':''}"><i>${i+1}</i><b>${esc(nick(r.name||r.c))}</b><span>${esc(r.gp)} GP</span><em>${esc(r.pts)}</em></div>`).join('')}</div></div>`:'';
+  const nx=T.games.filter(x=>!x.done&&x.date>Date.now()&&x.date.toDateString()!==new Date().toDateString()).slice(0,3);
+  const next=nx.length?`<div class="jf-glass gd-card"><h2>Up next</h2><div class="kh-nx">${nx.map(x=>`<div>${logoImg(x.oppLogo)}<b>${x.home?'vs':'at'} ${esc(x.opp)}</b><span>${x.date.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})} · ${fmt(x.date)}</span></div>`).join('')}</div></div>`:'';
+  const html=`<div class="jf-title">Knights game day</div><div class="hb-body kh-body">${hero}${form}${lead}${tbl}${next}</div>`;
+  if(html!==khSig){khSig=html;b.innerHTML=html}
+  khTick();
+  const fitK=()=>{const x=document.querySelector('#khBody .kh-body');if(!x)return;x.querySelectorAll(':scope>*').forEach(c=>c.style.flexShrink='0');const over=()=>x.scrollHeight>x.clientHeight+2;
+    for(let g=0;g<12&&over();g++){const r=[...x.querySelectorAll('.kh-st>div')].filter(d=>!d.classList.contains('me')&&!d.classList.contains('op'));if(r.length>5)r[r.length-1].remove();else break}
+    for(let g=0;g<4&&over();g++){const r=x.querySelectorAll('.kh-nx>div');if(r.length>1)r[r.length-1].remove();else{const c=x.querySelector('.kh-nx');if(c)c.closest('.gd-card').remove();break}}
+    for(let g=0;g<12&&over();g++){const r=[...x.querySelectorAll('.kh-st>div')].filter(d=>!d.classList.contains('me')&&!d.classList.contains('op'));if(r.length>2)r[r.length-1].remove();else break}};
+  fitK();setTimeout(fitK,400);
+}
+function khTick(){const el=$('khCd'),g=kToday();if(!el||!g)return;const ms=g.date-Date.now();if(ms<=0){el.textContent='Puck drop!';return}
+  const s=Math.floor(ms/1000);el.textContent=Math.floor(s/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
+setInterval(()=>{if($('pKHub').classList.contains('on'))khTick()},1000);
+function khSay(){const T=kT(),g=kToday();if(!T||!g)return 'The Knights don\'t play today.';
+  const lv=kLive();if(lv&&lv.g.state==='in'){const x=lv.g,h=g.home;return `Knights ${h?x.sH:x.sA}, ${g.opp} ${h?x.sA:x.sH}, ${x.live&&x.live.per||''}.`}
+  return `The Knights ${g.home?'host':'visit'} the ${g.opp} tonight at ${fmt(g.date)}. They're ${T.rec||''}.`}
+
+/* ================= Morning-after recap (Leafs + Knights) ================= */
+let RC={},rcPick=0,rcSig='',rcDemand=0;
+async function loadRecaps(){
+  if(!(CFG.recap&&CFG.recap.on!==false)||!CFG.relay)return;
+  /* Leafs */
+  try{const r=await tfetch(relayBase()+'/recap?team='+((CFG.hub&&CFG.hub.team)||'TOR'),15000),d=await r.json();if(!d.error&&!d.none)RC.nhl=d}catch(e){}
+  /* Knights: last finished game from the OHL schedule, details from the relay */
+  const T=kT(),last=T&&T.games.filter(x=>x.done&&x.id).pop();
+  if(T&&last&&(!RC.ohl||RC.ohl.id!==String(last.id))){
+    try{const r=await tfetch(relayBase()+`/live?league=ohl&id=${encodeURIComponent(last.id)}&code=${encodeURIComponent(T.L.code)}&ht=${encodeURIComponent(T.L.keys[0])}`,15000),d=await r.json();
+      if(!d.error&&!d.none)RC.ohl=ohlRecap(d,T,last)}catch(e){}}
+  if($('pRecap').classList.contains('on'))renderRecap();
+}
+function ohlRecap(d,T,last){
+  const me=d.home&&d.home.abbr===T.ab?'h':'a',op=me==='h'?'a':'h',U=me==='h'?d.home:d.away,O=me==='h'?d.away:d.home;
+  let su=0,so=0;
+  const goals=(d.goals||[]).map(x=>{const m=String(x.text||'').match(/^GOAL\s+(\S+)\s*·\s*(.+?)(?:\s*\((\d+)\))?(?:,\s*assists\s+(.+))?$/i)||[];const us=x.s===me;if(us)su++;else so++;
+    const w=String(x.when||'').split(' ');return {per:w[0]||'',time:w.slice(1).join(' '),us,team:m[1]||(us?U.abbr:O.abbr),scorer:m[2]||x.text,n:m[3]||null,assists:m[4]?m[4].split(/,\s*/):[],strength:'',score:`${su}-${so}`}});
+  const per=(d.periods||[]).map(p=>({p:p.p,us:me==='h'?p.h:p.a,them:me==='h'?p.a:p.h,usS:me==='h'?p.hs:p.as,themS:me==='h'?p.as:p.hs}));
+  return {league:'OHL',id:String(last.id),date:last.date.toISOString(),home:me==='h',ot:per.some(p=>/OT|SO/i.test(p.p)),
+    us:{abbr:U.abbr,name:nick(U.name||T.name),logo:U.logo||T.logo,score:U.score,sog:U.sog},them:{abbr:O.abbr,name:nick(O.name||last.opp),logo:O.logo||last.oppLogo,score:O.score,sog:O.sog},
+    win:U.score>O.score,goals,goalsBy:per.map(p=>({p:p.p,us:p.us,them:p.them})),shotsBy:per.map(p=>({p:p.p,us:p.usS,them:p.themS})),stars:[],
+    top:{us:(d.top||{})[me]||[],them:(d.top||{})[op]||[]},goalies:{us:(d.goalies||{})[me],them:(d.goalies||{})[op]},videos:[],
+    next:(()=>{const n=T.games.find(x=>!x.done&&x.date>Date.now());return n?{start:n.date.toISOString(),home:n.home,opp:n.opp}:null})()};
+}
+/* in the rotation from 6 AM until noon the day after a game (any time that day if asked for) */
+function recapList(){const R=CFG.recap||{},until=R.untilHour||12,now=new Date(),t0=dayStart(now),y0=new Date(t0.getTime()-864e5);
+  return Object.values(RC).filter(r=>{const d=new Date(r.date),gd=dayStart(new Date(d.getTime()-4*3600e3));
+    if(gd.getTime()===y0.getTime())return Date.now()<rcDemand||(now.getHours()>=6&&now.getHours()<until);
+    return Date.now()<rcDemand&&Date.now()-d<36*3600e3})}
+const recapOn=()=>recapList().length>0;
+function renderRecap(){
+  const b=$('rcBody'),L=recapList();if(!L.length){b.innerHTML='<div class="jf-title">Last night</div><div class="jf-wait">No recap right now</div>';rcSig='';return}
+  const R=L[rcPick%L.length],U=R.us,O=R.them,d=new Date(R.date);
+  const lg=t=>t.logo&&/^https?:/i.test(t.logo)?`<img class="rc-lg" src="${esc(t.logo)}" alt="" onerror="this.style.visibility='hidden'">`:`<i class="rc-lg">${esc(t.abbr)}</i>`;
+  const when=dayStart(new Date(d.getTime()-4*3600e3)).getTime()===dayStart(new Date(Date.now()-864e5)).getTime()?'LAST NIGHT':d.toLocaleDateString([],{weekday:'long'}).toUpperCase();
+  const hero=`<div class="jf-glass rc-hero ${R.win?'win':'loss'}"><div class="rc-k">${when} · ${esc(R.league)}</div>
+    <div class="rc-row">${lg(U)}<div class="rc-sc"><b class="${R.win?'w':''}">${esc(U.score)}</b><em>–</em><b class="${R.win?'':'w'}">${esc(O.score)}</b></div>${lg(O)}</div>
+    <div class="rc-res"><span class="${R.win?'w':'l'}">${R.win?'WIN':R.ot?'OT LOSS':'LOSS'}</span> ${esc(U.name)} ${R.home?'vs':'at'} ${esc(O.name)}${R.ot?' · '+(R.otType||'OT'):''}${U.sog!=null&&O.sog!=null?` · Shots ${esc(U.sog)}–${esc(O.sog)}`:''}</div></div>`;
+  let lastPer='';const goals=(R.goals||[]).map(g=>{const head=g.per!==lastPer?`<div class="rc-per">${esc(g.per)}</div>`:'';lastPer=g.per;
+    return head+`<div class="rc-g ${g.us?'us':''}"><span class="rc-t">${esc(g.time)}</span><span class="rc-team">${esc(g.team)}</span><div><b>${esc(g.scorer)}${g.n?` <small>(${esc(g.n)})</small>`:''}${g.strength&&g.strength!=='EV'?` <i class="rc-str">${esc(g.strength)}</i>`:''}</b><small>${g.assists.length?esc(g.assists.join(', ')):'Unassisted'}</small></div><em>${esc(g.score)}</em></div>`}).join('');
+  const gl=`<div class="jf-glass gd-card"><h2>Scoring</h2>${goals||'<div class="cnote">No goals</div>'}</div>`;
+  const P=(R.goalsBy||[]).length?R.goalsBy:[];const S=R.shotsBy||[];
+  const tbl=P.length?`<div class="jf-glass gd-card"><table class="lv-pt"><tr><th></th>${P.map(p=>`<th>${esc(p.p)}</th>`).join('')}<th>T</th>${S.length?'<th>SOG</th>':''}</tr>
+    <tr><td>${esc(U.abbr)}</td>${P.map(p=>`<td>${esc(p.us)}</td>`).join('')}<td class="t">${esc(U.score)}</td>${S.length?`<td class="sog">${esc(U.sog!=null?U.sog:S.reduce((a,s)=>a+(+s.us||0),0))}</td>`:''}</tr>
+    <tr><td>${esc(O.abbr)}</td>${P.map(p=>`<td>${esc(p.them)}</td>`).join('')}<td class="t">${esc(O.score)}</td>${S.length?`<td class="sog">${esc(O.sog!=null?O.sog:S.reduce((a,s)=>a+(+s.them||0),0))}</td>`:''}</tr></table></div>`:'';
+  const stars=(R.stars||[]).length?`<div class="jf-glass gd-card"><h2>Three stars</h2><div class="rc-stars">${R.stars.map(s=>`<div>${gdHead(s.img)}<i>${'★'.repeat(s.star||1)}</i><b>${esc(String(s.name).split(' ').slice(-1)[0])}</b><span>${esc(s.team)} · ${esc(s.line)}</span></div>`).join('')}</div></div>`
+    :(R.top&&R.top.us&&R.top.us.length?`<div class="jf-glass gd-card"><h2>Top ${esc(U.name)}</h2>${R.top.us.slice(0,3).map(p=>`<div class="lv-pl"><b>${esc(p.name)}</b><span>${[p.g?p.g+'G':'',p.a?p.a+'A':'',p.sog?p.sog+' SOG':''].filter(Boolean).join(' · ')||'–'}</span></div>`).join('')}</div>`:'');
+  const G=R.goalies||{},gk=(R.videos||[]).length?`<div class="jf-glass gd-card rc-vid"><h2>🎬 Highlights</h2><div class="hl-slot" id="rcVid"></div><div class="hl-cap"></div></div>`:'';
+  const gks=G.us||G.them?`<div class="jf-glass gd-card rc-gk">${[['us',U],['them',O]].map(([k,t])=>G[k]?`<div><small>${esc(t.abbr)} GOALIE</small><b>${esc(G[k].name)}</b><span>${esc(G[k].saves)} saves${G[k].sv?' · '+esc(G[k].sv):''}</span></div>`:'').join('')}</div>`:'';
+  const nx=R.next?`<div class="rc-next">Next: ${R.next.home?'vs':'at'} <b>${esc(R.next.opp)}</b> · ${new Date(R.next.start).toLocaleDateString([],{weekday:'long'})} ${fmt(new Date(R.next.start))}</div>`:'';
+  const pair=gk||gks?`<div class="rc-pair${gk&&gks?'':' one'}">${gk}${gks}</div>`:'';
+  const html=`<div class="jf-title">${esc(U.name)} recap</div><div class="hb-body rc-body">${hero}${gl}${tbl}${pair}${stars}${nx}</div>`;
+  if(html!==rcSig){rcSig=html;b.innerHTML=html}
+  if((R.videos||[]).length)mountVideo('recap','#rcVid',R.videos,true);
+  const fitR=()=>{const x=document.querySelector('#rcBody .rc-body');if(!x)return;x.querySelectorAll(':scope>*').forEach(c=>c.style.flexShrink='0');const over=()=>x.scrollHeight>x.clientHeight+2;
+    if(over()){const st=x.querySelector('.rc-stars,.lv-pl');if(st)st.closest('.gd-card').remove()}
+    if(over()){const nx=x.querySelector('.rc-next');if(nx)nx.remove()}
+    if(over()){const v=x.querySelector('.rc-vid');if(v){v.remove();const pr=x.querySelector('.rc-pair');if(pr)pr.classList.add('one')}}
+    if(over()){const t=x.querySelector('.lv-pt');if(t)t.closest('.gd-card').remove()}
+    for(let g=0;g<20&&over();g++){const r=x.querySelectorAll('.rc-g');if(r.length<=1)break;const last=r[r.length-1],prev=last.previousElementSibling;last.remove();if(prev&&prev.classList.contains('rc-per')&&(!prev.nextElementSibling||prev.nextElementSibling.classList.contains('rc-per')))prev.remove()}};
+  fitR();setTimeout(fitR,400);
+}
+function recapSay(){const L=Object.values(RC).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));if(!L.length)return 'I don\'t have a recent game to recap.';
+  return L.slice(0,2).map(R=>`The ${R.us.name} ${R.win?'beat':'lost to'} the ${R.them.name} ${Math.max(R.us.score,R.them.score)} to ${Math.min(R.us.score,R.them.score)}${R.ot?' in overtime':''}${(R.stars||[])[0]?`. First star: ${R.stars[0].name}`:''}.`).join(' ')}
+setInterval(loadRecaps,900000);
+
+/* ================= The week ahead (Sunday evening + Monday morning) ================= */
+const weekOn=()=>{if(CFG.week&&CFG.week.on===false)return false;const n=new Date(),d=n.getDay(),h=n.getHours();return (d===0&&h>=((CFG.week&&CFG.week.fromHour)||15))||(d===1&&h<10)||Date.now()<(window._wkDemand||0)};
+function weekDays(){const n=new Date(),start=dayStart(n.getDay()===0?new Date(n.getTime()+864e5):n);return Array.from({length:7},(_,i)=>new Date(start.getTime()+i*864e5+3600e3)).map(dayStart)}
+function renderWeek(){
+  const b=$('wkBody'),days=weekDays(),end=new Date(days[6].getTime()+864e5);
+  const k=d=>d.toDateString(),items={};days.forEach(d=>items[k(d)]=[]);
+  calEvents.filter(e=>e.start>=days[0]&&e.start<end).forEach(e=>{const r=e.loc?rtGet(e.loc):null;const bd=/birthday|b-?day/i.test(e.title);
+    items[k(e.start)]&&items[k(e.start)].push({t:e.allDay?0:e.start.getHours()*60+e.start.getMinutes(),h:`<span class="wk-i ${bd?'bd':'ev'}">${bd?'🎂':'📅'} ${e.allDay?'':`<b>${fmt(e.start).replace(':00','')}</b> `}${esc(e.title)}${r&&!e.allDay?` <small>🚗 ${driveTxt(r.min)}</small>`:''}</span>`})});
+  Object.values(sched).forEach(T=>T.games.filter(g=>g.date>=days[0]&&g.date<end).forEach(g=>{
+    let net='';if(T.L.league==='nhl'&&HUB&&HUB.next){const m=HUB.next.find(x=>Math.abs(Date.parse(x.start)-g.date)<3600e3);if(m&&m.nets&&m.nets.length)net=m.nets[0]}
+    items[k(g.date)]&&items[k(g.date)].push({t:g.date.getHours()*60+g.date.getMinutes(),h:`<span class="wk-i gm">${T.L.sport==='baseball'?'⚾':'🏒'} <b>${fmt(g.date).replace(':00','')}</b> ${esc(T.name)} ${g.home?'vs':'at'} ${esc(g.opp)}${net?` <small>📺 ${esc(net)}</small>`:''}</span>`})}));
+  const y=new Date().getFullYear();[...holidays(y),...holidays(y+1)].forEach(h=>{if(h.date>=days[0]&&h.date<end)items[k(h.date)].push({t:-1,h:`<span class="wk-i hol">${h.emoji} ${esc(h.name)}</span>`})});
+  (CFG.countdowns||[]).forEach(c=>{const d=new Date(c.date+'T00:00');if(d>=days[0]&&d<end)items[k(d)].push({t:-1,h:`<span class="wk-i hol">${c.emoji||'⭐'} ${esc(c.name)}</span>`})});
+  const nG=Object.values(sched).reduce((a,T)=>a+T.games.filter(g=>g.date>=days[0]&&g.date<end).length,0),nE=calEvents.filter(e=>e.start>=days[0]&&e.start<end).length;
+  let wxNote='';if(WXD){const dl=WXD.dl,idx=days.map(d=>dl.time.indexOf(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)).filter(i=>i>=0);
+    if(idx.length){const hi=Math.max(...idx.map(i=>dl.temperature_2m_max[i])),lo=Math.min(...idx.map(i=>dl.temperature_2m_min[i])),sn=idx.find(i=>dl.snowfall_sum&&dl.snowfall_sum[i]>=1);
+      wxNote=`Highs up to ${Math.round(hi)}°, lows to ${Math.round(lo)}°${sn!=null?` · ❄️ snow ${new Date(dl.time[sn]+'T12:00').toLocaleDateString([],{weekday:'long'})}`:''}`}}
+  const head=`<div class="jf-glass wk-hd"><div class="wk-range">${days[0].toLocaleDateString([],{month:'short',day:'numeric'})} – ${days[6].toLocaleDateString([],{month:'short',day:'numeric'})}</div>
+    <div class="wk-chips"><span>🏒 ${nG} game${nG===1?'':'s'}</span><span>📅 ${nE} event${nE===1?'':'s'}</span></div>${wxNote?`<div class="wk-wx">${esc(wxNote)}</div>`:''}</div>`;
+  const rows=days.map(d=>{const it=items[k(d)].sort((a,b)=>a.t-b.t),today=k(d)===k(new Date());
+    return `<div class="jf-glass wk-day${today?' today':''}${it.length?'':' empty'}"><div class="wk-d"><b>${d.toLocaleDateString([],{weekday:'short'})}</b><span>${d.getDate()}</span></div>
+      <div class="wk-w">${dayWx(d)||'<em class="dwx">–</em>'}</div><div class="wk-its">${it.map(x=>x.h).join('')||'<span class="wk-free">Nothing planned</span>'}</div></div>`}).join('');
+  b.innerHTML=`<div class="jf-title">The week ahead</div><div class="hb-body wk-body">${head}${rows}</div>`;
+}
+function weekSay(){const days=weekDays(),end=new Date(days[6].getTime()+864e5),parts=[];
+  Object.values(sched).forEach(T=>{const g=T.games.filter(x=>x.date>=days[0]&&x.date<end);if(g.length)parts.push(`${g.length} ${T.name} game${g.length===1?'':'s'}`)});
+  const nE=calEvents.filter(e=>e.start>=days[0]&&e.start<end).length;if(nE)parts.push(`${nE} calendar event${nE===1?'':'s'}`);
+  return parts.length?`This week: ${parts.join(', ')}.`:'Pretty quiet week ahead.'}
+
+/* ================= Holiday themes ================= */
+function easterSunday(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
+function holidayNow(){
+  const q=(location.search.match(/[?&]holiday=([a-z]+)/)||[])[1]||(CFG.holidays&&CFG.holidays.force);
+  const n=new Date(),y=n.getFullYear(),D=(m,d,yy=y)=>new Date(yy,m-1,d),t=dayStart(n);
+  const thx=(()=>{const o=D(10,1),mon=new Date(y,9,1+((8-o.getDay())%7)+7);return mon})();
+  const es=easterSunday(y);
+  const H=[
+    {k:'halloween',name:'Halloween',emoji:'🎃',from:D(10,24),day:D(10,31),hi:'Happy Halloween!'},
+    {k:'remembrance',name:'Remembrance Day',emoji:'🌺',from:D(11,8),day:D(11,11),hi:'Lest we forget'},
+    {k:'christmas',name:'Christmas',emoji:'🎄',from:D(12,1),day:D(12,25),to:D(12,26),hi:'Merry Christmas!'},
+    {k:'newyear',name:'New Year',emoji:'🎆',from:D(12,31),day:D(1,1,y+(n.getMonth()===11?1:0)),hi:'Happy New Year!'},
+    {k:'newyear',name:'New Year',emoji:'🎆',from:D(1,1),day:D(1,1),hi:'Happy New Year!'},
+    {k:'valentines',name:'Valentine\'s Day',emoji:'💗',from:D(2,10),day:D(2,14),hi:'Happy Valentine\'s Day!'},
+    {k:'stpat',name:'St. Patrick\'s Day',emoji:'☘️',from:D(3,15),day:D(3,17),hi:'Happy St. Patrick\'s Day!'},
+    {k:'easter',name:'Easter',emoji:'🐣',from:new Date(es.getTime()-3*864e5),day:es,to:new Date(es.getTime()+864e5),hi:'Happy Easter!'},
+    {k:'canada',name:'Canada Day',emoji:'🍁',from:D(6,28),day:D(7,1),hi:'Happy Canada Day!'},
+    {k:'thanksgiving',name:'Thanksgiving',emoji:'🦃',from:new Date(thx.getTime()-3*864e5),day:thx,hi:'Happy Thanksgiving!'}];
+  if(q){const h=H.find(x=>x.k===q);return h?Object.assign({},h,{forced:true}):null}
+  if(CFG.holidays&&CFG.holidays.on===false)return null;
+  return H.find(h=>t>=dayStart(h.from)&&t<=dayStart(h.to||h.day))||null;
+}
+const hfx={c:null,x:null,parts:[],k:'',last:0};
+const HOL_FX={halloween:{e:['🦇'],n:7,mode:'fly',size:[22,40]},christmas:{e:['❄'],n:60,mode:'fall',size:[8,18],color:'#fff'},newyear:{e:['✦','✧'],n:40,mode:'rise',size:[8,16],color:'#ffd84a'},
+  valentines:{e:['💗','💕'],n:18,mode:'rise',size:[14,26]},stpat:{e:['☘️'],n:16,mode:'fall',size:[16,28]},easter:{e:['🌸','🌷'],n:16,mode:'fall',size:[14,24]},
+  canada:{e:['🍁'],n:20,mode:'fall',size:[16,30]},thanksgiving:{e:['🍂','🍁'],n:18,mode:'fall',size:[16,28]},remembrance:null};
+function holSpawn(cfg,init){const W=hfx.c.width,H=hfx.c.height,d=devicePixelRatio,s=(cfg.size[0]+Math.random()*(cfg.size[1]-cfg.size[0]))*d;
+  const p={e:cfg.e[Math.floor(Math.random()*cfg.e.length)],s,ph:Math.random()*6.28,r:(Math.random()-.5)*.6,vr:(Math.random()-.5)*.01,a:.35+Math.random()*.4};
+  if(cfg.mode==='fly'){p.x=Math.random()<.5?-80*d:W+80*d;p.dir=p.x<0?1:-1;p.y=H*(.08+Math.random()*.55);p.vx=(1.2+Math.random()*1.4)*d*p.dir;p.vy=0;if(init)p.x=Math.random()*W;p.a=.55+Math.random()*.3}
+  else if(cfg.mode==='rise'){p.x=Math.random()*W;p.y=init?Math.random()*H:H+30*d;p.vy=-(.35+Math.random()*.6)*d;p.vx=0}
+  else{p.x=Math.random()*W;p.y=init?Math.random()*H:-30*d;p.vy=(.35+Math.random()*.7)*d;p.vx=(Math.random()-.5)*.3*d}
+  return p}
+function holLoop(t){requestAnimationFrame(holLoop);const h=holidayNow(),k=h?h.k:'',cfg=k?HOL_FX[k]:null;if(!hfx.x)return;const ctx=hfx.x,W=hfx.c.width,H=hfx.c.height;
+  if(k!==hfx.k){hfx.k=k;hfx.parts=[];ctx.clearRect(0,0,W,H);if(cfg)for(let i=0;i<cfg.n;i++)hfx.parts.push(holSpawn(cfg,true))}
+  if(!cfg||t-hfx.last<33)return;hfx.last=t;ctx.clearRect(0,0,W,H);ctx.textAlign='center';ctx.textBaseline='middle';
+  hfx.parts.forEach((p,i)=>{p.ph+=.03;
+    if(cfg.mode==='fly'){p.x+=p.vx;p.y+=Math.sin(p.ph*2)*1.2*devicePixelRatio;if(p.x<-120*devicePixelRatio||p.x>W+120*devicePixelRatio)hfx.parts[i]=holSpawn(cfg,false)}
+    else{p.x+=p.vx+Math.sin(p.ph)*.4*devicePixelRatio;p.y+=p.vy;p.r+=p.vr;if(p.y>H+40*devicePixelRatio||p.y<-40*devicePixelRatio)hfx.parts[i]=holSpawn(cfg,false)}
+    ctx.save();ctx.globalAlpha=p.a;ctx.translate(p.x,p.y);ctx.rotate(cfg.mode==='fly'?0:p.r);if(cfg.mode==='fly'&&p.dir<0)ctx.scale(-1,1);
+    ctx.font=`${p.s}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;if(cfg.color)ctx.fillStyle=cfg.color;
+    if(cfg.mode==='fly'){const f=1+Math.sin(p.ph*6)*.18;ctx.scale(1,f)}ctx.fillText(p.e,0,0);ctx.restore()});
+}
+function applyHoliday(){
+  const h=holidayNow(),k=h?h.k:'';document.body.dataset.hol=k;
+  const chip=$('holChip');if(!h){chip.style.display='none';return}
+  const n=daysUntil(h.day);chip.style.display='';chip.textContent=n<=0?`${h.emoji} ${h.hi}`:`${h.emoji} ${h.name} in ${n} day${n===1?'':'s'}`;
+}
+function holInit(){hfx.c=$('holfx');hfx.x=hfx.c.getContext('2d');const rs=()=>{hfx.c.width=innerWidth*devicePixelRatio;hfx.c.height=innerHeight*devicePixelRatio;hfx.k='~'};rs();addEventListener('resize',rs);applyHoliday();setInterval(applyHoliday,600000);requestAnimationFrame(holLoop)}
+/* Remembrance Day: two minutes of silence at 11:00 */
+setInterval(()=>{const h=holidayNow(),n=new Date();if(!h||h.k!=='remembrance'||n.getDate()!==11||n.getMonth()!==10)return;
+  if(n.getHours()===11&&n.getMinutes()<2&&!$('lwf').classList.contains('on')){$('lwf').classList.add('on');setTimeout(()=>$('lwf').classList.remove('on'),120000)}},5000);
+/* New Year's: countdown and celebration at midnight */
+setInterval(()=>{const n=new Date();if(!(CFG.holidays&&CFG.holidays.on===false)&&n.getMonth()===0&&n.getDate()===1&&n.getHours()===0&&n.getMinutes()===0&&n.getSeconds()<3&&!$('bday').classList.contains('on')){
+  const el=$('bday');el.innerHTML=`<canvas id="confetti"></canvas><div class="bd-card"><div class="bd-cake">🎆</div><div class="bd-k">${n.getFullYear()}</div><div class="bd-n">Happy New Year!</div></div>`;
+  el.classList.add('on');confetti($('confetti'));setTimeout(()=>el.classList.remove('on'),90000)}},1000);
+
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 34';
+document.getElementById('ver').textContent='build nova 35';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -2758,7 +3077,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
