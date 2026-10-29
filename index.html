@@ -736,6 +736,11 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 .lv-mb{height:calc(.9*var(--u));border-radius:calc(.6*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.lv-mb i{display:block;height:100%}
 .lv-mix em{font-style:normal;color:var(--dim);font-variant-numeric:tabular-nums}
 .lv-zones{grid-template-columns:1fr 1.15fr!important}
+
+/* MLB headshots: cut-out sits on the bottom edge; portrait fallback shows head and shoulders */
+.gd-hs.mlb{background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.22),rgba(255,255,255,.06))}
+.gd-hs.mlb img{object-fit:contain;object-position:center bottom;top:12%;height:88%}
+.gd-hs.mlb.port img{object-fit:cover;object-position:center 22%;top:0;height:100%;transform:scale(1.02)}
 </style>
 </head>
 <body>
@@ -2080,7 +2085,9 @@ setInterval(loadGameday,600000);
 const gdToday=()=>{if(!GD||!GD.game)return false;const s=new Date(GD.game.start);
   return s.toDateString()===new Date().toDateString()&&!/^(LIVE|CRIT|OFF|FINAL)$/.test(GD.game.state||'')&&Date.now()<s.getTime()+10*60000};
 const gdLogo=(u,ab)=>u&&/^https?:\/\//i.test(u)?`<img class="gd-lg" src="${esc(u)}" alt="${esc(ab)}" onerror="this.style.visibility='hidden'">`:`<div class="gd-lg gd-ph">${esc(ab)}</div>`;
-const gdHead=(u,cls='')=>`<div class="gd-hs ${cls}">${u&&/^https?:\/\//i.test(u)?`<img src="${esc(u)}" alt="" onerror="this.remove()">`:''}</div>`;
+/* player photo in a circle. MLB cut-outs sit at the bottom of the circle; if one is missing, fall back to the regular headshot, framed wider */
+const gdHead=(u,cls='')=>{if(!(u&&/^https?:\/\//i.test(u)))return `<div class="gd-hs ${cls}"></div>`;const mlb=/mlbstatic\.com/.test(u);
+  return `<div class="gd-hs ${cls}${mlb?' mlb':''}"><img src="${esc(u)}" alt="" onerror="if(this.src.includes('/headshot/silo/')){this.src=this.src.replace('/headshot/silo/','/headshot/67/');this.parentNode.classList.add('port')}else this.remove()"></div>`};
 function renderGameday(){
   const b=$('gdBody');
   if(!GD||!GD.game){b.innerHTML='<div class="jf-wait">No game scheduled</div>';gdSig='';return}
@@ -2656,7 +2663,7 @@ setInterval(()=>{if($('pWS').classList.contains('on'))wsTick()},1000);
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 29';
+document.getElementById('ver').textContent='build nova 30';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
