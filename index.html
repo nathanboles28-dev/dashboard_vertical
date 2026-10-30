@@ -1205,7 +1205,7 @@ const CFG={
   // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
   cams:{on:true, list:[
     {name:'Niagara Falls', sub:'Horseshoe Falls from the Fallsview District', yt:['c:UC15QFO-cdISk-4Sn5CPd78g']},
-    {name:'New York · Times Square', sub:'EarthCam · live from Manhattan', yt:['v:z-jYdOIKcTQ','v:JQ_jwk_7OVE','v:AdUw5RdyZxI','v:iiBTWU2FyFo','v:Ht_g0bZNTfI','v:bD00_BXIuYc']},
+    {name:'Jackson Hole · Town Square', sub:'Wyoming · SeeJH.com', yt:['v:1EiC9bvVGnk','v:psfFJR3vZ78','v:BN7gzH-i-zo','v:LDnHwbRp6ZA','v:B9umkkqg5UI','c:UCEpDjqeFIGTqHwk-uULx72Q']},
     {name:'Earth from space', sub:'Live from the International Space Station', yt:['c:UCLA_DiR1FfKNvjuUpBHmylQ','v:r-TPJDQSqv0','v:0FBiyFpV__g','v:0Jiz0HZP2Dk','v:l8Mwbk6ulZA','v:1nnQQaLuyLY','v:kWRhLLbLFE0','v:FfLm8DoEXOE']}
     // yt = streams to try in order (v:VIDEO_ID or c:CHANNEL_ID for a channel's live stream); if one won't play here, the next is tried
   ]},
@@ -3572,7 +3572,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 49';
+document.getElementById('ver').textContent='build nova 50';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
