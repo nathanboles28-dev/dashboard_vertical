@@ -1205,7 +1205,7 @@ const CFG={
   // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
   cams:{on:true, list:[
     {name:'Niagara Falls', sub:'Horseshoe Falls from the Fallsview District', yt:['c:UC15QFO-cdISk-4Sn5CPd78g']},
-    {name:'New York · Times Square', sub:'Live from Manhattan', yt:['v:VjSIXFwB_WQ','v:Ht_g0bZNTfI','v:bD00_BXIuYc','v:iiBTWU2FyFo','v:JQ_jwk_7OVE','v:z-jYdOIKcTQ','v:AdUw5RdyZxI']},
+    {name:'New York · Times Square', sub:'EarthCam · live from Manhattan', yt:['v:z-jYdOIKcTQ','v:JQ_jwk_7OVE','v:AdUw5RdyZxI','v:iiBTWU2FyFo','v:Ht_g0bZNTfI','v:bD00_BXIuYc']},
     {name:'Earth from space', sub:'Live from the International Space Station', yt:['c:UCLA_DiR1FfKNvjuUpBHmylQ','v:r-TPJDQSqv0','v:0FBiyFpV__g','v:0Jiz0HZP2Dk','v:l8Mwbk6ulZA','v:1nnQQaLuyLY','v:kWRhLLbLFE0','v:FfLm8DoEXOE']}
     // yt = streams to try in order (v:VIDEO_ID or c:CHANNEL_ID for a channel's live stream); if one won't play here, the next is tried
   ]},
@@ -3416,14 +3416,16 @@ setInterval(()=>{if($('pCams').classList.contains('on'))fill511()},60000);
 let ytReady=null;const camP={};
 function ytAPI(){if(ytReady)return ytReady;ytReady=new Promise(res=>{if(window.YT&&YT.Player)return res();window.onYouTubeIframeAPIReady=()=>res();const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';document.head.appendChild(t)});return ytReady}
 function camStart(i,c,el){
-  const key='nova-cam-'+c.name,list=c.yt||[];let idx=0;try{idx=Math.max(0,Math.min(+(localStorage.getItem(key)||0)||0,list.length-1))}catch(e){}
+  const list=c.yt||[],key='nova-cam-'+c.name+'-'+String(list[0]||'').slice(-6);let idx=0;try{idx=Math.max(0,Math.min(+(localStorage.getItem(key)||0)||0,list.length-1))}catch(e){}
   const tryOne=n=>{if(n>=list.length){el.innerHTML='<div class="cam-off">This cam is offline right now</div>';return}
     const [k,id]=String(list[n]).split(':'),host=document.createElement('div');el.innerHTML='';el.appendChild(host);let done=false;
     const fail=()=>{if(done)return;done=true;clearTimeout(t);try{p.destroy()}catch(e){}tryOne(n+1)};
     const p=new YT.Player(host,{width:'100%',height:'100%',videoId:k==='c'?'live_stream':id,
       playerVars:Object.assign({autoplay:1,mute:1,controls:0,playsinline:1,modestbranding:1,rel:0,iv_load_policy:3,disablekb:1},k==='c'?{channel:id}:{}),
       events:{onReady:e=>{try{e.target.mute();e.target.playVideo()}catch(x){}},onError:fail,
-        onStateChange:e=>{if(e.data===1){done=true;clearTimeout(t);try{localStorage.setItem(key,String(n))}catch(x){}}else if(e.data===0)fail()}}});
+        onStateChange:e=>{if(e.data===1){if(done)return;let live=true;try{const vd=e.target.getVideoData&&e.target.getVideoData();if(vd&&vd.isLive===false)live=false}catch(x){}
+          if(!live&&c.liveOnly!==false){fail();return}
+          done=true;clearTimeout(t);try{localStorage.setItem(key,String(n))}catch(x){}}else if(e.data===0)fail()}}});
     camP[i]=p;const t=setTimeout(()=>{if(!done){try{if(p.getPlayerState&&p.getPlayerState()===1){done=true;return}}catch(e){}fail()}},25000)};
   tryOne(idx);
 }
@@ -3570,7 +3572,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 48';
+document.getElementById('ver').textContent='build nova 49';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
