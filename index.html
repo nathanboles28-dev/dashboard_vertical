@@ -1247,10 +1247,11 @@ const CFG={
   // Traffic cams page: near = [lat, lon] to look around, road = only cameras on that road. The closest 511 camera is used
   // (each card gets a different camera). You can still add a YouTube cam: {name:'...', yt:['c:CHANNEL_ID']}
   cams:{on:true, title:'Traffic cams', list:[
-    {name:'401 at Woodstock', near:[43.1000,-80.7480], road:'401'},
-    {name:'403 toward Brantford', near:[43.1330,-80.6780], road:'403'},
-    {name:'401 at London', near:[42.9300,-81.2280], road:'401'}
+    {name:'401 at 403', near:[43.11809,-80.70662], road:'401', match:'401 403'},
+    {name:'401 at Towerline Rd', near:[43.0990,-80.7000], road:'401', match:'towerline', view:'north'},
+    {name:'401 at London', near:[42.9300,-81.2280], road:'401', match:'401 wellington'}
   ]},
+
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
   // Snow alert chip on the main page when at least alertCm is expected in the next 24 hours
@@ -3555,10 +3556,10 @@ const camsList=()=>(CFG.cams&&CFG.cams.list)||[];
 const cam511={};
 /* one camera per card, closest to its spot (and on its road), never the same camera twice; incidents near each camera come along */
 async function fill511(){const used=new Set();
-  for(const im of document.querySelectorAll('#camBody .cam-511')){const road=im.dataset.road||'',k=im.dataset.near+'|'+road;
+  for(const im of document.querySelectorAll('#camBody .cam-511')){const road=im.dataset.road||'',mt=im.dataset.match||'',vw=im.dataset.view||'',k=im.dataset.near+'|'+road+'|'+mt+'|'+vw;
     try{let c=cam511[k];
       if(!c||Date.now()-c.at>180000){const [la,lo]=im.dataset.near.split(',');
-        const d=await (await tfetch(relayBase()+`/local?key=${encodeURIComponent(SECRETS.calkey)}&lat=${la}&lon=${lo}&r=12&cams=6${road?'&road='+encodeURIComponent(road):''}`,15000)).json();
+        const d=await (await tfetch(relayBase()+`/local?key=${encodeURIComponent(SECRETS.calkey)}&lat=${la}&lon=${lo}&r=12&cams=6${road?'&road='+encodeURIComponent(road):''}${mt?'&match='+encodeURIComponent(mt):''}${vw?'&view='+encodeURIComponent(vw):''}`,15000)).json();
         const L=(d.cams||[]).filter(x=>!used.has(x.img)),pick=(c&&L.find(x=>x.img===c.url))||L[0];
         if(pick)c=cam511[k]={url:pick.img,loc:pick.loc,dir:pick.dir,dist:pick.dist,at:Date.now(),
           ev:(d.events||[]).filter(e=>e.dist<=6||(e.full&&e.dist<=12)).sort((a,b)=>(/accident|incident/i.test(b.type)-/accident|incident/i.test(a.type))||a.dist-b.dist)[0]||null}}
@@ -3593,7 +3594,7 @@ function renderCams(on){
   const b=$('camBody');
   if(!on){Object.keys(camP).forEach(k=>{try{camP[k].destroy()}catch(e){}delete camP[k]});b.querySelectorAll('iframe').forEach(f=>f.src='about:blank');return}
   const L=camsList();
-  b.innerHTML=`<div class="jf-title">${esc((CFG.cams&&CFG.cams.title)||'Live cams')}</div><div class="cam-wrap">${L.map((c,i)=>`<div class="jf-glass cam-card${c.near?' tc':''}"><div class="cam-frame" id="cam${i}">${c.iframe?`<iframe src="${esc(c.iframe)}" allow="autoplay; encrypted-media"></iframe>`:c.near?`<img class="cam-511" data-near="${esc(c.near.join(','))}" data-road="${esc(c.road||'')}" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1"><div class="cam-off">Finding a camera…</div>`:''}${c.near?'<span class="cam-ev"></span>':''}</div>
+  b.innerHTML=`<div class="jf-title">${esc((CFG.cams&&CFG.cams.title)||'Live cams')}</div><div class="cam-wrap">${L.map((c,i)=>`<div class="jf-glass cam-card${c.near?' tc':''}"><div class="cam-frame" id="cam${i}">${c.iframe?`<iframe src="${esc(c.iframe)}" allow="autoplay; encrypted-media"></iframe>`:c.near?`<img class="cam-511" data-near="${esc(c.near.join(','))}" data-road="${esc(c.road||'')}" data-match="${esc(c.match||'')}" data-view="${esc(c.view||'')}" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1"><div class="cam-off">Finding a camera…</div>`:''}${c.near?'<span class="cam-ev"></span>':''}</div>
       <div class="cam-cap"><span class="sat-live">● LIVE</span><b>${esc(c.name)}</b>${c.near?'<span class="cam-loc"></span>':c.sub?`<span>${esc(c.sub)}</span>`:''}</div></div>`).join('')}</div>`;
   fill511();
   if(L.some(c=>c.yt))ytAPI().then(()=>{if(!$('pCams').classList.contains('on'))return;L.forEach((c,i)=>{if(c.yt)camStart(i,c,$('cam'+i))})});
@@ -3732,7 +3733,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 54';
+document.getElementById('ver').textContent='build nova 57';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
