@@ -950,6 +950,31 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .sat-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
 .sat-img.on{opacity:1}.sat-img.under{z-index:1;opacity:1}.sat-img.top{z-index:2}.sat-img.fade{animation:satIn 1.2s ease-in-out both}
 @keyframes satIn{from{opacity:0}to{opacity:1}}
+/* ===== Rain radar loop ===== */
+#pRLoop{--acc:#4fd1a5;--ico:'🌧️'}
+.rl-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#0d0f14}
+.rl-base,.rl-lab,.rl-fx{position:absolute;inset:0;pointer-events:none}
+.rl-base img,.rl-lab img{position:absolute;width:256px;height:256px;max-width:none}
+.rl-base{filter:brightness(1.05) contrast(1.1)}
+.rl-cv{position:absolute;inset:0;width:100%;height:100%;filter:saturate(1.25)}
+.rl-lab{opacity:.9}
+.rl-fx svg{position:absolute;inset:0;width:100%;height:100%}
+.rl-pin{position:absolute;width:0;height:0}.rl-pin i{position:absolute;left:calc(-.9*var(--u));top:calc(-.9*var(--u));width:calc(1.8*var(--u));height:calc(1.8*var(--u));border-radius:50%;background:#fff;box-shadow:0 0 0 calc(.4*var(--u)) #4fd1a5,0 0 calc(2*var(--u)) #4fd1a5}
+.rl-pin i::after{content:'';position:absolute;inset:calc(-.4*var(--u));border-radius:50%;border:2px solid #4fd1a5;animation:rlPing 2.4s ease-out infinite}
+@keyframes rlPing{from{transform:scale(1);opacity:.9}to{transform:scale(5);opacity:0}}
+.rl-pin b{position:absolute;left:calc(1.8*var(--u));top:calc(-1.6*var(--u));font-size:calc(2*var(--u));font-weight:700;white-space:nowrap;text-shadow:0 1px 4px #000,0 0 8px #000}
+.rl-sweep{position:absolute;inset:0;background:conic-gradient(from 0deg at var(--px) var(--py),rgba(79,209,165,.16),rgba(79,209,165,0) 50deg,transparent 360deg);animation:rlSweep 6s linear infinite;mix-blend-mode:screen}
+@property --rla{syntax:'<angle>';inherits:false;initial-value:0deg}
+.rl-sweep{background:conic-gradient(from var(--rla) at var(--px) var(--py),rgba(79,209,165,.12),rgba(79,209,165,0) 40deg,transparent 360deg)}
+@keyframes rlSweep{to{--rla:360deg}}
+.rl-badge{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));padding:calc(.8*var(--u)) calc(1.6*var(--u));border-radius:calc(1.2*var(--u));background:rgba(10,12,18,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);font-size:calc(3.2*var(--u));font-weight:300;font-variant-numeric:tabular-nums}
+.rl-badge small{display:block;font-size:calc(1.6*var(--u));font-weight:700;letter-spacing:.14em;color:#4fd1a5}
+.rl-badge.past small{color:var(--dim)}
+.rl-leg{position:absolute;right:calc(1.6*var(--u));bottom:calc(1.6*var(--u));padding:calc(.9*var(--u)) calc(1.4*var(--u));border-radius:calc(1.2*var(--u));background:rgba(10,12,18,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);font-size:calc(1.5*var(--u));color:var(--dim);display:grid;grid-template-columns:auto calc(16*var(--u));gap:calc(.6*var(--u)) calc(1*var(--u));align-items:center}
+.rl-leg i{display:block;height:calc(1*var(--u));border-radius:calc(.5*var(--u))}
+.rl-ring{position:absolute;font-size:calc(1.4*var(--u));color:rgba(255,255,255,.55);transform:translate(-50%,-120%);text-shadow:0 1px 3px #000}
+.rl-prog{display:flex;gap:3px;margin-top:calc(1*var(--u))}.rl-prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.15);transition:background .3s}.rl-prog i.on{background:#4fd1a5}.rl-prog i.seen{background:rgba(79,209,165,.4)}
+.rl-tip b{display:block;font-size:calc(2.4*var(--u));margin-bottom:calc(.6*var(--u))}.rl-tip span{font-size:calc(2.1*var(--u));color:var(--dim);line-height:1.45}
 .sat-bar{display:flex;align-items:center;gap:calc(1.6*var(--u));margin-top:calc(1.2*var(--u));font-size:calc(2.2*var(--u))}
 .sat-live{color:#ff6b7a;font-weight:800;letter-spacing:.08em;font-size:calc(1.9*var(--u))}.sat-src{margin-left:auto;color:var(--dim);font-size:calc(1.9*var(--u))}
 .sat-prog{display:flex;gap:4px;margin-top:calc(1*var(--u))}.sat-prog i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.15)}.sat-prog i.on{background:#5fd3e0}
@@ -1070,6 +1095,7 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 <section id="pTMap" class="page"><div id="tmBody"></div></section>
 <section id="pRadar" class="page"><div id="rdBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
+<section id="pRLoop" class="page"><div id="rlBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
 <section id="pRecap" class="page"><div id="rcBody"></div></section>
 <section id="pKHub" class="page"><div id="khBody"></div></section>
@@ -1117,6 +1143,7 @@ const CFG={
     {type:'local',     secs:40},
     {type:'radar',     secs:40},
     {type:'sat',       secs:30},
+    {type:'rloop',     secs:30},   // rain radar loop, last 90 minutes
     {type:'cams',      secs:40},
     {type:'news',      secs:20},
     // sports (game day / live / World Series only show when they're on)
@@ -1195,6 +1222,8 @@ const CFG={
   cinema:{intro:true, introSecs:9, goal:true, goalSecs:11, sayScorer:true},
   // Satellite page: NOAA GOES-East Great Lakes picture (refreshes every 10 minutes)
   satellite:{on:true},
+  // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
+  radarLoop:{on:true, frames:15, zoom:7},
   // Live traffic map on the Around Woodstock page (TomTom, free key in the Worker as TOMTOM_KEY). Rests between quietFrom and quietTo o'clock to save the free allowance.
   // views: [big map, small map, small map]
   trafficMap:{on:true, quietFrom:23, quietTo:6, views:[
@@ -1690,10 +1719,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',cams:'pCams',tmap:'pTMap',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',cams:'pCams',tmap:'pTMap',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='tmap'||tmOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='tmap'||tmOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1727,6 +1756,7 @@ function nextPage(force,hold){
   if(p.type==='tmap')renderTMap();
   if(p.type==='radar'){renderRadar();loadRadar()}
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
+  if(p.type==='rloop')renderRLoop();
   renderCams(p.type==='cams');
   if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSig='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
@@ -2280,6 +2310,7 @@ function handleCommand(raw){
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
   if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){showHealth(25);return reply(healthSay())}
+  if(has(/\b(radar loop|rain (radar|loop|map)|snow (radar|map)|precip\w*|is it (going to )?(rain|snow)\w* nearby)\b/)){showFor('rloop');return reply(rlSay())}
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|niagara|cn tower)\b/)){showFor('cams');return reply('Here are the live cams.')}
@@ -3319,6 +3350,7 @@ function healthList(){
   const out=[],add=(name,ok,why,crit)=>out.push({name,ok,why,crit});
   if(CFG.relay)add('Relay (Cloudflare Worker)',HC.relay.ok!==false,HC.relay.ok===false?'not answering':'',true);
   add('Weather',!!WXD,WXD?'':'not loaded',true);
+  if(!(CFG.radarLoop&&CFG.radarLoop.on===false)&&RL.times.length)add('Radar loop',!RL.err,RL.err?'Environment Canada frames not loading':'');
   add('Rain radar',RS.ec!==false||RS.rv===true,RS.ec===false&&RS.rv===false?'both sources down':RS.ec===false?'Environment Canada down (RainViewer OK)':'');
   if(typeof calOn==='function'&&calOn())add('Calendar',!calErr&&calAt>0,calErr||(calAt?'':'not loaded yet'));
   lastRes.forEach(r=>add(r.L.label+' scores',!r.failed,r.failed?'not loading':''));
@@ -3404,6 +3436,80 @@ function renderSat(){
     clearTimeout(window._satC);if(prev){im.addEventListener('animationend',clean,{once:true});window._satC=setTimeout(clean,8000)}else clean()};
   show(SAT.idx);
   if(F.length>1)satT=setInterval(()=>{if(!$('pSat').classList.contains('on')){clearInterval(satT);return}SAT.idx=(SAT.idx+1)%(F.length+3);show(Math.min(SAT.idx,F.length-1))},1600);
+}
+
+/* ================= Rain radar loop (Environment Canada 1 km radar, last ~90 minutes) ================= */
+const RL={times:[],at:0,step:6,sig:'',idx:0,err:false,ok:0};let rlT=null;
+const rlCfg=()=>Object.assign({frames:15,zoom:7},CFG.radarLoop||{});
+const WMS_RL='https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=RADAR_1KM_RRAI,RADAR_1KM_RSNO&styles=&crs=EPSG:3857&format=image/png&transparent=true';
+/* ask Environment Canada which radar times exist; if that fails, guess (the composite is every 6 minutes, ~10 minutes behind) */
+async function rlTimes(){
+  const n=rlCfg().frames;
+  try{const t=await (await tfetch('https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetCapabilities&layer=RADAR_1KM_RRAI&_='+Math.floor(Date.now()/120000),12000)).text();
+    const m=t.match(/<Dimension[^>]*name="time"[^>]*>\s*([^<\/]+)\/([^<\/]+)\/PT(\d+)M/i);
+    if(m){const end=Date.parse(m[2]),st=+m[3]||6,start=Date.parse(m[1]);if(!isNaN(end)){RL.step=st;const out=[];for(let i=n-1;i>=0;i--){const v=end-i*st*60000;if(isNaN(start)||v>=start)out.push(v)}return out}}
+  }catch(e){}
+  const st=6*60000,end=Math.floor((Date.now()-10*60000)/st)*st;RL.step=6;return Array.from({length:n},(_,i)=>end-(n-1-i)*st);
+}
+async function loadRLoop(){RL.at=Date.now();const t=await rlTimes();if(t.length){RL.times=t;RL.err=false}if($('pRLoop').classList.contains('on')){RL.sig='';renderRLoop()}}
+setInterval(()=>{if($('pRLoop').classList.contains('on')||Date.now()-RL.at>900000)loadRLoop()},360000);
+function rlSay(){const H=WXD&&WXD.hr;if(!H||!H.time)return 'Here\'s the rain radar for the last hour and a half.';
+  const now=Date.now(),i0=Math.max(0,H.time.findIndex(t=>new Date(t).getTime()+3600e3>now)),pp=(H.precipitation_probability||[]).slice(i0,i0+6),mx=Math.max(0,...pp);
+  if(mx<30)return 'Here\'s the rain radar. Nothing much expected in the next 6 hours.';
+  const k=pp.findIndex(v=>v>=50);const snow=(H.snowfall||[]).slice(i0,i0+6).some(v=>v>0);
+  return `Here's the radar. ${snow?'Snow':'Rain'} looks likely ${k<=0?'within the hour':'around '+fmt(new Date(H.time[i0+k]))}, ${mx}% chance.`}
+function rlOutlook(){const H=WXD&&WXD.hr;if(!H||!H.time)return '';
+  const now=Date.now(),i0=Math.max(0,H.time.findIndex(t=>new Date(t).getTime()+3600e3>now)),pp=(H.precipitation_probability||[]).slice(i0,i0+6),mx=Math.max(0,...pp);
+  const snow=(H.snowfall||[]).slice(i0,i0+6).some(v=>v>0),w=snow?'snow':'rain';
+  if(mx<30)return `<b>Next 6 hours: dry</b><span>Under ${Math.max(10,Math.ceil(mx/10)*10)}% chance of ${w} at home. Anything on the radar should miss or fizzle out.</span>`;
+  const k=pp.findIndex(v=>v>=50);
+  return `<b>Next 6 hours: ${mx}% chance of ${w}</b><span>${k<0?'Possible showers, but nothing certain.':k===0?'Likely within the hour — watch the blobs heading for the pin.':'Most likely starting around '+fmt(new Date(H.time[i0+k]))+'.'}</span>`}
+function renderRLoop(){
+  const b=$('rlBody'),C=rlCfg();
+  if(!b.querySelector('.rl-stage')){b.innerHTML=`<div class="jf-title">Rain radar · Southern Ontario</div><div class="sat-wrap"><div class="jf-glass sat-card"><div class="rl-stage"><div class="rl-base"></div><canvas class="rl-cv"></canvas><div class="rl-lab"></div><div class="rl-fx"></div></div>
+      <div class="sat-bar"><span class="sat-live" id="rlLive">● LIVE</span><span id="rlTime"></span><span class="sat-src">Environment Canada · 1 km radar</span></div><div class="rl-prog" id="rlProg"></div></div>
+      <div class="jf-glass gd-card rl-tip" id="rlTip"></div></div>`;RL.sig=''}
+  const tip=$('rlTip'),ot=rlOutlook();tip.innerHTML=ot||`<b>What you're seeing</b><span>The last ${Math.round(C.frames*RL.step/6)*6} minutes of rain and snow, every ${RL.step} minutes. Rings are 50, 100 and 200 km from home.</span>`;
+  if(!RL.times.length){if(Date.now()-RL.at>60000)loadRLoop();return}
+  const st=b.querySelector('.rl-stage'),W=Math.round(st.clientWidth),H=Math.round(st.clientHeight);if(W<50||H<50){setTimeout(renderRLoop,300);return}
+  const z=C.zoom,N=256*2**z,lr=CFG.lat*Math.PI/180,px=(CFG.lon+180)/360*N,py=(1-Math.log(Math.tan(lr)+1/Math.cos(lr))/Math.PI)/2*N;
+  /* home sits a bit right of centre so more of the west (where weather comes from) is visible */
+  const ox=px-W*.58,oy=py-H*.5,sig=[W,H,z,RL.times.join()].join('|');
+  if(sig!==RL.sig){RL.sig=sig;
+    const tile=(svc,tx,ty)=>`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${svc}/MapServer/tile/${z}/${ty}/${tx}" style="left:${Math.round(tx*256-ox)}px;top:${Math.round(ty*256-oy)}px" alt="" onerror="this.remove()">`;
+    let bs='',ls='';for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+W)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+H)/256);ty++){bs+=tile('World_Dark_Gray_Base',tx,ty);ls+=tile('World_Dark_Gray_Reference',tx,ty)}
+    st.querySelector('.rl-base').innerHTML=bs;st.querySelector('.rl-lab').innerHTML=ls;
+    const R=6378137,mx=x=>x/N*2*Math.PI*R-Math.PI*R,my=y=>Math.PI*R-y/N*2*Math.PI*R,bb=[mx(ox),my(oy+H),mx(ox+W),my(oy)].map(v=>v.toFixed(0)).join(',');
+    const sc=Math.min(1,1400/Math.max(W,H)),iw=Math.round(W*sc),ih=Math.round(H*sc);
+    const cv=st.querySelector('.rl-cv');cv.width=iw;cv.height=ih;RL.ctx=cv.getContext('2d');RL.ctx.clearRect(0,0,iw,ih);RL.ok=0;RL.loaded=new Set();RL.bad=new Set();
+    /* frames are decoded up front and painted onto one canvas, so the loop never flickers */
+    RL.imgs=RL.times.map((t,i)=>{const im=new Image();im.decoding='async';
+      im.onload=async()=>{try{await im.decode()}catch(e){}RL.ok++;RL.loaded.add(i)};im.onerror=()=>{RL.bad.add(i);if(RL.bad.size===RL.times.length){RL.err=true;$('rlTime').textContent='Radar unavailable right now'}};
+      im.src=`${WMS_RL}&bbox=${bb}&width=${iw}&height=${ih}&time=${new Date(t).toISOString().replace(/\.\d+Z$/,'Z')}`;return im});
+    /* range rings + home pin + sweep */
+    const hx=px-ox,hy=py-oy,kmPx=1000/(156543.034*Math.cos(lr)/2**z);
+    st.querySelector('.rl-fx').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${[50,100,200].map(k=>`<circle cx="${hx}" cy="${hy}" r="${(k*kmPx).toFixed(1)}" fill="none" stroke="rgba(79,209,165,.35)" stroke-width="1.5" stroke-dasharray="6 6"/>`).join('')}</svg>
+      ${[50,100,200].map(k=>`<div class="rl-ring" style="left:${hx}px;top:${(hy-k*kmPx).toFixed(0)}px">${k} km</div>`).join('')}
+      <div class="rl-sweep" style="--px:${hx}px;--py:${hy}px"></div><div class="rl-pin" style="left:${hx}px;top:${hy}px"><i></i><b>${esc(CFG.city||'Home')}</b></div>
+      <div class="rl-badge" id="rlBadge"><small>LATEST</small><span>–</span></div>
+      <div class="rl-leg"><span>Rain</span><i style="background:linear-gradient(90deg,#9cf1ff,#2fb4ff,#1fd64a,#fff21a,#ff9a0a,#ff1a1a,#d000ff)"></i><span>Snow</span><i style="background:linear-gradient(90deg,#cfe3ff,#8fb2ff,#5a6dff,#3b2bd6,#8a1bd6)"></i><span></span><span style="display:flex;justify-content:space-between"><em style="font-style:normal">light</em><em style="font-style:normal">heavy</em></span></div>`;
+    RL.idx=0;
+  }
+  clearInterval(rlT);
+  const n=RL.times.length;let hold=0;
+  const show=()=>{if(!$('pRLoop').classList.contains('on')){clearInterval(rlT);return}
+    if(RL.err)return;
+    if(hold>0){hold--;return}
+    /* next frame that has loaded (skip ones that are still coming in or missing) */
+    let tries=0;do{RL.idx=(RL.idx+1)%n;tries++}while(tries<n&&!RL.loaded.has(RL.idx));
+    if(!RL.loaded.has(RL.idx))return;
+    {const c=RL.ctx,cv=c.canvas;c.clearRect(0,0,cv.width,cv.height);c.globalAlpha=.88;c.drawImage(RL.imgs[RL.idx],0,0,cv.width,cv.height)}
+    const last=[...RL.loaded].sort((a,c)=>c-a)[0],isLast=RL.idx===last,t=new Date(RL.times[RL.idx]),ago=Math.round((Date.now()-t)/60000);
+    const bd=$('rlBadge');if(bd){bd.classList.toggle('past',!isLast);bd.innerHTML=`<small>${isLast?'LATEST':ago+' MIN AGO'}</small><span>${fmt(t)}</span>`}
+    $('rlTime').textContent=(isLast?'Latest · ':'')+fmt(t);$('rlLive').style.visibility=isLast?'visible':'hidden';
+    $('rlProg').innerHTML=RL.times.map((_,i)=>`<i class="${i===RL.idx?'on':i<RL.idx&&RL.loaded.has(i)?'seen':''}"></i>`).join('');
+    if(isLast)hold=4};
+  show();rlT=setInterval(show,450);
 }
 
 /* ================= Live cams ================= */
@@ -3577,7 +3683,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 52';
+document.getElementById('ver').textContent='build nova 53';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -3589,7 +3695,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(healthDot,15000);
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
