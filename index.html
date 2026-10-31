@@ -983,6 +983,10 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .cam-frame{position:relative;flex:1;min-height:0;border-radius:calc(1.6*var(--u));overflow:hidden;background:#000}
 .cam-frame iframe,.cam-frame img,.cam-frame>div{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
 .cam-off{display:grid;place-items:center;color:var(--dim);font-size:calc(2.4*var(--u))}
+.cam-frame img.cam-511{z-index:1;transition:opacity .6s}.cam-frame .cam-off{z-index:0}.cam-frame.none .cam-off{font-size:0}.cam-frame.none .cam-off::after{content:'No camera found here';font-size:calc(2.4*var(--u))}
+.cam-ev{position:absolute;z-index:2;right:calc(1.2*var(--u));top:calc(1.2*var(--u));padding:calc(.6*var(--u)) calc(1.3*var(--u));border-radius:calc(2*var(--u));font-size:calc(1.9*var(--u));font-weight:600;background:rgba(10,12,18,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.16);max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cam-ev:empty{display:none}.cam-ev.ok{color:#9ff0b8}.cam-ev.amber{color:#ffd27a;border-color:rgba(255,184,77,.5)}.cam-ev.red{color:#fff;background:rgba(220,40,60,.8);border-color:rgba(255,120,130,.7)}
+.cam-card.tc .cam-cap{min-width:0}.cam-card.tc .cam-cap b{white-space:nowrap}.cam-card.tc .cam-loc{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cam-cap{display:flex;align-items:baseline;gap:calc(1.4*var(--u));margin-top:calc(1*var(--u));font-size:calc(2.4*var(--u))}.cam-cap b{font-weight:700}.cam-cap>span:last-child{color:var(--dim);font-size:calc(2*var(--u))}
 /* ===== Leafs headlines ===== */
 .hb2-nw{display:grid;grid-template-columns:calc(16*var(--u)) 1fr;gap:calc(1.6*var(--u));align-items:center;padding:calc(.8*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -1021,6 +1025,15 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .lc-map .tm-leg{margin-top:calc(1.2*var(--u))}
 .lc-cams.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.lc-evcard .lc-ev{padding:calc(1*var(--u)) 0}.lc-cams.c3 .lc-cap{font-size:calc(1.9*var(--u))}.lc-cams.c3 .lc-cap small{font-size:calc(1.6*var(--u))}
 .lc-cams.c1{grid-template-columns:1fr}
+.lc-drs{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.4*var(--u))}.lc-drs.n1{grid-template-columns:1fr}.lc-drs.n3 .lc-dr:first-child{grid-column:1/3}
+.lc-dr{position:relative;padding:calc(1.5*var(--u)) calc(1.8*var(--u)) calc(2.2*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);overflow:hidden;display:grid;grid-template-columns:1fr auto;align-items:baseline;row-gap:calc(.3*var(--u))}
+.lc-dr b{font-size:calc(2.4*var(--u));font-weight:600}.lc-drm{grid-row:2;font-size:calc(5.4*var(--u));font-weight:300;line-height:1.05;font-variant-numeric:tabular-nums}.lc-drm small{font-size:calc(2.2*var(--u));font-weight:500;color:var(--dim)}
+.lc-drs-k{grid-column:2;grid-row:1/3;align-self:center;font-size:calc(1.9*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.1*var(--u));border-radius:calc(2*var(--u))}
+.lc-dr small{grid-column:1/3;font-size:calc(1.8*var(--u));color:var(--dim)}
+.lc-dr.ok .lc-drs-k{color:#9ff0b8;background:rgba(63,210,122,.14)}.lc-dr.amber .lc-drs-k{color:#ffd27a;background:rgba(255,176,0,.16)}.lc-dr.red .lc-drs-k{color:#fff;background:rgba(255,59,48,.55)}
+.lc-dr.red{border-color:rgba(255,90,90,.45)}.lc-dr.amber{border-color:rgba(255,176,0,.35)}
+.lc-drbar{position:absolute;left:0;right:0;bottom:0;height:calc(.6*var(--u));background:rgba(255,59,48,.75)}.lc-dr.ok .lc-drbar{background:rgba(63,210,122,.5)}.lc-dr.amber .lc-drbar{background:rgba(255,176,0,.75)}
+.lc-drbar em{display:block;height:100%;background:#3fd27a}
 @media (orientation:landscape){.lc-body{grid-template-columns:1.3fr 1fr!important}.lc-map{grid-row:1/3}.lc-mbig{height:calc(34*var(--u))}.lc-mrow .tm-map{height:calc(20*var(--u))}}
 
 /* bigger cams: one large + two stacked */
@@ -1231,12 +1244,12 @@ const CFG={
     {name:'Downtown', lat:43.1312, lon:-80.7470, z:15},
     {name:'London · downtown', lat:42.9836, lon:-81.2497, z:13}   // around Canada Life Place
   ]},
-  // Live cams page: youtube = a YouTube channel that streams live 24/7, or iframe = an embeddable player link
-  cams:{on:true, list:[
-    {name:'Niagara Falls', sub:'Horseshoe Falls from the Fallsview District', yt:['c:UC15QFO-cdISk-4Sn5CPd78g']},
-    {name:'Mountain cam', sub:'Banff when it\'s live, otherwise Jackson Hole', yt:['c:UC0muoxLiFjQJVPF36pxf-1A','c:UCFJFUjH4EwdmH7OVfzcy22g','v:1EiC9bvVGnk','v:psfFJR3vZ78','v:BN7gzH-i-zo','v:LDnHwbRp6ZA','v:B9umkkqg5UI','c:UCEpDjqeFIGTqHwk-uULx72Q'], showTitle:true},
-    {name:'Earth from space', sub:'Live from the International Space Station', yt:['c:UCLA_DiR1FfKNvjuUpBHmylQ','v:r-TPJDQSqv0','v:0FBiyFpV__g','v:0Jiz0HZP2Dk','v:l8Mwbk6ulZA','v:1nnQQaLuyLY','v:kWRhLLbLFE0','v:FfLm8DoEXOE']}
-    // yt = streams to try in order (v:VIDEO_ID or c:CHANNEL_ID for a channel's live stream); if one won't play here, the next is tried
+  // Traffic cams page: near = [lat, lon] to look around, road = only cameras on that road. The closest 511 camera is used
+  // (each card gets a different camera). You can still add a YouTube cam: {name:'...', yt:['c:CHANNEL_ID']}
+  cams:{on:true, title:'Traffic cams', list:[
+    {name:'401 at Woodstock', near:[43.1000,-80.7480], road:'401'},
+    {name:'403 toward Brantford', near:[43.1330,-80.6780], road:'403'},
+    {name:'401 at London', near:[42.9300,-81.2280], road:'401'}
   ]},
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
   weatherFx:{on:true, amount:1},
@@ -1250,7 +1263,7 @@ const CFG={
   wrapped:{on:true},
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
   // Around Woodstock page: cams = how many traffic cameras; road events shown only if within nearKm of town, on the 401/403 within hwyKm, or a full closure within closureKm
-  local:{on:true, cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
+  local:{on:true, drives:[{name:'London',lat:42.9836,lon:-81.2497},{name:'Kitchener',lat:43.4516,lon:-80.4925},{name:'Brantford',lat:43.1394,lon:-80.2644},{name:'Toronto',lat:43.6435,lon:-79.3791}], cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
   // Plane radar page: radiusKm = how far out it looks, cards = how many flights listed under the radar
   planes:{on:true, radiusKm:40, cards:4},
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
@@ -1747,7 +1760,7 @@ function nextPage(force,hold){
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
   if(p.type==='gameday'){renderGameday();loadGameday()}
-  if(p.type==='local'){renderLocal();loadLocal()}
+  if(p.type==='local'){renderLocal();loadLocal();if(Date.now()-drvAt>290000)loadDrives()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   if(p.type==='ws'){renderWS();loadWS()}
   if(p.type==='recap'){if(!force)rcPick++;renderRecap()}
@@ -2313,7 +2326,8 @@ function handleCommand(raw){
   if(has(/\b(radar loop|rain (radar|loop|map)|snow (radar|map)|precip\w*|is it (going to )?(rain|snow)\w* nearby)\b/)){showFor('rloop');return reply(rlSay())}
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
-  if(has(/\b(cams?|webcams?|niagara|cn tower)\b/)){showFor('cams');return reply('Here are the live cams.')}
+  if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
+  if(has(/\b(drive times?|how long to (drive|get) to|commute)\b/)){showFor('local');return reply(drvSay())}
   if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
   if(has(/\b(recap|last night|how did (the )?(leafs|knights) do)\b/)){rcDemand=Date.now()+3600e3;if(recapOn())showFor('recap');return reply(recapSay())}
   if(has(/\b(week ahead|this week|the week|weekly)\b/)){window._wkDemand=Date.now()+1800e3;showFor('week');return reply(weekSay())}
@@ -2582,6 +2596,28 @@ async function loadPlanes(){
   if($('pLocal').classList.contains('on'))renderLocal();
 }
 setInterval(()=>{const on=$('pLocal').classList.contains('on');if(on||Date.now()-locAt>300000)loadLocal()},120000);
+/* drive times from home with live traffic (TomTom, through the relay) */
+let DRV=null,drvAt=0,drvErr='';
+const drvList=()=>((CFG.local||{}).drives||[]);
+async function loadDrives(){
+  if(!locOn()||!drvList().length)return;
+  try{const to=drvList().slice(0,6).map(d=>[String(d.name).replace(/[|;]/g,' '),d.lat,d.lon].join('|')).join(';');
+    const r=await tfetch(relayBase()+'/drives?'+locQ()+'&to='+encodeURIComponent(to),20000),d=await r.json();
+    if(d.error){drvErr=/key/i.test(d.error)?'TomTom key not set up':'Drive times unavailable'}else{DRV=d;drvAt=Date.now();drvErr=(d.drives||[]).every(x=>x.error)?((d.drives[0]||{}).error||'Drive times unavailable'):''}}
+  catch(e){drvErr='Drive times unavailable';console.warn('drives',e)}
+  if($('pLocal').classList.contains('on'))renderLocal();
+}
+setInterval(()=>{const on=$('pLocal').classList.contains('on');if((on&&Date.now()-drvAt>290000)||Date.now()-drvAt>900000)loadDrives()},60000);
+function drvSay(){const L=((DRV&&DRV.drives)||[]).filter(x=>!x.error&&x.min!=null);if(!L.length)return 'I can\'t get drive times right now.';
+  return L.map(x=>`${x.name} is ${x.min>=60?Math.floor(x.min/60)+' hour'+(x.min>=120?'s':'')+(x.min%60?' '+x.min%60+' minutes':''):x.min+' minutes'}${x.delay>=3?', with '+x.delay+' minutes of traffic':''}`).join('. ')+'.'}
+function drvHTML(){
+  const L=((DRV&&DRV.drives)||[]).filter(x=>!x.error&&x.min!=null);
+  if(!L.length)return `<div class="cnote">${esc(drvErr||(drvList().length?'Checking the roads…':'No destinations set'))}</div>`;
+  return `<div class="lc-drs n${Math.min(L.length,4)}">${L.slice(0,4).map(x=>{const dl=Math.max(0,x.delay||0),cls=dl>=10?'red':dl>=3?'amber':'ok';
+    const hm=x.min>=60?`${Math.floor(x.min/60)}<small>h</small> ${x.min%60}<small>m</small>`:`${x.min}<small> min</small>`;
+    const usual=x.usual&&Math.abs(x.usual-x.min)>=3?` · usually ${x.usual>=60?Math.floor(x.usual/60)+'h '+x.usual%60+'m':x.usual+' min'}`:'';
+    return `<div class="lc-dr ${cls}"><b>${esc(x.name)}</b><div class="lc-drm">${hm}</div><span class="lc-drs-k">${cls==='ok'?'✓ Clear':'+'+dl+' min traffic'}</span><small>${x.km} km${usual}</small>
+      <i class="lc-drbar"><em style="width:${Math.min(100,(x.free||x.min)/x.min*100).toFixed(0)}%"></em></i></div>`}).join('')}</div>`}
 setInterval(()=>{if($('pLocal').classList.contains('on')&&Date.now()-(window._lmAt||0)>300000)renderLocal()},30000);
 setInterval(()=>{if($('pLocal').classList.contains('on'))document.querySelectorAll('#locBody .lc-cam img').forEach(i=>{i.src=i.dataset.src+(i.dataset.src.includes('?')?'&':'?')+'t='+Date.now()})},60000);
 const evInfo=e=>{const t=e.type||'';if(/accident|incident/i.test(t))return {i:/collision/i.test(e.sub+e.desc)?'💥':'⚠️',n:/collision/i.test(e.sub+e.desc)?'Collision':'Incident',red:true};
@@ -2610,7 +2646,7 @@ function renderLocal(){
     :`<div class="jf-good">${locErr?esc(locErr):'✓ Nothing affecting '+esc(CFG.city)+' right now'}</div>`;
   const html=`<div class="jf-title">Around ${esc(CFG.city)}</div>
    <div class="lc-body">${mapHTML}
-    <div class="jf-glass gd-card lc-camcard"><h2>Traffic cameras${locAt?' · updated '+fmt(new Date(locAt)):''}</h2>${camHTML}</div>
+    <div class="jf-glass gd-card lc-drcard"><h2>Drive times now${drvAt?' · '+fmt(new Date(drvAt)):''}</h2>${drvHTML()}</div>
     <div class="jf-glass gd-card lc-evcard"><h2>Affecting ${esc(CFG.city)}</h2>${evHTML}</div>
    </div>`;
   const fresh=html!==locSig||Date.now()-(window._lmAt||0)>300000;
@@ -3356,6 +3392,7 @@ function healthList(){
   lastRes.forEach(r=>add(r.L.label+' scores',!r.failed,r.failed?'not loading':''));
   add('News',newsItems.length>0,newsItems.length?'':'no headlines');
   if(typeof jfOn==='function'&&jfOn())add('Jellyfin',!!(JF&&JF.up&&!jfErr),jfErr||(JF&&!JF.up?'server offline':JF?'':'not loaded'));
+  if(typeof locOn==='function'&&locOn()&&drvList().length&&(drvAt||drvErr))add('Drive times',!drvErr,drvErr);
   if(typeof locOn==='function'&&locOn())add('Traffic cams',!locErr&&!!LOC,locErr||(LOC?'':'not loaded'));
   if(typeof hubOn==='function'&&hubOn())add('Leafs hub',!!HUB,HUB?'':'not loaded');
   if(SECRETS.topic)add('Remote',remoteUp!==false,remoteUp===false?'disconnected':''); else add('Remote',false,'topic not set on this screen');
@@ -3516,10 +3553,22 @@ function renderRLoop(){
 const camsList=()=>(CFG.cams&&CFG.cams.list)||[];
 /* 511 cameras near a spot: ask the relay for the closest one, refresh the picture every minute */
 const cam511={};
-async function fill511(){document.querySelectorAll('#camBody .cam-511').forEach(async im=>{const k=im.dataset.near;
-  try{if(!cam511[k]||Date.now()-cam511[k].at>3600e3){const [la,lo]=k.split(',');const r=await tfetch(relayBase()+`/local?key=${encodeURIComponent(SECRETS.calkey)}&lat=${la}&lon=${lo}&r=10&cams=1`,15000),d=await r.json();
-      if(d.cams&&d.cams[0])cam511[k]={url:d.cams[0].img,loc:d.cams[0].loc,at:Date.now()}}
-    const c=cam511[k];if(c){im.src=c.url+(c.url.includes('?')?'&':'?')+'t='+Math.floor(Date.now()/60000);const cap=im.closest('.cam-card').querySelector('.cam-cap>span:last-child');if(cap&&c.loc)cap.textContent=c.loc}}catch(e){}})}
+/* one camera per card, closest to its spot (and on its road), never the same camera twice; incidents near each camera come along */
+async function fill511(){const used=new Set();
+  for(const im of document.querySelectorAll('#camBody .cam-511')){const road=im.dataset.road||'',k=im.dataset.near+'|'+road;
+    try{let c=cam511[k];
+      if(!c||Date.now()-c.at>180000){const [la,lo]=im.dataset.near.split(',');
+        const d=await (await tfetch(relayBase()+`/local?key=${encodeURIComponent(SECRETS.calkey)}&lat=${la}&lon=${lo}&r=12&cams=6${road?'&road='+encodeURIComponent(road):''}`,15000)).json();
+        const L=(d.cams||[]).filter(x=>!used.has(x.img)),pick=(c&&L.find(x=>x.img===c.url))||L[0];
+        if(pick)c=cam511[k]={url:pick.img,loc:pick.loc,dir:pick.dir,dist:pick.dist,at:Date.now(),
+          ev:(d.events||[]).filter(e=>e.dist<=6||(e.full&&e.dist<=12)).sort((a,b)=>(/accident|incident/i.test(b.type)-/accident|incident/i.test(a.type))||a.dist-b.dist)[0]||null}}
+      if(!c){im.closest('.cam-frame').classList.add('none');continue}
+      used.add(c.url);im.closest('.cam-frame').classList.remove('none');
+      const u=c.url+(c.url.includes('?')?'&':'?')+'t='+Math.floor(Date.now()/60000);if(im.dataset.u!==u){im.dataset.u=u;im.src=u}
+      const card=im.closest('.cam-card'),loc=card.querySelector('.cam-loc'),ev=card.querySelector('.cam-ev');
+      if(loc)loc.textContent=[c.loc,c.dir].filter(Boolean).join(' · ');
+      if(ev){const e=c.ev;if(e){const k2=evInfo(e);ev.className='cam-ev'+(k2.red?' red':' amber');ev.textContent=`${k2.i} ${k2.n}${e.full&&k2.n!=='Closure'?' · full closure':''} · ${e.dist} km`}else{ev.className='cam-ev ok';ev.textContent='✓ No incidents nearby'}}
+    }catch(e){}}}
 setInterval(()=>{if($('pCams').classList.contains('on'))fill511()},60000);
 /* YouTube cams: each cam has a list of streams; if YouTube refuses one (embedding off, gone, offline), try the next and remember the one that works */
 let ytReady=null;const camP={};
@@ -3544,8 +3593,8 @@ function renderCams(on){
   const b=$('camBody');
   if(!on){Object.keys(camP).forEach(k=>{try{camP[k].destroy()}catch(e){}delete camP[k]});b.querySelectorAll('iframe').forEach(f=>f.src='about:blank');return}
   const L=camsList();
-  b.innerHTML=`<div class="jf-title">Live cams</div><div class="cam-wrap">${L.map((c,i)=>`<div class="jf-glass cam-card"><div class="cam-frame" id="cam${i}">${c.iframe?`<iframe src="${esc(c.iframe)}" allow="autoplay; encrypted-media"></iframe>`:c.near?`<img class="cam-511" data-near="${esc(c.near.join(','))}" alt="">`:''}</div>
-      <div class="cam-cap"><span class="sat-live">● LIVE</span><b>${esc(c.name)}</b>${c.sub?`<span>${esc(c.sub)}</span>`:''}</div></div>`).join('')}</div>`;
+  b.innerHTML=`<div class="jf-title">${esc((CFG.cams&&CFG.cams.title)||'Live cams')}</div><div class="cam-wrap">${L.map((c,i)=>`<div class="jf-glass cam-card${c.near?' tc':''}"><div class="cam-frame" id="cam${i}">${c.iframe?`<iframe src="${esc(c.iframe)}" allow="autoplay; encrypted-media"></iframe>`:c.near?`<img class="cam-511" data-near="${esc(c.near.join(','))}" data-road="${esc(c.road||'')}" alt="" onerror="this.style.opacity=0" onload="this.style.opacity=1"><div class="cam-off">Finding a camera…</div>`:''}${c.near?'<span class="cam-ev"></span>':''}</div>
+      <div class="cam-cap"><span class="sat-live">● LIVE</span><b>${esc(c.name)}</b>${c.near?'<span class="cam-loc"></span>':c.sub?`<span>${esc(c.sub)}</span>`:''}</div></div>`).join('')}</div>`;
   fill511();
   if(L.some(c=>c.yt))ytAPI().then(()=>{if(!$('pCams').classList.contains('on'))return;L.forEach((c,i)=>{if(c.yt)camStart(i,c,$('cam'+i))})});
 }
@@ -3683,7 +3732,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 53';
+document.getElementById('ver').textContent='build nova 54';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -3695,7 +3744,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
