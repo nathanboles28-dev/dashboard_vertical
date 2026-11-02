@@ -47,6 +47,8 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
  padding:16px 6px 13px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .12s,background .2s}
 .grid button:active,.row button:active{transform:scale(.96);background:rgba(255,255,255,.18)}
 .grid button span{font-size:26px;line-height:1}.grid button b{font-size:14px;font-weight:600}
+.sec{margin:6px 4px -2px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.grid.extras button{background:linear-gradient(180deg,rgba(90,180,255,.18),rgba(90,180,255,.06));border-color:rgba(120,190,255,.35)}
 .row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .row button{padding:13px 4px;font-size:14px;font-weight:600}
 .tip{font-size:13px;color:var(--dim);line-height:1.5;text-align:center;padding:0 6px}
@@ -70,31 +72,38 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 
   <div class="card say" id="sayCard"><small>Nova</small><p id="sayText"></p></div>
 
+  <div class="sec">Your day</div>
   <div class="grid">
     <button data-c="home"><span>🏠</span><b>Home</b></button>
     <button data-c="weather"><span>⛅</span><b>Weather</b></button>
-    <button data-c="scores"><span>🏒</span><b>Scores</b></button>
-    <button data-c="news"><span>📰</span><b>News</b></button>
-    <button data-c="standings"><span>📊</span><b>Standings</b></button>
+    <button data-c="weather maps"><span>🗺️</span><b>Weather maps</b></button>
     <button data-c="calendar"><span>📅</span><b>Calendar</b></button>
-    <button data-c="photos"><span>🖼️</span><b>Photos</b></button>
-    <button data-c="when do my teams play next"><span>🗓️</span><b>Next games</b></button>
     <button data-c="countdown"><span>⏳</span><b>Countdowns</b></button>
-    <button data-c="jellyfin"><span>🍿</span><b>Jellyfin</b></button>
-    <button data-c="game day"><span>🍁</span><b>Game day</b></button>
-    <button data-c="traffic"><span>🚦</span><b>Traffic</b></button>
-    <button data-c="planes"><span>✈️</span><b>Planes</b></button>
-    <button data-c="leafs hub"><span>📺</span><b>Leafs hub</b></button>
-    <button data-c="wrapped"><span>🎬</span><b>Wrapped</b></button>
-    <button data-c="what's the score"><span>🔴</span><b>Live game</b></button>
-    <button data-c="world series"><span>⚾</span><b>World Series</b></button>
-    <button data-c="recap"><span>🔁</span><b>Recap</b></button>
-    <button data-c="knights"><span>💚</span><b>Knights</b></button>
     <button data-c="week ahead"><span>🗓️</span><b>Week ahead</b></button>
-    <button data-c="satellite"><span>🛰️</span><b>Satellite</b></button>
-    <button data-c="rain radar"><span>🌧️</span><b>Rain radar</b></button>
+  </div>
+  <div class="sec">Sports</div>
+  <div class="grid">
+    <button data-c="leafs hub"><span>🍁</span><b>Leafs</b></button>
+    <button data-c="knights"><span>💚</span><b>Knights</b></button>
+    <button data-c="standings"><span>📊</span><b>Standings</b></button>
+    <button data-c="what's the score"><span>🔴</span><b>Live game</b></button>
+    <button data-c="game day"><span>🏒</span><b>Game day</b></button>
+    <button data-c="news"><span>📰</span><b>Team news</b></button>
+  </div>
+  <div class="sec">Around town</div>
+  <div class="grid">
+    <button data-c="traffic"><span>🚦</span><b>Woodstock</b></button>
     <button data-c="cams"><span>📹</span><b>Traffic cams</b></button>
-    <button data-c="drive times"><span>🚗</span><b>Drive times</b></button>
+    <button data-c="planes"><span>✈️</span><b>Planes</b></button>
+  </div>
+  <div class="sec">Media</div>
+  <div class="grid">
+    <button data-c="jellyfin"><span>🍿</span><b>Jellyfin</b></button>
+    <button data-c="wrapped"><span>🎬</span><b>Wrapped</b></button>
+    <button data-c="photos"><span>🖼️</span><b>Photos</b></button>
+  </div>
+  <div class="sec">Screen</div>
+  <div class="grid">
     <button data-c="status"><span>🩺</span><b>Status</b></button>
     <button data-c="goodnight"><span>🌙</span><b>Goodnight</b></button>
     <button data-c="wake up"><span>☀️</span><b>Wake</b></button>
