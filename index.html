@@ -950,6 +950,30 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 .sat-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;z-index:0;will-change:opacity;backface-visibility:hidden;transform:translateZ(0)}
 .sat-img.on{opacity:1}.sat-img.under{z-index:1;opacity:1}.sat-img.top{z-index:2}.sat-img.fade{animation:satIn 1.2s ease-in-out both}
 @keyframes satIn{from{opacity:0}to{opacity:1}}
+/* ===== Aquarium ===== */
+#pAqua{background:#031c2e;transition:opacity 1.6s ease,visibility 1.6s}#aqCv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#aqClock{position:absolute;left:calc(3*var(--u));bottom:calc(3*var(--u));font-size:calc(4*var(--u));font-weight:200;color:rgba(220,240,255,.55);text-shadow:0 2px 12px rgba(0,0,0,.5);font-variant-numeric:tabular-nums}
+body.aqua #mini,body.aqua #dots,body.aqua #hdot,body.aqua #holfx,body.aqua .xlights,body.aqua #ver{opacity:0!important;visibility:hidden}
+body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(3,20,35,.6)}
+/* ===== Car ===== */
+#pCar{--acc:#7fd6ff;--ico:'🚙'}
+.car-wrap{position:absolute;left:5%;right:5%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u))}
+.car-hero{position:relative;padding:calc(3.4*var(--u)) calc(3*var(--u)) calc(2.4*var(--u));display:grid;grid-template-columns:calc(30*var(--u)) 1fr;grid-template-rows:auto auto;align-items:center;column-gap:calc(3*var(--u));overflow:hidden;
+ background:linear-gradient(140deg,rgba(80,170,255,.22),rgba(60,220,170,.12) 60%,rgba(255,255,255,.04))!important}
+.car-ring{grid-row:1;grid-column:1;width:100%;transform:rotate(-90deg)}.car-ring circle{fill:none;stroke-width:9;stroke-linecap:round}.car-ring .bg{stroke:rgba(255,255,255,.1)}.car-ring .fg{filter:drop-shadow(0 0 6px currentColor);transition:stroke-dasharray 1s}.car-ring .tg{stroke:#fff;stroke-width:13;stroke-linecap:butt}
+.car-hero.chg .car-ring .fg{animation:carPulse 2.2s ease-in-out infinite}@keyframes carPulse{50%{opacity:.6}}
+.car-num{grid-row:1;grid-column:1;text-align:center;z-index:1}.car-num b{display:block;font-size:calc(9*var(--u));font-weight:200;line-height:1}.car-num b small{font-size:calc(3.4*var(--u));font-weight:400;color:var(--dim)}
+.car-num span{display:block;margin-top:calc(.6*var(--u));font-size:calc(2.2*var(--u));color:var(--dim)}
+.car-state{grid-row:1;grid-column:2;font-size:calc(3.2*var(--u));font-weight:600;line-height:1.3}
+.car-sil{grid-row:2;grid-column:1/3;width:100%;height:auto;margin-top:calc(1.6*var(--u));opacity:.95}
+.car-cable{stroke-dasharray:6 6;animation:carFlow 1s linear infinite}@keyframes carFlow{to{stroke-dashoffset:-12}}
+.car-grid{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.8*var(--u))}
+.car-t{padding:calc(2.6*var(--u)) calc(2.4*var(--u));border-radius:calc(2*var(--u));background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);display:grid;grid-template-columns:auto 1fr;column-gap:calc(1.4*var(--u));align-items:center;
+ backdrop-filter:blur(30px) saturate(150%);-webkit-backdrop-filter:blur(30px) saturate(150%)}
+.car-t i{grid-row:1/3;font-style:normal;font-size:calc(4*var(--u))}.car-t span{font-size:calc(1.9*var(--u));color:var(--dim)}.car-t b{font-size:calc(2.8*var(--u));font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.car-grid>.car-t:last-child:nth-child(odd){grid-column:1/3}.car-t.ok b{color:#b6f5c9}.car-t.warn{border-color:rgba(255,184,77,.55);background:rgba(255,184,77,.12)}.car-t.warn b{color:#ffd27a}
+.car-foot{margin-top:auto;font-size:calc(1.9*var(--u));color:var(--dim);line-height:1.45;padding:0 calc(.6*var(--u))}.car-foot b{color:#ffd27a}
+.car-setup h2{margin-bottom:calc(1.2*var(--u))}.car-setup span{font-size:calc(2.4*var(--u));line-height:1.5}.car-setup b{color:#7fd6ff}.car-setup small{display:block;margin-top:calc(1.4*var(--u));color:var(--dim);font-size:calc(1.9*var(--u))}
 /* ===== Rain radar loop ===== */
 #pRLoop{--acc:#4fd1a5;--ico:'🌧️'}
 .rl-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#0d0f14}
@@ -1110,6 +1134,8 @@ body[data-hol="halloween"] #dots i.on,body[data-hol="halloween"] #dots .on{backg
 <section id="pSat" class="page"><div id="satBody"></div></section>
 <section id="pRLoop" class="page"><div id="rlBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
+<section id="pAqua" class="page"><canvas id="aqCv"></canvas><div id="aqClock"></div></section>
+<section id="pCar" class="page"><div id="carBody"></div></section>
 <section id="pRecap" class="page"><div id="rcBody"></div></section>
 <section id="pKHub" class="page"><div id="khBody"></div></section>
 <section id="pWeek" class="page"><div id="wkBody"></div></section>
@@ -1234,6 +1260,9 @@ const CFG={
   // Game-start intro and goal celebration for your teams (sayScorer: Nova reads out the goal scorer)
   cinema:{intro:true, introSecs:9, goal:true, goalSecs:11, sayScorer:true},
   // Satellite page: NOAA GOES-East Great Lakes picture (refreshes every 10 minutes)
+  // Remote-only pages: not in the rotation, only shown from the remote's Extras row. holdMins/holdSecs = how long they stay before the rotation resumes
+  extras:{aqua:{on:false, holdMins:30}, car:{on:false, holdSecs:120}},   // on:true to bring them back (and re-add the remote buttons)
+  car:{name:'Ioniq 5'},
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
   radarLoop:{on:true, frames:15, zoom:7},
@@ -1656,8 +1685,9 @@ async function radar(){
     for(let tx=cx-1;tx<=cx+1;tx++)for(let ty=cy-1;ty<=cy+1;ty++)h+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${RZ}/${ty}/${tx}" style="${pos(tx,ty)}" alt="" onerror="this.remove()">`;
     h+='<div id="rvLayer"></div>';
     const W=40075016.68/n,O=20037508.34,bb=[-O+(cx-1)*W,O-(cy+2)*W,-O+(cx+2)*W,O-(cy-1)*W];
-    const wms=`https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=RADAR_1KM_RRAI,RADAR_1KM_RSNO&styles=&crs=EPSG:3857&bbox=${bb.join(',')}&width=768&height=768&format=image/png&transparent=true&_=${Date.now()}`;
-    h+=`<img src="${wms}" style="${pos(cx-1,cy-1)};width:768px;height:768px;opacity:.85" alt="" onload="RS.ec=true;radarStatus()" onerror="RS.ec=false;radarStatus();this.remove()">`;
+    /* Environment Canada only takes one layer per request now: rain and snow are fetched separately */
+    const wms=ly=>`https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=${ly}&styles=&crs=EPSG:3857&bbox=${bb.join(',')}&width=768&height=768&format=image/png&transparent=true&_=${Date.now()}`;
+    ['RADAR_1KM_RRAI','RADAR_1KM_RSNO'].forEach((ly,i)=>{h+=`<img src="${wms(ly)}" style="${pos(cx-1,cy-1)};width:768px;height:768px;opacity:.85" alt="" onload="RS.ec=true;radarStatus()" onerror="${i?'':'RS.ec=false;radarStatus();'}this.remove()">`});
     h+='</div><div class="pin"></div><div class="mtime">Radar · '+fmt(new Date())+'</div><div class="mcap"><span id="rsrc"></span> · Map © Esri</div>';
     $('radar').innerHTML=h;rFrames=[];RS.ec=null;radarStatus();
     /* RainViewer: newest frame, drawn at zoom 7 and doubled to line up with the zoom-8 map */
@@ -1733,7 +1763,7 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',cams:'pCams',tmap:'pTMap',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',tmap:'pTMap',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
 const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='tmap'||tmOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)));
@@ -1771,6 +1801,8 @@ function nextPage(force,hold){
   if(p.type==='radar'){renderRadar();loadRadar()}
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   if(p.type==='rloop')renderRLoop();
+  if(p.type==='aqua')aqStart();else aqStop();
+  if(p.type==='car'){renderCar();loadCar()}
   renderCams(p.type==='cams');
   if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSig='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
@@ -1782,7 +1814,7 @@ function nextPage(force,hold){
   document.body.classList.toggle('alt',p.type!=='dashboard');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
-  $('dots').innerHTML=list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx?'on':''}"></i>`:'').join(''):'';
+  $('dots').innerHTML=list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
   clearTimeout(pTimer);if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
 }
 
@@ -2278,7 +2310,7 @@ function reply(text){
   if(!T)return;
   fetch(`https://ntfy.sh/${T}-reply`,{method:'POST',body:text}).catch(()=>{});
 }
-function showFor(type){nextPage(type,paused?0:((CFG.remote&&CFG.remote.holdSecs)||60))}
+function showFor(type){const X=(CFG.extras||{})[type],h=X&&X.holdMins?X.holdMins*60:X&&X.holdSecs?X.holdSecs:null;nextPage(type,paused?0:(h||(CFG.remote&&CFG.remote.holdSecs)||60))}
 const num=x=>Math.round(x);
 function wxSay(tomorrow){
   if(!WXD)return 'Sorry, I don\'t have the weather yet.';
@@ -2324,6 +2356,9 @@ function handleCommand(raw){
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
   if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){showHealth(25);return reply(healthSay())}
+  const xOn=t=>((CFG.extras||{})[t]||{}).on!==false;
+  if(xOn('aqua')&&has(/\b(aquarium|fish ?tank|fish)\b/)){showFor('aqua');return reply('Here\'s the aquarium. Say next or press Resume to go back.')}
+  if(xOn('car')&&has(/\b(car|ioniq|the ev|car battery|charging)\b/)){showFor('car');return reply(carSay())}
   if(has(/\b(radar loop|rain (radar|loop|map)|snow (radar|map)|precip\w*|is it (going to )?(rain|snow)\w* nearby)\b/)){showFor('rloop');return reply(rlSay())}
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
@@ -3479,7 +3514,7 @@ function renderSat(){
 /* ================= Rain radar loop (Environment Canada 1 km radar, last ~90 minutes) ================= */
 const RL={times:[],at:0,step:6,sig:'',idx:0,err:false,ok:0};let rlT=null;
 const rlCfg=()=>Object.assign({frames:15,zoom:7},CFG.radarLoop||{});
-const WMS_RL='https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&layers=RADAR_1KM_RRAI,RADAR_1KM_RSNO&styles=&crs=EPSG:3857&format=image/png&transparent=true';
+const WMS_RL='https://geo.weather.gc.ca/geomet?service=WMS&version=1.3.0&request=GetMap&styles=&crs=EPSG:3857&format=image/png&transparent=true';
 /* ask Environment Canada which radar times exist; if that fails, guess (the composite is every 6 minutes, ~10 minutes behind) */
 async function rlTimes(){
   const n=rlCfg().frames;
@@ -3521,9 +3556,13 @@ function renderRLoop(){
     const sc=Math.min(1,1400/Math.max(W,H)),iw=Math.round(W*sc),ih=Math.round(H*sc);
     const cv=st.querySelector('.rl-cv');cv.width=iw;cv.height=ih;RL.ctx=cv.getContext('2d');RL.ctx.clearRect(0,0,iw,ih);RL.ok=0;RL.loaded=new Set();RL.bad=new Set();
     /* frames are decoded up front and painted onto one canvas, so the loop never flickers */
-    RL.imgs=RL.times.map((t,i)=>{const im=new Image();im.decoding='async';
-      im.onload=async()=>{try{await im.decode()}catch(e){}RL.ok++;RL.loaded.add(i)};im.onerror=()=>{RL.bad.add(i);if(RL.bad.size===RL.times.length){RL.err=true;$('rlTime').textContent='Radar unavailable right now'}};
-      im.src=`${WMS_RL}&bbox=${bb}&width=${iw}&height=${ih}&time=${new Date(t).toISOString().replace(/\.\d+Z$/,'Z')}`;return im});
+    /* each frame = a rain picture + a snow picture (Environment Canada only serves one layer per request) */
+    RL.imgs=RL.times.map((t,i)=>{const fr={ims:[],done:0,good:0},tm=new Date(t).toISOString().replace(/\.\d+Z$/,'Z');
+      const fin=()=>{if(++fr.done<2)return;if(fr.good){RL.ok++;RL.loaded.add(i)}else{RL.bad.add(i);if(RL.bad.size===RL.times.length){RL.err=true;$('rlTime').textContent='Radar unavailable right now'}}};
+      ['RADAR_1KM_RRAI','RADAR_1KM_RSNO'].forEach(ly=>{const im=new Image();im.decoding='async';
+        im.onload=async()=>{try{await im.decode()}catch(e){}im._ok=true;fr.good++;fin()};im.onerror=()=>fin();
+        im.src=`${WMS_RL}&layers=${ly}&bbox=${bb}&width=${iw}&height=${ih}&time=${tm}`;fr.ims.push(im)});
+      return fr});
     /* range rings + home pin + sweep */
     const hx=px-ox,hy=py-oy,kmPx=1000/(156543.034*Math.cos(lr)/2**z);
     st.querySelector('.rl-fx').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${[50,100,200].map(k=>`<circle cx="${hx}" cy="${hy}" r="${(k*kmPx).toFixed(1)}" fill="none" stroke="rgba(79,209,165,.35)" stroke-width="1.5" stroke-dasharray="6 6"/>`).join('')}</svg>
@@ -3541,13 +3580,195 @@ function renderRLoop(){
     /* next frame that has loaded (skip ones that are still coming in or missing) */
     let tries=0;do{RL.idx=(RL.idx+1)%n;tries++}while(tries<n&&!RL.loaded.has(RL.idx));
     if(!RL.loaded.has(RL.idx))return;
-    {const c=RL.ctx,cv=c.canvas;c.clearRect(0,0,cv.width,cv.height);c.globalAlpha=.88;c.drawImage(RL.imgs[RL.idx],0,0,cv.width,cv.height)}
+    {const c=RL.ctx,cv=c.canvas;c.clearRect(0,0,cv.width,cv.height);c.globalAlpha=.88;RL.imgs[RL.idx].ims.forEach(im=>{if(im._ok)c.drawImage(im,0,0,cv.width,cv.height)})}
     const last=[...RL.loaded].sort((a,c)=>c-a)[0],isLast=RL.idx===last,t=new Date(RL.times[RL.idx]),ago=Math.round((Date.now()-t)/60000);
     const bd=$('rlBadge');if(bd){bd.classList.toggle('past',!isLast);bd.innerHTML=`<small>${isLast?'LATEST':ago+' MIN AGO'}</small><span>${fmt(t)}</span>`}
     $('rlTime').textContent=(isLast?'Latest · ':'')+fmt(t);$('rlLive').style.visibility=isLast?'visible':'hidden';
     $('rlProg').innerHTML=RL.times.map((_,i)=>`<i class="${i===RL.idx?'on':i<RL.idx&&RL.loaded.has(i)?'seen':''}"></i>`).join('');
     if(isLast)hold=4};
   show();rlT=setInterval(show,450);
+}
+
+/* ================= Aquarium (remote-only page) ================= */
+const AQ={on:false,raf:0,t0:0,fish:[],bub:[],snow:[],jelly:[],kelp:[],W:0,H:0,dpr:1,floor:null,back:null,last:0};
+function aqInit(){
+  const cv=$('aqCv'),dpr=Math.min(2,window.devicePixelRatio||1),W=cv.clientWidth,H=cv.clientHeight;if(!W||!H)return false;
+  if(AQ.W===W&&AQ.H===H&&AQ.fish.length)return true;
+  AQ.W=W;AQ.H=H;AQ.dpr=dpr;cv.width=W*dpr;cv.height=H*dpr;
+  const R=(a,b)=>a+Math.random()*(b-a),fy=H*.86;AQ.fy=fy;
+  /* back layer: water gradient, far rocks; floor layer: sand, rocks, coral */
+  const mk=()=>{const c=document.createElement('canvas');c.width=W*dpr;c.height=H*dpr;const x=c.getContext('2d');x.scale(dpr,dpr);return [c,x]};
+  {const [c,x]=mk();const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1a8fc0');g.addColorStop(.35,'#0e6596');g.addColorStop(.7,'#08426a');g.addColorStop(1,'#04243b');x.fillStyle=g;x.fillRect(0,0,W,H);
+    for(let k=0;k<3;k++){x.fillStyle=`rgba(3,30,48,${.35+k*.15})`;x.beginPath();x.moveTo(0,H);let px=0;const base=H*(.72+k*.05);while(px<=W+40){x.lineTo(px,base-R(0,H*(.08-k*.02))-Math.sin(px/W*Math.PI*(2+k))*H*.03);px+=R(30,70)}x.lineTo(W,H);x.fill()}
+    AQ.back=c}
+  {const [c,x]=mk();
+    const sg=x.createLinearGradient(0,fy-20,0,H);sg.addColorStop(0,'#c9b27a');sg.addColorStop(.25,'#a8915d');sg.addColorStop(1,'#5e4f33');x.fillStyle=sg;
+    x.beginPath();x.moveTo(0,H);x.lineTo(0,fy);for(let px=0;px<=W;px+=20)x.lineTo(px,fy+Math.sin(px/90)*6+Math.sin(px/37)*3);x.lineTo(W,H);x.fill();
+    for(let i=0;i<900;i++){x.fillStyle=`rgba(${R(60,255)|0},${R(50,220)|0},${R(30,150)|0},${R(.05,.25)})`;x.fillRect(R(0,W),R(fy+4,H),R(1,2.5),R(1,2.5))}
+    const rock=(cx,cy,rw,rh,col)=>{x.save();const g=x.createRadialGradient(cx-rw*.3,cy-rh*.5,2,cx,cy,rw);g.addColorStop(0,col[0]);g.addColorStop(1,col[1]);x.fillStyle=g;x.beginPath();
+      const n=9;for(let i=0;i<=n;i++){const a=Math.PI+i/n*Math.PI,r=1+Math.sin(i*2.3)*.12;x.lineTo(cx+Math.cos(a)*rw*r,cy+Math.sin(a)*rh*r)}x.closePath();x.fill();x.restore()};
+    rock(W*.12,fy+H*.035,W*.16,H*.07,['#5d6b72','#232c31']);rock(W*.8,fy+H*.03,W*.2,H*.09,['#6b6560','#2a2522']);rock(W*.47,fy+H*.05,W*.09,H*.035,['#7a7f80','#33393b']);
+    /* corals: branching + fan + brain */
+    const branch=(bx,by,len,ang,w,col,d)=>{if(d<=0||len<4)return;const ex=bx+Math.cos(ang)*len,ey=by+Math.sin(ang)*len;x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(bx,by);x.quadraticCurveTo(bx+Math.cos(ang+.3)*len*.5,by+Math.sin(ang+.3)*len*.5,ex,ey);x.stroke();
+      branch(ex,ey,len*R(.62,.8),ang-R(.25,.6),w*.72,col,d-1);branch(ex,ey,len*R(.62,.8),ang+R(.25,.6),w*.72,col,d-1)};
+    branch(W*.2,fy+8,H*.055,-Math.PI/2,W*.018,'#ff7a8a',5);branch(W*.26,fy+12,H*.05,-Math.PI/2-.3,W*.014,'#ff9f6b',4);
+    branch(W*.86,fy-H*.035,H*.045,-Math.PI/2+.15,W*.016,'#c58cff',5);branch(W*.68,fy+14,H*.045,-Math.PI/2,W*.012,'#ffd166',4);
+    {const cx=W*.58,cy=fy+4;x.save();x.translate(cx,cy);for(let i=0;i<26;i++){const a=-Math.PI+i/25*Math.PI;x.strokeStyle=`rgba(255,120,90,${.5+Math.random()*.3})`;x.lineWidth=1.6;x.beginPath();x.moveTo(0,0);x.quadraticCurveTo(Math.cos(a)*W*.06,Math.sin(a)*H*.05-H*.04,Math.cos(a)*W*.09,Math.sin(a)*H*.075-H*.02);x.stroke()}x.restore()}
+    {const cx=W*.36,cy=fy+H*.03,r=W*.045;const g=x.createRadialGradient(cx-r*.3,cy-r*.4,2,cx,cy,r);g.addColorStop(0,'#a5e08a');g.addColorStop(1,'#3e7a3a');x.fillStyle=g;x.beginPath();x.ellipse(cx,cy,r,r*.7,0,Math.PI,0);x.fill();
+      x.strokeStyle='rgba(30,70,30,.6)';x.lineWidth=1.2;for(let k=1;k<5;k++){x.beginPath();x.ellipse(cx,cy,r*k/5,r*.7*k/5,0,Math.PI,0);x.stroke()}}
+    /* a treasure chest, slightly open */
+    {const cx=W*.73,cy=fy+H*.045,w=W*.1,h=H*.035;x.save();x.translate(cx,cy);x.rotate(-.06);x.fillStyle='#5a3a1c';x.fillRect(-w/2,-h,w,h);x.fillStyle='#3d2610';x.fillRect(-w/2,-h*.55,w,h*.12);x.fillStyle='#c9a227';x.fillRect(-w*.06,-h*.8,w*.12,h*.3);
+      x.fillStyle='#6b4522';x.beginPath();x.moveTo(-w/2,-h);x.lineTo(-w/2+6,-h*1.7);x.lineTo(w/2+6,-h*1.7);x.lineTo(w/2,-h);x.fill();x.fillStyle='rgba(255,215,90,.55)';x.beginPath();x.ellipse(0,-h*1.05,w*.38,h*.18,0,0,Math.PI*2);x.fill();x.restore()}
+    AQ.floor=c}
+  /* kelp strands */
+  AQ.kelp=[];[[.05,.55],[.09,.4],[.31,.35],[.42,.5],[.52,.28],[.63,.45],[.92,.6],[.96,.42]].forEach(([px,hh],i)=>AQ.kelp.push({x:W*px+R(-8,8),h:H*hh*R(.85,1.1),w:R(22,34)*W/900,ph:R(0,6),col:i%3?'#2f8f4e':'#3fae5c',seg:16}));
+  /* fish */
+  const SP={
+    tetra:{L:[16,22],H:.32,body:['#7fd6ff','#e8f6ff'],stripe:'#2fa8ff',red:'#ff3b4a',sp:1.4},
+    clown:{L:[34,44],H:.42,body:['#ff8a1c','#ffb15c'],bands:true,sp:.9},
+    tang:{L:[48,60],H:.62,body:['#ffe03a','#fff07a'],sp:.8,tall:true},
+    blue:{L:[56,68],H:.5,body:['#1f6bff','#4fa0ff'],tail:'#ffd500',sp:.85,blue:true},
+    angel:{L:[46,58],H:.95,body:['#d9dde8','#f5f7fb'],stripes:'#2b2f3a',sp:.6,angel:true},
+    puffer:{L:[40,48],H:.72,body:['#c9b07a','#f1e6c9'],spots:true,sp:.5}
+  };
+  AQ.fish=[];const add=(k,n,school)=>{for(let i=0;i<n;i++){const s=SP[k],L=R(s.L[0],s.L[1])*W/520,z=R(.6,1);
+    AQ.fish.push({k,s,L:L*z,z,x:R(W*.1,W*.9),y:R(H*.12,fy-H*.1),vx:R(-1,1)*s.sp,vy:0,dir:1,ph:R(0,6),tx:R(0,W),ty:R(H*.1,fy-H*.12),tt:0,school})}};
+  add('tetra',26,1);add('clown',2);add('tang',2);add('blue',1);add('angel',2);add('puffer',1);
+  AQ.fish.sort((a,b)=>a.z-b.z);
+  AQ.school={x:W*.5,y:H*.4,tx:W*.5,ty:H*.4};
+  AQ.bub=[];AQ.snow=Array.from({length:70},()=>({x:R(0,W),y:R(0,H),r:R(.5,1.8),v:R(.05,.25),ph:R(0,6)}));
+  AQ.jelly=[{x:W*.7,y:H*.55,s:W*.07,ph:0,vx:.08,hue:300}];
+  return true;
+}
+function aqFish(x,f,t){
+  const s=f.s,L=f.L,Hh=L*s.H,wag=Math.sin(t*(s.k==='tetra'?14:7)*(.6+Math.hypot(f.vx,f.vy)*.4)+f.ph);
+  x.save();x.translate(f.x,f.y);x.rotate(Math.atan2(f.vy,Math.abs(f.vx)+.01)*.6*Math.sign(f.dir||1));x.scale(f.dir,1);
+  x.globalAlpha=.55+f.z*.45;
+  const nose=L*.5,tb=-L*.32;
+  /* tail */
+  x.fillStyle=s.tail||s.body[0];x.beginPath();x.moveTo(tb+2,0);x.lineTo(tb-L*.22,-Hh*.45+wag*Hh*.15);x.quadraticCurveTo(tb-L*.14,wag*Hh*.1,tb-L*.22,Hh*.45+wag*Hh*.15);x.closePath();x.fill();
+  /* fins */
+  if(s.angel){x.fillStyle='rgba(225,230,240,.8)';x.beginPath();x.moveTo(L*.1,-Hh*.3);x.quadraticCurveTo(-L*.05,-Hh*1.1,-L*.35,-Hh*1.15);x.quadraticCurveTo(-L*.2,-Hh*.5,-L*.25,-Hh*.1);x.fill();
+    x.beginPath();x.moveTo(L*.1,Hh*.3);x.quadraticCurveTo(-L*.05,Hh*1.1,-L*.35,Hh*1.15);x.quadraticCurveTo(-L*.2,Hh*.5,-L*.25,Hh*.1);x.fill()}
+  else{x.fillStyle=s.blue?'#0d2a6b':s.tall?'#f2cf1d':'rgba(255,255,255,.35)';x.beginPath();x.moveTo(L*.15,-Hh*.42);x.quadraticCurveTo(-L*.05,-Hh*(s.tall?.95:.7),-L*.28,-Hh*.3);x.lineTo(-L*.1,-Hh*.3);x.fill()}
+  /* body */
+  const bp=new Path2D();bp.moveTo(nose,0);bp.bezierCurveTo(nose*.8,-Hh*.62,-L*.05,-Hh*.6,tb,-Hh*.12);bp.lineTo(tb,Hh*.12);bp.bezierCurveTo(-L*.05,Hh*.6,nose*.8,Hh*.62,nose,0);
+  const g=x.createLinearGradient(0,-Hh/2,0,Hh/2);g.addColorStop(0,s.body[0]);g.addColorStop(1,s.body[1]);x.fillStyle=g;x.fill(bp);
+  x.save();x.clip(bp);
+  if(s.stripe){x.fillStyle=s.stripe;x.fillRect(-L*.25,-Hh*.18,L*.7,Hh*.16);x.fillStyle=s.red;x.fillRect(tb,Hh*.0,L*.4,Hh*.4)}
+  if(s.bands){x.fillStyle='#fff';[L*.22,-L*.02,-L*.26].forEach((bx,i)=>{x.beginPath();x.ellipse(bx,0,L*(i===1?.06:.045),Hh,0,0,Math.PI*2);x.fill()});x.strokeStyle='#1a1a1a';x.lineWidth=1}
+  if(s.blue){x.fillStyle='#0b1f4f';x.beginPath();x.moveTo(L*.3,-Hh*.1);x.bezierCurveTo(L*.05,-Hh*.45,-L*.2,-Hh*.2,tb,-Hh*.05);x.bezierCurveTo(-L*.15,0,L*.05,-Hh*.15,L*.3,-Hh*.1);x.fill()}
+  if(s.stripes){x.fillStyle=s.stripes;[L*.18,-L*.05,-L*.25].forEach(bx=>x.fillRect(bx,-Hh,L*.05,Hh*2))}
+  if(s.spots){x.fillStyle='rgba(90,70,40,.55)';for(let i=0;i<9;i++)x.fillRect(-L*.25+(i%3)*L*.16,-Hh*.35+((i/3)|0)*Hh*.14,L*.05,L*.05)}
+  /* shine */const sh=x.createLinearGradient(0,-Hh/2,0,0);sh.addColorStop(0,'rgba(255,255,255,.25)');sh.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=sh;x.fillRect(-L,-Hh,L*2,Hh);
+  x.restore();
+  /* pectoral fin + eye */
+  x.fillStyle='rgba(255,255,255,.35)';x.beginPath();x.ellipse(L*.12,Hh*.12,L*.1,Hh*.08,.6+wag*.3,0,Math.PI*2);x.fill();
+  const er=Math.max(1.4,L*.055);x.fillStyle='#fff';x.beginPath();x.arc(L*.32,-Hh*.1,er,0,7);x.fill();x.fillStyle='#111';x.beginPath();x.arc(L*.33,-Hh*.1,er*.6,0,7);x.fill();
+  x.restore();
+}
+function aqStep(ts){
+  if(!AQ.on){AQ.raf=0;return}AQ.raf=requestAnimationFrame(aqStep);
+  if(ts-AQ.last<30)return;const dtf=Math.min(3,(ts-(AQ.last||ts))/16.7)||1;AQ.last=ts;
+  const cv=$('aqCv'),x=cv.getContext('2d'),{W,H,fy}=AQ,t=ts/1000;if(!W)return;
+  x.setTransform(AQ.dpr,0,0,AQ.dpr,0,0);x.drawImage(AQ.back,0,0,W,H);
+  /* light rays */
+  x.save();x.globalCompositeOperation='lighter';for(let i=0;i<6;i++){const cx=W*(.1+i*.17)+Math.sin(t*.13+i*1.7)*W*.05,w=W*(.05+.03*Math.sin(t*.2+i)),a=.05+.035*Math.sin(t*.31+i*2.1);
+    const g=x.createLinearGradient(0,0,0,H*.85);g.addColorStop(0,`rgba(180,235,255,${a})`);g.addColorStop(1,'rgba(180,235,255,0)');x.fillStyle=g;x.beginPath();x.moveTo(cx-w*.4,0);x.lineTo(cx+w*.4,0);x.lineTo(cx+w*2.2+W*.08,H*.85);x.lineTo(cx-w*.4+W*.08,H*.85);x.fill()}
+  /* surface shimmer */
+  for(let i=0;i<14;i++){const yy=H*.012+i*H*.004;x.strokeStyle=`rgba(200,245,255,${.09-i*.005})`;x.lineWidth=2;x.beginPath();for(let px=0;px<=W;px+=12)x.lineTo(px,yy+Math.sin(px/40+t*1.4+i)*3+Math.sin(px/17-t*2+i*.7)*1.5);x.stroke()}
+  x.restore();
+  /* marine snow */
+  x.fillStyle='rgba(220,240,255,.35)';AQ.snow.forEach(p=>{p.y+=p.v*dtf;p.x+=Math.sin(t*.5+p.ph)*.15;if(p.y>H){p.y=-4;p.x=Math.random()*W}x.fillRect(p.x,p.y,p.r,p.r)});
+  /* jellyfish (behind the fish) */
+  AQ.jelly.forEach(j=>{const pulse=(Math.sin(t*1.6+j.ph)+1)/2;j.y-=(.15+pulse*.35)*dtf;j.x+=j.vx*dtf+Math.sin(t*.3)*.2;if(j.y<-j.s*3){j.y=H*.8;j.x=W*(.15+Math.random()*.7);j.hue=[300,200,20,170][(Math.random()*4)|0]}
+    const s=j.s*(1+pulse*.08),bw=s*(1.05-pulse*.15);x.save();x.translate(j.x,j.y);x.globalCompositeOperation='lighter';
+    for(let k=0;k<6;k++){x.strokeStyle=`hsla(${j.hue},90%,75%,.25)`;x.lineWidth=1.5;x.beginPath();x.moveTo(-bw*.7+k*bw*.28,0);for(let q=1;q<10;q++)x.lineTo(-bw*.7+k*bw*.28+Math.sin(t*2+q*.6+k)*s*.08,q*s*.32);x.stroke()}
+    const g=x.createRadialGradient(0,-s*.2,2,0,0,s);g.addColorStop(0,`hsla(${j.hue},95%,85%,.55)`);g.addColorStop(1,`hsla(${j.hue},90%,60%,.12)`);x.fillStyle=g;x.beginPath();x.ellipse(0,0,bw,s*(.75+pulse*.1),0,Math.PI,0);x.quadraticCurveTo(0,s*.25,-bw,0);x.fill();x.restore()});
+  /* fish */
+  const S=AQ.school;if(Math.hypot(S.tx-S.x,S.ty-S.y)<30||Math.random()<.002){S.tx=W*(.12+Math.random()*.76);S.ty=H*(.12+Math.random()*(fy/H-.3))}
+  S.x+=(S.tx-S.x)*.004*dtf;S.y+=(S.ty-S.y)*.004*dtf;
+  AQ.fish.forEach(f=>{const s=f.s;
+    if(f.school){let ax=(S.x-f.x)*.0009,ay=(S.y-f.y)*.0009,cnt=0,mx=0,my=0;
+      AQ.fish.forEach(o=>{if(o===f||!o.school)return;const dx=f.x-o.x,dy=f.y-o.y,d=Math.hypot(dx,dy);if(d<f.L*1.6&&d>0){ax+=dx/d*.05;ay+=dy/d*.05}if(d<f.L*5){mx+=o.vx;my+=o.vy;cnt++}});
+      if(cnt){ax+=(mx/cnt-f.vx)*.03;ay+=(my/cnt-f.vy)*.03}f.vx+=ax*dtf;f.vy+=ay*dtf}
+    else{if(Math.hypot(f.tx-f.x,f.ty-f.y)<f.L||(f.tt-=dtf)<0){f.tx=W*(.05+Math.random()*.9);f.ty=H*.1+Math.random()*(fy-H*.18);f.tt=300+Math.random()*600}
+      const dx=f.tx-f.x,dy=f.ty-f.y,d=Math.hypot(dx,dy)||1;f.vx+=dx/d*.02*s.sp*dtf;f.vy+=dy/d*.012*s.sp*dtf}
+    const sp=Math.hypot(f.vx,f.vy),mx=s.sp*(f.school?1.6:1);if(sp>mx){f.vx*=mx/sp;f.vy*=mx/sp}
+    f.vy*=.98;if(f.y<H*.06)f.vy+=.05;if(f.y>fy-f.L*.6)f.vy-=.06;if(f.x<-f.L*2)f.vx+=.08;if(f.x>W+f.L*2)f.vx-=.08;
+    f.x+=f.vx*dtf;f.y+=f.vy*dtf;const want=f.vx<0?-1:1;f.dir+=(want-f.dir)*.08*dtf;if(Math.abs(f.dir)<.3)f.dir=.3*want;
+    aqFish(x,f,t)});
+  /* bubbles */
+  if(Math.random()<.35)[W*.47,W*.82].forEach((bx,i)=>{if(Math.random()<.5)AQ.bub.push({x:bx+(Math.random()-.5)*6,y:fy+(i?-H*.01:H*.03),r:1.5+Math.random()*4,v:.8+Math.random()*1.2,ph:Math.random()*6})});
+  if(Math.random()<.04)AQ.bub.push({x:Math.random()*W,y:fy,r:1+Math.random()*2.5,v:.6+Math.random(),ph:Math.random()*6});
+  x.lineWidth=1;AQ.bub=AQ.bub.filter(b=>{b.y-=b.v*dtf*(1+b.r*.08);b.x+=Math.sin(t*3+b.ph)*.4;if(b.y<0)return false;
+    x.strokeStyle='rgba(220,245,255,.6)';x.fillStyle='rgba(220,245,255,.12)';x.beginPath();x.arc(b.x,b.y,b.r,0,7);x.fill();x.stroke();x.fillStyle='rgba(255,255,255,.7)';x.fillRect(b.x-b.r*.4,b.y-b.r*.5,1.2,1.2);return true});
+  /* floor + kelp in front */
+  x.drawImage(AQ.floor,0,0,W,H);
+  AQ.kelp.forEach(k=>{x.fillStyle=k.col;x.strokeStyle='rgba(0,40,10,.35)';const pts=[];for(let i=0;i<=k.seg;i++){const q=i/k.seg;pts.push([k.x+Math.sin(t*.8+k.ph+q*2.2)*q*q*k.w*2.2,fy+6-q*k.h])}
+    const wd=q=>k.w*Math.sin(Math.min(1,q*1.15+.12)*Math.PI)*(.85+.15*Math.sin(q*11+k.ph));
+    const g=x.createLinearGradient(k.x-k.w,0,k.x+k.w,0);g.addColorStop(0,k.col);g.addColorStop(.5,'#5fd07a');g.addColorStop(1,k.col);x.fillStyle=g;
+    x.beginPath();pts.forEach(([px,py],i)=>x.lineTo(px-wd(i/k.seg)/2,py));for(let i=pts.length-1;i>=0;i--)x.lineTo(pts[i][0]+wd(i/k.seg)/2,pts[i][1]);x.closePath();x.fill();x.stroke();
+    x.strokeStyle='rgba(20,80,35,.6)';x.lineWidth=1.2;x.beginPath();pts.forEach(([px,py],i)=>x.lineTo(px,py));x.stroke();
+    x.fillStyle='#3a9c55';for(let i=3;i<pts.length-1;i+=3){const [px,py]=pts[i],sd=i%2?1:-1,sw=Math.sin(t*1.1+k.ph+i)*.25;x.beginPath();x.ellipse(px+sd*k.w*.55,py,k.w*.55,k.w*.16,sd*(.5+sw),0,Math.PI*2);x.fill()}});
+  /* glass vignette */
+  const v=x.createRadialGradient(W/2,H*.45,Math.min(W,H)*.35,W/2,H*.5,Math.max(W,H)*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,10,20,.55)');x.fillStyle=v;x.fillRect(0,0,W,H);
+  const c=$('aqClock');if(c&&(!c._m||c._m!==new Date().getMinutes())){c._m=new Date().getMinutes();c.textContent=fmt(new Date())}
+}
+function aqStart(){AQ.on=true;document.body.classList.add('aqua');requestAnimationFrame(()=>{if(!aqInit()){setTimeout(aqStart,300);return}if(!AQ.raf){AQ.last=0;AQ.raf=requestAnimationFrame(aqStep)}})}
+function aqStop(){AQ.on=false;document.body.classList.remove('aqua')}
+
+/* ================= Car page (remote-only): Hyundai Bluelink status, pushed by the kitchen Mac ================= */
+let CAR=null,carAt=0,carErr='',carSig='';
+function carSay(){const c=CAR;if(!c||c.soc==null)return 'I don\'t have the car\'s status yet.';
+  return `The ${(c.name||'car')} is at ${c.soc} percent${c.range_km!=null?', about '+c.range_km+' kilometres of range':''}${c.charging?', and charging':c.plugged?', plugged in':''}. It's ${c.locked?'locked':'unlocked'}.`}
+async function loadCar(){
+  if(!CFG.relay||!SECRETS.calkey){carErr='Key not set on this screen';return renderCar()}
+  try{const d=await (await tfetch(relayBase()+'/car?key='+encodeURIComponent(SECRETS.calkey),12000)).json();
+    if(d.error&&!d.soc&&d.soc!==0){carErr=d.error;if(d.needsLogin)CAR=Object.assign(CAR||{},{needsLogin:true})}else{CAR=d;carAt=Date.now();carErr=''}}
+  catch(e){carErr='Can\'t reach the relay right now'}
+  renderCar();
+}
+setInterval(()=>{if($('pCar').classList.contains('on'))loadCar()},60000);
+const carAgo=iso=>{if(!iso)return '';const d=new Date(iso);if(isNaN(d))return '';const m=Math.round((Date.now()-d)/60000);
+  return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+'h ago':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})};
+function renderCar(){
+  const b=$('carBody'),C=CFG.car||{},nm=(CAR&&CAR.name)||C.name||'Ioniq 5';
+  if(!CAR||CAR.soc==null){b.innerHTML=`<div class="jf-title">${esc(nm)}</div><div class="car-wrap"><div class="jf-glass gd-card car-setup"><h2>${CAR&&CAR.needsLogin?'Bluelink needs a quick sign-in':'Car data not set up yet'}</h2>
+      <span>${CAR&&CAR.needsLogin?'Hyundai asked for a new verification code. On the kitchen Mac, open Terminal and run <b>~/nova/car-setup.sh</b>, then enter the code Hyundai emails you.':'On the kitchen Mac, run <b>~/nova/car-setup.sh</b> once and sign in with your MyHyundai account. After that, the car\'s status shows up here.'}</span>
+      ${carErr&&!(CAR&&CAR.needsLogin)?`<small>${esc(carErr)}</small>`:''}</div></div>`;carSig='';return}
+  const c=CAR,soc=Math.max(0,Math.min(100,+c.soc||0)),tgt=c.charging||c.plugged?(c.plugged===1?c.target_dc:c.target_ac)||c.target_ac:null;
+  const col=soc<=15?'#ff5c6c':soc<=30?'#ffb84d':'#3fd27a',R=46,Cc=2*Math.PI*R;
+  const hm=m=>m>=60?Math.floor(m/60)+'h '+(m%60?m%60+'m':''):m+' min';
+  const state=c.charging?`⚡ Charging${c.charge_mins?' · '+hm(c.charge_mins)+' to '+(tgt||100)+'%':''}`:c.plugged?`🔌 Plugged in${tgt?' · stops at '+tgt+'%':''}`:'🅿️ Parked';
+  const openList=Object.entries(c.open||{}).filter(([,v])=>v).map(([k])=>({fl:'front left door',fr:'front right door',rl:'rear left door',rr:'rear right door',trunk:'liftgate',hood:'hood',windows:'a window'}[k]||k));
+  const tile=(ic,lab,val,cls='')=>`<div class="car-t ${cls}"><i>${ic}</i><span>${lab}</span><b>${val}</b></div>`;
+  const b12=c.battery12;
+  const html=`<div class="jf-title">${esc(nm)}</div><div class="car-wrap">
+    <div class="jf-glass car-hero${c.charging?' chg':''}">
+      <svg class="car-ring" viewBox="0 0 120 120"><circle cx="60" cy="60" r="${R}" class="bg"/>${tgt?`<circle cx="60" cy="60" r="${R}" class="tg" stroke-dasharray="1.2 ${Cc}" stroke-dashoffset="${(-Cc*tgt/100).toFixed(1)}"/>`:''}
+        <circle cx="60" cy="60" r="${R}" class="fg" style="stroke:${col}" stroke-dasharray="${(Cc*soc/100).toFixed(1)} ${Cc.toFixed(1)}"/></svg>
+      <div class="car-num"><b>${soc}<small>%</small></b><span>${c.range_km!=null?jfNum(c.range_km)+' km range':''}</span></div>
+      <div class="car-state">${state}</div>
+      <svg class="car-sil" viewBox="0 0 400 120" aria-hidden="true"><path d="M24 88 L26 66 Q30 54 56 50 L112 44 Q140 20 186 17 L318 15 Q348 16 360 34 L372 52 Q378 58 378 70 L378 88 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.55)" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M124 45 Q150 25 190 24 L330 22 Q346 24 354 44 Z" fill="rgba(140,200,255,.18)" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><line x1="238" y1="23" x2="238" y2="45" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <circle cx="100" cy="88" r="20" fill="#0e1117" stroke="rgba(255,255,255,.6)" stroke-width="3"/><circle cx="100" cy="88" r="8" fill="rgba(255,255,255,.35)"/>
+        <circle cx="306" cy="88" r="20" fill="#0e1117" stroke="rgba(255,255,255,.6)" stroke-width="3"/><circle cx="306" cy="88" r="8" fill="rgba(255,255,255,.35)"/>
+        ${c.charging||c.plugged?`<path d="M376 66 Q392 66 392 90 L392 112" fill="none" stroke="${c.charging?'#3fd27a':'rgba(255,255,255,.5)'}" stroke-width="3" class="${c.charging?'car-cable':''}"/>`:''}</svg>
+    </div>
+    <div class="car-grid">
+      ${tile(c.locked?'🔒':'🔓','Doors',c.locked?'Locked':'Unlocked',c.locked?'ok':'warn')}
+      ${tile(openList.length?'🚪':'✅','Doors & windows',openList.length?esc(openList[0].replace(/^./,m=>m.toUpperCase()))+' open':'All closed',openList.length?'warn':'ok')}
+      ${tile(c.climate?'❄️':'🌡️','Climate',c.climate?'Running':'Off')}
+      ${tile('🔋','12V battery',b12!=null?b12+'%':'–',b12!=null&&b12<60?'warn':'ok')}
+      ${tile('🛞','Tires',c.tires_warn?'Check pressure':'Normal',c.tires_warn?'warn':'ok')}
+      ${tile('🛣️','Odometer',c.odometer_km!=null?jfNum(c.odometer_km)+' km':'–')}
+      ${c.next_service_km!=null?tile('🔧','Next service',c.next_service_km<=1000?'Due in '+jfNum(c.next_service_km)+' km':'in '+jfNum(c.next_service_km)+' km',c.next_service_km<=1000?'warn':''):''}
+      ${c.dtc?tile('⚠️','Warnings',c.dtc+' code'+(c.dtc===1?'':'s'),'warn'):''}
+    </div>
+    <div class="car-foot">Car last reported ${esc(carAgo(c.reported)||'–')}${c.reported?' · '+fmt(new Date(c.reported)):''}. Nova only reads what Hyundai already has saved, so it never wakes the car.${c.needsLogin?' <b>Bluelink needs a new sign-in on the Mac.</b>':''}</div>
+  </div>`;
+  if(html!==carSig){carSig=html;b.innerHTML=html}
 }
 
 /* ================= Live cams ================= */
@@ -3733,7 +3954,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 59';
+document.getElementById('ver').textContent='build nova 62';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
