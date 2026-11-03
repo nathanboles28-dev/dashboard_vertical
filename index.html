@@ -1907,7 +1907,7 @@ function nextPage(force,hold){
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
   $('dots').innerHTML=list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
-  clearTimeout(pTimer);if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
+  clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
 }
 
 
@@ -3892,9 +3892,12 @@ function spNext(){
   if(!pool.length)return null;
   SP.idx=(SP.idx+1)%pool.length;return pool[SP.idx];
 }
-function renderSpot(){
-  const el=$('spot');if(!el)return;clearTimeout(SP.reveal);
-  const it=spNext();
+function renderSpot(midVisit){
+  const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();
+  const left=((window._pgEnd||Infinity)-Date.now())/1000,need=((CFG.spotlight&&CFG.spotlight.answerSecs)||12)+4;
+  let it=spNext();
+  /* not enough time left to reveal a trivia answer: skip to the next non-trivia card */
+  for(let g=0;g<4&&it&&it.k==='trivia'&&left<need;g++)it=spNext();
   if(!it){el.innerHTML='<div class="sp-wait">✨ Loading something interesting…</div>';return}
   const img=it.img?`<div class="sp-img"><img src="${esc(it.img)}" alt="" onerror="this.parentNode.remove()"></div>`:'';
   let body='';
@@ -3902,12 +3905,14 @@ function renderSpot(){
   else body=`${it.title?`<b class="sp-t">${esc(it.title)}</b>`:''}<div class="sp-txt">${esc(it.text)}</div>${it.k==='otd'&&it.ago>0?`<div class="sp-ago">${it.ago} year${it.ago===1?'':'s'} ago today</div>`:''}`;
   el.className='card sp-'+it.k+(it.img||it.k==='trivia'?'':' sp-noimg');
   el.innerHTML=`<div class="sp-in"><div class="sp-tag">${esc(it.tag)}</div>${it.k==='trivia'?'':img}${body}</div>`;
-  if(it.k==='trivia'){const secs=(CFG.spotlight&&CFG.spotlight.answerSecs)||12;const t=el.querySelector('.sp-timer i');if(t)t.style.animationDuration=secs+'s';
+  if(it.k==='trivia'){const secs=Math.max(5,Math.min((CFG.spotlight&&CFG.spotlight.answerSecs)||12,left-4));const t=el.querySelector('.sp-timer i');if(t)t.style.animationDuration=secs+'s';
     SP.reveal=setTimeout(()=>{el.querySelectorAll('.sp-opts>div').forEach(d=>d.classList.add(d.dataset.a==='1'?'right':'wrong'));el.classList.add('revealed')},secs*1000)}
 }
 /* a new card each time home comes round, and every ~25 s while it's showing */
-function spotTick(){if($('shift').classList.contains('on'))renderSpot()}
-setInterval(spotTick,((CFG.spotlight&&CFG.spotlight.secs)||25)*1000);
+/* while home stays up (e.g. held from the remote), swap cards every ~25 s, but only if there's time left to read the next one */
+function spotTick(){if(!$('shift').classList.contains('on'))return;const every=((CFG.spotlight&&CFG.spotlight.secs)||25)*1000,left=(window._pgEnd||Infinity)-Date.now();
+  if(Date.now()-(SP.shownAt||0)>=every&&left>=20000)renderSpot(true)}
+setInterval(spotTick,2000);
 setInterval(loadSpotlight,30*60000);
 
 /* ================= Live ticker along the bottom: scores, team news, weather, roads, birthdays ================= */
@@ -3974,7 +3979,7 @@ function renderWatch(){
           <div class="wt-ov">${esc(pk.overview||'')}</div>
           ${pk.why?`<span class="wt-why">${esc(pk.why)}</span>`:''}</div></div></div>`:'';
   const N=(WT.fresh||[]).slice(0,5);
-  const fresh=N.length?`<div class="jf-glass gd-card"><h2>✨ New on Jellyfin</h2><div class="wt-row">${N.map(x=>`<div class="wt-it">${po(x.id,x.title)}<i class="wt-new">NEW</i><b>${esc(x.title)}</b><small>${x.ep?esc(x.ep)+' · ':''}${ago(x.added)}</small></div>`).join('')}</div></div>`:'';
+  const fresh=N.length?`<div class="jf-glass gd-card"><h2>✨ New movies on Jellyfin</h2><div class="wt-row">${N.map(x=>`<div class="wt-it">${po(x.id,x.title)}<i class="wt-new">NEW</i><b>${esc(x.title)}</b><small>${x.ep?esc(x.ep)+' · ':''}${ago(x.added)}</small></div>`).join('')}</div></div>`:'';
   const U=WT.users||{},names=Object.keys(U);
   const most=names.length?`<div class="wt-two">${names.map(n=>`<div class="jf-glass gd-card wt-u"><h2><span class="jf-av" style="background:${jfCol(n)}">${esc(n.charAt(0))}</span>${esc(n)}'s most watched</h2>
       ${(U[n]||[]).slice(0,3).map((x,i)=>`<div class="wt-ur">${po(x.id,x.title,'sm')}<div><b>${esc(x.title)}</b><small>${x.type==='Series'?x.plays+' episode'+(x.plays===1?'':'s'):x.plays>1?'watched '+x.plays+' times':'watched'}</small></div><em>${i+1}</em></div>`).join('')||'<div class="cnote">Nothing yet</div>'}</div>`).join('')}</div>`:'';
