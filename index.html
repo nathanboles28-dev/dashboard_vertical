@@ -4066,7 +4066,7 @@ function renderTech(){
   /* each Mac */
   const bar=(lab,v,suf)=>`<div class="ts-bar"><span>${lab}</span><div><i style="width:${Math.max(2,Math.min(100,v||0))}%;background:${v>=85?'#ff5c6c':v>=65?'#ffb84d':'#5fd88a'}"></i></div><em>${v==null?'–':v+'%'}${suf||''}</em></div>`;
   const mHTML=list.map(m=>{const d=m.d;if(!d)return `<div class="jf-glass ts-m off"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st off">Not set up yet</span></div></div>`;
-    const age=(Date.now()-(d.received||0))/1000,online=age<(d.ping!==undefined?240:900);
+    const age=(Date.now()-(d.received||0))/1000,online=age<900;
     const w=d.wifi,wq=w?(w.signal>=-60?4:w.signal>=-67?3:w.signal>=-75?2:1):0;
     const drives=(d.drives||[]).map(x=>{const used=x.total?Math.round((1-x.free/x.total)*100):0;return `<div class="ts-dr"><span>💾 ${esc(x.name)}</span><div><i style="width:${used}%;background:${used>=90?'#ff5c6c':used>=75?'#ffb84d':'#7fb0ff'}"></i></div><em><b>${fmtB(x.free)}</b> free of ${fmtB(x.total)}</em></div>`}).join('');
     return `<div class="jf-glass ts-m${online?'':' off'}"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st ${online?'on':'off'}">${online?'● Online':'Offline · seen '+agoS((d.received||0)/1000)}</span>${d.up?`<em>Up ${upTxt(d.up+((Date.now()/1000)-(d.at||Date.now()/1000)))}</em>`:''}</div>
@@ -4258,7 +4258,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 69';
+document.getElementById('ver').textContent='build nova 70';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
