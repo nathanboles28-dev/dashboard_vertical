@@ -127,9 +127,12 @@ const $=id=>document.getElementById(id);
 const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('topic');
   if(v){localStorage.setItem('nova-topic',v.trim());history.replaceState(null,'',location.pathname+location.search)}
   return localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
+/* no channel saved yet (e.g. a phone home-screen icon keeps its own storage): let it be typed in once */
+function askTopic(){const h=$('heard');h.innerHTML='<button id="setTopic" style="font:inherit;padding:.6em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Tap to enter your Nova channel name</button>';
+  $('setTopic').onclick=()=>{const v=(prompt('Nova channel name (the topic)')||'').trim().replace(/^.*#topic=/,'');if(v){try{localStorage.setItem('nova-topic',v)}catch(e){}location.reload()}}}
 /* ---------- send a command to the dashboard ---------- */
 function send(text){
-  if(!T){setConn(false,'Not set up');$('heard').textContent='Open this page once with #topic=… on the end of the address.';return}
+  if(!T){setConn(false,'Not set up');askTopic();return}
   $('heard').textContent='“'+text+'”';
   fetch('https://ntfy.sh/'+T,{method:'POST',body:text}).then(r=>{if(!r.ok)throw 0;setConn(true)}).catch(()=>setConn(false,'Can\'t reach relay'));
 }
@@ -142,7 +145,7 @@ let speakOn=NOVA.speak;try{const v=localStorage.getItem('nova-speak-v2');if(v!==
 $('speakSw').classList.toggle('on',speakOn);
 $('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak-v2',speakOn?'1':'0')}catch(e){}};
 function listen(){
-  if(!T){setConn(false,'Not set up');$('heard').textContent='Open this page once with #topic=… on the end of the address.';return}
+  if(!T){setConn(false,'Not set up');askTopic();return}
   const es=new EventSource('https://ntfy.sh/'+T+'-reply/sse');
   es.onopen=()=>setConn(true);
   es.onerror=()=>setConn(false,'Reconnecting…');
