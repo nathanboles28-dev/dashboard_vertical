@@ -1369,7 +1369,7 @@ const CFG={
   ticker:{on:true, speed:70},
   watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
-  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
+  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', backupHours:12},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
@@ -4061,9 +4061,13 @@ function renderTech(){
       <div class="ts-ping"><small>PING</small><b>${net.ping!=null?net.ping:'–'}<i>ms</i></b>${spark}</div></div>
       <div class="ts-nfoot"><span>${outTxt}</span><span>${sp?'Speed test '+agoS(sp[0]):'No speed test yet'}</span></div></div>`;
   /* the LaCie backup */
-  const bk=list.map(x=>x.d&&x.d.tm).find(t=>t&&new RegExp(C.backup,'i').test(t.dest||''));
-  const bkAge=bk&&bk.last?Date.now()/1000-bk.last:null,bkCls=!bk?'':bk.running?'run':bkAge==null?'warn':bkAge<36*3600?'ok':bkAge<5*86400?'warn':'bad';
-  const bkHTML=`<div class="jf-glass ts-bk ${bkCls}"><i>🛟</i><div><b>${esc(C.backup)} backup</b><small>${!bk?'Not reported yet':bk.running?'Backing up right now…':bk.last?'Last backup '+agoS(bk.last):'No backup found yet'}</small></div>${bk&&bk.running?'<span class="ts-spin"></span>':''}</div>`;
+  /* Kopia (any Mac running the Kopia app) wins; otherwise a Time Machine drive whose name matches */
+  const kp=list.map(x=>x.d&&x.d.kopia).find(k=>k);
+  const bk=kp?{last:kp.last,dest:kp.dest,kopia:true}:list.map(x=>x.d&&x.d.tm).find(t=>t&&new RegExp(C.backup,'i').test(t.dest||''));
+  const bkAge=bk&&bk.last?Date.now()/1000-bk.last:null,okFor=(C.backupHours||12)*3600;
+  const bkCls=!bk?'':bk.running?'run':bkAge==null?'warn':bkAge<okFor*2+7200?'ok':bkAge<4*86400?'warn':'bad';
+  const bkSub=!bk?'Not reported yet':bk.running?'Backing up right now…':bk.last?'Last backup '+agoS(bk.last)+(bk.kopia?' · to '+esc(bk.dest||'the cloud'):''):(bk.kopia?'Waiting for the first backup to finish':'No backup found yet');
+  const bkHTML=`<div class="jf-glass ts-bk ${bkCls}"><i>🛟</i><div><b>${esc(C.backup)} backup</b><small>${bkSub}</small></div>${bk&&bk.running?'<span class="ts-spin"></span>':''}</div>`;
   /* each Mac */
   const bar=(lab,v,suf)=>`<div class="ts-bar"><span>${lab}</span><div><i style="width:${Math.max(2,Math.min(100,v||0))}%;background:${v>=85?'#ff5c6c':v>=65?'#ffb84d':'#5fd88a'}"></i></div><em>${v==null?'–':v+'%'}${suf||''}</em></div>`;
   const mHTML=list.map(m=>{const d=m.d;if(!d)return `<div class="jf-glass ts-m off"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st off">Not set up yet</span></div></div>`;
@@ -4259,7 +4263,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 73';
+document.getElementById('ver').textContent='build nova 74';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
