@@ -39,7 +39,8 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 @keyframes breathe{50%{box-shadow:0 0 0 18px rgba(110,168,255,.08),0 0 60px rgba(110,168,255,.6)}}
 #micState{font-size:17px;font-weight:600}
 #heard{font-size:15px;color:var(--dim);min-height:20px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.say{padding:16px 18px;display:none}
+.say{padding:16px 18px;display:none;position:relative}
+.sayx{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid var(--edge);background:rgba(255,255,255,.08);color:var(--ink);font:inherit;font-size:15px;line-height:1}
 .say small{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
 .say p{font-size:17px;line-height:1.4}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -70,7 +71,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
     <div id="heard">Say “Nova, show me the weather”</div>
   </div>
 
-  <div class="card say" id="sayCard"><small>Nova</small><p id="sayText"></p></div>
+  <div class="card say" id="sayCard"><button class="sayx" id="sayX" aria-label="Close">✕</button><small>Nova</small><p id="sayText"></p></div>
 
   <div class="sec">Your day</div>
   <div class="grid">
@@ -100,6 +101,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
   <div class="grid">
     <button data-c="jellyfin"><span>🍿</span><b>Jellyfin</b></button>
     <button data-c="wrapped"><span>🎬</span><b>Wrapped</b></button>
+    <button data-c="what should we watch"><span>🎞️</span><b>Watch next</b></button>
     <button data-c="photos"><span>🖼️</span><b>Photos</b></button>
   </div>
   <div class="sec">Screen</div>
@@ -131,6 +133,7 @@ function send(text){
   fetch('https://ntfy.sh/'+T,{method:'POST',body:text}).then(r=>{if(!r.ok)throw 0;setConn(true)}).catch(()=>setConn(false,'Can\'t reach relay'));
 }
 document.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{unlockSpeech();send(b.dataset.c)}));
+$('sayX').addEventListener('click',()=>{clearTimeout(window._sayT);$('sayCard').style.display='none';if(window.speechSynthesis)speechSynthesis.cancel()});
 function setConn(ok,msg){$('conn').className='pill '+(ok?'ok':'bad');$('conn').querySelector('span').textContent=msg||(ok?'Connected':'Offline')}
 
 /* ---------- answers from the dashboard ---------- */
@@ -144,7 +147,7 @@ function listen(){
   es.onerror=()=>setConn(false,'Reconnecting…');
   es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;
-    $('sayCard').style.display='block';$('sayText').textContent=d.message;if(speakOn)say(d.message)};
+    $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)};
 }
 listen();
 
