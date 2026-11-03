@@ -394,7 +394,7 @@ body.hasAlert #nticker{top:calc(7*var(--u))}
 .nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.1*var(--u));font-weight:500;color:rgba(240,242,250,.95)}.nt-it b{font-weight:700}
 .nt-sep{font-size:calc(1.1*var(--u));color:rgba(242,166,90,.6)}
 /* green tag for recycling */
-.nt-k.k{background:rgba(63,191,111,.28);color:#c7f5d8}
+.nt-k.k{background:rgba(63,191,111,.28);color:#c7f5d8}.nt-k.a{background:rgba(255,176,0,.3);color:#ffe2a6}
 .nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(242,166,90,.2);color:#ffd9b0;text-shadow:none}.nt-k.live{background:rgba(255,59,48,.75);color:#fff;animation:ntPulse 1.6s ease-in-out infinite}
 .nt-live{font-style:normal;color:#ff7a85}
 @keyframes ntPulse{50%{opacity:.6}}
@@ -1406,7 +1406,8 @@ const CFG={
   morningMode:{on:true, from:'07:00', to:'09:00', headlines:4},
   // Recycling (City of Woodstock): zone 3's turn comes every 6th weekday, skipping holidays. anchor = any known pickup date for your zone
   recycling:{on:true, zone:3, anchor:'2026-01-06', eveningFrom:16},
-  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', backupHours:12},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
+  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', backupHours:12, kopia:false,
+    manualBackup:true, backupEveryDays:7},   // manual backups: tap "Backed up" on the remote; the card turns orange after backupEveryDays   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
@@ -2538,6 +2539,7 @@ function handleCommand(raw){
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
+  if(has(/\b(backed up|backup (is )?done|did (a|the) backup|log (a|the) backup)\b/)){showFor('tech');markBackup();return reply('Got it, the '+TC().backup+' backup is logged for today.')}
   if(has(/\b(morning (mode|page|briefing|rundown)|get going)\b/)){showFor('morn');return reply('Here\'s your morning.')}
   if(has(/\b(drive times?|how long to (drive|get) to|commute)\b/)){showFor('local');return reply(drvSay())}
   if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
@@ -4080,6 +4082,7 @@ setInterval(loadSpotlight,30*60000);
 let ntSig='',ntNext=null;
 function ntItems(){
   const out=[],tag=(t,c)=>`<span class="nt-k ${c||''}">${esc(t)}</span>`;
+  try{const bd=backupDue();if(bd!=null)out.push(`${tag('💾 BACKUP','a')} <b>${esc(TC().backup)}</b> last backed up ${bd} days ago · tap Backed up on the remote when done`)}catch(e){}
   try{const R=CFG.recycling||{},k=recycleIn(),h=new Date().getHours();if(k===1&&h>=(R.eveningFrom??16))out.push(`${tag('♻️ TOMORROW','k')} <b>Recycling day</b> · put it out tonight or by 7 AM`);else if(k===0&&h<12)out.push(`${tag('♻️ TODAY','k')} <b>Recycling day</b>`)}catch(e){}
   /* your teams first: live, today, last result */
   try{lastRes.forEach(r=>r.games.forEach(g=>{if(!isFav(r.L,g))return;const d=g.date,today=d.toDateString()===new Date().toDateString();
@@ -4160,9 +4163,18 @@ function renderWatch(){
 let TS=null,tsAt=0,tsSig='',tsVisit=Math.floor(Math.random()*50),tsLines=0;
 const TC=()=>Object.assign({machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}],backup:'LaCie',stickers:'stickers.webp'},CFG.tech||{});
 const tsOn=()=>!!(CFG.relay&&SECRETS.calkey&&!(CFG.tech&&CFG.tech.on===false));
+/* manual backup log: "backed up" on the remote saves today's date on the relay (so it survives a refresh) */
+const bkDay=t=>{const d=new Date(t*1000),n=new Date();n.setHours(0,0,0,0);const k=Math.round((n-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/864e5);
+  return k<=0?'today':k===1?'yesterday':k<7?k+' days ago · '+d.toLocaleDateString([],{weekday:'long'}):k+' days ago · '+d.toLocaleDateString([],{month:'short',day:'numeric'})};
+async function markBackup(){const now=Math.round(Date.now()/1000),nm='LaCie backup log';
+  TS=TS||{machines:{}};TS.machines=TS.machines||{};TS.machines[nm]={...(TS.machines[nm]||{}),manual:{last:now}};
+  try{await fetch(relayBase()+'/stats?key='+encodeURIComponent(SECRETS.calkey),{method:'POST',body:JSON.stringify({name:nm,full:1,manual:{last:now}})})}catch(e){console.warn('backup log',e)}
+  tsSig='';renderTech()}
+function backupDue(){const C=TC();if(!C.manualBackup||!TS)return null;const m=((TS.machines||{})['LaCie backup log']||{}).manual;if(!m||!m.last)return null;
+  const days=Math.floor((Date.now()/1000-m.last)/86400);return days>=(C.backupEveryDays||7)?days:null}
 async function loadTech(){
   if(!tsOn())return;
-  try{const d=await (await tfetch(relayBase()+'/stats?key='+encodeURIComponent(SECRETS.calkey)+'&names='+encodeURIComponent(TC().machines.map(m=>m.name).join(',')),12000)).json();if(!d.error){TS=d;tsAt=Date.now()}}catch(e){console.warn('tech',e)}
+  try{const d=await (await tfetch(relayBase()+'/stats?key='+encodeURIComponent(SECRETS.calkey)+'&names='+encodeURIComponent(TC().machines.map(m=>m.name).concat(TC().manualBackup?['LaCie backup log']:[]).join(',')),12000)).json();if(!d.error){TS=d;tsAt=Date.now()}}catch(e){console.warn('tech',e)}
   if($('pTech').classList.contains('on'))renderTech();
 }
 setInterval(()=>{if($('pTech').classList.contains('on')||Date.now()-tsAt>600000)loadTech()},60000);
@@ -4190,12 +4202,15 @@ function renderTech(){
       <div class="ts-nfoot"><span>${outTxt}</span><span>${sp?'Speed test '+agoS(sp[0]):'No speed test yet'}</span></div></div>`;
   /* the LaCie backup */
   /* Kopia (any Mac running the Kopia app) wins; otherwise a Time Machine drive whose name matches */
-  const kp=list.map(x=>x.d&&x.d.kopia).find(k=>k);
-  const bk=kp?{last:kp.last,dest:kp.dest,kopia:true}:list.map(x=>x.d&&x.d.tm).find(t=>t&&new RegExp(C.backup,'i').test(t.dest||''));
+  const kp=C.kopia?list.map(x=>x.d&&x.d.kopia).find(k=>k):null;
+  const man=C.manualBackup?((M['LaCie backup log']||{}).manual||{last:null}):null;
+  const bk=man?{last:man.last,manual:true}:kp?{last:kp.last,dest:kp.dest,kopia:true}:list.map(x=>x.d&&x.d.tm).find(t=>t&&new RegExp(C.backup,'i').test(t.dest||''));
   const bkAge=bk&&bk.last?Date.now()/1000-bk.last:null,okFor=(C.backupHours||12)*3600;
-  const bkCls=!bk?'':bk.running?'run':bkAge==null?'warn':bkAge<okFor*2+7200?'ok':bkAge<4*86400?'warn':'bad';
-  const bkSub=!bk?'Not reported yet':bk.running?'Backing up right now…':bk.last?'Last backup '+agoS(bk.last)+(bk.kopia?' · to '+esc(bk.dest||'the cloud'):''):(bk.kopia?'Waiting for the first backup to finish':'No backup found yet');
-  const bkHTML=`<div class="jf-glass ts-bk ${bkCls}"><i>🛟</i><div><b>${esc(C.backup)} backup</b><small>${bkSub}</small></div>${bk&&bk.running?'<span class="ts-spin"></span>':''}</div>`;
+  const evD=(C.backupEveryDays||7)*86400;
+  const bkCls=!bk?'':bk.running?'run':bkAge==null?'warn':bk.manual?(bkAge<evD+43200?'ok':bkAge<evD*2?'warn':'bad'):bkAge<okFor*2+7200?'ok':bkAge<4*86400?'warn':'bad';
+  const bkSub=bk&&bk.manual?(bk.last?`Last backup ${bkDay(bk.last)}${bkAge>=evD+43200?' · time for another one':''}`:'No backup logged yet · tap “Backed up” on the remote'):!bk?'Not reported yet':bk.running?'Backing up right now…':bk.last?'Last backup '+agoS(bk.last)+(bk.kopia?' · to '+esc(bk.dest||'the cloud'):''):(bk.kopia?'Waiting for the first backup to finish':'No backup found yet');
+  /* nothing reports a backup (Time Machine or Kopia): leave the card out */
+  const bkHTML=!bk?'':`<div class="jf-glass ts-bk ${bkCls}"><i>🛟</i><div><b>${esc(C.backup)} backup</b><small>${bkSub}</small></div>${bk&&bk.running?'<span class="ts-spin"></span>':''}</div>`;
   /* each Mac */
   const bar=(lab,v,suf)=>`<div class="ts-bar"><span>${lab}</span><div><i style="width:${Math.max(2,Math.min(100,v||0))}%;background:${v>=85?'#ff5c6c':v>=65?'#ffb84d':'#5fd88a'}"></i></div><em>${v==null?'–':v+'%'}${suf||''}</em></div>`;
   const mHTML=list.map(m=>{const d=m.d;if(!d)return `<div class="jf-glass ts-m off"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st off">Not set up yet</span></div></div>`;
@@ -4391,7 +4406,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 76';
+document.getElementById('ver').textContent='build nova 78';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
