@@ -1049,6 +1049,34 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .wt-pop{overflow:hidden}.wt-mq{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .wt-mqt{display:flex;gap:calc(1.4*var(--u));width:max-content;animation:ntScroll 40s linear infinite}
 .wt-mi{width:calc(7.6*var(--u));text-align:center}.wt-pop h2{margin-bottom:calc(.8*var(--u))}.wt-mi small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
+/* ===== Home tech ===== */
+#pTech{--acc:#7fd6ff;--ico:'🖥️'}
+.ts-body{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(1.6*var(--u));overflow:hidden}.ts-body>*{flex-shrink:0}
+.ts-nrow{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:calc(1.6*var(--u))}.ts-nrow>div{padding:calc(1.2*var(--u)) calc(1.6*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06)}
+.ts-nrow small{display:block;font-size:calc(1.5*var(--u));font-weight:800;letter-spacing:.12em;color:var(--dim)}.ts-nrow b{display:block;font-size:calc(5*var(--u));font-weight:200;line-height:1.1}.ts-nrow b i{font-style:normal;font-size:calc(1.9*var(--u));color:var(--dim);margin-left:calc(.5*var(--u))}
+.ts-ping{position:relative}.ts-ping svg{position:absolute;right:calc(1.4*var(--u));bottom:calc(1.2*var(--u));width:50%;height:calc(4*var(--u));opacity:.9}
+.ts-nfoot{display:flex;justify-content:space-between;gap:1vw;margin-top:calc(1.2*var(--u));font-size:calc(1.9*var(--u));color:var(--dim)}
+.ts-bk{display:flex;align-items:center;gap:calc(1.8*var(--u));padding:calc(1.6*var(--u)) calc(2.4*var(--u))!important}.ts-bk>i{font-style:normal;font-size:calc(4*var(--u))}.ts-bk>div{flex:1}.ts-bk b{display:block;font-size:calc(2.6*var(--u))}.ts-bk small{font-size:calc(2*var(--u));color:var(--dim)}
+.ts-bk.ok{border-color:rgba(63,210,122,.5)!important}.ts-bk.ok small{color:#9ff0b8}.ts-bk.warn{border-color:rgba(255,184,77,.55)!important}.ts-bk.warn small{color:#ffd27a}.ts-bk.bad{border-color:rgba(255,92,108,.6)!important;background:rgba(255,59,48,.18)!important}.ts-bk.bad small{color:#ffb3bb}.ts-bk.run small{color:#9fd0ff}
+.ts-spin{width:calc(3*var(--u));height:calc(3*var(--u));border-radius:50%;border:3px solid rgba(127,214,255,.25);border-top-color:#7fd6ff;animation:tsSpin 1s linear infinite}@keyframes tsSpin{to{transform:rotate(360deg)}}
+.ts-m{padding:calc(1.6*var(--u)) calc(2.2*var(--u))!important}.ts-m.off{opacity:.7}
+.ts-mh{display:flex;align-items:center;gap:calc(1.2*var(--u))}.ts-mh>i{font-style:normal;font-size:calc(3.2*var(--u))}.ts-mh b{font-size:calc(2.7*var(--u));font-weight:700}.ts-mh em{margin-left:auto;font-style:normal;font-size:calc(1.9*var(--u));color:var(--dim)}
+.ts-st{font-size:calc(1.6*var(--u));font-weight:700;padding:calc(.3*var(--u)) calc(.9*var(--u));border-radius:calc(1.4*var(--u))}.ts-st.on{color:#9ff0b8;background:rgba(63,210,122,.15)}.ts-st.off{color:#ffb3bb;background:rgba(255,92,108,.15)}
+.ts-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:calc(1.6*var(--u));margin-top:calc(1.2*var(--u))}
+.ts-bar span,.ts-wifi>span:first-child{display:block;font-size:calc(1.5*var(--u));font-weight:800;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.ts-bar div{height:calc(.9*var(--u));border-radius:calc(.5*var(--u));background:rgba(255,255,255,.1);overflow:hidden;margin:calc(.5*var(--u)) 0}.ts-bar div i{display:block;height:100%;border-radius:inherit;transition:width 1s}
+.ts-bar em,.ts-wifi em{font-style:normal;font-size:calc(1.9*var(--u))}.ts-bar em small{color:var(--dim);font-size:.85em}
+.ts-wq{display:inline-flex;align-items:flex-end;gap:3px;height:calc(2.4*var(--u));margin:calc(.3*var(--u)) 0}.ts-wq i{width:calc(.8*var(--u));border-radius:2px;background:rgba(255,255,255,.15)}.ts-wq i:nth-child(1){height:25%}.ts-wq i:nth-child(2){height:50%}.ts-wq i:nth-child(3){height:75%}.ts-wq i:nth-child(4){height:100%}.ts-wq i.on{background:#7fd6ff}
+.ts-wifi em{display:block}
+.ts-drs{margin-top:calc(1.2*var(--u));display:flex;flex-direction:column;gap:calc(.8*var(--u))}
+.ts-dr{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr auto;gap:calc(1.4*var(--u));align-items:center;font-size:calc(2*var(--u))}.ts-dr>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ts-dr div{height:calc(1*var(--u));border-radius:calc(.5*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.ts-dr div i{display:block;height:100%;border-radius:inherit}
+.ts-dr em{font-style:normal;color:var(--dim);font-size:calc(1.85*var(--u));white-space:nowrap}.ts-dr em b{color:var(--ink);font-weight:600}
+.ts-fun{position:relative;overflow:visible!important;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.4*var(--u));padding:calc(2*var(--u)) calc(26*var(--u)) calc(2*var(--u)) calc(2*var(--u))!important}.ts-fun>div{text-align:center}.ts-fun i{font-style:normal;font-size:calc(3*var(--u))}
+.ts-fun b{display:block;font-size:calc(3.4*var(--u));font-weight:300;line-height:1.2}.ts-fun small{font-size:calc(1.6*var(--u));color:var(--dim)}
+.ts-stk{position:absolute;right:calc(1*var(--u));top:calc(-2*var(--u));width:calc(24*var(--u));aspect-ratio:1;background-repeat:no-repeat;z-index:3;transform:rotate(var(--rot,-8deg));filter:drop-shadow(0 calc(1*var(--u)) calc(1.6*var(--u)) rgba(0,0,0,.55))}
+.ts-stk.pop{animation:stkPop 1s cubic-bezier(.2,1.6,.4,1) .5s both,stkBob 4s ease-in-out 1.5s infinite}
+@keyframes stkPop{from{opacity:0;transform:rotate(calc(var(--rot) - 40deg)) scale(.3)}}@keyframes stkBob{50%{transform:rotate(calc(var(--rot) + 5deg)) translateY(calc(-.8*var(--u)))}}
 /* ===== Rain radar loop ===== */
 #pRLoop{--acc:#4fd1a5;--ico:'🌧️'}
 .rl-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#0d0f14}
@@ -1216,6 +1244,7 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 <section id="pHub" class="page"><div id="hubBody"></div></section>
 <section id="pWrap" class="page"><div id="wrBody"></div></section>
 <section id="pWatch" class="page"><div id="wtBody"></div></section>
+<section id="pTech" class="page"><div id="tsBody"></div></section>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
 <section id="pLocal" class="page"><div id="locBody"></div></section>
@@ -1270,7 +1299,8 @@ const CFG={
     {type:'jellyfin',  secs:20},
     {type:'wrapped',   secs:30},
     {type:'watch',     secs:40},   // Watch next: a pick from your library, new on Jellyfin, most watched
-    {type:'photos',    secs:15}
+    {type:'photos',    secs:15},
+    {type:'tech',      secs:25}    // Home tech: drives, LaCie backup, internet, the Macs
   ],
   // Photos from a Google Drive folder (shared as "Anyone with the link can view").
   // folderId: the long ID at the end of the folder's link (drive.google.com/drive/folders/THIS_PART)
@@ -1336,7 +1366,9 @@ const CFG={
   // Spotlight card on the home page: on this day, did you know, picture of the day and trivia (answer shows after answerSecs)
   spotlight:{on:true, secs:25, answerSecs:12, trivia:[21,9,22,17,11]},
   ticker:{on:true, speed:70},
-  watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
+  watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},
+  // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
+  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', stickers:'stickers.webp'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
@@ -1850,10 +1882,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -1896,6 +1928,7 @@ function nextPage(force,hold){
   renderCams(p.type==='cams');
   if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSigs.hub='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
+  if(p.type==='tech'){tsVisit++;renderTech();if(Date.now()-tsAt>60000)loadTech()}
   if(p.type==='watch'){wtVisit++;renderWatch();if(Date.now()-wtAt>1800000)loadWatch()}
   pauseVideos();
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
@@ -3511,7 +3544,7 @@ function healthDot(){const L=healthList(),bad=L.filter(x=>!x.ok),crit=bad.some(x
 setInterval(healthDot,30000);
 function healthPanel(){const L=healthList();$('hpanel').innerHTML=`<h3>🩺 Status</h3>${L.map(x=>`<div class="${x.ok?'ok':'bad'}"><i></i><b>${esc(x.name)}</b><span>${x.ok?'OK':esc(x.why||'problem')}</span></div>`).join('')}<small>${esc(HC.relay.v||'')} · ${esc($('ver')?$('ver').textContent:'')}</small>`}
 /* big numbers count up from zero as a page comes in */
-const CU_SEL='#temp,#fTemp,.lc-drm,.cdr-n b,.wr-big,.hb2-rec,.hb2-ld b,.sn-big,.wr-facts b,.hb2-race b,.hb2-sc b';
+const CU_SEL='.ts-nrow b,.ts-fun b,#temp,#fTemp,.lc-drm,.cdr-n b,.wr-big,.hb2-rec,.hb2-ld b,.sn-big,.wr-facts b,.hb2-race b,.hb2-sc b';
 function countUp(root){if(CFG.motion===false)return;
   root.querySelectorAll(CU_SEL).forEach(el=>{const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;
     while((n=w.nextNode())){const m=n.nodeValue.match(/^(\D*?)(-?\d[\d,]*(?:\.\d+)?)(.*)$/s);if(!m||/\d:\d/.test(n.nodeValue))continue;
@@ -3994,6 +4027,66 @@ function renderWatch(){
   setTimeout(fit,600);
 }
 
+/* ================= Home tech: drives, the LaCie backup, internet, each Mac, plus a sticker ================= */
+let TS=null,tsAt=0,tsSig='',tsVisit=Math.floor(Math.random()*50),tsLines=0;
+const TC=()=>Object.assign({machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}],backup:'LaCie',stickers:'stickers.webp'},CFG.tech||{});
+const tsOn=()=>!!(CFG.relay&&SECRETS.calkey&&!(CFG.tech&&CFG.tech.on===false));
+async function loadTech(){
+  if(!tsOn())return;
+  try{const d=await (await tfetch(relayBase()+'/stats?key='+encodeURIComponent(SECRETS.calkey)+'&names='+encodeURIComponent(TC().machines.map(m=>m.name).join(',')),12000)).json();if(!d.error){TS=d;tsAt=Date.now()}}catch(e){console.warn('tech',e)}
+  if($('pTech').classList.contains('on'))renderTech();
+}
+setInterval(()=>{if($('pTech').classList.contains('on')||Date.now()-tsAt>600000)loadTech()},60000);
+/* how long Nova has been on screen today (counted here, a minute at a time) */
+const onKey=()=>'nova-onscreen-'+new Date().toDateString();
+setInterval(()=>{try{if(document.visibilityState==='visible'&&!$('night').classList.contains('on')){const k=onKey();localStorage.setItem(k,String((+localStorage.getItem(k)||0)+1))}}catch(e){}},60000);
+const onScreen=()=>{try{return +localStorage.getItem(onKey())||0}catch(e){return 0}};
+async function countLines(){if(tsLines)return;try{const t=await (await fetch(location.href.split('#')[0],{cache:'no-store'})).text();tsLines=t.split('\n').length}catch(e){}}
+const fmtB=b=>b>=1e12?(b/1e12).toFixed(b>=1e13?0:1)+' TB':Math.round(b/1e9)+' GB';
+const agoS=t=>{const m=Math.round((Date.now()/1000-t)/60);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' days ago'};
+const upTxt=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600);return d?`${d} day${d===1?'':'s'}`:h?`${h} h`:Math.max(1,Math.floor(s/60))+' min'};
+function renderTech(){
+  const b=$('tsBody'),C=TC();countLines();
+  if(!TS){b.innerHTML='<div class="jf-title">Home tech</div><div class="jf-wait">'+(tsOn()?'Waiting for the Macs to check in…':'Key not set on this screen')+'</div>';tsSig='';return}
+  const M=TS.machines||{},list=C.machines.map(m=>({...m,d:M[m.name]}));
+  /* internet: whichever Mac runs the speed test / ping */
+  const net=list.map(x=>x.d).find(d=>d&&(d.speeds||d.pings))||{};
+  const sp=(net.speeds||[]).slice(-1)[0],pg=(net.pings||[]).slice(-30),outs=(net.outages||[]).slice().reverse();
+  const spark=pg.length>1?(()=>{const v=pg.map(p=>p[1]),mx=Math.max(...v,20),W=200,H=40;return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline fill="none" stroke="#7fd6ff" stroke-width="2" points="${v.map((y,i)=>(i/(v.length-1)*W).toFixed(1)+','+(H-2-y/mx*(H-6)).toFixed(1)).join(' ')}"/></svg>`})():'';
+  const lastOut=outs[0],weekAgo=Date.now()/1000-7*86400;
+  const outTxt=lastOut?(lastOut[0]>weekAgo?`⚠️ Last outage ${agoS(lastOut[1])} · ${Math.max(1,Math.round((lastOut[1]-lastOut[0])/60))} min`:'✅ No outages in the last week'):'✅ No outages recorded';
+  const netHTML=`<div class="jf-glass gd-card ts-net"><h2>🌐 Internet</h2><div class="ts-nrow">
+      <div><small>DOWNLOAD</small><b>${sp?sp[1]:'–'}<i>Mbps</i></b></div><div><small>UPLOAD</small><b>${sp?sp[2]:'–'}<i>Mbps</i></b></div>
+      <div class="ts-ping"><small>PING</small><b>${net.ping!=null?net.ping:'–'}<i>ms</i></b>${spark}</div></div>
+      <div class="ts-nfoot"><span>${outTxt}</span><span>${sp?'Speed test '+agoS(sp[0]):'No speed test yet'}</span></div></div>`;
+  /* the LaCie backup */
+  const bk=list.map(x=>x.d&&x.d.tm).find(t=>t&&new RegExp(C.backup,'i').test(t.dest||''));
+  const bkAge=bk&&bk.last?Date.now()/1000-bk.last:null,bkCls=!bk?'':bk.running?'run':bkAge==null?'warn':bkAge<36*3600?'ok':bkAge<5*86400?'warn':'bad';
+  const bkHTML=`<div class="jf-glass ts-bk ${bkCls}"><i>🛟</i><div><b>${esc(C.backup)} backup</b><small>${!bk?'Not reported yet':bk.running?'Backing up right now…':bk.last?'Last backup '+agoS(bk.last):'No backup found yet'}</small></div>${bk&&bk.running?'<span class="ts-spin"></span>':''}</div>`;
+  /* each Mac */
+  const bar=(lab,v,suf)=>`<div class="ts-bar"><span>${lab}</span><div><i style="width:${Math.max(2,Math.min(100,v||0))}%;background:${v>=85?'#ff5c6c':v>=65?'#ffb84d':'#5fd88a'}"></i></div><em>${v==null?'–':v+'%'}${suf||''}</em></div>`;
+  const mHTML=list.map(m=>{const d=m.d;if(!d)return `<div class="jf-glass ts-m off"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st off">Not set up yet</span></div></div>`;
+    const age=(Date.now()-(d.received||0))/1000,online=age<(d.ping!==undefined?240:900);
+    const w=d.wifi,wq=w?(w.signal>=-60?4:w.signal>=-67?3:w.signal>=-75?2:1):0;
+    const drives=(d.drives||[]).map(x=>{const used=x.total?Math.round((1-x.free/x.total)*100):0;return `<div class="ts-dr"><span>💾 ${esc(x.name)}</span><div><i style="width:${used}%;background:${used>=90?'#ff5c6c':used>=75?'#ffb84d':'#7fb0ff'}"></i></div><em><b>${fmtB(x.free)}</b> free of ${fmtB(x.total)}</em></div>`}).join('');
+    return `<div class="jf-glass ts-m${online?'':' off'}"><div class="ts-mh"><i>${m.icon||'💻'}</i><b>${esc(m.name)}</b><span class="ts-st ${online?'on':'off'}">${online?'● Online':'Offline · seen '+agoS((d.received||0)/1000)}</span>${d.up?`<em>Up ${upTxt(d.up+((Date.now()/1000)-(d.at||Date.now()/1000)))}</em>`:''}</div>
+      <div class="ts-stats">${bar('CPU',d.cpu)}${bar('Memory',d.mem,d.memgb?` <small>of ${d.memgb} GB</small>`:'')}${w?`<div class="ts-wifi"><span>Wi-Fi</span><span class="ts-wq">${[1,2,3,4].map(k=>`<i class="${k<=wq?'on':''}"></i>`).join('')}</span><em>${esc(String(w.channel||'').match(/\d+GHz/)?String(w.channel).match(/[\d.]+GHz/)[0].replace('GHz',' GHz'):'')} · ${w.signal} dBm</em></div>`:''}</div>
+      ${drives?`<div class="ts-drs">${drives}</div>`:''}</div>`}).join('');
+  /* fun */
+  const os=onScreen();
+  const fun=`<div class="jf-glass ts-fun"><div><i>📺</i><b>${Math.floor(os/60)}h ${os%60}m</b><small>Nova on screen today</small></div><div><i>🧾</i><b>${tsLines?tsLines.toLocaleString():'…'}</b><small>lines of code in this dashboard</small></div><div><i>🏗️</i><b>${esc(($('ver').textContent||'').replace(/^build nova /,'#'))}</b><small>build${HC.relay&&HC.relay.v?' · relay '+esc(HC.relay.v.replace(/[()]/g,'')):''}</small></div><div class="ts-stk" id="tsStk"></div></div>`;
+  const html=`<div class="jf-title">Home tech</div><div class="ts-body">${netHTML}${bkHTML}${mHTML}${fun}</div>`;
+  if(html!==tsSig){tsSig=html;b.innerHTML=html}
+  const sk=$('tsStk');if(sk)drawSticker(sk);
+  const x=b.querySelector('.ts-body');if(x){const over=()=>x.scrollHeight>x.clientHeight+2;for(let g=0;g<6&&over();g++){const r=x.querySelectorAll('.ts-dr');if(r.length>3)r[r.length-1].remove();else break}}
+}
+/* the stickers: one picture with 21 of them, 7 across and 3 down */
+const STK={n:35,cols:7,rows:5};
+function drawSticker(el){const i=tsVisit%STK.n,c=i%STK.cols,r=Math.floor(i/STK.cols);
+  el.style.backgroundImage=`url("${TC().stickers}")`;el.style.backgroundSize=`${STK.cols*100}% ${STK.rows*100}%`;
+  el.style.backgroundPosition=`${(c/(STK.cols-1)*100).toFixed(3)}% ${(r/(STK.rows-1)*100).toFixed(3)}%`;
+  el.style.setProperty('--rot',((tsVisit*37)%24-12)+'deg');el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
+
 /* ================= Live cams ================= */
 const camsList=()=>(CFG.cams&&CFG.cams.list)||[];
 /* 511 cameras near a spot: ask the relay for the closest one, refresh the picture every minute */
@@ -4165,7 +4258,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 67';
+document.getElementById('ver').textContent='build nova 69';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -4177,7 +4270,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
+moon();weather();sportsLoop();radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
