@@ -386,14 +386,15 @@ body.aqua #pglow{display:none}
 body.hasTicker #ticker{display:flex}
 /* ===== news ticker ===== */
 #nticker{position:fixed;left:0;right:0;top:0;height:calc(4.6*var(--u));z-index:5;overflow:hidden;display:flex;align-items:center;
- background:linear-gradient(90deg,#ff6a3d,#ff3d77 55%,#c13dff);box-shadow:0 calc(.4*var(--u)) calc(2*var(--u)) rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.25)}
+ background:linear-gradient(90deg,rgba(14,16,30,.94),rgba(30,20,44,.94));box-shadow:0 calc(.4*var(--u)) calc(2*var(--u)) rgba(0,0,0,.4)}
+#nticker::after{content:'';position:absolute;left:0;right:0;bottom:0;height:calc(.3*var(--u));background:linear-gradient(90deg,#f2a65a,#e0708c 50%,#9a7dff);opacity:.85}
 body.hasAlert #nticker{top:calc(7*var(--u))}
 .nt-track{display:flex;align-items:center;white-space:nowrap;will-change:transform;animation:ntScroll var(--dur,60s) linear infinite}
 @keyframes ntScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.1*var(--u));font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.25)}.nt-it b{font-weight:700}
-.nt-sep{font-size:calc(1.1*var(--u));color:rgba(255,255,255,.6)}
-.nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(0,0,0,.28);color:#fff;text-shadow:none}.nt-k.live{background:#fff;color:#e0243b;animation:ntPulse 1.6s ease-in-out infinite}
-.nt-live{font-style:normal;color:#fff;background:rgba(0,0,0,.25);padding:0 calc(.5*var(--u));border-radius:calc(.5*var(--u))}
+.nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.1*var(--u));font-weight:500;color:rgba(240,242,250,.95)}.nt-it b{font-weight:700}
+.nt-sep{font-size:calc(1.1*var(--u));color:rgba(242,166,90,.6)}
+.nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(242,166,90,.2);color:#ffd9b0;text-shadow:none}.nt-k.live{background:rgba(255,59,48,.75);color:#fff;animation:ntPulse 1.6s ease-in-out infinite}
+.nt-live{font-style:normal;color:#ff7a85}
 @keyframes ntPulse{50%{opacity:.6}}
 body.hasTicker #nticker,body.aqua #nticker,body.noTicker #nticker{display:none}
 body:not(.hasTicker):not(.noTicker):not(.aqua) .page{top:calc(4.6*var(--u))}
@@ -4258,7 +4259,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 72';
+document.getElementById('ver').textContent='build nova 73';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
