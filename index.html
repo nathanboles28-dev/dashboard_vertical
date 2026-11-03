@@ -385,21 +385,21 @@ body.aqua #pglow{display:none}
  background:linear-gradient(180deg,rgba(20,22,30,.72),rgba(10,11,16,.85));border-top:1px solid rgba(255,255,255,.14);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%)}
 body.hasTicker #ticker{display:flex}
 /* ===== news ticker ===== */
-#nticker{position:fixed;left:0;right:0;bottom:0;height:calc(4.4*var(--u));z-index:5;overflow:hidden;display:flex;align-items:center;
- background:linear-gradient(180deg,rgba(8,10,16,.25),rgba(6,8,12,.72));border-top:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
- -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+#nticker{position:fixed;left:0;right:0;top:0;height:calc(4.6*var(--u));z-index:5;overflow:hidden;display:flex;align-items:center;
+ background:linear-gradient(90deg,#ff6a3d,#ff3d77 55%,#c13dff);box-shadow:0 calc(.4*var(--u)) calc(2*var(--u)) rgba(0,0,0,.35);border-bottom:1px solid rgba(255,255,255,.25)}
+body.hasAlert #nticker{top:calc(7*var(--u))}
 .nt-track{display:flex;align-items:center;white-space:nowrap;will-change:transform;animation:ntScroll var(--dur,60s) linear infinite}
 @keyframes ntScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.05*var(--u));color:rgba(240,242,250,.92)}.nt-it b{font-weight:700}
-.nt-sep{font-size:calc(1.1*var(--u));color:rgba(255,255,255,.3)}
-.nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(77,139,255,.3);color:#cfe0ff}
-.nt-k.k{background:rgba(63,191,111,.3);color:#c7f5d8}.nt-k.w{background:rgba(93,183,255,.25);color:#d6ecff}.nt-k.live{background:rgba(255,59,48,.6);color:#fff;animation:ntPulse 1.6s ease-in-out infinite}.nt-k.a{background:rgba(255,176,0,.3);color:#ffe2a6}.nt-k.c{background:rgba(255,200,90,.22);color:#ffe2a6}
-.nt-live{font-style:normal;color:#ff5c6c}
+.nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.1*var(--u));font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.25)}.nt-it b{font-weight:700}
+.nt-sep{font-size:calc(1.1*var(--u));color:rgba(255,255,255,.6)}
+.nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(0,0,0,.28);color:#fff;text-shadow:none}.nt-k.live{background:#fff;color:#e0243b;animation:ntPulse 1.6s ease-in-out infinite}
+.nt-live{font-style:normal;color:#fff;background:rgba(0,0,0,.25);padding:0 calc(.5*var(--u));border-radius:calc(.5*var(--u))}
 @keyframes ntPulse{50%{opacity:.6}}
 body.hasTicker #nticker,body.aqua #nticker,body.noTicker #nticker{display:none}
-body:not(.hasTicker):not(.noTicker) #dots{bottom:calc(5.3*var(--u))!important}
-body:not(.hasTicker):not(.noTicker) #hdot{bottom:calc(5.6*var(--u))}
-body:not(.hasTicker):not(.noTicker) #ver{bottom:calc(5*var(--u))!important}
+body:not(.hasTicker):not(.noTicker):not(.aqua) .page{top:calc(4.6*var(--u))}
+body.hasAlert:not(.hasTicker):not(.noTicker):not(.aqua) .page{top:calc(11.6*var(--u))}
+body:not(.hasTicker):not(.noTicker):not(.aqua) #mini{top:calc(8.6*var(--u))}
+body.hasAlert:not(.hasTicker):not(.noTicker):not(.aqua) #mini{top:calc(14.1*var(--u))}
 body:not(.hasTicker):not(.noTicker) #toast,body:not(.hasTicker):not(.noTicker) #answer{bottom:calc(8*var(--u))}
 body.hasTicker #dots{display:none}
 body.hasTicker .page{bottom:calc(8*var(--u))}
@@ -1072,7 +1072,7 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .ts-dr{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr auto;gap:calc(1.4*var(--u));align-items:center;font-size:calc(2*var(--u))}.ts-dr>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ts-dr div{height:calc(1*var(--u));border-radius:calc(.5*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.ts-dr div i{display:block;height:100%;border-radius:inherit}
 .ts-dr em{font-style:normal;color:var(--dim);font-size:calc(1.85*var(--u));white-space:nowrap}.ts-dr em b{color:var(--ink);font-weight:600}
-.ts-fun{position:relative;overflow:visible!important;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.4*var(--u));padding:calc(2*var(--u)) calc(26*var(--u)) calc(2*var(--u)) calc(2*var(--u))!important}.ts-fun>div{text-align:center}.ts-fun i{font-style:normal;font-size:calc(3*var(--u))}
+.ts-fun{position:relative;overflow:visible!important;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.4*var(--u));padding:calc(2*var(--u))!important}.ts-fun>div{text-align:center}.ts-fun i{font-style:normal;font-size:calc(3*var(--u))}
 .ts-fun b{display:block;font-size:calc(3.4*var(--u));font-weight:300;line-height:1.2}.ts-fun small{font-size:calc(1.6*var(--u));color:var(--dim)}
 .ts-stk{position:absolute;right:calc(1*var(--u));top:calc(-2*var(--u));width:calc(24*var(--u));aspect-ratio:1;background-repeat:no-repeat;z-index:3;transform:rotate(var(--rot,-8deg));filter:drop-shadow(0 calc(1*var(--u)) calc(1.6*var(--u)) rgba(0,0,0,.55))}
 .ts-stk.pop{animation:stkPop 1s cubic-bezier(.2,1.6,.4,1) .5s both,stkBob 4s ease-in-out 1.5s infinite}
@@ -1368,7 +1368,7 @@ const CFG={
   ticker:{on:true, speed:70},
   watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
-  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', stickers:'stickers.webp'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
+  tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
@@ -4074,7 +4074,7 @@ function renderTech(){
       ${drives?`<div class="ts-drs">${drives}</div>`:''}</div>`}).join('');
   /* fun */
   const os=onScreen();
-  const fun=`<div class="jf-glass ts-fun"><div><i>📺</i><b>${Math.floor(os/60)}h ${os%60}m</b><small>Nova on screen today</small></div><div><i>🧾</i><b>${tsLines?tsLines.toLocaleString():'…'}</b><small>lines of code in this dashboard</small></div><div><i>🏗️</i><b>${esc(($('ver').textContent||'').replace(/^build nova /,'#'))}</b><small>build${HC.relay&&HC.relay.v?' · relay '+esc(HC.relay.v.replace(/[()]/g,'')):''}</small></div><div class="ts-stk" id="tsStk"></div></div>`;
+  const fun=`<div class="jf-glass ts-fun"><div><i>📺</i><b>${Math.floor(os/60)}h ${os%60}m</b><small>Nova on screen today</small></div><div><i>🧾</i><b>${tsLines?tsLines.toLocaleString():'…'}</b><small>lines of code in this dashboard</small></div><div><i>🏗️</i><b>${esc(($('ver').textContent||'').replace(/^build nova /,'#'))}</b><small>build${HC.relay&&HC.relay.v?' · relay '+esc(HC.relay.v.replace(/[()]/g,'')):''}</small></div></div>`;
   const html=`<div class="jf-title">Home tech</div><div class="ts-body">${netHTML}${bkHTML}${mHTML}${fun}</div>`;
   if(html!==tsSig){tsSig=html;b.innerHTML=html}
   const sk=$('tsStk');if(sk)drawSticker(sk);
@@ -4258,7 +4258,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 70';
+document.getElementById('ver').textContent='build nova 72';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
