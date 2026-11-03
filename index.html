@@ -1336,7 +1336,7 @@ const CFG={
   // Spotlight card on the home page: on this day, did you know, picture of the day and trivia (answer shows after answerSecs)
   spotlight:{on:true, secs:25, answerSecs:12, trivia:[21,9,22,17,11]},
   ticker:{on:true, speed:70},
-  watch:{on:true, users:['Erinn','Nathan']},   // Watch next page: whose viewing counts (Jellyfin user names)
+  watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
@@ -3961,7 +3961,7 @@ let WT=null,wtAt=0,wtSig='',wtVisit=0;
 const wtOn=()=>jfOn()&&!(CFG.watch&&CFG.watch.on===false);
 async function loadWatch(){
   if(!wtOn())return;
-  try{const u=((CFG.watch&&CFG.watch.users)||['Erinn','Nathan']).join(',');const d=await (await tfetch(relayBase()+'/jellyfin/picks?key='+encodeURIComponent(SECRETS.calkey)+'&users='+encodeURIComponent(u),25000)).json();if(!d.error){WT=d;wtAt=Date.now()}}catch(e){console.warn('watch',e)}
+  try{const u=((CFG.watch&&CFG.watch.users)||['Erinn','Nathan']).join(',');const d=await (await tfetch(relayBase()+'/jellyfin/picks?key='+encodeURIComponent(SECRETS.calkey)+'&users='+encodeURIComponent(u)+'&lib='+encodeURIComponent((CFG.watch&&CFG.watch.library)||'Movies'),25000)).json();if(!d.error){WT=d;wtAt=Date.now()}}catch(e){console.warn('watch',e)}
   if($('pWatch').classList.contains('on'))renderWatch();
 }
 setInterval(()=>{if($('pWatch').classList.contains('on')||Date.now()-wtAt>3600e3)loadWatch()},600000);
