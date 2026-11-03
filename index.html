@@ -393,6 +393,8 @@ body.hasAlert #nticker{top:calc(7*var(--u))}
 @keyframes ntScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .nt-it{display:inline-flex;align-items:center;gap:calc(1*var(--u));padding:0 calc(2*var(--u));font-size:calc(2.1*var(--u));font-weight:500;color:rgba(240,242,250,.95)}.nt-it b{font-weight:700}
 .nt-sep{font-size:calc(1.1*var(--u));color:rgba(242,166,90,.6)}
+/* green tag for recycling */
+.nt-k.k{background:rgba(63,191,111,.28);color:#c7f5d8}
 .nt-k{font-size:calc(1.45*var(--u));font-weight:800;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));background:rgba(242,166,90,.2);color:#ffd9b0;text-shadow:none}.nt-k.live{background:rgba(255,59,48,.75);color:#fff;animation:ntPulse 1.6s ease-in-out infinite}
 .nt-live{font-style:normal;color:#ff7a85}
 @keyframes ntPulse{50%{opacity:.6}}
@@ -1052,6 +1054,36 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .wt-mi{width:calc(7.6*var(--u));text-align:center}.wt-pop h2{margin-bottom:calc(.8*var(--u))}.wt-mi small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
 /* ===== Home tech ===== */
 #pTech{--acc:#7fd6ff;--ico:'🖥️'}
+/* ===== Morning mode ===== */
+#pMorn{--acc:#ffb35c;--ico:'☀️'}
+body.morn #mini{opacity:0!important}
+#mmBody{position:absolute;left:5%;right:5%;top:calc(3.4*var(--u));bottom:calc(3*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u))}
+.mm-head{display:flex;align-items:flex-end;justify-content:space-between;gap:calc(2*var(--u))}
+.mm-hi{font-size:calc(5.4*var(--u));font-weight:700;letter-spacing:-.01em;background:linear-gradient(90deg,#ffd27a,#ff9f6b);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1}
+.mm-date{font-size:calc(2.4*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
+.mm-clock{font-size:calc(8*var(--u));font-weight:200;line-height:.95;letter-spacing:-.02em}.mm-clock small{font-size:calc(2.6*var(--u));color:var(--dim);margin-left:calc(.6*var(--u));font-weight:400}
+.mm-wx{display:grid;grid-template-columns:auto 1fr;gap:calc(1*var(--u)) calc(2.4*var(--u));align-items:center}
+.mm-wxi{font-size:calc(9*var(--u));line-height:1}
+.mm-wxt b{font-size:calc(7*var(--u));font-weight:300;line-height:1}.mm-wxt span{font-size:calc(2.8*var(--u));margin-left:calc(1.2*var(--u))}
+.mm-wxt small{display:block;font-size:calc(2*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
+.mm-note{grid-column:1/-1;font-size:calc(2.1*var(--u));font-weight:600;color:#ffd9a6;background:rgba(255,179,92,.14);border-radius:calc(1.2*var(--u));padding:calc(.8*var(--u)) calc(1.4*var(--u))}
+.mm-hrs{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,1fr);text-align:center;border-top:1px solid rgba(255,255,255,.1);padding-top:calc(1.2*var(--u));margin-top:calc(.4*var(--u))}
+.mm-hrs b{display:block;font-size:calc(1.7*var(--u));font-weight:600;color:var(--dim)}.mm-hrs span{display:block;font-size:calc(3*var(--u));margin:calc(.3*var(--u)) 0}.mm-hrs div{font-size:calc(2.2*var(--u))}.mm-hrs em{display:block;font-style:normal;font-size:calc(1.6*var(--u));color:#8fc9ff;min-height:1.2em}
+.mm-two{display:grid;grid-template-columns:1.15fr 1fr;gap:calc(1.8*var(--u))}
+.mm-ev{display:flex;gap:calc(1.4*var(--u));align-items:baseline;padding:calc(.7*var(--u)) 0;border-top:1px solid rgba(255,255,255,.07)}.mm-ev:first-of-type{border-top:0}
+.mm-ev>span{flex:0 0 calc(10*var(--u));font-size:calc(2*var(--u));font-weight:700;color:#ffd27a}
+.mm-ev b{display:block;font-size:calc(2.2*var(--u));font-weight:600;line-height:1.25}.mm-ev small{display:block;font-size:calc(1.7*var(--u));color:var(--dim)}.mm-ev small.lv{color:#8ff0b6}
+.mm-g{display:flex;align-items:center;gap:calc(1.2*var(--u));padding:calc(.8*var(--u)) 0;border-top:1px solid rgba(255,255,255,.07)}.mm-g:first-of-type{border-top:0}
+.mm-g img{width:calc(4*var(--u));height:calc(4*var(--u));object-fit:contain}.mm-g b{display:block;font-size:calc(2.2*var(--u));font-weight:600}.mm-g small{display:block;font-size:calc(1.8*var(--u));color:#ffd27a;font-weight:600}
+.mm-none{font-size:calc(2.1*var(--u));color:var(--dim);line-height:1.4}.mm-none em{display:block;font-style:normal;font-size:calc(1.8*var(--u));margin-top:calc(.6*var(--u));color:rgba(240,242,250,.75)}
+.mm-ok{font-size:calc(2.1*var(--u));color:#9ff0b8}
+.mm-hl{display:flex;align-items:baseline;gap:calc(1.2*var(--u));padding:calc(.7*var(--u)) 0;border-top:1px solid rgba(255,255,255,.07)}.mm-hl:first-of-type{border-top:0}
+.mm-hl i{font-style:normal;flex:none;font-size:calc(1.4*var(--u));font-weight:800;letter-spacing:.08em;padding:calc(.25*var(--u)) calc(.7*var(--u));border-radius:calc(.6*var(--u));background:rgba(255,179,92,.18);color:#ffd9b0}
+.mm-hl b{flex:1;font-size:calc(2.05*var(--u));font-weight:500;line-height:1.3}.mm-hl small{flex:none;font-size:calc(1.6*var(--u));color:var(--dim)}
+#mmBody .lc-roads,#mmBody .lc-alert{margin:0}
+#mmBody>*{flex:none}
+.mm-rc{display:inline-block;margin-top:calc(1*var(--u));font-size:calc(1.9*var(--u));font-weight:600;color:var(--dim);padding:calc(.4*var(--u)) calc(1.2*var(--u));border-radius:99px;background:rgba(255,255,255,.07)}.mm-rc.soon{color:#bff3cf;background:rgba(63,210,122,.18)}.mm-rc.now{color:#fff;background:rgba(63,190,111,.55);animation:ntPulse 2.4s ease-in-out infinite}#mmBody>.mm-hlc{flex:0 1 auto;min-height:0;overflow:hidden}
+
 .ts-body{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(1.6*var(--u));overflow:hidden}.ts-body>*{flex-shrink:0}
 .ts-nrow{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:calc(1.6*var(--u))}.ts-nrow>div{padding:calc(1.2*var(--u)) calc(1.6*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.06)}
 .ts-nrow small{display:block;font-size:calc(1.5*var(--u));font-weight:800;letter-spacing:.12em;color:var(--dim)}.ts-nrow b{display:block;font-size:calc(5*var(--u));font-weight:200;line-height:1.1}.ts-nrow b i{font-style:normal;font-size:calc(1.9*var(--u));color:var(--dim);margin-left:calc(.5*var(--u))}
@@ -1246,6 +1278,7 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 <section id="pWrap" class="page"><div id="wrBody"></div></section>
 <section id="pWatch" class="page"><div id="wtBody"></div></section>
 <section id="pTech" class="page"><div id="tsBody"></div></section>
+<section id="pMorn" class="page"><div id="mmBody"></div></section>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
 <section id="pLocal" class="page"><div id="locBody"></div></section>
@@ -1369,6 +1402,10 @@ const CFG={
   ticker:{on:true, speed:70},
   watch:{on:true, users:['Erinn','Nathan'], library:'Movies'},
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
+  // Morning mode: between these times the board stays on one "get going" page (weather, calendar, drives, roads, games today, headlines)
+  morningMode:{on:true, from:'07:00', to:'09:00', headlines:4},
+  // Recycling (City of Woodstock): zone 3's turn comes every 6th weekday, skipping holidays. anchor = any known pickup date for your zone
+  recycling:{on:true, zone:3, anchor:'2026-01-06', eveningFrom:16},
   tech:{on:true, machines:[{name:'Macbook',icon:'💻'},{name:'Dashboard Computer',icon:'🖥️'},{name:'Jellyfin Server Mac',icon:'🎬'}], backup:'LaCie', backupHours:12},   // Watch next page: whose viewing counts (Jellyfin user names) and the movie library to use
   motion:true,   // cards rise in, numbers count up, a soft glow in each page's colour   // news ticker along the bottom; speed = pixels per second
   satellite:{on:true},
@@ -1883,7 +1920,7 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
 const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
@@ -1900,7 +1937,9 @@ function goalAlert(key,team,mine){
 function pageSecs(p){const LC=CFG.live||{};if(p.type==='ws'&&typeof wsLive==='function'&&wsLive())return (CFG.ws&&CFG.ws.liveSecs)||60;if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
 function nextPage(force,hold){
   const list=(CFG.pages&&CFG.pages.length)?CFG.pages:[{type:'dashboard',secs:60}];
-  let p;
+  let p,stay=false;
+  if(force||force===0)window._userHoldUntil=Date.now()+((hold||15)*1000);
+  else if(typeof mornOn==='function'&&mornOn()){force='morn';hold=60;stay=$('pMorn').classList.contains('on')}
   if(force){const i=list.findIndex(q=>q.type===force);if(i>=0)pIdx=i;p=i>=0?list[i]:{type:force}}
   else if(force===0){for(let n=0;n<list.length;n++){pIdx=(pIdx-1+list.length)%list.length;if(canShow(list[pIdx]))break}p=list[pIdx]}
   else{for(let n=0;n<list.length;n++){pIdx=(pIdx+1)%list.length;if(canShow(list[pIdx]))break}p=list[pIdx]}
@@ -1929,18 +1968,20 @@ function nextPage(force,hold){
   renderCams(p.type==='cams');
   if(p.type==='hub'){window._hubNews=(window._hubNews||0)+1;hubSigs.hub='';renderHub();if(Date.now()-hubAt>600000)loadHub()}
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
+  if(p.type==='morn')renderMorn();
   if(p.type==='tech'){tsVisit++;renderTech();if(Date.now()-tsAt>60000)loadTech()}
   if(p.type==='watch'){wtVisit++;renderWatch();if(Date.now()-wtAt>1800000)loadWatch()}
   pauseVideos();
   Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
-  {const pe=$(PAGE_EL[p.type]);if(pe){pe.classList.add('enter');clearTimeout(pe._et);pe._et=setTimeout(()=>pe.classList.remove('enter'),1900);
+  {const pe=$(PAGE_EL[p.type]);if(pe&&!stay){pe.classList.add('enter');clearTimeout(pe._et);pe._et=setTimeout(()=>pe.classList.remove('enter'),1900);
     const ac=getComputedStyle(pe).getPropertyValue('--acc').trim();if(ac)$('pglow').style.setProperty('--pacc',ac);setTimeout(()=>countUp(pe),120)}}
   if(p.type==='hub'&&HUB&&(HUB.videos||[]).length){const v=vidPlayer('hub');if(v._list&&HUB.videos.length>1)v._idx=((v._idx||0)+1)%HUB.videos.length;mountVideo('hub','#hubVid',HUB.videos,true)}
   if(p.type==='live'&&replayOn())renderLive2();
   document.body.classList.toggle('alt',p.type!=='dashboard');
+  document.body.classList.toggle('morn',p.type==='morn');
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
-  $('dots').innerHTML=list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
+  $('dots').innerHTML=p.type!=='morn'&&list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
   clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
 }
 
@@ -2497,6 +2538,7 @@ function handleCommand(raw){
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
+  if(has(/\b(morning (mode|page|briefing|rundown)|get going)\b/)){showFor('morn');return reply('Here\'s your morning.')}
   if(has(/\b(drive times?|how long to (drive|get) to|commute)\b/)){showFor('local');return reply(drvSay())}
   if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
   if(has(/\b(recap|last night|how did (the )?(leafs|knights) do)\b/)){rcDemand=Date.now()+3600e3;if(recapOn())showFor('recap');return reply(recapSay())}
@@ -2779,7 +2821,7 @@ async function loadDestWx(){const L=drvList();if(!L.length||Date.now()-dwxAt<120
   try{const j=await (await tfetch(`https://api.open-meteo.com/v1/forecast?latitude=${L.map(d=>d.lat).join(',')}&longitude=${L.map(d=>d.lon).join(',')}&current=temperature_2m,weather_code,is_day&hourly=precipitation_probability,snowfall&forecast_hours=4&timezone=auto`,12000)).json();
     (Array.isArray(j)?j:[j]).forEach((r,i)=>{const c=r.current||{},h=r.hourly||{};if(L[i])DWX[L[i].name]={t:Math.round(c.temperature_2m),code:c.weather_code,night:c.is_day===0,pp:Math.max(0,...(h.precipitation_probability||[0])),snow:(h.snowfall||[]).reduce((a,b)=>a+(b||0),0)}});
     if($('pLocal').classList.contains('on'))renderLocal()}catch(e){dwxAt=Date.now()-900000}}
-setInterval(()=>{if($('pLocal').classList.contains('on'))loadDestWx()},300000);
+setInterval(()=>{if($('pLocal').classList.contains('on')||$('pMorn').classList.contains('on'))loadDestWx()},300000);
 function drvHTML(){loadDestWx();
   const L=((DRV&&DRV.drives)||[]).filter(x=>!x.error&&x.min!=null);
   if(!L.length)return `<div class="cnote">${esc(drvErr||(drvList().length?'Checking the roads…':'No destinations set'))}</div>`;
@@ -3344,6 +3386,91 @@ function playMorning(){
 function morningAtScreenOn(){clearTimeout(mornT);const n=new Date(),ms=(60-n.getSeconds())*1000-n.getMilliseconds()+4000;mornT=setTimeout(playMorning,ms)}
 setInterval(()=>{const M=CFG.morning||{};if(M.on===false)return;const n=new Date(),[h,m]=String(M.time||'07:00').split(':').map(Number);
   if(n.getHours()===h&&n.getMinutes()===m&&n.getSeconds()>=4&&Date.now()-mornAt>600000){let k='nova-morning-'+n.toDateString(),done=false;try{done=localStorage.getItem(k)==='1';localStorage.setItem(k,'1')}catch(e){}if(!done){wakeScreen();playMorning()}}},1000);
+
+/* ---------- Recycling day: Woodstock collects on a six-weekday rotation that skips stat holidays ---------- */
+const rcYmd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const rcHol={};
+function rcHolidays(y){if(rcHol[y])return rcHol[y];const s=new Set(),add=d=>s.add(rcYmd(d));
+  const obs=d=>{d=new Date(d);if(d.getDay()===6)d.setDate(d.getDate()+2);else if(d.getDay()===0)d.setDate(d.getDate()+1);return d};
+  const nthMon=(m,n)=>{const d=new Date(y,m,1);while(d.getDay()!==1)d.setDate(d.getDate()+1);d.setDate(d.getDate()+7*(n-1));return d};
+  const a=y%19,b=Math.floor(y/100),c=y%100,dd=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-dd-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+  const easter=new Date(y,Math.floor((h+l-7*m+114)/31)-1,(h+l-7*m+114)%31+1);
+  const vic=new Date(y,4,24);while(vic.getDay()!==1)vic.setDate(vic.getDate()-1);
+  add(obs(new Date(y,0,1)));add(nthMon(1,3));add(new Date(y,easter.getMonth(),easter.getDate()-2));add(vic);add(obs(new Date(y,6,1)));
+  add(nthMon(7,1));add(nthMon(8,1));add(nthMon(9,2));const x=obs(new Date(y,11,25));add(x);const bx=obs(new Date(y,11,26));if(rcYmd(bx)===rcYmd(x))bx.setDate(bx.getDate()+1);add(bx);
+  return rcHol[y]=s}
+let rcCache={day:'',next:[]};
+function recycleNext(){const R=CFG.recycling||{};if(R.on===false||!R.anchor)return [];const today=new Date();today.setHours(0,0,0,0);
+  if(rcCache.day===today.toDateString())return rcCache.next;
+  const out=[],d=new Date(R.anchor+'T12:00');let n=0;
+  while(out.length<3&&d.getFullYear()<today.getFullYear()+3){const wd=d.getDay();if(wd>0&&wd<6&&!rcHolidays(d.getFullYear()).has(rcYmd(d))){if(n%6===0&&d>=today)out.push(new Date(d.getFullYear(),d.getMonth(),d.getDate()));n++}d.setDate(d.getDate()+1)}
+  rcCache={day:today.toDateString(),next:out};return out}
+/* 0 = today, 1 = tomorrow, ... (null if none) */
+function recycleIn(){const n=recycleNext()[0];if(!n)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((n-t)/864e5)}
+/* ================= Morning mode: from 7 to 9 AM the board stays on one "get going" page ================= */
+const MM=()=>Object.assign({on:true,from:'07:00',to:'09:00',headlines:4},CFG.morningMode||{});
+const mmMin=x=>{const[a,b]=String(x).split(':').map(Number);return a*60+(b||0)};
+function mornOn(d=new Date()){const M=MM();if(M.on===false)return false;const m=d.getHours()*60+d.getMinutes();return m>=mmMin(M.from)&&m<mmMin(M.to)}
+let mmSig='';
+function mmWeather(){
+  if(!WXD)return `<div class="jf-glass gd-card"><div class="mm-none">Checking the weather…</div></div>`;
+  const c=WXD.c,dl=WXD.dl,hr=WXD.hr,[ic,tx]=wx(c.weather_code,c.is_day===0);
+  const t0=new Date();t0.setMinutes(0,0,0);let k=hr.time.findIndex(t=>new Date(t)>=t0);if(k<0)k=0;
+  const hrs=[0,2,4,6,8,10].map(n=>{const i=k+n;if(hr.time[i]===undefined)return '';const h=new Date(hr.time[i]).getHours(),pp=hr.precipitation_probability[i]||0;
+    return `<div><b>${n?(h%12||12)+(h<12?' AM':' PM'):'Now'}</b><span>${wx(hr.weather_code[i],hr.is_day[i]===0)[0]}</span>${Math.round(hr.temperature_2m[i])}°<em>${pp>=20?pp+'%':''}</em></div>`}).join('');
+  const snow=(dl.snowfall_sum||[])[0]||0,pp=(dl.precipitation_probability_max||[])[0]||0,feels=Math.round(c.apparent_temperature),lo=Math.round(dl.temperature_2m_min[0]);
+  const note=snow>=1?`❄️ About ${Math.round(snow)} cm of snow today, leave a little extra time`:pp>=50?`💧 ${pp}% chance of rain today, grab an umbrella`:feels<=-15?`🥶 Feels like ${feels}°, bundle up`:'';
+  return `<div class="jf-glass gd-card mm-wx"><div class="mm-wxi">${ic}</div><div class="mm-wxt"><b>${Math.round(c.temperature_2m)}°</b><span>${esc(tx)}</span>
+    <small>Feels ${feels}° · High ${Math.round(dl.temperature_2m_max[0])}° · Low ${lo}°</small></div>${note?`<div class="mm-note">${note}</div>`:''}<div class="mm-hrs">${hrs}</div></div>`}
+function mmCalendar(){
+  const t0=dayStart(new Date()),t1=new Date(t0.getTime()+864e5);
+  const ev=calEvents.filter(e=>e.start<t1&&(e.end||e.start)>=t0&&(e.allDay||(e.end||e.start)>new Date())).sort((a,b)=>(b.allDay-a.allDay)||(a.start-b.start)).slice(0,5);
+  const rows=ev.map(e=>{const r=!e.allDay&&e.loc?rtGet(e.loc):null;
+    return `<div class="mm-ev"><span>${e.allDay?'All day':fmt(e.start)}</span><div><b>${esc(e.title)}</b>${r?`<small class="lv">🚗 Leave by ${fmt(leaveBy(e,r))} · ${r.min} min drive</small>`:e.loc?`<small>${esc(String(e.loc).split(',')[0])}</small>`:''}</div></div>`}).join('');
+  return `<div class="jf-glass gd-card"><h2>📅 Today</h2>${rows||`<div class="mm-none">${calErr?esc(calErr):'Nothing on the calendar today 🎉'}</div>`}</div>`}
+function mmGames(){
+  const today=new Date().toDateString(),g=(nextRows||[]).filter(r=>r.date&&r.date.toDateString()===today).sort((a,b)=>a.date-b.date);
+  const row=r=>`<div class="mm-g">${logoImg(r.logo)}<div><b>${esc(r.me||r.L.label)} ${r.at} ${esc(r.opp)}</b><small>${fmt(r.date)}</small></div></div>`;
+  if(g.length)return `<div class="jf-glass gd-card"><h2>🏒 Games today</h2>${g.map(row).join('')}</div>`;
+  const nx=(nextRows||[]).filter(r=>r.date>new Date()).sort((a,b)=>a.date-b.date)[0];
+  return `<div class="jf-glass gd-card"><h2>🏒 Games today</h2><div class="mm-none">No Leafs, Knights or Jays games today${nx?`<em>Next: ${esc(nx.me||nx.L.label)} ${nx.at} ${esc(nx.opp)} · ${dayTag(nx.date)||'Today'} ${fmt(nx.date)}</em>`:''}</div></div>`}
+function mmRoads(){
+  const rank={accidentsAndIncidents:0,closures:1,roadwork:2};
+  const al=((LOC&&LOC.events)||[]).filter(affectsMe).filter(e=>evInfo(e).red||/accident|incident/i.test(e.type)).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||a.dist-b.dist).slice(0,2);
+  const alHTML=al.map(e=>{const k=evInfo(e);return `<div class="lc-alert"><i>${k.i}</i><div><b>${k.n}${e.full&&k.n!=='Closure'?' · full closure':''} · ${esc(e.road)}${e.dir?' '+esc(shortDir(e.dir)):''}</b><small>${esc(e.desc)}</small></div><span>${esc(e.dist)} km</span></div>`}).join('');
+  const rd=roadsHTML();
+  return alHTML+rd+(!alHTML&&!rd&&LOC?`<div class="jf-glass gd-card"><div class="mm-ok">✅ No collisions or closures near ${esc(CFG.city)} right now</div></div>`:'')}
+function mmHeadlines(){
+  const n=MM().headlines||4,fresh=newsItems.filter(i=>Date.now()-i.date<36*3600e3),list=(fresh.length>=2?fresh:newsItems).slice(0,n);
+  if(!list.length)return '';
+  return `<div class="jf-glass gd-card mm-hlc"><h2>📰 Sports headlines</h2>${list.map(i=>`<div class="mm-hl"><i>${esc(i.tag||'')}</i><b>${esc(i.title)}</b><small>${agoS(i.date/1000)}</small></div>`).join('')}</div>`}
+function mmRecycle(){const k=recycleIn();if(k==null)return '';const nx=recycleNext()[0];
+  if(k===0)return `<div class="mm-rc now">♻️ Recycling day today: out by 7 AM</div>`;
+  if(k===1)return `<div class="mm-rc soon">♻️ Recycling tomorrow</div>`;
+  return `<div class="mm-rc">♻️ Next recycling ${k<7?nx.toLocaleDateString([],{weekday:'long'}):nx.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</div>`}
+function renderMorn(){
+  if(Date.now()-drvAt>290000&&typeof loadDrives==='function')loadDrives();
+  if(Date.now()-locAt>600000&&typeof loadLocal==='function')loadLocal();
+  const n=new Date(),hm=fmt(n).split(' ');
+  const html=`<div class="mm-head"><div><div class="mm-hi">Good morning</div><div class="mm-date">${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</div>${mmRecycle()}</div>
+      <div class="mm-clock">${hm[0]}${hm[1]?`<small>${hm[1]}</small>`:''}</div></div>
+    ${mmWeather()}
+    <div class="mm-two">${mmCalendar()}${mmGames()}</div>
+    <div class="jf-glass gd-card lc-drcard"><h2>🚗 Drive times${drvAt?' · '+fmt(new Date(drvAt)):''}</h2>${drvHTML()}</div>
+    ${mmRoads()}
+    ${mmHeadlines()}`;
+  if(html!==mmSig){mmSig=html;$('mmBody').innerHTML=html}
+  /* if it runs long, drop the headlines rather than cut anything off */
+  requestAnimationFrame(mmFit);
+}
+/* the headlines card takes whatever room is left: show only whole headlines; if fewer than 2 fit, trim winter-road rows first */
+function mmFit(){const b=$('mmBody'),c=b&&b.querySelector('.mm-hlc');if(!c)return;
+  const fits=()=>{const cb=c.getBoundingClientRect().bottom-parseFloat(getComputedStyle(c).paddingBottom);return [...c.querySelectorAll('.mm-hl')].filter(r=>r.getBoundingClientRect().bottom<=cb+1).length};
+  const rd=[...b.querySelectorAll('.lc-rd')];while(fits()<2&&rd.length>1)rd.pop().remove();
+  const n=fits(),rows=[...c.querySelectorAll('.mm-hl')];rows.slice(n).forEach(r=>r.remove());if(!n)c.remove()}
+setInterval(()=>{if($('pMorn').classList.contains('on'))renderMorn()},20000);
+/* at 7:00 jump straight to the morning page (unless the remote is showing something) */
+setInterval(()=>{if(mornOn()&&!paused&&!$('pMorn').classList.contains('on')&&Date.now()>(window._userHoldUntil||0))nextPage()},15000);
 
 /* ================= Knights hub: same layout as the Leafs hub (data from the relay's /khub) ================= */
 const khTeam=()=>((CFG.khub&&CFG.khub.team)||'LDN').toUpperCase();
@@ -3953,6 +4080,7 @@ setInterval(loadSpotlight,30*60000);
 let ntSig='',ntNext=null;
 function ntItems(){
   const out=[],tag=(t,c)=>`<span class="nt-k ${c||''}">${esc(t)}</span>`;
+  try{const R=CFG.recycling||{},k=recycleIn(),h=new Date().getHours();if(k===1&&h>=(R.eveningFrom??16))out.push(`${tag('♻️ TOMORROW','k')} <b>Recycling day</b> · put it out tonight or by 7 AM`);else if(k===0&&h<12)out.push(`${tag('♻️ TODAY','k')} <b>Recycling day</b>`)}catch(e){}
   /* your teams first: live, today, last result */
   try{lastRes.forEach(r=>r.games.forEach(g=>{if(!isFav(r.L,g))return;const d=g.date,today=d.toDateString()===new Date().toDateString();
     if(g.state==='in')out.push(`${tag('LIVE','live')} <b>${esc(g.line)}</b> · ${esc(g.det)}`);
@@ -4044,7 +4172,7 @@ setInterval(()=>{try{if(document.visibilityState==='visible'&&!$('night').classL
 const onScreen=()=>{try{return +localStorage.getItem(onKey())||0}catch(e){return 0}};
 async function countLines(){if(tsLines)return;try{const t=await (await fetch(location.href.split('#')[0],{cache:'no-store'})).text();tsLines=t.split('\n').length}catch(e){}}
 const fmtB=b=>b>=1e12?(b/1e12).toFixed(b>=1e13?0:1)+' TB':Math.round(b/1e9)+' GB';
-const agoS=t=>{const m=Math.round((Date.now()/1000-t)/60);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' days ago'};
+const agoS=t=>{const m=Math.round((Date.now()/1000-t)/60);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)===1?'1 day ago':Math.round(m/1440)+' days ago'};
 const upTxt=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600);return d?`${d} day${d===1?'':'s'}`:h?`${h} h`:Math.max(1,Math.floor(s/60))+' min'};
 function renderTech(){
   const b=$('tsBody'),C=TC();countLines();
@@ -4263,7 +4391,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 74';
+document.getElementById('ver').textContent='build nova 76';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
