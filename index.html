@@ -1447,7 +1447,7 @@ const CFG={
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
   // Morning mode: between these times the board stays on one "get going" page (weather, calendar, drives, roads, games today, headlines)
   // Now playing (Apple Music on the Macbook, via the remote's channel): full page in the rotation, mini player on other pages, card on the home page
-  nowPlaying:{on:true, page:true, mini:true, card:true},
+  nowPlaying:{on:true, page:true, mini:true, card:true, peekSecs:10},   // peekSecs: when a new song starts, show the Now playing page this long, then go back (0 = off)
   morningMode:{on:true, from:'07:00', to:'09:00', headlines:4},
   // Recycling (City of Woodstock): zone 3's turn comes every 6th weekday, skipping holidays. anchor = any known pickup date for your zone
   recycling:{on:true, zone:3, anchor:'2026-01-06', eveningFrom:16},
@@ -3488,13 +3488,26 @@ function npApply(){const s=npState(),C=NPC(),pg=window._curPage||'';
   document.body.classList.toggle('npBar',!!s&&C.mini!==false&&pg!=='np'&&pg!=='dashboard');
   document.body.classList.toggle('npCardOn',!!s&&C.card!==false);
   if(!s&&pg==='np')nextPage()}
-function npUpdate(j){const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;
+/* a new song: show the Now playing page for a few seconds, then go back to wherever the board was */
+let npLastSong='';
+function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)return;
+  const cur=window._curPage||'';
+  if(paused||cur==='live'||document.body.classList.contains('aqua')||($('night')&&$('night').classList.contains('on')))return;
+  if(cur!=='np'||window._npPeek){const P=window._npPeek||{prev:cur,left:Math.max(8,Math.round(((window._pgEnd||0)-Date.now())/1000))};
+    window._npPeek=P;if(cur!=='np')nextPage('np',3600);
+    clearTimeout(window._npPeekT);window._npPeekT=setTimeout(()=>{const Q=window._npPeek;window._npPeek=null;
+      if(!Q||window._curPage!=='np')return;   /* something else (remote, goal, alert) took over meanwhile */
+      if(Q.prev==='morn'||!Q.prev){nextPage();return}
+      nextPage(Q.prev,Q.left)},secs*1000)}}
+function npUpdate(j,fresh){const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;
+  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)setTimeout(npPeek,300)}}
+  else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
   npApply();}
 setInterval(()=>{const had=document.body.classList.contains('npBar')||document.body.classList.contains('npCardOn');if(had&&!npState())npApply()},15000);
 function npListen(){const T=SECRETS.topic;if(!T||!window.EventSource||NPC().on===false)return;
   const es=new EventSource(`https://ntfy.sh/${T}-music/sse?since=3h`);
-  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;let j;try{j=JSON.parse(d.message)}catch(x){return}if(j&&j.state)npUpdate(j)}}
+  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;let j;try{j=JSON.parse(d.message)}catch(x){return}if(j&&j.state)npUpdate(j,!!d.time&&Date.now()/1000-d.time<20)}}
 /* ---------- Recycling day: Woodstock collects on a six-weekday rotation that skips stat holidays ---------- */
 const rcYmd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const rcHol={};
@@ -4512,7 +4525,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 81';
+document.getElementById('ver').textContent='build nova 82';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
