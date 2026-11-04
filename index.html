@@ -1054,6 +1054,11 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .wt-mi{width:calc(7.6*var(--u));text-align:center}.wt-pop h2{margin-bottom:calc(.8*var(--u))}.wt-mi small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);margin-top:calc(.4*var(--u))}
 /* ===== Home tech ===== */
 #pTech{--acc:#7fd6ff;--ico:'🖥️'}
+/* final scores: winner bold, loser dimmed (style A) */
+.fw{font-weight:800!important;color:#fff}.fl{font-weight:500!important;opacity:.55}
+#leagues .g.fin>span{font-size:.82em;padding:.05em .55em;border-radius:99px;background:rgba(255,255,255,.1);color:rgba(240,242,250,.78)}
+.gr .side.lost{opacity:.55}.gr .side.won .nm{font-weight:800}
+.lv-sc.fw{font-weight:700!important}
 /* ===== Now playing ===== */
 #pNP{--acc:#ff8fb1;--ico:'🎵';background:#120d1f}
 .np-bg{position:absolute;inset:-12%;filter:blur(70px) saturate(135%);opacity:.8;transition:background 2s}
@@ -1084,6 +1089,10 @@ body.npBar #npMini{display:flex}
 body.npBar .page{bottom:calc(15*var(--u))}
 body.hasTicker #npMini{bottom:calc(9*var(--u))}body.hasTicker.npBar .page{bottom:calc(20*var(--u))}
 body.aqua #npMini{display:none!important}
+/* forecast page with the mini player: a smaller "now" block so the 7-day list keeps every row */
+body.npBar #pFc{gap:calc(1.8*var(--u));grid-template-rows:auto .7fr 1.6fr auto}
+body.npBar #fTemp{font-size:14vw}body.npBar #fIcon{font-size:calc(10*var(--u))}body.npBar #fDesc{font-size:4.4vw}body.npBar #fSub{font-size:2.6vw}
+body.npBar #fHours .day span{font-size:5.2vw}body.npBar .fdr{font-size:3.4vw}
 /* home page card (takes the "Did you know" spot) */
 #npCard{grid-area:spot;display:none;z-index:2;position:relative;overflow:hidden;flex-direction:column;gap:calc(1.2*var(--u));padding:calc(2*var(--u)) calc(2.2*var(--u))!important;
  background:linear-gradient(135deg,var(--np1,rgba(120,40,90,.95)),var(--np2,rgba(40,26,80,.95)))!important;border:1px solid rgba(255,255,255,.18)!important}
@@ -1748,12 +1757,17 @@ async function sports(){
     let show=list.filter(g=>g.today===undefined||g.today),empty='No games today';
     if(!show.length&&list.length){const up=list.filter(g=>g.state==='pre').sort((a,b)=>a.date-b.date);if(up.length){show=up;empty=''}}
     show.sort((a,b)=>(isFav(L,b)-isFav(L,a))||rank[a.state]-rank[b.state]||a.date-b.date);
-    return {L,failed,msg,empty,rows:show.map(g=>`<div class="g${isFav(L,g)?' fav':''}"><b>${esc(g.line)}</b><span class="${g.state==='in'?'live':''}">${esc(g.det)}</span></div>`)};
+    return {L,failed,msg,empty,rows:show.map(g=>`<div class="g${isFav(L,g)?' fav':''}${finWin(g)?' fin':''}"><b>${scoreHTML(g)}</b><span class="${g.state==='in'?'live':''}">${esc(g.det)}</span></div>`)};
   });
   lgData=lgData.filter(x=>x.failed||x.rows.length);
   drawLeagues();
 }
 let lgData=[],lgPage=0;const PER=5;
+/* final scores: winner bold, loser dimmed */
+const finWin=g=>{const a=+g.sA,h=+g.sH;return g.state!=='post'||g.sA===''||g.sH===''||isNaN(a)||isNaN(h)||a===h?'':a>h?'a':'h'};
+function scoreHTML(g){const w=finWin(g);if(!w)return esc(g.line);
+  return `<span class="${w==='a'?'fw':'fl'}">${esc(g.A)} ${esc(g.sA)}</span><span class="fl"> – </span><span class="${w==='h'?'fw':'fl'}">${esc(g.sH)} ${esc(g.H)}</span>`}
+const lvFin=(me,them)=>+me>+them?' fw':+me<+them?' fl':'';
 function drawLeagues(){
   $('leagues').innerHTML=lgData.map(({L,failed,msg,empty,rows})=>{
     const pages=Math.max(1,Math.ceil(rows.length/PER)),pg=lgPage%pages;
@@ -1953,12 +1967,13 @@ function renderGames(){
     else if(live){cls+=' live';
       when=g.live.clock!==null?mmss(Math.max(0,g.live.clock-Math.floor((Date.now()-at)/1000)))+(g.live.per?' · '+g.live.per:''):g.live.text}
     else{cls+=' fin';when=g.det}
-    const mid=pre?'<div class="mid">–</div>':`<div class="mid sc">${esc(g.sA)} – ${esc(g.sH)}</div>`;
+    const fw=finWin(g),wc=k=>fw?(fw===k?' won':' lost'):'';
+    const mid=pre?'<div class="mid">–</div>':fw?`<div class="mid sc"><span class="${fw==='a'?'fw':'fl'}">${esc(g.sA)}</span><span class="fl"> – </span><span class="${fw==='h'?'fw':'fl'}">${esc(g.sH)}</span></div>`:`<div class="mid sc">${esc(g.sA)} – ${esc(g.sH)}</div>`;
     const tag=(goals[r_key(L,g)]&&goals[r_key(L,g)].until>Date.now())?'🚨 '+(L.sport==='baseball'?'RUN':'GOAL')+' · '+esc(nick(goals[r_key(L,g)].team).toUpperCase()):live?'<i class="dot"></i>LIVE · '+L.label:pre?L.label+' · '+(g.live.hockey?'PUCK DROP':L.sport==='baseball'?'FIRST PITCH':'START'):L.label;
     const gk=goals[r_key(L,g)],isGoal=gk&&gk.until>Date.now();
     return `<div class="gr${isGoal?' goal':''}">
-      <div class="side a">${bigLogo(g.lA)}<div class="nm${f.includes(g.A)?' me':''}">${esc(nick(g.fA||g.nA))}</div></div>${mid}
-      <div class="side h"><div class="nm${f.includes(g.H)?' me':''}">${esc(nick(g.fH||g.nH))}</div>${bigLogo(g.lH)}</div>
+      <div class="side a${wc('a')}">${bigLogo(g.lA)}<div class="nm${f.includes(g.A)?' me':''}">${esc(nick(g.fA||g.nA))}</div></div>${mid}
+      <div class="side h${wc('h')}"><div class="nm${f.includes(g.H)?' me':''}">${esc(nick(g.fH||g.nH))}</div>${bigLogo(g.lH)}</div>
       <div class="${cls}"><small>${tag}</small><b>${esc(when)}</b></div>${g.arena?`<div class="arena">${esc(g.arena)}</div>`:''}${scorerHTML(L,g)}</div>`;
   }).join('')+(rows.length>1?'':teamBlocks(rows.length?3:4));
   if($('gList').innerHTML!==html)$('gList').innerHTML=html;
@@ -3038,9 +3053,9 @@ function renderLive2(){
   const A=LV.away,H=LV.home,base=LV.sport==='baseball';
   const per=base?esc(LV.inning||LV.detail||''):LV.league==='OHL'&&LV._g?esc(LV._g.live.per||''):esc(LV.per||'');
   const sub=T=>base?`H ${T.hits} · E ${T.errors}`:`SOG ${T.sog}`;
-  const sb=`<div class="jf-glass lv-sb"><div class="lv-tm">${lvLogo(A)}<div class="lv-nm"><b>${esc(nick(A.name))}</b><small>${sub(A)}</small></div><div class="lv-sc">${esc(base?A.runs:A.score)}</div></div>
+  const sb=`<div class="jf-glass lv-sb"><div class="lv-tm">${lvLogo(A)}<div class="lv-nm"><b>${esc(nick(A.name))}</b><small>${sub(A)}</small></div><div class="lv-sc${LV.state==='final'?lvFin(base?A.runs:A.score,base?H.runs:H.score):''}">${esc(base?A.runs:A.score)}</div></div>
     <div class="lv-mid"><div class="lv-per">${per}</div><div class="lv-clk" id="lvClk">${esc(lvClockTxt())}</div>${LV.pp?`<span class="lv-pp">${esc((LV.pp.s==='h'?H:A).abbr)} PP${LV.pp.time?' '+esc(String(LV.pp.time).replace(/^0(\d:)/,'$1')):''}</span>`:''}</div>
-    <div class="lv-tm h">${lvLogo(H)}<div class="lv-nm"><b>${esc(nick(H.name))}</b><small>${sub(H)}</small></div><div class="lv-sc">${esc(base?H.runs:H.score)}</div></div></div>`;
+    <div class="lv-tm h">${lvLogo(H)}<div class="lv-nm"><b>${esc(nick(H.name))}</b><small>${sub(H)}</small></div><div class="lv-sc${LV.state==='final'?lvFin(base?H.runs:H.score,base?A.runs:A.score):''}">${esc(base?H.runs:H.score)}</div></div></div>`;
   let mid='';
   if(!base){
     const P=LV.periods||[],tot=s=>P.reduce((a,p)=>a+(+p[s]||0),0);
@@ -3484,8 +3499,17 @@ function npTick(){const s=npState();if(!s)return;const pc=s.dur?Math.min(100,s.c
   document.querySelectorAll('.np-fill').forEach(e=>e.style.width=pc.toFixed(2)+'%');document.querySelectorAll('.np-cur').forEach(e=>e.textContent=npT(s.cur))}
 setInterval(npTick,1000);
 /* show or hide the mini player / home card, and leave the Now playing page when the music stops */
+/* pages where the mini player would cut something off (remembered until the TV refreshes) */
+const npSkip=new Set();
+/* boxes on the page whose content no longer fits (cut off) */
+function npClipped(pe){let n=0;pe.querySelectorAll('*').forEach(e=>{if(e.clientHeight<40)return;const o=getComputedStyle(e).overflowY;if((o==='hidden'||o==='clip')&&e.scrollHeight>e.clientHeight+6)n++});return n}
 function npApply(){const s=npState(),C=NPC(),pg=window._curPage||'';
-  document.body.classList.toggle('npBar',!!s&&C.mini!==false&&pg!=='np'&&pg!=='dashboard');
+  const want=!!s&&C.mini!==false&&pg!=='np'&&pg!=='dashboard'&&!npSkip.has(pg);
+  document.body.classList.toggle('npBar',want);
+  /* safety net: if the mini player makes this page cut anything off, hide it on this page instead */
+  clearTimeout(window._npFitT);if(want)window._npFitT=setTimeout(()=>{const pe=$(PAGE_EL[window._curPage]);if(!pe||window._curPage!==pg||!document.body.classList.contains('npBar'))return;
+    const withBar=npClipped(pe);document.body.classList.remove('npBar');const without=npClipped(pe);
+    if(withBar>without)npSkip.add(pg);else document.body.classList.add('npBar')},1800);
   document.body.classList.toggle('npCardOn',!!s&&C.card!==false);
   if(!s&&pg==='np')nextPage()}
 /* a new song: show the Now playing page for a few seconds, then go back to wherever the board was */
@@ -4207,9 +4231,9 @@ function ntItems(){
   try{lastRes.forEach(r=>r.games.forEach(g=>{if(!isFav(r.L,g))return;const d=g.date,today=d.toDateString()===new Date().toDateString();
     if(g.state==='in')out.push(`${tag('LIVE','live')} <b>${esc(g.line)}</b> · ${esc(g.det)}`);
     else if(today&&g.state==='pre')out.push(`${tag(r.L.label)} <b>${esc(g.line)}</b> tonight ${esc(fmt(d))}`);
-    else if(g.state==='post'&&Date.now()-d<20*3600e3)out.push(`${tag(r.L.label)} <b>${esc(g.line)}</b> · ${esc(g.det)}`)}))}catch(e){}
+    else if(g.state==='post'&&Date.now()-d<20*3600e3)out.push(`${tag(r.L.label)} <b>${scoreHTML(g)}</b> · ${esc(g.det)}`)}))}catch(e){}
   /* other scores tonight */
-  try{lastRes.forEach(r=>{const o=r.games.filter(g=>{if(isFav(r.L,g))return false;const h=(g.date-Date.now())/3600e3;return g.state==='in'||(g.state==='pre'&&h<4&&h>-1)||(g.state==='post'&&h>-14)});if(o.length)out.push(`${tag(r.L.label+' tonight')} ${o.slice(0,6).map(g=>esc(g.line)+(g.state==='in'?' <i class="nt-live">●</i>':'')).join(' &nbsp;·&nbsp; ')}`)})}catch(e){}
+  try{lastRes.forEach(r=>{const o=r.games.filter(g=>{if(isFav(r.L,g))return false;const h=(g.date-Date.now())/3600e3;return g.state==='in'||(g.state==='pre'&&h<4&&h>-1)||(g.state==='post'&&h>-14)});if(o.length)out.push(`${tag(r.L.label+' tonight')} ${o.slice(0,6).map(g=>scoreHTML(g)+(g.state==='in'?' <i class="nt-live">●</i>':'')).join(' &nbsp;·&nbsp; ')}`)})}catch(e){}
   /* next Leafs / Knights game when it isn't today */
   try{const n=HUB&&(HUB.next||[])[0];if(n&&daysUntil(new Date(n.start))>0)out.push(`${tag('LEAFS')} Next: ${n.home?'vs':'at'} ${esc(n.opp)} ${new Date(n.start).toLocaleDateString([],{weekday:'short'})} ${fmt(new Date(n.start))}${n.nets&&n.nets.length?' · '+esc(n.nets[0]):''}`)}catch(e){}
   try{const n=KH&&(KH.next||[])[0];if(n&&daysUntil(new Date(n.start))>0)out.push(`${tag('KNIGHTS','k')} Next: ${n.home?'vs':'at'} ${esc(n.opp)} ${new Date(n.start).toLocaleDateString([],{weekday:'short'})} ${fmt(new Date(n.start))}`)}catch(e){}
@@ -4525,7 +4549,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 82';
+document.getElementById('ver').textContent='build nova 84';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
