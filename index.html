@@ -1060,6 +1060,27 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 #leagues .g.fin>span{font-size:.82em;padding:.05em .55em;border-radius:99px;background:rgba(255,255,255,.1);color:rgba(240,242,250,.78)}
 .gr .side.lost{opacity:.55}.gr .side.won .nm{font-weight:800}
 .lv-sc.fw{font-weight:700!important}
+/* ===== Trades & signings ===== */
+#pTx{--acc:#5fd88a;--ico:'🔁'}
+#txBody{position:absolute;left:5%;right:5%;top:calc(12*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u));overflow:hidden}
+body.npBar #txBody{bottom:calc(2*var(--u))}
+.tx-c{flex:none}.tx-c h2{display:flex;justify-content:space-between;align-items:baseline}.tx-c h2 small{font-size:calc(1.7*var(--u));font-weight:500;color:var(--dim)}
+.tx-yt{background:linear-gradient(135deg,rgba(77,139,255,.26),rgba(95,216,138,.13))!important;border-color:rgba(130,180,255,.35)!important}
+.tx-t{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u));padding:calc(1.3*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.tx-t:first-of-type{border-top:0}
+.tx-s{display:flex;gap:calc(1.3*var(--u));align-items:center;min-width:0}
+.tx-lg{flex:none;width:calc(5.6*var(--u));height:calc(5.6*var(--u));border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;overflow:hidden;box-shadow:0 calc(.4*var(--u)) calc(1.2*var(--u)) rgba(0,0,0,.3)}
+.tx-lg img{width:78%;height:78%;object-fit:contain}.tx-lg b{font-size:calc(1.6*var(--u));color:#14203a;font-weight:800}
+.tx-s div{min-width:0}.tx-s small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);font-weight:600}
+.tx-s b{display:block;font-size:calc(2.1*var(--u));font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tx-d{grid-column:1/-1;font-size:calc(1.5*var(--u));color:rgba(240,242,250,.45);margin-top:calc(-1*var(--u))}
+.tx-r{display:flex;gap:calc(1.6*var(--u));align-items:center;padding:calc(1.1*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.tx-r:first-of-type{border-top:0}
+.tx-r .tx-lg{width:calc(4.8*var(--u));height:calc(4.8*var(--u))}
+.tx-r>div:not(.tx-lg){flex:1;min-width:0}.tx-r b{display:block;font-size:calc(2.1*var(--u));font-weight:600;line-height:1.25}.tx-r small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);margin-top:calc(.2*var(--u))}
+.tx-r b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tx-r .d{flex:none;font-size:calc(1.6*var(--u));color:rgba(240,242,250,.5)}
+.tx-k{display:inline-block;font-size:calc(1.3*var(--u));font-weight:800;letter-spacing:.08em;padding:calc(.25*var(--u)) calc(.8*var(--u));border-radius:calc(.6*var(--u));margin-right:calc(.8*var(--u));vertical-align:calc(.25*var(--u))}
+.tx-k.s{background:rgba(95,216,138,.25);color:#c7f5d8}.tx-k.t{background:rgba(93,183,255,.25);color:#d6ecff}.tx-k.f{background:rgba(255,176,0,.25);color:#ffe2a6}
+.tx-none{font-size:calc(2*var(--u));color:var(--dim)}
 /* ===== Now playing ===== */
 #pNP{--acc:#ff8fb1;--ico:'🎵';background:#120d1f}
 .np-bg{position:absolute;inset:-12%;filter:blur(70px) saturate(135%);opacity:.8;transition:background 2s}
@@ -1329,6 +1350,7 @@ body.morn #mini{opacity:0!important}
 <section id="pWatch" class="page"><div id="wtBody"></div></section>
 <section id="pTech" class="page"><div id="tsBody"></div></section>
 <section id="pMorn" class="page"><div id="mmBody"></div></section>
+<section id="pTx" class="page"><div class="jf-title">Trades &amp; signings</div><div id="txBody"></div></section>
 <section id="pNP" class="page"><div class="np-bg" id="npBg"></div><div id="npBody"></div></section>
 <div id="npMini"></div>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
@@ -1374,6 +1396,7 @@ const CFG={
     {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
     {type:'cams',      secs:40},
     {type:'news',      secs:40},   // team news: a featured story to read + more headlines
+    {type:'tx',        secs:35},   // trades & signings (NHL trades, MLB trades + free agents, your teams first) - last 30 days
     // sports (game day / live / World Series only show when they're on)
     {type:'recap',     secs:40},   // morning after a Leafs/Knights game, until noon
     {type:'ws',        secs:30},
@@ -1458,6 +1481,8 @@ const CFG={
   // Morning mode: between these times the board stays on one "get going" page (weather, calendar, drives, roads, games today, headlines)
   // Now playing (Apple Music on the Macbook, via the remote's channel): full page in the rotation, mini player on other pages, card on the home page
   nowPlaying:{on:true, page:true, mini:true, card:true, peekSecs:10},   // peekSecs: when a new song starts, show the Now playing page this long, then go back (0 = off)
+  // Trades & signings page: last N days; your teams: Leafs (ESPN abbreviation) and Blue Jays (MLB team id)
+  transactions:{on:true, days:30, nhlTeam:'TOR', mlbTeam:141},
   morningMode:{on:true, from:'07:00', to:'09:00', headlines:4},
   // Recycling (City of Woodstock): zone 3's turn comes every 6th weekday, skipping holidays. anchor = any known pickup date for your zone
   recycling:{on:true, zone:3, anchor:'2026-01-06', eveningFrom:16},
@@ -1982,10 +2007,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2032,6 +2057,7 @@ function nextPage(force,hold){
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
   if(p.type==='morn')renderMorn();
   if(p.type==='np')renderNP();
+  if(p.type==='tx'){renderTx();if(Date.now()-txAt>2*3600e3)loadTx()}
   window._curPage=p.type;
   if(p.type==='tech'){tsVisit++;renderTech();if(Date.now()-tsAt>60000)loadTech()}
   if(p.type==='watch'){wtVisit++;renderWatch();if(Date.now()-wtAt>1800000)loadWatch()}
@@ -2603,6 +2629,7 @@ function handleCommand(raw){
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
+  if(has(/\b(trades?|signings?|signed|free agen(t|ts|cy)|hot stove|transactions?)\b/)){showFor('tx');const x=TX&&(TX.mine[0]||TX.nhl[0]||TX.mlb[0]);return reply(x?(x.kind==='trade'?`Latest: the ${x.nameA} get ${x.aGets||'something'}, the ${x.nameB} get ${x.bGets||'something'}.`:`Latest: the ${x.team} signed ${x.who}.`):'No trades or signings lately.')}
   if(has(/\b(now playing|what song|this song|apple music|the music|what'?s this song)\b/)){const st=npState();if(st)showFor('np');return reply(st?`${st.title} by ${st.artist}`:'Nothing is playing on Apple Music right now.')}
   if(has(/\b(backed up|backup (is )?done|did (a|the) backup|log (a|the) backup)\b/)){showFor('tech');markBackup();return reply('Got it, the '+TC().backup+' backup is logged for today.')}
   if(has(/\b(morning (mode|page|briefing|rundown)|get going)\b/)){showFor('morn');return reply('Here\'s your morning.')}
@@ -3533,6 +3560,75 @@ setInterval(()=>{const had=document.body.classList.contains('npBar')||document.b
 function npListen(){const T=SECRETS.topic;if(!T||!window.EventSource||NPC().on===false)return;
   const es=new EventSource(`https://ntfy.sh/${T}-music/sse?since=3h`);
   es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;let j;try{j=JSON.parse(d.message)}catch(x){return}if(j&&j.state)npUpdate(j,!!d.time&&Date.now()/1000-d.time<20)}}
+/* ================= Trades & signings: NHL trades (ESPN), MLB trades + free-agent signings (MLB), your teams first ================= */
+const TXC=()=>Object.assign({on:true,days:30,nhlTeam:'TOR',mlbTeam:141},CFG.transactions||{});
+let TX=null,txAt=0,txSig='';
+const txOn=()=>TXC().on!==false&&!!TX&&(TX.mine.length+TX.nhl.length+TX.mlb.length)>0;
+const NHLT={ANA:['Anaheim','Ducks'],BOS:['Boston','Bruins'],BUF:['Buffalo','Sabres'],CAR:['Carolina','Hurricanes'],CBJ:['Columbus','Blue Jackets'],CGY:['Calgary','Flames'],CHI:['Chicago','Blackhawks'],COL:['Colorado','Avalanche'],DAL:['Dallas','Stars'],DET:['Detroit','Red Wings'],EDM:['Edmonton','Oilers'],FLA:['Florida','Panthers'],LA:['Los Angeles','Kings'],MIN:['Minnesota','Wild'],MTL:['Montreal','Canadiens'],NJ:['New Jersey','Devils'],NSH:['Nashville','Predators'],NYI:['New York Islanders','Islanders'],NYR:['New York Rangers','Rangers'],OTT:['Ottawa','Senators'],PHI:['Philadelphia','Flyers'],PIT:['Pittsburgh','Penguins'],SEA:['Seattle','Kraken'],SJ:['San Jose','Sharks'],STL:['St. Louis','Blues'],TB:['Tampa Bay','Lightning'],TOR:['Toronto','Maple Leafs'],UTA:['Utah','Mammoth'],VAN:['Vancouver','Canucks'],VGK:['Vegas','Golden Knights'],WPG:['Winnipeg','Jets'],WSH:['Washington','Capitals']};
+function nhlAbbr(name){name=String(name||'').replace(/^the /i,'').trim();let best=null;
+  for(const [a,[loc,nick]] of Object.entries(NHLT)){if(name===loc+' '+nick||name===nick||name.endsWith(' '+nick)){return a}if(name===loc||name.startsWith(loc+' '))best=best||a}
+  if(/^New York/.test(name))return /Islanders/.test(name)?'NYI':/Rangers/.test(name)?'NYR':null;return best}
+const nhlLogo=a=>a?`https://a.espncdn.com/i/teamlogos/nhl/500/${a.toLowerCase()}.png`:'';
+/* tidy a traded "piece": picks, odd typos, leading "a" */
+function txPiece(x){x=String(x||'').trim().replace(/\b2022(\d)\b/g,'202$1').replace(/^an? /i,'').replace(/\bdraft pick/gi,'pick').replace(/\bfuture considerations\b/i,'future considerations')
+  .replace(/\b(first|second|third|fourth|fifth|sixth|seventh)(?=[- ]round|\b and)/gi,w=>({first:'1st',second:'2nd',third:'3rd',fourth:'4th',fifth:'5th',sixth:'6th',seventh:'7th'})[w.toLowerCase()])
+  .replace(/^cash considerations$/i,'cash');return x.charAt(0).toUpperCase()+x.slice(1)}
+const txEnd='(?:\\.(?:\\s+(?=(?:Placed|Recalled|Assigned|Signed|Activated|Acquired|Traded|Sent|Released|Loaned|Transferred|Waived|Claimed|Reassigned|Re-assigned|Returned)\\b)|\\s*$))';
+function nhlTrade(t){const d=t.description||'',A=t.team.abbreviation;let m;
+  if((m=d.match(new RegExp('Traded (.+?) to ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:m[3]?txPiece(m[3]):'',bGets:txPiece(m[1])};
+  if((m=d.match(new RegExp('Acquired (.+?) from ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:txPiece(m[1]),bGets:m[3]?txPiece(m[3]):''};
+  return null}
+const txDate=d=>new Date(d).toLocaleDateString([],{month:'short',day:'numeric'});
+async function loadTx(){const C=TXC();if(C.on===false)return;txAt=Date.now();
+  const since=Date.now()-(C.days||30)*864e5,pad=n=>String(n).padStart(2,'0'),ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const mine=[],nhl=[],mlb=[];
+  /* NHL (ESPN): trades for everyone, plus Leafs contract signings */
+  try{const j=await (await tfetch('https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/transactions?limit=600',15000)).json();
+    const seen={};
+    (j.transactions||[]).forEach(t=>{const at=new Date(t.date);if(at<since||!t.team)return;const d=t.description||'';
+      if(/\b(Traded|Acquired)\b/.test(d)){const x=nhlTrade(t);if(!x||!x.B)return;
+        const k=t.date.slice(0,10)+'|'+[x.A,x.B].sort().join('-');
+        const prev=seen[k];if(prev){if((!prev.aGets||!prev.bGets)&&x.aGets&&x.bGets)Object.assign(prev,x);return}
+        const it={kind:'trade',lg:'NHL',at,...x,logoA:nhlLogo(x.A),logoB:nhlLogo(x.B),nameA:NHLT[x.A]?NHLT[x.A][1]:x.A,nameB:NHLT[x.B]?NHLT[x.B][1]:x.B};seen[k]=it;
+        (x.A===C.nhlTeam||x.B===C.nhlTeam?mine:nhl).push(it)}
+      else if(t.team.abbreviation===C.nhlTeam&&/\bSigned\b.*\bcontract\b/.test(d)&&!/tryout/i.test(d)){
+        const m=d.match(/Signed (.+?) to (an? .+?contract(?: extension)?)/);if(m)mine.push({kind:'sign',lg:'NHL',at,team:'Maple Leafs',ab:C.nhlTeam,logo:nhlLogo(C.nhlTeam),who:m[1],how:m[2].replace(/^an? /,'')})}})}catch(e){console.warn('tx nhl',e)}
+  /* MLB (official feed): trades, major-league free-agent signings; Blue Jays get minor-league deals and players leaving too */
+  try{const [tj,tm]=await Promise.all([tfetch(`https://statsapi.mlb.com/api/v1/transactions?sportId=1&startDate=${ymd(new Date(since))}&endDate=${ymd(new Date())}`,15000).then(r=>r.json()),
+      tfetch('https://statsapi.mlb.com/api/v1/teams?sportId=1',15000).then(r=>r.json()).catch(()=>({teams:[]}))]);
+    const T={},byName={};(tm.teams||[]).forEach(t=>{T[t.id]=t;byName[t.name]=t});
+    const logo=id=>id?`https://www.mlbstatic.com/team-logos/${id}.svg`:'',nick=t=>t?(t.teamName||t.name):'';
+    const done=new Set();
+    (tj.transactions||[]).forEach(t=>{const d=t.description||'',at=new Date(t.date+'T12:00');if(done.has(d))return;
+      const ids=[t.fromTeam&&t.fromTeam.id,t.toTeam&&t.toTeam.id];
+      if(t.typeCode==='TR'){done.add(d);const m=d.match(/^(.+?) traded (.+?) to (.+?)(?: for (.+?))?\.$/);if(!m)return;
+        const a=byName[m[1]]||T[ids[0]],b=byName[m[3]]||T[ids[1]];if(!a||!b)return;
+        const it={kind:'trade',lg:'MLB',at,A:a.abbreviation,B:b.abbreviation,nameA:nick(a),nameB:nick(b),logoA:logo(a.id),logoB:logo(b.id),aGets:m[4]?txPiece(m[4]):'',bGets:txPiece(m[2])};
+        (a.id===C.mlbTeam||b.id===C.mlbTeam?mine:mlb).push(it)}
+      else if(t.typeCode==='SFA'||/^Signed$/i.test(t.typeDesc||'')){const to=t.toTeam&&T[t.toTeam.id],me=t.toTeam&&t.toTeam.id===C.mlbTeam,minor=/minor league/i.test(d);
+        if(!to||minor)return;done.add(d);   /* minor-league deals are the small stuff: left out, Blue Jays included */
+        const m=d.match(/signed (?:free agent )?(.+?)(?: to (an? .+?contract))?\.$/i);
+        (me?mine:mlb).push({kind:'sign',lg:'MLB',at,team:nick(to),ab:to.abbreviation,logo:logo(to.id),who:m?m[1]:(t.person&&t.person.fullName)||'',how:minor?'minor league contract':(m&&m[2]?m[2].replace(/^an? /,''):'free agent')})}
+      else if(t.typeCode==='DFA'&&t.toTeam&&t.toTeam.id===C.mlbTeam){done.add(d);
+        /* Blue Jays players hitting free agency: one row per day */
+        const who=d.replace(/ elected free agency\.?$/i,'').replace(/^[A-Z0-9]{1,3} /,''),k=t.date;
+        let g=mine.find(x=>x.kind==='fa'&&x.day===k);if(!g){g={kind:'fa',lg:'MLB',at,day:k,team:'Blue Jays',ab:'TOR',logo:logo(C.mlbTeam),names:[]};mine.push(g)}g.names.push(who)}})
+    mine.forEach(x=>{if(x.kind==='fa'){x.who=x.names.join(', ');x.how=x.names.length>1?x.names.length+' players became free agents':'became a free agent'}})}catch(e){console.warn('tx mlb',e)}
+  const by=(a,b)=>b.at-a.at;TX={mine:mine.sort(by),nhl:nhl.sort(by),mlb:mlb.sort(by)};
+  if($('pTx').classList.contains('on'))renderTx()}
+function renderTx(){const b=$('txBody'),C=TXC();
+  if(!TX){b.innerHTML='<div class="jf-wait">Checking the wire…</div>';return}
+  const lg=(u,a)=>`<div class="tx-lg">${u?`<img src="${esc(u)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('b'),{textContent:'${esc(a||'')}'}))">`:`<b>${esc(a||'')}</b>`}</div>`;
+  const trade=x=>`<div class="tx-t"><div class="tx-s">${lg(x.logoA,x.A)}<div><small>${esc(x.nameA)} get</small><b>${esc(x.aGets||'—')}</b></div></div><div class="tx-s">${lg(x.logoB,x.B)}<div><small>${esc(x.nameB)} get</small><b>${esc(x.bGets||'—')}</b></div></div><div class="tx-d">${txDate(x.at)}</div></div>`;
+  const row=x=>x.kind==='trade'?trade(x):`<div class="tx-r">${lg(x.logo,x.ab||'')}<div><b><span class="tx-k ${x.kind==='fa'?'f':'s'}">${x.kind==='fa'?'FREE AGENT':'SIGNED'}</span>${esc(x.who)}</b><small>${esc(x.team)} · ${esc(x.how)}</small></div><span class="d">${txDate(x.at)}</span></div>`;
+  const card=(cls,title,list,empty)=>`<div class="jf-glass gd-card tx-c ${cls}"><h2>${title}<small>last ${C.days||30} days</small></h2>${list.length?list.map(row).join(''):`<div class="tx-none">${empty}</div>`}</div>`;
+  const html=`${TX.mine.length?card('tx-yt','⭐ Leafs &amp; Blue Jays',TX.mine.slice(0,6),''):''}
+    ${card('','🏒 NHL trades',TX.nhl.slice(0,8),'No NHL trades lately')}
+    ${card('','⚾ MLB hot stove',TX.mlb.slice(0,10),'Quiet on the MLB wire')}`;
+  if(html===txSig)return;txSig=html;b.innerHTML=html;
+  /* too much to fit: drop the oldest rows, biggest list first, never cutting a row in half */
+  requestAnimationFrame(()=>{let n=0;while(b.scrollHeight>b.clientHeight+2&&n++<40){const cards=[...b.querySelectorAll('.tx-c')].map(c=>[c,c.querySelectorAll('.tx-t,.tx-r')]).filter(x=>x[1].length>1).sort((x,y)=>y[1].length-x[1].length);if(!cards.length)break;cards[0][1][cards[0][1].length-1].remove()}})}
+setInterval(()=>{if(TXC().on!==false&&Date.now()-txAt>2*3600e3)loadTx()},600000);
 /* ---------- Recycling day: Woodstock collects on a six-weekday rotation that skips stat holidays ---------- */
 const rcYmd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const rcHol={};
@@ -4550,7 +4646,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 85';
+document.getElementById('ver').textContent='build nova 86';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -4562,7 +4658,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();setTimeout(npListen,3000);radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
+moon();weather();sportsLoop();setTimeout(npListen,3000);setTimeout(loadTx,12000);radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
