@@ -1138,10 +1138,13 @@ body.npCardOn #npCard{display:flex}body.npCardOn #spot{visibility:hidden}
 .lc-now.ok{background:linear-gradient(90deg,rgba(63,191,111,.28),rgba(63,191,111,.08))!important;border-color:rgba(120,230,160,.4)!important}.lc-now.ok small{color:rgba(220,255,230,.8)}
 .lc-wzw{background:none!important;border:0!important;box-shadow:none!important;flex-direction:column;gap:calc(1.8*var(--u));overflow:visible!important;min-height:calc(56*var(--u))!important}
 @media (orientation:landscape){.lc-wzw{min-height:0!important;height:auto}.lc-wzw .wz.big{min-height:0}.wz-row{height:44%;min-height:0}}
-.wz{position:relative;overflow:hidden;padding:0!important;border-radius:calc(2.4*var(--u));background:#f6f4ee}
+.wz{position:relative;border-radius:calc(2.4*var(--u));background:rgba(246,244,238,.12);border:1px solid rgba(255,255,255,.12)}
+#wzLayer{position:fixed;inset:0;pointer-events:none;z-index:3}
+.wzBox{position:fixed;left:-5000px;top:0;width:500px;height:400px;overflow:hidden;border-radius:calc(2.4*var(--u));background:#f6f4ee;opacity:0;transition:opacity .35s}
+.wzBox.on{opacity:1}
 .wz.big{flex:1 1 0;min-height:calc(30*var(--u))}
 .wz-row{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.4*var(--u));height:calc(34*var(--u));flex:0 0 auto}
-.wz iframe{position:absolute;border:0;left:calc(-80px*var(--wzs,1));top:calc(-100px*var(--wzs,1));width:calc(100%/var(--wzs,1) + 150px);height:calc(100%/var(--wzs,1) + 180px);transform:scale(var(--wzs,1));transform-origin:0 0;pointer-events:none}
+.wzBox iframe{position:absolute;border:0;left:calc(-80px*var(--wzs,1));top:calc(-100px*var(--wzs,1));width:calc(100%/var(--wzs,1) + 150px);height:calc(100%/var(--wzs,1) + 180px);transform:scale(var(--wzs,1));transform-origin:0 0;pointer-events:none}
 .wz-tag{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));background:rgba(10,14,24,.8);padding:calc(.7*var(--u)) calc(1.5*var(--u));border-radius:calc(1.3*var(--u));display:flex;flex-direction:column;z-index:2}
 .wz-tag.bot{top:auto;bottom:calc(1.6*var(--u))}.wz-tag b{font-size:calc(2.4*var(--u));font-weight:600;color:#fff}.wz-tag small{font-size:calc(1.7*var(--u));color:#bec8d7}
 .wz-src{position:absolute;right:calc(1.2*var(--u));bottom:calc(1.2*var(--u));background:rgba(10,14,24,.7);color:#e6ebf5;font-size:calc(1.6*var(--u));padding:calc(.3*var(--u)) calc(1*var(--u));border-radius:calc(.9*var(--u));z-index:2}
@@ -1583,8 +1586,8 @@ const CFG={
   // Waze live maps on the Around page (free, no key): first view is the big one, the next two sit side by side.
   // zoom is a whole number (13 = whole town, 14 = a neighbourhood, 15 = a few streets). label:'bottom' moves the name tag down.
   wazeMap:{on:true, reloadMin:15, views:[
-    {name:'Woodstock', sub:'Waze reports · jams · closures', lat:43.1300, lon:-80.7500, z:13},
-    {name:'401 / 403 split', lat:43.1195, lon:-80.6950, z:14},
+    {name:'Woodstock → London', sub:'401 traffic · Waze reports', lat:43.0500, lon:-81.0000, z:11},
+    {name:'Woodstock', lat:43.1300, lon:-80.7500, z:12},
     {name:'North end', lat:43.1455, lon:-80.7400, z:14, label:'bottom'}
   ]},
   // Live traffic map on the Around Woodstock page (TomTom, free key in the Worker as TOMTOM_KEY). Rests between quietFrom and quietTo o'clock to save the free allowance.
@@ -3094,12 +3097,29 @@ function renderLocal(){
 const wzOn=()=>{const W=CFG.wazeMap||{};return W.on!==false&&(W.views||[]).length>0};
 function wzScale(){document.documentElement.style.setProperty('--wzs',Math.max(1,Math.min(innerWidth,innerHeight)/900).toFixed(3))}
 wzScale();addEventListener('resize',wzScale);
-function wzCard(v,cls){if(!v)return '';const r=Math.floor(Date.now()/(((CFG.wazeMap||{}).reloadMin||15)*60000));
-  const src=`https://embed.waze.com/iframe?zoom=${v.z||13}&lat=${v.lat}&lon=${v.lon}&ct=livemap&r=${r}`;
-  return `<div class="jf-glass wz ${cls}"><iframe src="${esc(src)}" tabindex="-1" scrolling="no" title="Waze live map"></iframe>
-    <div class="wz-tag${v.label==='bottom'?' bot':''}"><b>${esc(v.name||'')}</b>${v.sub?`<small>${esc(v.sub)}</small>`:''}</div><span class="wz-src">live · Waze</span></div>`}
+/* The 3 Waze maps are made ONCE and kept alive in their own layer (rebuilding them every render froze the screen).
+   The Around page only holds empty slots; the layer lines the maps up over them while the page shows,
+   and parks them off-screen otherwise (the browser then lets them sleep). Each map reloads quietly every reloadMin while parked. */
+function wzCard(v,i,cls){if(!v)return '';return `<div class="wz ${cls}" data-wz="${i}"></div>`}
 function wzHTML(){const V=(CFG.wazeMap||{}).views||[];
-  return `<div class="lc-map lc-gm lc-wzw">${wzCard(V[0],'big')}${V.length>1?`<div class="wz-row">${wzCard(V[1],'sm')}${wzCard(V[2],'sm')}</div>`:''}</div>`}
+  return `<div class="lc-map lc-gm lc-wzw">${wzCard(V[0],0,'big')}${V.length>1?`<div class="wz-row">${wzCard(V[1],1,'sm')}${wzCard(V[2],2,'sm')}</div>`:''}</div>`}
+const WZ={layer:null,boxes:[],shownAt:0};
+function wzSrc(v){return `https://embed.waze.com/iframe?zoom=${v.z||13}&lat=${v.lat}&lon=${v.lon}&ct=livemap`}
+function wzBuild(){if(WZ.layer)return;const V=(CFG.wazeMap||{}).views||[];
+  WZ.layer=document.createElement('div');WZ.layer.id='wzLayer';document.body.appendChild(WZ.layer);
+  WZ.boxes=V.slice(0,3).map(v=>{const d=document.createElement('div');d.className='wzBox';
+    d.innerHTML=`<iframe tabindex="-1" scrolling="no" title="Waze live map"></iframe><div class="wz-tag${v.label==='bottom'?' bot':''}"><b>${esc(v.name||'')}</b>${v.sub?`<small>${esc(v.sub)}</small>`:''}</div><span class="wz-src">live · Waze</span>`;
+    WZ.layer.appendChild(d);const f=d.querySelector('iframe'),b={d,f,v,at:0,ok:false};
+    f.addEventListener('load',()=>{b.ok=true});b.load=()=>{b.ok=false;b.at=Date.now();f.src=wzSrc(v)};b.load();return b})}
+function wzTick(){if(!wzOn())return;wzBuild();
+  const on=$('pLocal')&&$('pLocal').classList.contains('on'),slots=document.querySelectorAll('#locBody [data-wz]'),now=Date.now(),R=((CFG.wazeMap||{}).reloadMin||15)*60000;
+  if(on&&slots.length){if(!WZ.shownAt)WZ.shownAt=now}else WZ.shownAt=0;
+  const show=WZ.shownAt&&now-WZ.shownAt>650;   /* wait for the page's fade-in */
+  WZ.boxes.forEach((b,i)=>{const s=slots[i];
+    if(show&&s){const r=s.getBoundingClientRect();Object.assign(b.d.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});b.d.classList.add('on');
+      if(!b.ok&&now-b.at>25000)b.load()}   /* never finished loading: try again */
+    else{if(b.d.classList.contains('on')){b.d.classList.remove('on');b.d.style.left='-5000px'}if(now-b.at>R)b.load()}})}
+setInterval(wzTick,300);
 /* ================= Around page: Google map (dark, live traffic, 511 pins). Loaded once, then reused; capped per day ================= */
 const GMC=()=>Object.assign({on:true,zoom:13,dailyCap:250,refreshMin:5},CFG.googleMap||{});
 let GM=null,gmTraffic=null,gmState='',gmMarks=[],gmAt=0;
@@ -4831,7 +4851,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 94';
+document.getElementById('ver').textContent='build nova 96';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
