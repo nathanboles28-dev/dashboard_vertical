@@ -1150,7 +1150,8 @@ body.npBar #fHours .day span{font-size:5.2vw}body.npBar .fdr{font-size:3.4vw}
 /* home page card (takes the "Did you know" spot) */
 #npCard{grid-area:spot;display:none;z-index:2;position:relative;overflow:hidden;flex-direction:column;gap:calc(1.2*var(--u));padding:calc(2*var(--u)) calc(2.2*var(--u))!important;
  background:linear-gradient(135deg,var(--np1,rgba(120,40,90,.95)),var(--np2,rgba(40,26,80,.95)))!important;border:1px solid rgba(255,255,255,.18)!important}
-body.npCardOn #npCard{display:flex}body.npCardOn #spot{visibility:hidden}
+body.npCardOn #npCard{display:flex}
+#npCard.xb{background:linear-gradient(150deg,rgba(14,59,23,.96),rgba(16,124,16,.9))!important}#npCard.xb .k{color:#a3f7bf}#npCard.xb b{color:#fff}#npCard.xb small,#npCard.xb .np-tm{color:rgba(225,245,230,.8)}#npCard.xb .ca{background-color:#0b2a12}body.npCardOn #spot{visibility:hidden}
 #npCard .k{font-size:calc(1.4*var(--u));font-weight:800;letter-spacing:.12em;color:#ffc2d6}
 #npCard .row{display:flex;gap:calc(1.6*var(--u));align-items:center;min-height:0}
 #npCard .ca{flex:none;width:calc(15*var(--u));height:calc(15*var(--u));border-radius:calc(1.4*var(--u));background:linear-gradient(160deg,#ff7a59,#c2367a 50%,#3a1c71) center/cover;box-shadow:0 calc(.8*var(--u)) calc(2*var(--u)) rgba(0,0,0,.35)}
@@ -3763,7 +3764,7 @@ function npApply(){const s=npState(),C=NPC(),pg=window._curPage||'';
   clearTimeout(window._npFitT);if(want)window._npFitT=setTimeout(()=>{const pe=$(PAGE_EL[window._curPage]);if(!pe||window._curPage!==pg||!document.body.classList.contains('npBar'))return;
     const withBar=npClipped(pe);document.body.classList.remove('npBar');const without=npClipped(pe);
     if(withBar>without)npSkip.add(pg);else document.body.classList.add('npBar')},1800);
-  document.body.classList.toggle('npCardOn',!!s&&C.card!==false);
+  document.body.classList.toggle('npCardOn',(!!s&&C.card!==false)||xbPl());
   if(!s&&pg==='np')nextPage()}
 /* a new song: show the Now playing page for a few seconds, then go back to wherever the board was */
 let npLastSong='';
@@ -3814,8 +3815,11 @@ const xbN=s=>String(s||'').replace(/[®™©]/g,'').replace(/\s{2,}/g,' ').trim(
 const xbPl=()=>XBC().on!==false&&XBC().mini!==false&&!!XB&&!!XB.playing&&Date.now()-xbAt<6*60000;
 function xbMini(){const pl=XB.playing,t=(XB.titles||[]).find(x=>x.id===pl.id||x.name===pl.name)||{};let since='';
   try{const s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(s&&s.name===pl.name){const m=Math.round((Date.now()-s.at)/60000);since=m<1?'just started':(m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min')}}catch(e){}
-  const el=$('npMini');el.className='xb';
-  el.innerHTML=`<div class="mn-a" style="background-image:url('${esc(t.img||xbImg(XB.pic,160))}')"></div><div class="mn-x"><b>${esc(xbN(pl.name))}</b><small>🎮 Playing on Xbox${since?' · '+since:''}</small></div><span class="np-eq"><i></i><i></i><i></i><i></i></span>`}
+  const el=$('npMini');el.className='xb';const art=esc(t.img?xbImg(t.img):xbImg(XB.pic,160));
+  $('npCard').className='card xb';
+  $('npCard').innerHTML=`<div class="k">🎮 PLAYING ON XBOX</div><div class="row"><div class="ca" style="background-image:url('${art}')"></div><div style="min-width:0"><b>${esc(xbN(pl.name))}</b><small>${since?(since==='just started'?'Just started':'For '+since):'Playing now'}</small></div></div>
+    <div class="np-tm"><span>${esc(XB.tag)} · ${(XB.score||0).toLocaleString()} G</span></div>`;
+  el.innerHTML=`<div class="mn-a" style="background-image:url('${art}')"></div><div class="mn-x"><b>${esc(xbN(pl.name))}</b><small>🎮 Playing on Xbox${since?' · '+since:''}</small></div><span class="np-eq"><i></i><i></i><i></i><i></i></span>`}
 let mnLast='';
 setInterval(()=>{const m=!!npState(),x=xbPl(),k=m+'|'+x;
   if(m&&x)window._mnXb=!window._mnXb;else window._mnXb=x&&!m;
@@ -3831,7 +3835,7 @@ function renderXb(){const b=$('xbBody');if(!XB){b.innerHTML='<div class="jf-wait
   const games=(XB.titles||[]).slice(0,4).map(t=>`<div class="jf-glass xb-gm"><div class="xb-art" style="background-image:url('${esc(xbImg(t.img))}')"></div><div><b>${esc(xbN(t.name))}</b><small>${pl&&pl.name===t.name?'Playing now':esc(xbAgo(t.last))}</small>
     ${(t.total||t.gsTotal)?`<div class="xb-bar"><i style="width:${Math.max(2,Math.min(100,t.pct!=null?t.pct:t.total?t.got/t.total*100:t.gs/t.gsTotal*100))}%"></i></div><small>${t.total?`${t.got} / ${t.total} achievements`:`${t.got||0} achievements`}${t.gs!=null?' · '+t.gs.toLocaleString()+(t.gsTotal?' / '+t.gsTotal.toLocaleString():'')+' G':''}</small>`:'<small>No achievements</small>'}</div></div>`).join('');
   const ach=(XB.ach||[]).slice(0,3).map(a=>`<div class="xb-a"><div class="xb-ai" style="background-image:url('${esc(xbImg(a.icon))}')"></div><div><b>${esc(a.name)}</b><small>${esc(xbN(a.game))}${a.at?' · '+esc(xbAgo(a.at)):''}</small></div>${a.gs?`<em>+${a.gs} G</em>`:''}</div>`).join('');
-  const fr=(XB.friends||[]).slice(0,6).map(f=>`<div class="xb-f"><div class="xb-fp" style="background-image:url('${esc(xbImg(f.pic,96))}')"></div><div><b>${esc(f.tag)}</b><small>${esc(xbN(f.doing))}</small></div></div>`).join('');
+  const fr=(XB.friends||[]).slice(0,6).map(f=>`<div class="xb-f"><div class="xb-fp" style="background-image:url('${esc(xbImg(f.pic,64))}')"></div><div><b>${esc(f.tag)}</b><small>${esc(xbN(f.doing))}</small></div></div>`).join('');
   const html=hero+stats+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
     (ach?`<div class="jf-glass xb-ach"><div class="xb-h">LATEST ACHIEVEMENTS</div>${ach}</div>`:'')+
     (fr?`<div class="jf-glass xb-fr"><div class="xb-h">FRIENDS ONLINE</div><div class="xb-frs">${fr}</div></div>`:'');
@@ -4938,7 +4942,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 101';
+document.getElementById('ver').textContent='build nova 103';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
