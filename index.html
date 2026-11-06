@@ -1130,6 +1130,22 @@ body.npCardOn #npCard{display:flex}body.npCardOn #spot{visibility:hidden}
 #npCard .ca{flex:none;width:calc(15*var(--u));height:calc(15*var(--u));border-radius:calc(1.4*var(--u));background:linear-gradient(160deg,#ff7a59,#c2367a 50%,#3a1c71) center/cover;box-shadow:0 calc(.8*var(--u)) calc(2*var(--u)) rgba(0,0,0,.35)}
 #npCard b{display:block;font-size:calc(2.5*var(--u));font-weight:700;line-height:1.15;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}#npCard small{display:block;font-size:calc(1.85*var(--u));color:rgba(240,242,250,.75);margin-top:calc(.5*var(--u))}
 #npCard .np-bar{margin-top:auto;height:calc(.6*var(--u))}#npCard .np-tm{font-size:calc(1.5*var(--u));margin-top:calc(.6*var(--u))}
+/* ===== Around page: Google map ===== */
+.lc-now{display:flex;align-items:center;gap:calc(1.8*var(--u));padding:calc(1.8*var(--u)) calc(2.4*var(--u))!important}
+.lc-now i{font-style:normal;font-size:calc(4*var(--u));line-height:1}.lc-now b{display:block;font-size:calc(2.7*var(--u));font-weight:700;line-height:1.2}.lc-now small{display:block;font-size:calc(1.9*var(--u));color:rgba(255,240,220,.82);margin-top:calc(.4*var(--u))}
+.lc-now.bad{background:linear-gradient(90deg,rgba(255,176,0,.3),rgba(255,110,60,.14))!important;border-color:rgba(255,190,90,.45)!important}
+.lc-now.red{background:linear-gradient(90deg,rgba(255,59,48,.32),rgba(255,110,60,.12))!important;border-color:rgba(255,120,110,.5)!important}
+.lc-now.ok{background:linear-gradient(90deg,rgba(63,191,111,.28),rgba(63,191,111,.08))!important;border-color:rgba(120,230,160,.4)!important}.lc-now.ok small{color:rgba(220,255,230,.8)}
+.lc-gm{position:relative;padding:0!important;overflow:hidden;flex:1 1 0!important;min-height:calc(46*var(--u));display:flex}
+.lc-gmap,#gmHost{flex:1;width:100%;height:100%;min-height:inherit;background:#1d2c4d}
+.gm-leg{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(1.2*var(--u));background:rgba(10,14,24,.75);padding:calc(.7*var(--u)) calc(1.2*var(--u));border-radius:calc(1.2*var(--u));font-size:calc(1.5*var(--u));z-index:2}
+.gm-leg span{display:flex;align-items:center;gap:calc(.6*var(--u))}.gm-leg i{width:calc(2*var(--u));height:calc(.6*var(--u));border-radius:3px}
+.gm-upd{position:absolute;right:calc(1.6*var(--u));top:calc(1.6*var(--u));background:rgba(10,14,24,.75);padding:calc(.7*var(--u)) calc(1.2*var(--u));border-radius:calc(1.2*var(--u));font-size:calc(1.5*var(--u));z-index:2}
+.lc-ev2{display:flex;gap:calc(1.4*var(--u));align-items:center;padding:calc(.9*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.lc-ev2:first-of-type{border-top:0}
+.lc-ev2 i{font-style:normal;font-size:calc(2.6*var(--u))}.lc-ev2 b{display:block;font-size:calc(2*var(--u))}.lc-ev2 small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-ev2>div{flex:1;min-width:0}.lc-ev2 span{flex:none;font-size:calc(1.6*var(--u));color:var(--dim)}
+/* hide Google's own corner buttons/links that aren't needed on a TV */
+.lc-gm .gm-style-cc,.lc-gm a[title*="Report errors"],.lc-gm .gmnoprint:not(.gm-style-cc){opacity:.55}
 /* ===== Morning mode ===== */
 #pMorn{--acc:#ffb35c;--ico:'☀️'}
 body.morn #mini{opacity:0!important}
@@ -1241,6 +1257,8 @@ body.morn #mini{opacity:0!important}
 .tm-layer{position:absolute;inset:0}.tm-b{position:absolute;width:256px;height:256px;max-width:none}.tm-b.ref{opacity:.95}
 .tm-t{position:absolute;width:512px;height:512px;max-width:none}.tm-tr{filter:saturate(1.25) brightness(1.1)}
 .tm-name{position:absolute;left:calc(2.2*var(--u));top:calc(2*var(--u));z-index:2;font-size:calc(2.2*var(--u));font-weight:700;padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(2*var(--u));background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.18)}
+.tm-ev{position:absolute;width:44px;height:44px;margin:-22px;border-radius:50%;background:#f39c12;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:2}.tm-ev.red{background:#e8453c}
+.lc-gm .tm-map{border-radius:0}
 .tm-pin{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;background:#6ea8ff;border:3px solid #fff;box-shadow:0 0 0 6px rgba(110,168,255,.3);z-index:1}
 .tm-leg{display:flex;align-items:center;flex-wrap:wrap;gap:calc(1*var(--u)) calc(2.4*var(--u));font-size:calc(2.1*var(--u));color:var(--dim)}
 .tm-leg span{display:flex;align-items:center;gap:calc(.7*var(--u))}.tm-leg i{width:calc(3.4*var(--u));height:calc(1*var(--u));border-radius:4px}.tm-leg em{margin-left:auto;font-style:normal}
@@ -1330,6 +1348,7 @@ body.morn #mini{opacity:0!important}
  .hb-body:not(.wk-body):not(.rc-body){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);align-content:start;gap:calc(2*var(--u)) calc(2.4*var(--u))}
  .hb-body:not(.wk-body):not(.rc-body)>*{grid-column:1/-1}
  .hb-body:not(.wk-body):not(.rc-body)>:nth-child(1){grid-column:1}.hb-body:not(.wk-body):not(.rc-body)>:nth-child(2){grid-column:2}
+ .lc-body.gm>.lc-gm{grid-column:1;grid-row:1/9;min-height:0}.lc-body.gm>:not(.lc-gm){grid-column:2}
  /* standings: NHL and OHL side by side */
  #standBody{display:grid!important;grid-template-columns:1fr 1fr;align-items:start}
  /* with the mini player showing, it already covers the bottom strip: no extra gap above it */
@@ -1549,9 +1568,13 @@ const CFG={
   satellite:{on:true},
   // Rain radar loop page: Environment Canada 1 km radar, last 90 minutes (frames = how many 6-minute steps)
   radarLoop:{on:true, frames:15, zoom:7},
+  // Google map on the Around page: dark, live traffic, pins for 511 collisions/closures/roadwork. The key lives on the screen
+  // (open the dashboard once with #gmapkey=YOURKEY). dailyCap: most map loads per day this screen will ever make.
+  googleMap:{on:true, zoom:13, dailyCap:250, refreshMin:5},
   // Live traffic map on the Around Woodstock page (TomTom, free key in the Worker as TOMTOM_KEY). Rests between quietFrom and quietTo o'clock to save the free allowance.
   // views: [big map, small map, small map]
-  trafficMap:{on:true, quietFrom:23, quietTo:6, views:[
+  // big:true = one large close-up map with 511 pins (free). zoom 13 = close; drops to 12 if a nearby problem wouldn't fit
+  trafficMap:{on:true, big:true, zoom:13, quietFrom:23, quietTo:6, views:[
     {name:'Woodstock & the 401', lat:43.1180, lon:-80.7450, z:12, pin:true},
     {name:'Downtown', lat:43.1312, lon:-80.7470, z:15},
     {name:'London · downtown', lat:42.9836, lon:-81.2497, z:13}   // around Canada Life Place
@@ -1589,7 +1612,7 @@ const CFG={
 const $=id=>document.getElementById(id);
 /* Private values live only in this screen's browser, never in GitHub. Set them once by opening the dashboard with
    #calkey=YOURKEY&topic=YOURTOPIC on the end of the address; they're saved and the address is cleaned up. */
-const SECRETS=(()=>{const out={calkey:'',topic:''};try{const h=new URLSearchParams(location.hash.slice(1));let got=false;
+const SECRETS=(()=>{const out={calkey:'',topic:'',gmapkey:''};try{const h=new URLSearchParams(location.hash.slice(1));let got=false;
   Object.keys(out).forEach(k=>{const v=h.get(k);if(v){localStorage.setItem('nova-'+k,v.trim());got=true}});
   if(got)history.replaceState(null,'',location.pathname+location.search);
   Object.keys(out).forEach(k=>out[k]=localStorage.getItem('nova-'+k)||'')}catch(e){}return out})();
@@ -3003,9 +3026,14 @@ function renderLocal(){
   const b=$('locBody'),Lc=CFG.local||{},V=(CFG.trafficMap&&CFG.trafficMap.views)||[];
   if(!locOn()){b.innerHTML='<div class="jf-title">Around '+esc(CFG.city)+'</div><div class="jf-wait">Key not set on this screen</div>';return}
   const cams=((LOC&&LOC.cams)||[]).slice(0,Lc.cams||3),rank={accidentsAndIncidents:0,closures:1,roadwork:2};
-  const evs=((LOC&&LOC.events)||[]).filter(affectsMe).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||(b.full-a.full)||a.dist-b.dist).slice(0,Lc.maxEvents||2);
-  const mapOK=tmOn();
-  const mapHTML=mapOK?`<div class="jf-glass gd-card lc-map"><h2>Live traffic</h2><div class="lc-mbig tm-map" id="lm0"><span class="tm-name">${esc((V[0]||{}).name||'Woodstock')}</span></div>
+  const evs=((LOC&&LOC.events)||[]).filter(affectsMe).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||(b.full-a.full)||a.dist-b.dist).slice(0,Math.max(Lc.maxEvents||2,(gmOn()||(tmOn()&&(CFG.trafficMap||{}).big!==false))?3:0));
+  const gmap=gmOn();
+  const mapOK=!gmap&&tmOn(),TMc=CFG.trafficMap||{},tbig=mapOK&&TMc.big!==false,big=gmap||tbig;
+  const mapHTML=gmap?`<div class="jf-glass gd-card lc-map lc-gm"><div id="gmSlot" class="lc-gmap"></div>
+      <div class="gm-leg"><span><i style="background:#34a853"></i>Moving</span><span><i style="background:#f2a33a"></i>Slow</span><span><i style="background:#e8453c"></i>Heavy</span></div><div class="gm-upd" id="gmUpd">Live traffic</div></div>`
+    :tbig?`<div class="jf-glass gd-card lc-map lc-gm"><div class="lc-gmap tm-map" id="lm0"></div>
+      <div class="gm-leg"><span><i style="background:#3fd27a"></i>Moving</span><span><i style="background:#ffb000"></i>Slow</span><span><i style="background:#ff3b30"></i>Heavy</span></div><div class="gm-upd" id="lmUpd">Live traffic · ${fmt(new Date())}</div></div>`
+    :mapOK?`<div class="jf-glass gd-card lc-map"><h2>Live traffic</h2><div class="lc-mbig tm-map" id="lm0"><span class="tm-name">${esc((V[0]||{}).name||'Woodstock')}</span></div>
       <div class="lc-mrow">${V.slice(1,3).map((v,i)=>`<div class="tm-map" id="lm${i+1}"><span class="tm-name">${esc(v.name)}</span></div>`).join('')}</div>
       <div class="tm-leg"><span><i style="background:#3fd27a"></i>Moving</span><span><i style="background:#ffb000"></i>Slow</span><span><i style="background:#ff3b30"></i>Heavy</span><span><i style="background:#8e0e1a"></i>Stopped</span><em id="lmUpd">Updated ${fmt(new Date())}</em></div></div>`
     :`<div class="jf-glass gd-card lc-map off"><h2>Live traffic</h2><div class="cnote">${(CFG.trafficMap||{}).on===false?'Traffic map is turned off':'The traffic map rests overnight and comes back at '+(((CFG.trafficMap||{}).quietTo??6))+' AM'}</div></div>`;
@@ -3016,18 +3044,71 @@ function renderLocal(){
   const alerts=evs.filter(e=>evInfo(e).red||/accident|incident/i.test(e.type)).slice(0,2);
   const alertHTML=alerts.map(e=>{const k=evInfo(e),ago=e.reported?Math.round((Date.now()/1000-e.reported)/60):null;
       return `<div class="lc-alert"><i>${k.i}</i><div><b>${k.n}${e.full&&k.n!=='Closure'?' · full closure':''} · ${esc(e.road)}${e.dir?' '+esc(shortDir(e.dir)):''}</b><small>${esc(e.desc)}</small></div><span>${esc(e.dist)} km${ago!=null&&ago<720?'<br>'+(ago<60?ago+' min ago':Math.round(ago/60)+'h ago'):''}</span></div>`}).join('');
+  /* the one-line "right now" summary: worst collision/closure, else the slowest drive, else all clear */
+  const slow=((DRV&&DRV.drives)||[]).filter(d=>d.delay>=8).sort((a,b)=>b.delay-a.delay)[0];
+  const top=alerts[0],tk=top&&evInfo(top);
+  const nowHTML=!big?'':top?`<div class="jf-glass gd-card lc-now ${tk.red?'red':'bad'}"><i>⚠️</i><div><b>${tk.n} · ${esc(top.road)}${top.dir?' '+esc(shortDir(top.dir)):''}</b><small>${esc(top.desc)}${top.dist!=null?' · '+esc(top.dist)+' km away':''}</small></div></div>`
+    :slow?`<div class="jf-glass gd-card lc-now bad"><i>🐢</i><div><b>Slow to ${esc(slow.name)} · +${slow.delay} min</b><small>${driveTxt(slow.min)} right now · usually ${driveTxt(slow.usual||slow.free||slow.min)}</small></div></div>`
+    :`<div class="jf-glass gd-card lc-now ok"><i>✅</i><div><b>Roads are clear around ${esc(CFG.city)}</b><small>No collisions or closures nearby</small></div></div>`;
+  const near=evs.slice(0,3);
+  const nearHTML=!big||!near.length?'':`<div class="jf-glass gd-card"><h2>🚦 Nearby</h2>${near.map(e=>{const k=evInfo(e);return `<div class="lc-ev2"><i>${k.i}</i><div><b>${k.n} · ${esc(e.road)}${e.dir?' '+esc(shortDir(e.dir)):''}</b><small>${esc(e.desc)}</small></div><span>${esc(e.dist)} km</span></div>`}).join('')}</div>`;
   const html=`<div class="jf-title">Around ${esc(CFG.city)}</div>
-   <div class="lc-body">${mapHTML}
-    ${alertHTML}
+   <div class="lc-body${big?' gm':''}">${nowHTML}${mapHTML}
+    ${big?'':alertHTML}
     <div class="jf-glass gd-card lc-drcard"><h2>Drive times &amp; weather there${drvAt?' · '+fmt(new Date(drvAt)):''}</h2>${drvHTML()}</div>
+    ${nearHTML}
     ${roadsHTML()}
    </div>`;
   const fresh=html!==locSig||Date.now()-(window._lmAt||0)>300000;
   if(html!==locSig){locSig=html;b.innerHTML=html}
-  if(mapOK&&fresh){window._lmAt=Date.now();tmFails=0;requestAnimationFrame(()=>{[0,1,2].forEach(i=>{const el=$('lm'+i);if(el&&V[i]){const nm=el.querySelector('.tm-name');tmDraw(el,V[i]);if(nm)el.appendChild(nm)}})});
+  if(gmap)gmAttach(((LOC&&LOC.events)||[]).filter(affectsMe));
+  if(tbig&&fresh){window._lmAt=Date.now();tmFails=0;requestAnimationFrame(()=>{const el=$('lm0');if(!el)return;
+      /* close-up around home; one step wider only if a nearby problem would fall off the edge */
+      const pins=near.filter(e=>e.lat&&e.lon),z0=TMc.zoom||13,fits=z=>{const W=el.clientWidth,H=el.clientHeight,n=256*2**z,
+        wp=(lo,la)=>{const s=Math.sin(la*Math.PI/180);return [(lo+180)/360*n,(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n]},[cx,cy]=wp(CFG.lon,CFG.lat);
+        return pins.every(e=>{const [x,y]=wp(e.lon,e.lat);return Math.abs(x-cx)<W/2-24&&Math.abs(y-cy)<H/2-24})};
+      const z=fits(z0)?z0:fits(z0-1)?z0-1:z0-2;
+      tmDraw(el,{lat:CFG.lat,lon:CFG.lon,z,pin:true,evs:pins})});
+    setTimeout(()=>{if(tmFails>3&&$('lmUpd'))$('lmUpd').textContent='Traffic layer unavailable (check the TomTom key)'},6000)}
+  if(mapOK&&!tbig&&fresh){window._lmAt=Date.now();tmFails=0;requestAnimationFrame(()=>{[0,1,2].forEach(i=>{const el=$('lm'+i);if(el&&V[i]){const nm=el.querySelector('.tm-name');tmDraw(el,V[i]);if(nm)el.appendChild(nm)}})});
     setTimeout(()=>{if(tmFails>3&&$('lmUpd'))$('lmUpd').textContent='Traffic layer unavailable (check the TomTom key)'},6000)}
   fitLocal();setTimeout(fitLocal,400);
 }
+/* ================= Around page: Google map (dark, live traffic, 511 pins). Loaded once, then reused; capped per day ================= */
+const GMC=()=>Object.assign({on:true,zoom:13,dailyCap:250,refreshMin:5},CFG.googleMap||{});
+let GM=null,gmTraffic=null,gmState='',gmMarks=[],gmAt=0;
+const gmHost=document.createElement('div');gmHost.id='gmHost';
+const gmOn=()=>GMC().on!==false&&!!SECRETS.gmapkey&&gmState!=='capped'&&gmState!=='failed';
+/* this screen's own safety cap on map loads (Google Cloud has the real hard cap) */
+function gmCapOk(){try{const d=new Date().toDateString(),o=JSON.parse(localStorage.getItem('nova-gmcount')||'{}');if(o.d!==d){o.d=d;o.n=0}
+  if(o.n>=GMC().dailyCap)return false;o.n++;localStorage.setItem('nova-gmcount',JSON.stringify(o));return true}catch(e){return true}}
+const GM_NIGHT=[{elementType:'geometry',stylers:[{color:'#1d2c4d'}]},{elementType:'labels.text.fill',stylers:[{color:'#8ec3b9'}]},{elementType:'labels.text.stroke',stylers:[{color:'#1a3646'}]},
+  {featureType:'administrative.locality',elementType:'labels.text.fill',stylers:[{color:'#c9d6f0'}]},{featureType:'landscape.man_made',elementType:'geometry',stylers:[{color:'#22345c'}]},
+  {featureType:'poi',stylers:[{visibility:'off'}]},{featureType:'poi.park',elementType:'geometry',stylers:[{visibility:'on'},{color:'#1f3b3a'}]},
+  {featureType:'road',elementType:'geometry',stylers:[{color:'#304a7d'}]},{featureType:'road',elementType:'labels.text.fill',stylers:[{color:'#98a5be'}]},
+  {featureType:'road.highway',elementType:'geometry',stylers:[{color:'#2c6675'}]},{featureType:'road.highway',elementType:'geometry.stroke',stylers:[{color:'#255763'}]},
+  {featureType:'transit',stylers:[{visibility:'off'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0e1626'}]},{featureType:'water',elementType:'labels.text.fill',stylers:[{color:'#4e6d70'}]}];
+function gmLoad(){if(gmState||!SECRETS.gmapkey||GMC().on===false)return;
+  if(!gmCapOk()){gmState='capped';return}
+  gmState='loading';
+  window._gmReady=()=>{gmState='ready';try{gmMake()}catch(e){console.warn('gmap',e);gmState='failed'}if($('pLocal').classList.contains('on'))renderLocal()};
+  window.gm_authFailure=()=>{gmState='failed';GM=null;if($('pLocal').classList.contains('on'))renderLocal()};   /* bad key / not allowed / over the cap */
+  const sc=document.createElement('script');sc.async=true;sc.onerror=()=>{gmState='failed';if($('pLocal').classList.contains('on'))renderLocal()};
+  sc.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(SECRETS.gmapkey)+'&callback=_gmReady&v=weekly&loading=async';document.head.appendChild(sc)}
+function gmMake(){if(GM||!window.google||!google.maps)return;const C=GMC();
+  GM=new google.maps.Map(gmHost,{center:{lat:CFG.lat,lng:CFG.lon},zoom:C.zoom,styles:GM_NIGHT,disableDefaultUI:true,keyboardShortcuts:false,gestureHandling:'none',clickableIcons:false,backgroundColor:'#1d2c4d'});
+  gmTraffic=new google.maps.TrafficLayer();gmTraffic.setMap(GM);gmAt=Date.now()}
+/* pins for collisions / closures / roadwork */
+function gmPins(evs){if(!GM)return;gmMarks.forEach(m=>m.setMap(null));gmMarks=[];
+  evs.filter(e=>e.lat&&e.lon).slice(0,8).forEach(e=>{const k=evInfo(e),col=k.red||/accident|incident/i.test(e.type)?'#e8453c':'#f29b2a';
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="46" height="46"><circle cx="23" cy="23" r="19" fill="${col}" stroke="#fff" stroke-width="3"/><text x="23" y="30" text-anchor="middle" font-size="19">${k.i}</text></svg>`;
+    gmMarks.push(new google.maps.Marker({map:GM,position:{lat:e.lat,lng:e.lon},icon:{url:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg),scaledSize:new google.maps.Size(46,46),anchor:new google.maps.Point(23,23)},title:k.n+' · '+e.road}))})}
+/* put the (one) map into the page, and keep its traffic fresh */
+function gmAttach(evs){const slot=$('gmSlot');if(!slot)return;if(gmHost.parentNode!==slot)slot.appendChild(gmHost);
+  if(!GM){gmLoad();return}
+  if(Date.now()-gmAt>GMC().refreshMin*60000){gmTraffic.setMap(null);gmTraffic.setMap(GM);gmAt=Date.now()}
+  gmPins(evs);google.maps.event.trigger(GM,'resize');GM.setCenter({lat:CFG.lat,lng:CFG.lon});
+  const u=$('gmUpd');if(u)u.textContent='Live traffic · '+fmt(new Date(gmAt))}
 /* too much for the screen? trim road events first */
 function fitLocal(){const b=document.querySelector('#locBody .lc-body');if(!b)return;[...b.children].forEach(c=>c.style.flexShrink='0');
   const over=()=>b.scrollHeight>b.clientHeight+2;
@@ -4614,7 +4695,8 @@ function tmDraw(el,v){
     if(tx<0||ty<0)continue;
     tr+=`<img class="tm-t" src="${esc(relayBase())}/tt/${Z-1}/${tx}/${ty}.png?key=${encodeURIComponent(SECRETS.calkey)}&s=${slot}" style="left:${(tx*512-ox).toFixed(1)}px;top:${(ty*512-oy).toFixed(1)}px" alt="" onerror="this.style.display='none';tmFail()">`}
   const pin=v.pin!==false?(()=>{const [px,py]=wp(CFG.lon,CFG.lat,Z);return `<i class="tm-pin" style="left:${(px-ox).toFixed(1)}px;top:${(py-oy).toFixed(1)}px"></i>`})():'';
-  el.innerHTML=`<div class="tm-layer">${base}</div><div class="tm-layer tm-tr">${tr}</div><div class="tm-layer">${ref}</div>${v.pin?pin:''}`;
+  const evp=(v.evs||[]).map(e=>{const k=evInfo(e),[x,y]=wp(e.lon,e.lat,Z);return `<b class="tm-ev${k.red||/accident|incident/i.test(e.type)?' red':''}" style="left:${(x-ox).toFixed(1)}px;top:${(y-oy).toFixed(1)}px">${k.i}</b>`}).join('');
+  el.innerHTML=`<div class="tm-layer">${base}</div><div class="tm-layer tm-tr">${tr}</div><div class="tm-layer">${ref}</div>${v.pin?pin:''}${evp}`;
 }
 let tmFails=0;function tmFail(){tmFails++}
 /* ================= Plane radar: animated scope over a dark map, planes glide between updates ================= */
@@ -4720,7 +4802,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 90';
+document.getElementById('ver').textContent='build nova 92';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
