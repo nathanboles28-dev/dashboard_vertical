@@ -1141,7 +1141,7 @@ body.npCardOn #npCard{display:flex}body.npCardOn #spot{visibility:hidden}
 .wz{position:relative;overflow:hidden;padding:0!important;border-radius:calc(2.4*var(--u));background:#f6f4ee}
 .wz.big{flex:1 1 0;min-height:calc(30*var(--u))}
 .wz-row{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.4*var(--u));height:calc(34*var(--u));flex:0 0 auto}
-.wz iframe{position:absolute;border:0;left:calc(-60px*var(--wzs,1));top:calc(-80px*var(--wzs,1));width:calc(100%/var(--wzs,1) + 110px);height:calc(100%/var(--wzs,1) + 130px);transform:scale(var(--wzs,1));transform-origin:0 0;pointer-events:none}
+.wz iframe{position:absolute;border:0;left:calc(-80px*var(--wzs,1));top:calc(-100px*var(--wzs,1));width:calc(100%/var(--wzs,1) + 150px);height:calc(100%/var(--wzs,1) + 180px);transform:scale(var(--wzs,1));transform-origin:0 0;pointer-events:none}
 .wz-tag{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));background:rgba(10,14,24,.8);padding:calc(.7*var(--u)) calc(1.5*var(--u));border-radius:calc(1.3*var(--u));display:flex;flex-direction:column;z-index:2}
 .wz-tag.bot{top:auto;bottom:calc(1.6*var(--u))}.wz-tag b{font-size:calc(2.4*var(--u));font-weight:600;color:#fff}.wz-tag small{font-size:calc(1.7*var(--u));color:#bec8d7}
 .wz-src{position:absolute;right:calc(1.2*var(--u));bottom:calc(1.2*var(--u));background:rgba(10,14,24,.7);color:#e6ebf5;font-size:calc(1.6*var(--u));padding:calc(.3*var(--u)) calc(1*var(--u));border-radius:calc(.9*var(--u));z-index:2}
@@ -1584,7 +1584,7 @@ const CFG={
   // zoom is a whole number (13 = whole town, 14 = a neighbourhood, 15 = a few streets). label:'bottom' moves the name tag down.
   wazeMap:{on:true, reloadMin:15, views:[
     {name:'Woodstock', sub:'Waze reports · jams · closures', lat:43.1300, lon:-80.7500, z:13},
-    {name:'401 / 403 split', lat:43.1160, lon:-80.6950, z:14},
+    {name:'401 / 403 split', lat:43.1195, lon:-80.6950, z:14},
     {name:'North end', lat:43.1455, lon:-80.7400, z:14, label:'bottom'}
   ]},
   // Live traffic map on the Around Woodstock page (TomTom, free key in the Worker as TOMTOM_KEY). Rests between quietFrom and quietTo o'clock to save the free allowance.
@@ -4831,7 +4831,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 93';
+document.getElementById('ver').textContent='build nova 94';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
