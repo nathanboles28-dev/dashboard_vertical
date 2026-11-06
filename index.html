@@ -1211,7 +1211,9 @@ body.morn #mini{opacity:0!important}
 .ts-dr em{font-style:normal;color:var(--dim);font-size:calc(1.85*var(--u));white-space:nowrap}.ts-dr em b{color:var(--ink);font-weight:600}
 .ts-fun{position:relative;overflow:visible!important;display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.4*var(--u));padding:calc(2*var(--u))!important}.ts-fun>div{text-align:center}.ts-fun i{font-style:normal;font-size:calc(3*var(--u))}
 .ts-fun b{display:block;font-size:calc(3.4*var(--u));font-weight:300;line-height:1.2}.ts-fun small{font-size:calc(1.6*var(--u));color:var(--dim)}
-.ts-stk{position:absolute;right:calc(1*var(--u));top:calc(-2*var(--u));width:calc(24*var(--u));aspect-ratio:1;background-repeat:no-repeat;z-index:3;transform:rotate(var(--rot,-8deg));filter:drop-shadow(0 calc(1*var(--u)) calc(1.6*var(--u)) rgba(0,0,0,.55))}
+.ts-body>.ts-stkw{flex:1 1 0;flex-shrink:1;min-height:calc(15*var(--u));display:flex;align-items:center;justify-content:center}
+@media (orientation:landscape){.ts-body>.ts-stkw{height:calc(30*var(--u));display:flex!important}}
+.ts-stk{position:relative;height:min(100%,calc(34*var(--u)));aspect-ratio:1;background-repeat:no-repeat;z-index:3;transform:rotate(var(--rot,-8deg));filter:drop-shadow(0 calc(1*var(--u)) calc(1.6*var(--u)) rgba(0,0,0,.55))}
 .ts-stk.pop{animation:stkPop 1s cubic-bezier(.2,1.6,.4,1) .5s both,stkBob 4s ease-in-out 1.5s infinite}
 @keyframes stkPop{from{opacity:0;transform:rotate(calc(var(--rot) - 40deg)) scale(.3)}}@keyframes stkBob{50%{transform:rotate(calc(var(--rot) + 5deg)) translateY(calc(-.8*var(--u)))}}
 /* ===== Rain radar loop ===== */
@@ -4667,13 +4669,13 @@ function renderTech(){
   /* fun */
   const os=onScreen();
   const fun=`<div class="jf-glass ts-fun"><div><i>📺</i><b>${Math.floor(os/60)}h ${os%60}m</b><small>Nova on screen today</small></div><div><i>🧾</i><b>${tsLines?tsLines.toLocaleString():'…'}</b><small>lines of code in this dashboard</small></div><div><i>🏗️</i><b>${esc(($('ver').textContent||'').replace(/^build nova /,'#'))}</b><small>build${HC.relay&&HC.relay.v?' · relay '+esc(HC.relay.v.replace(/[()]/g,'')):''}</small></div></div>`;
-  const html=`<div class="jf-title">Home tech</div><div class="ts-body">${netHTML}${bkHTML}${mHTML}${fun}</div>`;
+  const html=`<div class="jf-title">Home tech</div><div class="ts-body">${netHTML}${bkHTML}${mHTML}${fun}<div class="ts-stkw"><div class="ts-stk" id="tsStk"></div></div></div>`;
   if(html!==tsSig){tsSig=html;b.innerHTML=html}
   const sk=$('tsStk');if(sk)drawSticker(sk);
-  const x=b.querySelector('.ts-body');if(x){const over=()=>x.scrollHeight>x.clientHeight+2;for(let g=0;g<6&&over();g++){const r=x.querySelectorAll('.ts-dr');if(r.length>3)r[r.length-1].remove();else break}}
+  const x=b.querySelector('.ts-body');if(x){const over=()=>x.scrollHeight>x.clientHeight+2;for(let g=0;g<6&&over();g++){const r=x.querySelectorAll('.ts-dr');if(r.length>3)r[r.length-1].remove();else break}if(over()){const s=x.querySelector('.ts-stkw');if(s)s.remove()}}
 }
-/* the stickers: one picture with 21 of them, 7 across and 3 down */
-const STK={n:35,cols:7,rows:5};
+/* the stickers: one picture with 30 of them, 6 across and 5 down (stickers.webp next to index.html) */
+const STK={n:30,cols:6,rows:5};
 function drawSticker(el){const i=tsVisit%STK.n,c=i%STK.cols,r=Math.floor(i/STK.cols);
   el.style.backgroundImage=`url("${TC().stickers}")`;el.style.backgroundSize=`${STK.cols*100}% ${STK.rows*100}%`;
   el.style.backgroundPosition=`${(c/(STK.cols-1)*100).toFixed(3)}% ${(r/(STK.rows-1)*100).toFixed(3)}%`;
@@ -4851,7 +4853,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 96';
+document.getElementById('ver').textContent='build nova 97';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
