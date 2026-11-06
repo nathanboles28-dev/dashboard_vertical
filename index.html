@@ -1062,6 +1062,31 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .lv-sc.fw{font-weight:700!important}
 /* ===== Trades & signings ===== */
 #pTx{--acc:#5fd88a;--ico:'🔁'}
+#pXbox{--acc:#52d273;--ico:'🎮'}
+#xbBody{position:absolute;left:5%;right:5%;top:calc(11*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u));overflow:hidden}
+body.npBar #xbBody{bottom:calc(2*var(--u))}
+#xbBody>*{flex-shrink:0}
+.xb-hero{display:flex;gap:calc(2.4*var(--u));align-items:center;padding:calc(2.4*var(--u))!important}
+.xb-pic{width:calc(12*var(--u));height:calc(12*var(--u));border-radius:50%;background:#107c10 center/cover;border:calc(.45*var(--u)) solid #52d273;flex:0 0 auto}
+.xb-hero h1{font-size:calc(4.4*var(--u));font-weight:700;line-height:1.1}
+.xb-gs{display:inline-flex;gap:calc(.9*var(--u));align-items:center;background:rgba(28,59,38,.85);border-radius:999px;padding:calc(.6*var(--u)) calc(1.6*var(--u));font-size:calc(2.2*var(--u));margin-top:calc(.7*var(--u))}.xb-gs b{color:#ffd54f}
+.xb-now{margin-left:auto;text-align:right;min-width:0}.xb-now b{font-size:calc(2.5*var(--u));white-space:nowrap}.xb-now small{display:block;color:var(--dim);font-size:calc(1.8*var(--u));margin-top:calc(.4*var(--u))}
+.xb-now .gm{color:#fff;font-size:calc(2*var(--u));max-width:calc(34*var(--u));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xb-dot{display:inline-block;width:calc(1.3*var(--u));height:calc(1.3*var(--u));border-radius:50%;background:#52d273;margin-right:calc(.9*var(--u));box-shadow:0 0 calc(1.1*var(--u)) #52d273}.xb-dot.off{background:#7a8a80;box-shadow:none}
+.xb-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.6*var(--u));text-align:center}.xb-stats>div{padding:calc(1.8*var(--u))!important}.xb-stats b{font-size:calc(3.8*var(--u));display:block;font-weight:600}.xb-stats small{color:var(--dim);font-size:calc(1.7*var(--u))}
+.xb-h{font-size:calc(2.2*var(--u));color:var(--acc);font-weight:700;letter-spacing:.04em;margin:0 0 calc(1.4*var(--u))}
+.xb-games{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.6*var(--u))}
+.xb-gm{display:flex;gap:calc(1.6*var(--u));align-items:center;padding:calc(1.6*var(--u))!important;min-width:0}
+.xb-art{width:calc(9.6*var(--u));height:calc(9.6*var(--u));border-radius:calc(1.5*var(--u));background:#1d2b22 center/cover;flex:0 0 auto}
+.xb-gm>div:last-child{flex:1;min-width:0}.xb-gm b{font-size:calc(2.1*var(--u));display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-gm small{color:var(--dim);font-size:calc(1.55*var(--u));display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xb-bar{height:calc(.9*var(--u));background:rgba(255,255,255,.12);border-radius:calc(.6*var(--u));margin:calc(.9*var(--u)) 0 calc(.5*var(--u));overflow:hidden}.xb-bar i{display:block;height:100%;background:linear-gradient(90deg,#2ecc71,#a3f7bf)}
+.xb-ach{padding:calc(2.4*var(--u))!important}.xb-a{display:flex;gap:calc(1.6*var(--u));align-items:center;padding:calc(1.1*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.xb-a:first-of-type{border:0}
+.xb-ai{width:calc(6*var(--u));height:calc(6*var(--u));border-radius:calc(1.3*var(--u));background:#24352a center/cover;flex:0 0 auto}
+.xb-a>div:nth-child(2){min-width:0;flex:1}.xb-a b{font-size:calc(2*var(--u));display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-a small{display:block;color:var(--dim);font-size:calc(1.55*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-a em{font-style:normal;color:#ffd54f;font-weight:700;font-size:calc(2*var(--u));white-space:nowrap}
+.xb-fr{padding:calc(2.4*var(--u))!important}.xb-frs{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.1*var(--u))}
+.xb-f{display:flex;gap:calc(1.3*var(--u));align-items:center;padding:calc(1.1*var(--u)) calc(1.3*var(--u));background:rgba(255,255,255,.05);border-radius:calc(1.6*var(--u));min-width:0}
+.xb-fp{width:calc(5*var(--u));height:calc(5*var(--u));border-radius:50%;background:#2a3a30 center/cover;flex:0 0 auto}.xb-f>div:last-child{min-width:0}.xb-f b{font-size:calc(1.9*var(--u));display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-f small{display:block;color:var(--dim);font-size:calc(1.45*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (orientation:landscape){#xbBody{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;column-gap:calc(2.4*var(--u));row-gap:calc(1.8*var(--u))}#xbBody>.xb-hero,#xbBody>.xb-stats{grid-column:1/-1}}
 #txBody{position:absolute;left:5%;right:5%;top:calc(12*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u));overflow:hidden}
 body.npBar #txBody{bottom:calc(2*var(--u))}
 .tx-c{flex:none}.tx-c h2{display:flex;justify-content:space-between;align-items:baseline}.tx-c h2 small{font-size:calc(1.7*var(--u));font-weight:500;color:var(--dim)}
@@ -1108,6 +1133,7 @@ body.npBar #txBody{bottom:calc(2*var(--u))}
 #npMini{position:fixed;left:5%;right:5%;bottom:calc(4*var(--u));height:calc(10.4*var(--u));z-index:4;display:none;align-items:center;gap:calc(2*var(--u));padding:calc(1.4*var(--u)) calc(2.6*var(--u)) calc(1.4*var(--u)) calc(1.4*var(--u));overflow:hidden;
  border-radius:calc(2.6*var(--u));background:linear-gradient(90deg,var(--np1,rgba(60,22,60,.92)),var(--np2,rgba(24,18,46,.92)));border:1px solid rgba(255,255,255,.16);box-shadow:0 calc(1.8*var(--u)) calc(4*var(--u)) rgba(0,0,0,.5)}
 body.npBar #npMini{display:flex}
+#npMini.xb{background:linear-gradient(100deg,rgba(14,59,23,.96),rgba(16,124,16,.92))!important}#npMini.xb .mn-a{background-color:#0b2a12}#npMini.xb .np-eq i{background:#a3f7bf!important}
 #npMini .mn-a{flex:none;width:calc(7.6*var(--u));height:calc(7.6*var(--u));border-radius:calc(1.4*var(--u));background:linear-gradient(160deg,#ff7a59,#c2367a 50%,#3a1c71) center/cover}
 #npMini .mn-x{flex:1;min-width:0}#npMini b{display:block;font-size:calc(2.7*var(--u));font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#npMini small{display:block;font-size:calc(2.1*var(--u));color:rgba(240,242,250,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #npMini .np-eq{height:calc(3*var(--u))}#npMini .np-eq i{width:calc(.6*var(--u))}
@@ -1440,6 +1466,7 @@ body.morn #mini{opacity:0!important}
 <section id="pWatch" class="page"><div id="wtBody"></div></section>
 <section id="pTech" class="page"><div id="tsBody"></div></section>
 <section id="pMorn" class="page"><div id="mmBody"></div></section>
+<section id="pXbox" class="page"><div class="jf-title">Xbox</div><div id="xbBody"></div></section>
 <section id="pTx" class="page"><div class="jf-title">Trades &amp; signings</div><div id="txBody"></div></section>
 <section id="pNP" class="page"><div class="np-bg" id="npBg"></div><div id="npBody"></div></section>
 <div id="npMini"></div>
@@ -1486,7 +1513,8 @@ const CFG={
     {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
     {type:'cams',      secs:40},
     {type:'news',      secs:40},   // team news: a featured story to read + more headlines
-    {type:'tx',        secs:35},   // trades & signings (NHL trades, MLB trades + free agents, your teams first) - last 30 days
+    {type:'tx',        secs:35},
+    {type:'xbox',      secs:30},   // Xbox: you, recent games, achievements, friends online (needs XBL_KEY on the relay)   // trades & signings (NHL trades, MLB trades + free agents, your teams first) - last 30 days
     // sports (game day / live / World Series only show when they're on)
     {type:'recap',     secs:40},   // morning after a Leafs/Knights game, until noon
     {type:'ws',        secs:30},
@@ -1587,6 +1615,8 @@ const CFG={
   googleMap:{on:true, zoom:13, dailyCap:250, refreshMin:5},
   // Waze live maps on the Around page (free, no key): first view is the big one, the next two sit side by side.
   // zoom is a whole number (13 = whole town, 14 = a neighbourhood, 15 = a few streets). label:'bottom' moves the name tag down.
+  // Xbox page (relay secret XBL_KEY from xbl.io). jumpSecs: when you start playing, show the page this many seconds (0 = off)
+  xbox:{on:true, jumpSecs:10, mini:true},   // mini: the 'playing on Xbox' bar at the bottom of every page
   wazeMap:{on:true, reloadMin:15, views:[
     {name:'Woodstock → London', sub:'401 traffic · Waze reports', lat:43.0500, lon:-81.0000, z:11},
     {name:'Woodstock', lat:43.1300, lon:-80.7500, z:12},
@@ -2108,10 +2138,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2158,6 +2188,7 @@ function nextPage(force,hold){
   if(p.type==='wrapped'){renderWrapped();if(Date.now()-wrAt>1800000)loadWrapped()}
   if(p.type==='morn')renderMorn();
   if(p.type==='np')renderNP();
+  if(p.type==='xbox'){renderXb();if(Date.now()-xbAt>60000)loadXb()}
   if(p.type==='tx'){renderTx();if(Date.now()-txAt>2*3600e3)loadTx()}
   window._curPage=p.type;
   if(p.type==='tech'){tsVisit++;renderTech();if(Date.now()-tsAt>60000)loadTech()}
@@ -2730,6 +2761,7 @@ function handleCommand(raw){
   if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
+  if(has(/\b(xbox|gamerscore|achievements?)\b/)){showFor('xbox');return reply(XB&&XB.tag?`${XB.tag}: ${(XB.score||0).toLocaleString()} Gamerscore`:'Xbox isn\'t set up yet')}
   if(has(/\b(trades?|signings?|signed|free agen(t|ts|cy)|hot stove|transactions?)\b/)){showFor('tx');const x=TX&&(TX.mine[0]||TX.nhl[0]||TX.mlb[0]);return reply(x?(x.kind==='trade'?`Latest: the ${x.nameA} get ${x.aGets||'something'}, the ${x.nameB} get ${x.bGets||'something'}.`:`Latest: the ${x.team} signed ${x.who}.`):'No trades or signings lately.')}
   if(has(/\b(now playing|what song|this song|apple music|the music|what'?s this song)\b/)){const st=npState();if(st)showFor('np');return reply(st?(npYT(st)?`${st.title}, on YouTube`:`${st.title} by ${st.artist}`):'Nothing is playing right now.')}
   if(has(/\b(backed up|backup (is )?done|did (a|the) backup|log (a|the) backup)\b/)){showFor('tech');markBackup();return reply('Got it, the '+TC().backup+' backup is logged for today.')}
@@ -3699,7 +3731,7 @@ function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pa
   if(pal){r.setProperty('--np1',npDark(pal[0],.94));r.setProperty('--np2',npDark(pal[1],.94));
     $('npBg').style.background=`radial-gradient(circle at 30% 25%,rgb(${pal[0].r},${pal[0].g},${pal[0].b}),transparent 55%),radial-gradient(circle at 75% 65%,rgb(${pal[1].r},${pal[1].g},${pal[1].b}),transparent 55%),#120d1f`}
   else{r.removeProperty('--np1');r.removeProperty('--np2');$('npBg').style.background='radial-gradient(circle at 30% 25%,#ff7a59,transparent 55%),radial-gradient(circle at 75% 60%,#8a3ffc,transparent 55%),radial-gradient(circle at 40% 90%,#1f6feb,transparent 60%),#120d1f'}
-  const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''})}
+  const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
 function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
@@ -3709,7 +3741,7 @@ function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return
     ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}
     <div class="np-src">${npEq} ${s.state==='paused'?'Paused':yt?'Watching':'Playing'} on ${esc(s.dev||'Macbook')} · ${yt?'YouTube':'Apple Music'}</div></div>`;
   npPaint();npTick()}
-function renderNPMini(){const s=npState();if(!s)return;
+function renderNPMini(){if(window._mnXb&&xbPl()){xbMini();return}const s=npState();if(!s)return;
   const yt=npYT(s);$('npMini').className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
   $('npMini').innerHTML=`<div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
   $('npCard').className='card'+(s.state==='paused'?' paused':'');
@@ -3725,7 +3757,7 @@ const npSkip=new Set();
 /* boxes on the page whose content no longer fits (cut off) */
 function npClipped(pe){let n=0;pe.querySelectorAll('*').forEach(e=>{if(e.clientHeight<40)return;const o=getComputedStyle(e).overflowY;if((o==='hidden'||o==='clip')&&e.scrollHeight>e.clientHeight+6)n++});return n}
 function npApply(){const s=npState(),C=NPC(),pg=window._curPage||'';
-  const want=!!s&&C.mini!==false&&pg!=='np'&&pg!=='dashboard'&&!npSkip.has(pg);
+  const want=(!!s&&C.mini!==false||xbPl())&&pg!=='np'&&pg!=='dashboard'&&pg!=='xbox'&&!npSkip.has(pg);
   document.body.classList.toggle('npBar',want);
   /* safety net: if the mini player makes this page cut anything off, hide it on this page instead */
   clearTimeout(window._npFitT);if(want)window._npFitT=setTimeout(()=>{const pe=$(PAGE_EL[window._curPage]);if(!pe||window._curPage!==pg||!document.body.classList.contains('npBar'))return;
@@ -3756,6 +3788,58 @@ function npListen(){const T=SECRETS.topic;if(!T||!window.EventSource||NPC().on==
 /* ================= Trades & signings: NHL trades (ESPN), MLB trades + free-agent signings (MLB), your teams first ================= */
 const TXC=()=>Object.assign({on:true,days:30,nhlTeam:'TOR',mlbTeam:141},CFG.transactions||{});
 let TX=null,txAt=0,txSig='';
+/* ================= Xbox (relay /xbox, data from xbl.io) ================= */
+const XBC=()=>Object.assign({on:true,jumpSecs:10},CFG.xbox||{});
+let XB=null,xbAt=0,xbSig='',xbFirst=true;
+const xbOn=()=>XBC().on!==false&&!!XB&&!!XB.tag;
+const xbAgo=d=>{if(!d)return '';const m=(Date.now()-new Date(d))/60000;if(m<60)return Math.max(1,Math.round(m))+' min ago';if(m<1440)return Math.round(m/60)+' h ago';
+  const days=Math.floor(m/1440);return days===1?'Yesterday':days<7?new Date(d).toLocaleDateString([],{weekday:'short'}):days<14?'Last week':new Date(d).toLocaleDateString([],{month:'short',day:'numeric'})};
+const xbImg=(u,w)=>!u?'':/images-eds/.test(u)&&!/[?&]w=/.test(u)?u+(u.includes('?')?'&':'?')+`w=${w}&h=${w}`:u;
+async function loadXb(){const C=XBC();if(C.on===false||!CFG.relay||!SECRETS.calkey)return;xbAt=Date.now();
+  try{const j=await (await tfetch(relayBase()+'/xbox?key='+encodeURIComponent(SECRETS.calkey),20000)).json();if(j.error||!j.tag){if(j.error&&!/not set up/.test(j.error))console.warn('xbox',j.error);return}
+    const was=XB&&XB.playing?XB.playing.name:'',now=j.playing?j.playing.name:'';
+    /* remember when this game started, for "for 1 h 12 min" */
+    try{let s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(!now)s=null;else if(!s||s.name!==now)s={name:now,at:Date.now()};localStorage.setItem('nova-xb-start',JSON.stringify(s))}catch(e){}
+    XB=j;if(now&&now!==was&&!xbFirst)xbPeek();xbFirst=false;
+    if($('pXbox').classList.contains('on'))renderXb()}catch(e){console.warn('xbox',e)}}
+setInterval(()=>{if(XBC().on!==false)loadXb()},120000);
+/* you just started a game: show the Xbox page for a few seconds, then go back */
+function xbPeek(){const secs=XBC().jumpSecs;if(!secs)return;const cur=window._curPage||'';
+  if(paused||cur==='live'||cur==='xbox'||window._npPeek||(typeof goalOn!=='undefined'&&goalOn)||($('night')&&$('night').classList.contains('on')))return;
+  const P={prev:cur,left:Math.max(8,Math.round(((window._pgEnd||0)-Date.now())/1000))};nextPage('xbox',3600);
+  clearTimeout(window._xbPeekT);window._xbPeekT=setTimeout(()=>{if(window._curPage!=='xbox')return;if(!P.prev||P.prev==='morn'){nextPage();return}nextPage(P.prev,P.left)},secs*1000)}
+const xbN=s=>String(s||'').replace(/[®™©]/g,'').replace(/\s{2,}/g,' ').trim();
+/* playing on Xbox: a bar at the bottom of every page (same spot as the music bar; if music is on too they take turns) */
+const xbPl=()=>XBC().on!==false&&XBC().mini!==false&&!!XB&&!!XB.playing&&Date.now()-xbAt<6*60000;
+function xbMini(){const pl=XB.playing,t=(XB.titles||[]).find(x=>x.id===pl.id||x.name===pl.name)||{};let since='';
+  try{const s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(s&&s.name===pl.name){const m=Math.round((Date.now()-s.at)/60000);since=m<1?'just started':(m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min')}}catch(e){}
+  const el=$('npMini');el.className='xb';
+  el.innerHTML=`<div class="mn-a" style="background-image:url('${esc(t.img||xbImg(XB.pic,160))}')"></div><div class="mn-x"><b>${esc(xbN(pl.name))}</b><small>🎮 Playing on Xbox${since?' · '+since:''}</small></div><span class="np-eq"><i></i><i></i><i></i><i></i></span>`}
+let mnLast='';
+setInterval(()=>{const m=!!npState(),x=xbPl(),k=m+'|'+x;
+  if(m&&x)window._mnXb=!window._mnXb;else window._mnXb=x&&!m;
+  if(window._mnXb)xbMini();else if(m&&(k!==mnLast||$('npMini').classList.contains('xb')))renderNPMini();
+  if(k!==mnLast){mnLast=k;npApply()}},10000);
+function renderXb(){const b=$('xbBody');if(!XB){b.innerHTML='<div class="jf-wait">Xbox isn\'t set up yet</div>';xbSig='';return}
+  const on=/online/i.test(XB.state||''),pl=XB.playing;let since='';
+  try{const s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(pl&&s&&s.name===pl.name){const m=Math.round((Date.now()-s.at)/60000);since=m<1?'just started':'for '+(m>=60?Math.floor(m/60)+' h '+(m%60)+' min':m+' min')}}catch(e){}
+  const hero=`<div class="jf-glass xb-hero"><div class="xb-pic" style="background-image:url('${esc(xbImg(XB.pic,208))}')"></div><div style="min-width:0"><h1>${esc(XB.tag)}</h1><div class="xb-gs">🏆 Gamerscore <b>${XB.score!=null?XB.score.toLocaleString():'–'}</b></div></div>
+    <div class="xb-now"><b><span class="xb-dot${on?'':' off'}"></span>${on?'Online':'Offline'}</b>${pl?`<small class="gm">Playing ${esc(xbN(pl.name))}</small>${since?`<small>${since}</small>`:''}`:on?'<small>On the home screen</small>':''}</div></div>`;
+  const wk=(XB.titles||[]).filter(t=>t.last&&Date.now()-new Date(t.last)<7*864e5).length;
+  const stats=`<div class="xb-stats"><div class="jf-glass"><b>${XB.weekAch||0}</b><small>achievements this week</small></div><div class="jf-glass"><b>${wk}</b><small>games played this week</small></div><div class="jf-glass"><b>${XB.friendsOnline||0}</b><small>friends online</small></div></div>`;
+  const games=(XB.titles||[]).slice(0,4).map(t=>`<div class="jf-glass xb-gm"><div class="xb-art" style="background-image:url('${esc(t.img)}')"></div><div><b>${esc(xbN(t.name))}</b><small>${pl&&pl.name===t.name?'Playing now':esc(xbAgo(t.last))}</small>
+    ${t.total?`<div class="xb-bar"><i style="width:${Math.max(2,Math.min(100,t.pct!=null?t.pct:t.got/t.total*100))}%"></i></div><small>${t.got} / ${t.total} achievements${t.gs!=null?' · '+t.gs.toLocaleString()+' G':''}</small>`:'<small>No achievements</small>'}</div></div>`).join('');
+  const ach=(XB.ach||[]).slice(0,3).map(a=>`<div class="xb-a"><div class="xb-ai" style="background-image:url('${esc(a.icon)}')"></div><div><b>${esc(a.name)}</b><small>${esc(xbN(a.game))}${a.at?' · '+esc(xbAgo(a.at)):''}</small></div>${a.gs?`<em>+${a.gs} G</em>`:''}</div>`).join('');
+  const fr=(XB.friends||[]).slice(0,6).map(f=>`<div class="xb-f"><div class="xb-fp" style="background-image:url('${esc(xbImg(f.pic,96))}')"></div><div><b>${esc(f.tag)}</b><small>${esc(xbN(f.doing))}</small></div></div>`).join('');
+  const html=hero+stats+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
+    (ach?`<div class="jf-glass xb-ach"><div class="xb-h">LATEST ACHIEVEMENTS</div>${ach}</div>`:'')+
+    (fr?`<div class="jf-glass xb-fr"><div class="xb-h">FRIENDS ONLINE</div><div class="xb-frs">${fr}</div></div>`:'');
+  if(html!==xbSig){xbSig=html;b.innerHTML=html}
+  /* too tall for the screen? drop friends past 4, then achievements past 2, then the friends card */
+  const over=()=>b.scrollHeight>b.clientHeight+2;
+  for(let g=0;g<4&&over();g++){const n=b.querySelectorAll('.xb-f');if(n.length>4)n[n.length-1].remove();else break}
+  for(let g=0;g<2&&over();g++){const n=b.querySelectorAll('.xb-a');if(n.length>2)n[n.length-1].remove();else break}
+  if(over()){const f=b.querySelector('.xb-fr');if(f)f.remove()}}
 const txOn=()=>TXC().on!==false&&!!TX&&(TX.mine.length+TX.nhl.length+TX.mlb.length)>0;
 const NHLT={ANA:['Anaheim','Ducks'],BOS:['Boston','Bruins'],BUF:['Buffalo','Sabres'],CAR:['Carolina','Hurricanes'],CBJ:['Columbus','Blue Jackets'],CGY:['Calgary','Flames'],CHI:['Chicago','Blackhawks'],COL:['Colorado','Avalanche'],DAL:['Dallas','Stars'],DET:['Detroit','Red Wings'],EDM:['Edmonton','Oilers'],FLA:['Florida','Panthers'],LA:['Los Angeles','Kings'],MIN:['Minnesota','Wild'],MTL:['Montreal','Canadiens'],NJ:['New Jersey','Devils'],NSH:['Nashville','Predators'],NYI:['New York Islanders','Islanders'],NYR:['New York Rangers','Rangers'],OTT:['Ottawa','Senators'],PHI:['Philadelphia','Flyers'],PIT:['Pittsburgh','Penguins'],SEA:['Seattle','Kraken'],SJ:['San Jose','Sharks'],STL:['St. Louis','Blues'],TB:['Tampa Bay','Lightning'],TOR:['Toronto','Maple Leafs'],UTA:['Utah','Mammoth'],VAN:['Vancouver','Canucks'],VGK:['Vegas','Golden Knights'],WPG:['Winnipeg','Jets'],WSH:['Washington','Capitals']};
 function nhlAbbr(name){name=String(name||'').replace(/^the /i,'').trim();let best=null;
@@ -4853,7 +4937,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 97';
+document.getElementById('ver').textContent='build nova 99';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -4865,7 +4949,7 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();setTimeout(npListen,3000);setTimeout(loadTx,12000);radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
+moon();weather();sportsLoop();setTimeout(npListen,3000);setTimeout(loadTx,12000);setTimeout(loadXb,9000);radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
