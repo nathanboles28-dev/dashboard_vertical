@@ -1086,7 +1086,19 @@ body.npBar #xbBody{bottom:calc(2*var(--u))}
 .xb-fr{padding:calc(2.4*var(--u))!important}.xb-frs{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.1*var(--u))}
 .xb-f{display:flex;gap:calc(1.3*var(--u));align-items:center;padding:calc(1.1*var(--u)) calc(1.3*var(--u));background:rgba(255,255,255,.05);border-radius:calc(1.6*var(--u));min-width:0}
 .xb-fp{width:calc(5*var(--u));height:calc(5*var(--u));border-radius:50%;background:#2a3a30 center/cover;flex:0 0 auto}.xb-f>div:last-child{min-width:0}.xb-f b{font-size:calc(1.9*var(--u));display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-f small{display:block;color:var(--dim);font-size:calc(1.45*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (orientation:landscape){#xbBody{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;column-gap:calc(2.4*var(--u));row-gap:calc(1.8*var(--u))}#xbBody>.xb-hero,#xbBody>.xb-stats{grid-column:1/-1}}
+.xb-two{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.6*var(--u))}.xb-two>div{padding:calc(2.2*var(--u))!important;min-width:0}
+.xb-msn{display:flex;align-items:baseline;gap:calc(1.2*var(--u))}.xb-msn b{font-size:calc(3.6*var(--u));font-weight:600;color:#ffd54f}.xb-msn span{font-size:calc(2*var(--u));color:var(--dim)}
+.xb-bar.big{height:calc(1.4*var(--u))}.xb-ms>small,.xb-hrs>small{display:block;color:var(--dim);font-size:calc(1.55*var(--u))}
+.xb-rare{display:flex;gap:calc(1.3*var(--u));align-items:center;margin-top:calc(1.6*var(--u));padding-top:calc(1.4*var(--u));border-top:1px solid rgba(255,255,255,.08)}.xb-rare>div:last-child{min-width:0}
+.xb-rare b{display:block;font-size:calc(1.9*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-rare small{display:block;color:var(--dim);font-size:calc(1.4*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-rare small:first-child{color:#ffd54f;letter-spacing:.08em;font-weight:700;font-size:calc(1.2*var(--u))}
+.xb-hr{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:calc(1*var(--u));margin-bottom:calc(1.1*var(--u))}.xb-hr span{font-size:calc(1.7*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xb-hr em{font-style:normal;font-size:calc(1.7*var(--u));color:#a3f7bf;font-weight:600}.xb-hr .xb-bar{grid-column:1/-1;margin:calc(.5*var(--u)) 0 0}
+.xb-tot{margin-top:calc(.4*var(--u))}
+.xb-gpc{padding:calc(2.2*var(--u))!important}.xb-h span{float:right;font-weight:500;color:var(--dim);letter-spacing:0;font-size:calc(1.5*var(--u))}
+.xb-gps{display:grid;grid-template-columns:repeat(7,1fr);gap:calc(1*var(--u));min-width:0}
+.xb-gp{min-width:0}.xb-gp i{position:relative;display:block;aspect-ratio:2/3;border-radius:calc(1*var(--u));background:#1d2b22 center/cover;box-shadow:0 calc(.5*var(--u)) calc(1.2*var(--u)) rgba(0,0,0,.35)}
+.xb-gp em{position:absolute;left:calc(.5*var(--u));bottom:calc(.5*var(--u));font-style:normal;font-size:calc(1*var(--u));font-weight:800;letter-spacing:.06em;padding:calc(.2*var(--u)) calc(.6*var(--u));border-radius:calc(.5*var(--u));background:#107c10;color:#fff}
+.xb-gp.out em{background:#c0392b}.xb-gp small{display:block;font-size:calc(1.2*var(--u));color:var(--dim);margin-top:calc(.5*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (orientation:landscape){#xbBody>.xb-gpc{grid-column:1/-1}#xbBody{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;column-gap:calc(2.4*var(--u));row-gap:calc(1.8*var(--u))}#xbBody>.xb-hero,#xbBody>.xb-stats{grid-column:1/-1}}
 #txBody{position:absolute;left:5%;right:5%;top:calc(12*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u));overflow:hidden}
 body.npBar #txBody{bottom:calc(2*var(--u))}
 .tx-c{flex:none}.tx-c h2{display:flex;justify-content:space-between;align-items:baseline}.tx-c h2 small{font-size:calc(1.7*var(--u));font-weight:500;color:var(--dim)}
@@ -3802,9 +3814,15 @@ async function loadXb(){const C=XBC();if(C.on===false||!CFG.relay||!SECRETS.calk
     const was=XB&&XB.playing?XB.playing.name:'',now=j.playing?j.playing.name:'';
     /* remember when this game started, for "for 1 h 12 min" */
     try{let s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(!now)s=null;else if(!s||s.name!==now)s={name:now,at:Date.now()};localStorage.setItem('nova-xb-start',JSON.stringify(s))}catch(e){}
-    XB=j;if(now&&now!==was&&!xbFirst)xbPeek();xbFirst=false;
+    XB=j;if(now&&now!==was&&!xbFirst)xbPeek();xbFirst=false;xbTrack(now);
     if($('pXbox').classList.contains('on'))renderXb()}catch(e){console.warn('xbox',e)}}
 setInterval(()=>{if(XBC().on!==false)loadXb()},120000);
+/* time played: Nova adds up the minutes it sees you in each game (it checks every 2 min), per week. Kept on this screen. */
+const xbWeek=()=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toDateString()};   /* weeks start Monday */
+function xbTime(){try{const o=JSON.parse(localStorage.getItem('nova-xb-time')||'null');if(o&&o.week===xbWeek())return o}catch(e){}return {week:xbWeek(),games:{},last:0}}
+function xbTrack(game){const o=xbTime(),n=Date.now();
+  if(game&&o.last&&o.lastGame===game){const m=Math.min(5,(n-o.last)/60000);o.games[game]=(o.games[game]||0)+m}
+  o.last=game?n:0;o.lastGame=game||'';try{localStorage.setItem('nova-xb-time',JSON.stringify(o))}catch(e){}}
 /* you just started a game: show the Xbox page for a few seconds, then go back */
 function xbPeek(){const secs=XBC().jumpSecs;if(!secs)return;const cur=window._curPage||'';
   if(paused||cur==='live'||cur==='xbox'||window._npPeek||(typeof goalOn!=='undefined'&&goalOn)||($('night')&&$('night').classList.contains('on')))return;
@@ -3836,13 +3854,29 @@ function renderXb(){const b=$('xbBody');if(!XB){b.innerHTML='<div class="jf-wait
     ${(t.total||t.gsTotal)?`<div class="xb-bar"><i style="width:${Math.max(2,Math.min(100,t.pct!=null?t.pct:t.total?t.got/t.total*100:t.gs/t.gsTotal*100))}%"></i></div><small>${t.total?`${t.got} / ${t.total} achievements`:`${t.got||0} achievements`}${t.gs!=null?' · '+t.gs.toLocaleString()+(t.gsTotal?' / '+t.gsTotal.toLocaleString():'')+' G':''}</small>`:'<small>No achievements</small>'}</div></div>`).join('');
   const ach=(XB.ach||[]).slice(0,3).map(a=>`<div class="xb-a"><div class="xb-ai" style="background-image:url('${esc(xbImg(a.icon))}')"></div><div><b>${esc(a.name)}</b><small>${esc(xbN(a.game))}${a.at?' · '+esc(xbAgo(a.at)):''}</small></div>${a.gs?`<em>+${a.gs} G</em>`:''}</div>`).join('');
   const fr=(XB.friends||[]).slice(0,6).map(f=>`<div class="xb-f"><div class="xb-fp" style="background-image:url('${esc(xbImg(f.pic,64))}')"></div><div><b>${esc(f.tag)}</b><small>${esc(xbN(f.doing))}</small></div></div>`).join('');
+  /* next Gamerscore milestone (every 5,000) */
+  const sc=XB.score||0,step=sc>=100000?10000:5000,goal=Math.floor(sc/step)*step+step,from=goal-step,mpct=Math.round((sc-from)/step*100);
+  const ms=`<div class="jf-glass xb-ms"><div class="xb-h">NEXT MILESTONE</div><div class="xb-msn"><b>${sc.toLocaleString()}</b><span>→ ${goal.toLocaleString()} G</span></div>
+    <div class="xb-bar big"><i style="width:${Math.max(2,mpct)}%"></i></div><small>${(goal-sc).toLocaleString()} G to go${XB.weekGs?` · +${XB.weekGs.toLocaleString()} G this week`:''}</small>
+    ${XB.rarest?`<div class="xb-rare"><div class="xb-ai" style="background-image:url('${esc(xbImg(XB.rarest.icon))}')"></div><div><small>RAREST RECENT</small><b>${esc(XB.rarest.name)}</b><small>${XB.rarest.rare<1?XB.rarest.rare.toFixed(1):Math.round(XB.rarest.rare)}% of players · ${esc(xbN(XB.rarest.game))}</small></div></div>`:''}</div>`;
+  const tm=xbTime(),tg=Object.entries(tm.games).filter(([,m])=>m>=1).sort((a,b)=>b[1]-a[1]).slice(0,4),tmax=tg.length?tg[0][1]:1,hm=m=>m>=60?Math.floor(m/60)+' h '+String(Math.round(m%60)).padStart(2,'0')+'m':Math.round(m)+' min';
+  const hrs=`<div class="jf-glass xb-hrs"><div class="xb-h">PLAYED THIS WEEK</div>${tg.length?tg.map(([g,m])=>`<div class="xb-hr"><span>${esc(xbN(g))}</span><div class="xb-bar"><i style="width:${Math.max(4,m/tmax*100)}%"></i></div><em>${hm(m)}</em></div>`).join('')
+    +`<small class="xb-tot">${hm(tg.reduce((s,[,m])=>s+m,0))} total</small>`:'<small>Nothing yet this week. Nova counts the time it sees you in a game.</small>'}</div>`;
+  /* Game Pass: one strip, new games first, then the ones leaving soon */
+  const gpl=[...(XB.gpNew||[]).slice(0,4).map(g=>({...g,k:'new'})),...(XB.gpLeaving||[]).slice(0,3).map(g=>({...g,k:'out'}))];
+  const gp=gpl.length?`<div class="jf-glass xb-gpc"><div class="xb-h">GAME PASS <span>✨ new · ⏳ leaving soon</span></div><div class="xb-gps">${gpl.map(g=>`<div class="xb-gp ${g.k}"><i style="background-image:url('${esc(g.img)}')"><em>${g.k==='new'?'NEW':'LEAVING'}</em></i><small>${esc(xbN(g.name))}</small></div>`).join('')}</div></div>`:'';
   const html=hero+stats+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
     (ach?`<div class="jf-glass xb-ach"><div class="xb-h">LATEST ACHIEVEMENTS</div>${ach}</div>`:'')+
-    (fr?`<div class="jf-glass xb-fr"><div class="xb-h">FRIENDS ONLINE</div><div class="xb-frs">${fr}</div></div>`:'');
+    (fr?`<div class="jf-glass xb-fr"><div class="xb-h">FRIENDS ONLINE</div><div class="xb-frs">${fr}</div></div>`:'')+
+    `<div class="xb-two">${ms}${hrs}</div>`+gp;
   if(html!==xbSig){xbSig=html;b.innerHTML=html}
   /* too tall for the screen? drop friends past 4, then achievements past 2, then the friends card */
   const over=()=>b.scrollHeight>b.clientHeight+2;
-  for(let g=0;g<4&&over();g++){const n=b.querySelectorAll('.xb-f');if(n.length>4)n[n.length-1].remove();else break}
+  const cut=(sel,keep)=>{for(let g=0;g<8&&over();g++){const n=b.querySelectorAll(sel);if(n.length>keep)n[n.length-1].remove();else break}};
+  cut('.xb-a',2);cut('.xb-f',4);cut('.xb-f',2);
+  if(over()){const x=b.querySelector('.xb-rare');if(x)x.remove()}
+  cut('.xb-hr',2);cut('.xb-gm',2);
+  for(const s of ['.xb-fr','.xb-gpc','.xb-ach','.xb-two'])if(over()){const x=b.querySelector(s);if(x)x.remove()}
   for(let g=0;g<2&&over();g++){const n=b.querySelectorAll('.xb-a');if(n.length>2)n[n.length-1].remove();else break}
   if(over()){const f=b.querySelector('.xb-fr');if(f)f.remove()}}
 const txOn=()=>TXC().on!==false&&!!TX&&(TX.mine.length+TX.nhl.length+TX.mlb.length)>0;
@@ -4942,7 +4976,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 103';
+document.getElementById('ver').textContent='build nova 104';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
