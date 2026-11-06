@@ -3794,7 +3794,8 @@ let XB=null,xbAt=0,xbSig='',xbFirst=true;
 const xbOn=()=>XBC().on!==false&&!!XB&&!!XB.tag;
 const xbAgo=d=>{if(!d)return '';const m=(Date.now()-new Date(d))/60000;if(m<60)return Math.max(1,Math.round(m))+' min ago';if(m<1440)return Math.round(m/60)+' h ago';
   const days=Math.floor(m/1440);return days===1?'Yesterday':days<7?new Date(d).toLocaleDateString([],{weekday:'short'}):days<14?'Last week':new Date(d).toLocaleDateString([],{month:'short',day:'numeric'})};
-const xbImg=(u,w)=>!u?'':/images-eds/.test(u)&&!/[?&]w=/.test(u)?u+(u.includes('?')?'&':'?')+`w=${w}&h=${w}`:u;
+const xbImg=(u,w)=>{if(!u)return '';u=String(u).replace(/^http:/,'https:').replace(/^https:\/\/images-eds\.xboxlive\.com/,'https://images-eds-ssl.xboxlive.com');   /* friends' pictures come on a non-https address */
+  return w&&/images-eds/.test(u)&&!/[?&]w=/.test(u)?u+(u.includes('?')?'&':'?')+`w=${w}&h=${w}`:u};
 async function loadXb(){const C=XBC();if(C.on===false||!CFG.relay||!SECRETS.calkey)return;xbAt=Date.now();
   try{const j=await (await tfetch(relayBase()+'/xbox?key='+encodeURIComponent(SECRETS.calkey),20000)).json();if(j.error||!j.tag){if(j.error&&!/not set up/.test(j.error))console.warn('xbox',j.error);return}
     const was=XB&&XB.playing?XB.playing.name:'',now=j.playing?j.playing.name:'';
@@ -3827,9 +3828,9 @@ function renderXb(){const b=$('xbBody');if(!XB){b.innerHTML='<div class="jf-wait
     <div class="xb-now"><b><span class="xb-dot${on?'':' off'}"></span>${on?'Online':'Offline'}</b>${pl?`<small class="gm">Playing ${esc(xbN(pl.name))}</small>${since?`<small>${since}</small>`:''}`:on?'<small>On the home screen</small>':''}</div></div>`;
   const wk=(XB.titles||[]).filter(t=>t.last&&Date.now()-new Date(t.last)<7*864e5).length;
   const stats=`<div class="xb-stats"><div class="jf-glass"><b>${XB.weekAch||0}</b><small>achievements this week</small></div><div class="jf-glass"><b>${wk}</b><small>games played this week</small></div><div class="jf-glass"><b>${XB.friendsOnline||0}</b><small>friends online</small></div></div>`;
-  const games=(XB.titles||[]).slice(0,4).map(t=>`<div class="jf-glass xb-gm"><div class="xb-art" style="background-image:url('${esc(t.img)}')"></div><div><b>${esc(xbN(t.name))}</b><small>${pl&&pl.name===t.name?'Playing now':esc(xbAgo(t.last))}</small>
+  const games=(XB.titles||[]).slice(0,4).map(t=>`<div class="jf-glass xb-gm"><div class="xb-art" style="background-image:url('${esc(xbImg(t.img))}')"></div><div><b>${esc(xbN(t.name))}</b><small>${pl&&pl.name===t.name?'Playing now':esc(xbAgo(t.last))}</small>
     ${(t.total||t.gsTotal)?`<div class="xb-bar"><i style="width:${Math.max(2,Math.min(100,t.pct!=null?t.pct:t.total?t.got/t.total*100:t.gs/t.gsTotal*100))}%"></i></div><small>${t.total?`${t.got} / ${t.total} achievements`:`${t.got||0} achievements`}${t.gs!=null?' · '+t.gs.toLocaleString()+(t.gsTotal?' / '+t.gsTotal.toLocaleString():'')+' G':''}</small>`:'<small>No achievements</small>'}</div></div>`).join('');
-  const ach=(XB.ach||[]).slice(0,3).map(a=>`<div class="xb-a"><div class="xb-ai" style="background-image:url('${esc(a.icon)}')"></div><div><b>${esc(a.name)}</b><small>${esc(xbN(a.game))}${a.at?' · '+esc(xbAgo(a.at)):''}</small></div>${a.gs?`<em>+${a.gs} G</em>`:''}</div>`).join('');
+  const ach=(XB.ach||[]).slice(0,3).map(a=>`<div class="xb-a"><div class="xb-ai" style="background-image:url('${esc(xbImg(a.icon))}')"></div><div><b>${esc(a.name)}</b><small>${esc(xbN(a.game))}${a.at?' · '+esc(xbAgo(a.at)):''}</small></div>${a.gs?`<em>+${a.gs} G</em>`:''}</div>`).join('');
   const fr=(XB.friends||[]).slice(0,6).map(f=>`<div class="xb-f"><div class="xb-fp" style="background-image:url('${esc(xbImg(f.pic,96))}')"></div><div><b>${esc(f.tag)}</b><small>${esc(xbN(f.doing))}</small></div></div>`).join('');
   const html=hero+stats+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
     (ach?`<div class="jf-glass xb-ach"><div class="xb-h">LATEST ACHIEVEMENTS</div>${ach}</div>`:'')+
@@ -4937,7 +4938,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 100';
+document.getElementById('ver').textContent='build nova 101';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
