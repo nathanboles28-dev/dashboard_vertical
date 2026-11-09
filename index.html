@@ -2322,7 +2322,7 @@ async function hmSet(name,v){const d=hmFind(name);if(!d)return;Object.assign(d,v
   try{await fetch(CFG.home.helper+'/set',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({id:d.id,...v})})}catch(e){}setTimeout(hmLoad,1500)}
 function hmScene(i){const sc=(CFG.home.scenes||[])[i];if(!sc)return;HM.scene=sc.name;for(const [n,v] of Object.entries(sc.set))hmSet(n,v)}
 function hmTile(n){const d=hmFind(n);if(!d)return `<div class="jf-glass hm-t gone"><div class="ic">${hmSvg('switch')}</div><div><b>${esc(n)}</b><small>Not found</small></div></div>`;
-  const st=!d.reach?'Not responding':!d.on?'Off':d.type==='light'&&d.bri!=null?`On · ${d.bri}%`:d.type==='fan'&&d.speed?`On · ${d.speed}%`:'On';
+  const st=!d.reach?(hmKind(d)==='light'||hmKind(d)==='plug'?'Off · no power':'Not responding'):!d.on?'Off':d.type==='light'&&d.bri!=null?`On · ${d.bri}%`:d.type==='fan'&&d.speed?`On · ${d.speed}%`:'On';
   return `<div class="jf-glass hm-t ${d.on&&d.reach?'on':'off'}" style="--lc:${hmColor(d)}" onclick="hmSet('${esc(d.name).replace(/'/g,"\\'")}',{on:${!d.on}})"><div class="ic ${hmKind(d)}">${hmSvg(hmKind(d))}</div><div><b>${esc(d.name)}</b><small>${st}</small></div></div>`}
 function renderHome(){const b=$('hmBody');if(!b)return;const H=CFG.home||{};
   if(!HM.devs.length){b.innerHTML=`<div class="hm-msg">${HM.err?esc(HM.err)+'.<br>Run the nova-home setup on this Mac.':'Loading your devices…'}</div>`;return}
@@ -2330,7 +2330,7 @@ function renderHome(){const b=$('hmBody');if(!b)return;const H=CFG.home||{};
   if(h){const c=hmColor(h),on=h.on&&h.reach;const sw=[['#ffcf7a',{ct:400}],['#fff3e0',{ct:250}],['#6c4dff',{color:'#6c4dff'}],['#2f8cff',{color:'#2f8cff'}],['#ff4d6d',{color:'#ff4d6d'}],['#3ddc84',{color:'#3ddc84'}]];
     const tone=hmTone(h),cur=on?(tone==='Warm white'?0:/white/.test(tone)?1:tone==='Purple'?2:tone==='Blue'?3:tone==='Red'||tone==='Pink'?4:tone==='Green'?5:-1):-1;
     hero=`<div class="jf-glass hm-hero" style="--lc:${c};--lo:${on?.55:0}"><div class="hm-orb ${on?'':'off'}">${hmSvg('light')}</div><div>
-      <div class="hm-hn">${esc(h.name)}</div><div class="hm-hs">${!h.reach?'Not responding':on?`<b>On</b> · ${h.bri!=null?h.bri+'% · ':''}${tone}`:'<b>Off</b>'}</div>
+      <div class="hm-hn">${esc(h.name)}</div><div class="hm-hs">${!h.reach?'<b>Off</b> · no power or not responding':on?`<b>On</b> · ${h.bri!=null?h.bri+'% · ':''}${tone}`:'<b>Off</b>'}</div>
       <div class="hm-bar"><i style="width:${on?h.bri||100:0}%"></i></div>
       <div class="hm-sw">${sw.map((x,i)=>`<span class="${i===cur?'cur':''}" style="--c:${x[0]}"></span>`).join('')}</div></div></div>`}
   const scenes=`<div class="hm-sc">${(H.scenes||[]).map((sc,i)=>`<div class="jf-glass hm-scn ${HM.scene===sc.name?'cur':''}" onclick="hmScene(${i})"><em>${sc.icon||'✨'}</em>${esc(sc.name)}</div>`).join('')}</div>`;
