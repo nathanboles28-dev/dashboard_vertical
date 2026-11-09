@@ -73,6 +73,16 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 .hm-g button.on{background:linear-gradient(150deg,color-mix(in srgb,var(--lc) 35%,transparent),rgba(255,255,255,.05));border-color:color-mix(in srgb,var(--lc) 60%,transparent)}
 .hm-g button.on i{background:var(--lc);box-shadow:0 0 10px var(--lc)}.hm-g button.on small{color:var(--ink)}
 .hm-g button:active,.hm-sc button:active{transform:scale(.96)}
+.tk{padding:16px;display:flex;flex-direction:column;gap:12px}
+.tk-ring{display:none;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(255,196,107,.18);border:1px solid rgba(255,196,107,.55);font-weight:600}
+.tk-ring button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:8px 16px;background:#ffc46b;color:#1a1300}
+.tk-q{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tk-q button,.tk-row button,.tk-add button{font:inherit;color:var(--ink);font-size:14px;font-weight:600;padding:10px 4px;border-radius:12px;border:1px solid var(--edge);background:rgba(255,255,255,.07)}
+.tk-h{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.tk-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid var(--edge)}.tk-row:first-of-type{border-top:0}
+.tk-row b{font-variant-numeric:tabular-nums;font-size:17px}.tk-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tk-row small{color:var(--dim)}
+.tk-row button{padding:6px 10px;font-size:13px}.tk-row input{width:22px;height:22px;accent-color:#7ee0a8}
+.tk-add{display:flex;gap:8px}.tk-add input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--edge);border-radius:12px;padding:10px 12px}.tk-add button{padding:10px 14px}
+.tk-empty{color:var(--dim);font-size:14px}
 </style>
 </head>
 <body>
@@ -89,6 +99,14 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 
   <div class="sec" id="hmSec" style="display:none">Home</div>
   <div class="card hm" id="hmCard"></div>
+  <div class="sec">Timers &amp; list</div>
+  <div class="card tk" id="tkCard">
+    <div class="tk-ring" id="tkRing"><span id="tkRingT"></span><button id="tkDone">Done</button></div>
+    <div class="tk-q"><button data-tm="60000">1 min</button><button data-tm="300000">5 min</button><button data-tm="600000">10 min</button><button data-tm="900000">15 min</button></div>
+    <div id="tkTm"></div><div id="tkRm"></div>
+    <div class="tk-h">Shopping list</div><div id="tkLs"></div>
+    <div class="tk-add"><input id="tkIn" placeholder="Add to the list (milk, eggs…)" enterkeyhint="done"><button id="tkAddB">Add</button></div>
+  </div>
   <div class="sec">Your day</div>
   <div class="grid">
     <button data-c="home"><span>🏠</span><b>Home</b></button>
@@ -194,6 +212,27 @@ function hmListen(){if(!T)return;const es=new EventSource('https://ntfy.sh/'+T+'
   es.onopen=()=>hmCmd({ping:1});
   es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}}}
 hmListen();
+
+/* ---------- Timers, reminders, list (state comes from the dashboard) ---------- */
+let TKS=null;
+function tkSend(o){if(!T)return;fetch('https://ntfy.sh/'+T,{method:'POST',body:JSON.stringify({tk:o})}).catch(()=>setConn(false,'Can\'t reach relay'))}
+const tkC=ms=>{const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
+function tkRender(){const S=TKS||{timers:[],rems:[],list:[],ring:[]};
+  $('tkRing').style.display=S.ring&&S.ring.length?'flex':'none';$('tkRingT').textContent=(S.ring||[])[0]||'';
+  $('tkTm').innerHTML=S.timers.length?S.timers.map(x=>`<div class="tk-row"><span>⏱ ${hmEsc(x.name||'Timer')}</span><b data-end="${x.end}">${tkC(x.end-Date.now())}</b><button data-cx="${x.id}">✕</button></div>`).join(''):'';
+  $('tkRm').innerHTML=S.rems.length?`<div class="tk-h">Reminders</div>`+S.rems.map(r=>`<div class="tk-row"><span>🔔 ${hmEsc(r.text)}</span><small>${new Date(r.at).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}</small><button data-ur="${r.id}">✕</button></div>`).join(''):'';
+  $('tkLs').innerHTML=S.list.length?S.list.map(x=>`<label class="tk-row"><input type="checkbox" data-del="${hmEsc(x.t)}"><span>${hmEsc(x.t)}</span></label>`).join(''):'<div class="tk-empty">Empty. Add below, or say "add milk to the list".</div>';
+  document.querySelectorAll('[data-cx]').forEach(b=>b.onclick=()=>{tkSend({cancel:+b.dataset.cx});TKS.timers=TKS.timers.filter(x=>x.id!==+b.dataset.cx);tkRender()});
+  document.querySelectorAll('[data-ur]').forEach(b=>b.onclick=()=>{tkSend({unrem:+b.dataset.ur});TKS.rems=TKS.rems.filter(x=>x.id!==+b.dataset.ur);tkRender()});
+  document.querySelectorAll('[data-del]').forEach(c=>c.onchange=()=>{setTimeout(()=>{tkSend({del:c.dataset.del});TKS.list=TKS.list.filter(x=>x.t!==c.dataset.del);tkRender()},400)})}
+document.querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>tkSend({timer:+b.dataset.tm}));
+$('tkDone').onclick=()=>{tkSend({dismiss:1});if(TKS){TKS.ring=[];tkRender()}};
+const tkAdd=()=>{const v=$('tkIn').value.trim();if(!v)return;tkSend({add:v});if(TKS){v.split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>TKS.list.push({t:x}));tkRender()}$('tkIn').value=''};
+$('tkAddB').onclick=tkAdd;$('tkIn').onkeydown=e=>{if(e.key==='Enter')tkAdd()};
+setInterval(()=>document.querySelectorAll('#tkTm [data-end]').forEach(b=>b.textContent=tkC(+b.dataset.end-Date.now())),1000);
+function tkListen(){if(!T)return;const es=new EventSource('https://ntfy.sh/'+T+'-tasks/sse?since=latest');es.onopen=()=>tkSend({ping:1});
+  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;try{TKS=JSON.parse(d.message);tkRender()}catch(x){}}}
+tkRender();tkListen();
 
 /* ---------- speaking ---------- */
 let voice=null;
