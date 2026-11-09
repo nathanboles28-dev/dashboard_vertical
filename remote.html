@@ -59,6 +59,20 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 .sw.on{background:#34c759}
 .grid button.wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;padding:14px 6px}
 .grid button.wide span{font-size:22px}.sw.on::after{transform:translateX(20px)}
+.hm{padding:16px;display:none;flex-direction:column;gap:14px}
+.hm-hero{display:flex;align-items:center;gap:14px}
+.hm-orb{width:58px;height:58px;border-radius:50%;flex:none;border:0;background:radial-gradient(circle at 40% 35%,#fff 0,var(--lc,#555) 40%,rgba(0,0,0,.2) 75%);box-shadow:0 0 26px var(--lc,transparent);cursor:pointer}
+.hm-orb.off{background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.25),rgba(255,255,255,.06) 60%);box-shadow:inset 0 0 0 1px var(--edge)}
+.hm-hero b{display:block;font-size:19px}.hm-hero small{font-size:14px;color:var(--dim)}
+.hm input[type=range]{width:100%;accent-color:var(--lc,#ffc46b);height:28px}
+.hm-sw{display:flex;justify-content:space-between}.hm-sw button{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:var(--c);cursor:pointer}
+.hm-sc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.hm-sc button{font:inherit;color:var(--ink);font-size:12px;font-weight:600;padding:10px 2px 8px;border-radius:14px;border:1px solid var(--edge);background:rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;gap:4px}.hm-sc button span{font-size:22px}
+.hm-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hm-g button{font:inherit;color:var(--ink);text-align:left;padding:11px 11px 10px;border-radius:16px;border:1px solid var(--edge);background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px;min-height:84px;cursor:pointer;transition:background .25s}
+.hm-g button i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.18)}.hm-g button b{font-size:13px;line-height:1.2}.hm-g button small{font-size:12px;color:var(--dim)}
+.hm-g button.on{background:linear-gradient(150deg,color-mix(in srgb,var(--lc) 35%,transparent),rgba(255,255,255,.05));border-color:color-mix(in srgb,var(--lc) 60%,transparent)}
+.hm-g button.on i{background:var(--lc);box-shadow:0 0 10px var(--lc)}.hm-g button.on small{color:var(--ink)}
+.hm-g button:active,.hm-sc button:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -73,9 +87,12 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 
   <div class="card say" id="sayCard"><button class="sayx" id="sayX" aria-label="Close">✕</button><small>Nova</small><p id="sayText"></p></div>
 
+  <div class="sec" id="hmSec" style="display:none">Home</div>
+  <div class="card hm" id="hmCard"></div>
   <div class="sec">Your day</div>
   <div class="grid">
     <button data-c="home"><span>🏠</span><b>Home</b></button>
+    <button data-c="my devices"><span>💡</span><b>Devices</b></button>
     <button data-c="weather"><span>⛅</span><b>Weather</b></button>
     <button data-c="weather maps"><span>🗺️</span><b>Weather maps</b></button>
     <button data-c="calendar"><span>📅</span><b>Calendar</b></button>
@@ -156,6 +173,27 @@ function listen(){
     $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)};
 }
 listen();
+
+/* ---------- Home: your lights, plugs and Rokus (state comes from the dashboard) ---------- */
+let HM=null,hmHold=0;
+function hmCmd(o){if(!T)return;fetch('https://ntfy.sh/'+T,{method:'POST',body:JSON.stringify({hm:o})}).catch(()=>setConn(false,'Can\'t reach relay'))}
+function hmEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function hmRender(){if(!HM||!HM.devices||!HM.devices.length)return;$('hmSec').style.display='';const c=$('hmCard');c.style.display='flex';
+  const h=HM.devices.find(d=>d.n===HM.hero),on=h&&h.on&&h.r!==false;
+  const sw=[['#ffcf7a',{ct:400}],['#fff3e0',{ct:250}],['#6c4dff',{color:'#6c4dff'}],['#2f8cff',{color:'#2f8cff'}],['#ff4d6d',{color:'#ff4d6d'}],['#3ddc84',{color:'#3ddc84'}]];
+  c.innerHTML=(h?`<div class="hm-hero" style="--lc:${h.c}"><button class="hm-orb ${on?'':'off'}" data-t="${hmEsc(h.n)}"></button><div><b>${hmEsc(h.n)}</b><small>${on?'On'+(h.b!=null?' · '+h.b+'%':''):'Off'} · tap the bulb</small></div></div>
+    <input type="range" min="1" max="100" value="${h.b||100}" id="hmBri" style="--lc:${h.c}">
+    <div class="hm-sw">${sw.map((x,i)=>`<button data-sw="${i}" style="--c:${x[0]}" aria-label="colour"></button>`).join('')}</div>`:'')+
+    `<div class="hm-sc">${(HM.scenes||[]).map(s=>`<button data-sc="${hmEsc(s.n)}"><span>${s.i||'✨'}</span>${hmEsc(s.n)}</button>`).join('')}</div>
+    <div class="hm-g">${HM.devices.filter(d=>d.n!==HM.hero).map(d=>`<button class="${d.on&&d.r!==false?'on':''}" style="--lc:${d.c}" data-t="${hmEsc(d.n)}"><i></i><b>${hmEsc(d.n)}</b><small>${d.r===false?'Not responding':d.on?'On'+(d.b!=null?' · '+d.b+'%':''):'Off'}</small></button>`).join('')}</div>`;
+  c.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const d=HM.devices.find(x=>x.n===b.dataset.t);if(!d)return;d.on=!d.on;hmHold=Date.now();hmRender();hmCmd({n:d.n,v:{on:d.on}})});
+  c.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>hmCmd({scene:b.dataset.sc}));
+  c.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>{hmHold=Date.now();if(h){h.on=true;h.c=sw[+b.dataset.sw][0];hmRender()}hmCmd({n:HM.hero,v:sw[+b.dataset.sw][1]})});
+  const r=$('hmBri');if(r){r.oninput=()=>{hmHold=Date.now()};r.onchange=()=>{hmHold=Date.now();if(h){h.on=true;h.b=+r.value}hmCmd({n:HM.hero,v:{bri:+r.value}});hmRender()}}}
+function hmListen(){if(!T)return;const es=new EventSource('https://ntfy.sh/'+T+'-home/sse?since=latest');
+  es.onopen=()=>hmCmd({ping:1});
+  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}}}
+hmListen();
 
 /* ---------- speaking ---------- */
 let voice=null;
