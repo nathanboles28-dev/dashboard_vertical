@@ -107,7 +107,7 @@ body.alt #mini{opacity:.85}
 .sp-tag{font-size:calc(1.75*var(--u));font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#ffd98a}
 .sp-wait{margin:auto;color:var(--dim);font-size:calc(2.2*var(--u))}
 .sp-img{flex:1 1 auto;min-height:calc(10*var(--u));max-height:calc(17*var(--u));border-radius:calc(1.4*var(--u));overflow:hidden;position:relative;background:rgba(255,255,255,.06)}
-.sp-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:spKen 30s ease-in-out both}
+.sp-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;animation:none}.sp-img .sp-bg{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;filter:blur(18px) brightness(.55) saturate(1.2);animation:none}
 @keyframes spKen{from{transform:scale(1.02)}to{transform:scale(1.14) translate(-2%,-2%)}}
 .sp-t{font-size:calc(2.4*var(--u));font-weight:700;line-height:1.2}
 .sp-txt{font-size:calc(2.2*var(--u));line-height:1.42;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
@@ -1690,7 +1690,7 @@ const CFG={
   // Xbox page (relay secret XBL_KEY from xbl.io). jumpSecs: when you start playing, show the page this many seconds (0 = off)
   xbox:{on:true, jumpSecs:10, mini:true},
   // Home: devices come from Homebridge through the small nova-home helper on this Mac. Names must match Homebridge exactly.
-  home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:true,
+  home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Large Light','Small Lamp','Office Roku']},
            {name:'Bedroom', devices:['Nathan Bedside Light','Erinn bedside light']},
            {name:'Around the house', devices:['Kitchen Lights','Rosemary Fan','Upstairs Roku']}],
@@ -2343,6 +2343,11 @@ function hmBadge(){const el=$('hmBadge');if(!el)return;const H=CFG.home,h=H&&H.b
 /* tell the phone remote what's on */
 let hmSent='';function hmReply(){try{if(!SECRETS||!SECRETS.topic)return;const st=HM.devs.map(d=>({n:d.name,t:d.type,on:!!d.on,b:d.bri,c:hmColor(d),r:d.reach}));const sig=JSON.stringify(st);if(sig===hmSent)return;hmSent=sig;
   fetch(`https://ntfy.sh/${SECRETS.topic}-home`,{method:'POST',body:JSON.stringify({devices:st,hero:CFG.home.hero,scenes:(CFG.home.scenes||[]).map(s=>({n:s.name,i:s.icon})),at:Date.now()})}).catch(()=>{})}catch(e){}}
+/* what's wrong with the smart home, in plain words ('' = fine) */
+function hmWhy(){if(HM.err)return 'home helper not running on this Mac';if(!HM.devs.length)return '';
+  const dead=HM.devs.filter(d=>!d.reach).length;if(dead===HM.devs.length)return 'no devices answering: the Alexa sign-in in Homebridge may have expired';
+  if(Date.now()-HM.at>10*60000)return 'not updated in 10 min';return ''}
+let hmWarned='';setInterval(()=>{if(!(CFG.home&&CFG.home.on))return;const w=hmWhy();if(w&&w!==hmWarned)toast(`<b>Home</b>${esc(w)}`);hmWarned=w},60000);
 function hmRemote(o){if(o.ping){hmSent='';hmReply();return}if(o.scene!=null){const i=(CFG.home.scenes||[]).findIndex(s=>s.name===o.scene);if(i>=0)hmScene(i);return}if(o.n)hmSet(o.n,o.v||{})}
 function hmSay(){const on=HM.devs.filter(d=>d.on&&d.reach).map(d=>d.name);return on.length?`On right now: ${on.join(', ')}.`:'Everything is off.'}
 setInterval(()=>{const vis=$('pHome')&&$('pHome').classList.contains('on');if(vis||Date.now()-HM.at>20000)hmLoad()},5000);setTimeout(hmLoad,1200);
@@ -4364,6 +4369,7 @@ function healthList(){
   if(typeof locOn==='function'&&locOn()&&drvList().length&&(drvAt||drvErr))add('Drive times',!drvErr,drvErr);
   if(typeof locOn==='function'&&locOn())add('Traffic cams',!locErr&&!!LOC,locErr||(LOC?'':'not loaded'));
   if(typeof hubOn==='function'&&hubOn())add('Leafs hub',!!HUB,HUB?'':'not loaded');
+  if(CFG.home&&CFG.home.on){const w=hmWhy();add('Home devices',!w,w)}
   if(SECRETS.topic)add('Remote',remoteUp!==false,remoteUp===false?'disconnected':''); else add('Remote',false,'topic not set on this screen');
   return out;
 }
@@ -4372,6 +4378,8 @@ function healthDot(){const L=healthList(),bad=L.filter(x=>!x.ok),crit=bad.some(x
   const d=$('hdot');d.className=bad.length?(crit?'bad':'warn'):'ok';d.title=bad.length?bad.map(x=>x.name+': '+x.why).join('\n'):'All good';
   if($('hpanel').classList.contains('on'))healthPanel()}
 setInterval(healthDot,30000);
+/* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
+const bootAt=Date.now();setInterval(()=>{const n=new Date();if(n.getHours()===4&&n.getMinutes()<10&&Date.now()-bootAt>3600e3)location.reload()},60000);
 function healthPanel(){const L=healthList();$('hpanel').innerHTML=`<h3>🩺 Status</h3>${L.map(x=>`<div class="${x.ok?'ok':'bad'}"><i></i><b>${esc(x.name)}</b><span>${x.ok?'OK':esc(x.why||'problem')}</span></div>`).join('')}<small>${esc(HC.relay.v||'')} · ${esc($('ver')?$('ver').textContent:'')}</small>`}
 /* big numbers count up from zero as a page comes in */
 const CU_SEL='.ts-nrow b,.ts-fun b,#temp,#fTemp,.lc-drm,.cdr-n b,.wr-big,.hb2-rec,.hb2-ld b,.sn-big,.wr-facts b,.hb2-race b,.hb2-sc b';
@@ -4773,7 +4781,7 @@ function spFit(el){const tx=el.querySelector('.sp-txt'),inn=el.querySelector('.s
     const over=()=>inn.scrollHeight>inn.clientHeight+1||tx.scrollHeight>tx.clientHeight+1;
     for(let g=0;g<14&&over()&&f>min;g++){f*=.93;tx.style.fontSize=f+'px'}
     if(over()){tx.style.display='';tx.style.webkitLineClamp=''}};
-  go();const im=el.querySelector('.sp-img img');if(im&&!im.complete)im.addEventListener('load',go,{once:true})}
+  go();const im=el.querySelector('.sp-img img:not(.sp-bg)');if(im&&!im.complete)im.addEventListener('load',go,{once:true})}
 function renderSpot(midVisit){
   const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();
   const left=((window._pgEnd||Infinity)-Date.now())/1000,need=((CFG.spotlight&&CFG.spotlight.answerSecs)||12)+4;
@@ -4781,7 +4789,8 @@ function renderSpot(midVisit){
   /* not enough time left to reveal a trivia answer: skip to the next non-trivia card */
   for(let g=0;g<4&&it&&it.k==='trivia'&&left<need;g++)it=spNext();
   if(!it){el.innerHTML='<div class="sp-wait">✨ Loading something interesting…</div>';return}
-  const img=it.img?`<div class="sp-img"><img src="${esc(it.img)}" alt="" onerror="this.parentNode.remove()"></div>`:'';
+  const big=it.img?String(it.img).replace(/\/(\d+)px-/,(m,n)=>+n<640?'/640px-':m):'';
+  const img=it.img?`<div class="sp-img"><img class="sp-bg" src="${esc(big)}" alt=""><img src="${esc(big)}" alt="" onerror="if(this.src!=='${esc(it.img)}'){this.src='${esc(it.img)}';this.previousElementSibling.src='${esc(it.img)}'}else this.parentNode.remove()"></div>`:'';
   let body='';
   if(it.k==='trivia')body=`<div class="sp-q">${esc(it.text)}</div><div class="sp-opts">${it.opts.map((o,i)=>`<div data-a="${o===it.ans?1:0}"><i>${'ABCD'[i]}</i>${esc(o)}</div>`).join('')}</div><div class="sp-timer"><i></i></div>`;
   else body=`${it.title?`<b class="sp-t">${esc(it.title)}</b>`:''}<div class="sp-txt">${esc(it.text)}</div>${it.k==='otd'&&it.ago>0?`<div class="sp-ago">${it.ago} year${it.ago===1?'':'s'} ago today</div>`:''}${it.k==='born'&&it.age>0?`<div class="sp-ago">${it.age} years ago today</div>`:''}`;
