@@ -165,8 +165,8 @@ body.alt #mini{opacity:.85}
 .lvtag{font-size:calc(1.8*var(--u));font-weight:600;color:var(--dim);display:flex;align-items:center;gap:.6vw}
 .dot{width:calc(1.2*var(--u));height:calc(1.2*var(--u));border-radius:50%;background:var(--live);animation:pulse 1.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.25}}
-.lvrow{display:flex;justify-content:space-between;align-items:baseline;font-size:calc(4.6*var(--u));font-weight:300;line-height:1.12;font-variant-numeric:tabular-nums}
-.lvrow.fav{font-weight:600}
+.lvrow{display:flex;justify-content:space-between;align-items:baseline;gap:calc(1.6*var(--u));font-size:calc(3.7*var(--u));font-weight:300;line-height:1.12;font-variant-numeric:tabular-nums}
+.lvrow.fav{font-weight:600}.lvrow>span:last-child{flex:none}
 .tm{display:flex;align-items:center;gap:.9vw;min-width:0}.tm>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .logo{width:calc(5.2*var(--u));height:calc(5.2*var(--u));object-fit:contain;flex:none;border-radius:50%;background:rgba(255,255,255,.1);padding:calc(.4*var(--u))}
 #lvClock{font-size:calc(3*var(--u));font-weight:400;font-variant-numeric:tabular-nums}
@@ -1065,7 +1065,7 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 #pXbox{--acc:#52d273;--ico:'🎮'}
 #pHome{--acc:#ffc46b;--ico:'🏠'}
 #hmBody{position:absolute;left:5%;right:5%;top:calc(11*var(--u));bottom:calc(5*var(--u));display:flex;flex-direction:column;gap:calc(2.2*var(--u))}
-.hm-top{display:grid;grid-template-columns:1fr;gap:calc(2.2*var(--u))}
+.hm-side{display:flex;flex-direction:column;gap:calc(3.2*var(--u))}
 @media (orientation:landscape){#hmBody{display:grid;grid-template-columns:38fr 62fr;grid-template-rows:1fr}.hm-side{display:flex;flex-direction:column;gap:calc(2.2*var(--u));min-height:0}}
 .hm-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:calc(3.4*var(--u));padding:calc(3.2*var(--u)) calc(3.6*var(--u))!important}
 .hm-hero::before{content:'';position:absolute;inset:-30%;background:radial-gradient(circle at 22% 50%,var(--lc,transparent),transparent 55%);opacity:var(--lo,0);pointer-events:none;transition:opacity 1s}
@@ -1093,6 +1093,7 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .hm-ft{font-size:calc(1.8*var(--u));color:var(--dim);text-align:center}
 .hm-msg{margin:auto;text-align:center;font-size:calc(2.6*var(--u));color:var(--dim);max-width:80%;line-height:1.5}
 #hmBadge{position:fixed;z-index:60;bottom:calc(1.6*var(--u));left:calc(2.6*var(--u));display:none;align-items:center;gap:calc(.8*var(--u));padding:calc(.5*var(--u)) calc(1.4*var(--u));border-radius:calc(3*var(--u));font-size:calc(1.8*var(--u));font-weight:700;color:#fff;background:rgba(0,0,0,.3);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)}
+body.hasTicker #hmBadge{bottom:auto;left:auto;top:calc(1.2*var(--u));right:4vw}
 #hmBadge i{width:calc(1.4*var(--u));height:calc(1.4*var(--u));border-radius:50%;background:var(--lc);box-shadow:0 0 calc(1.4*var(--u)) var(--lc)}
 #xbBody{position:absolute;left:5%;right:5%;top:calc(11*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u));overflow:hidden}
 body.npBar #xbBody{bottom:calc(2*var(--u))}
@@ -1855,7 +1856,7 @@ async function weather(){
     const hr=d.hourly,t0=new Date();t0.setMinutes(0,0,0);
     let k=hr.time.findIndex(t=>new Date(t)>=t0);if(k<0)k=0;
     $('hours').innerHTML=[0,2,4,6,8,10].map(n=>{const i=k+n,h=new Date(hr.time[i]).getHours(),pp=hr.precipitation_probability[i];
-      return `<div class="day"><b>${n?(h%12||12)+(h<12?' AM':' PM'):'Now'}</b><span>${wx(hr.weather_code[i],hr.is_day[i]===0)[0]}</span>${Math.round(hr.temperature_2m[i])}°${pp>=10?' <em>'+pp+'%</em>':''}</div>`}).join('');
+      return `<div class="day"><b>${n?(h%12||12)+(h<12?' AM':' PM'):'Now'}</b><span>${wx(hr.weather_code[i],hr.is_day[i]===0)[0]}</span>${Math.round(hr.temperature_2m[i])}°</div>`}).join('');
     /* forecast page */
     $('fIcon').innerHTML=ic;$('fTemp').textContent=Math.round(c.temperature_2m)+'°';$('fDesc').textContent=tx;
     $('fSub').textContent=`${CFG.city} · Feels ${Math.round(c.apparent_temperature)}° · Sunrise ${fmt(new Date(dl.sunrise[0]))} · Sunset ${fmt(new Date(dl.sunset[0]))}`;
@@ -2306,7 +2307,8 @@ const HMI={light:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 
 const hmSvg=t=>`<svg viewBox="0 0 24 24">${HMI[t]||HMI.switch}</svg>`;
 function hmHsl(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1));return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`}
 function hmCt(m){const k=1e6/m,t=Math.max(0,Math.min(1,(k-2200)/(6500-2200)));return `rgb(255,${Math.round(170+t*80)},${Math.round(90+t*160)})`}
-function hmColor(d){if(d.type==='fan')return '#7fd3ff';if(d.type==='tv')return '#b48cff';if(d.type==='plug')return '#ffd27a';
+const hmKind=d=>/\bfan\b/i.test(d.name)?'fan':/roku|\btv\b|television/i.test(d.name)?'tv':d.type;
+function hmColor(d){d={...d,type:hmKind(d)};if(d.type==='fan')return '#7fd3ff';if(d.type==='tv')return '#b48cff';if(d.type==='plug')return '#ffd27a';
   if(d.mode==='ct'&&d.ct)return hmCt(d.ct);if(d.sat!=null&&d.sat>8&&d.hue!=null)return hmHsl(d.hue,Math.max(55,d.sat),58);return d.ct?hmCt(d.ct):'#ffcf7a'}
 function hmTone(d){if(d.type!=='light')return '';if(d.mode!=='ct'&&d.sat>8){const h=d.hue;return h<15||h>=345?'Red':h<45?'Orange':h<70?'Yellow':h<160?'Green':h<200?'Teal':h<255?'Blue':h<290?'Purple':'Pink'}
   const k=d.ct?1e6/d.ct:2700;return k<3000?'Warm white':k<4500?'Soft white':'Bright white'}
@@ -2319,7 +2321,7 @@ async function hmSet(name,v){const d=hmFind(name);if(!d)return;Object.assign(d,v
 function hmScene(i){const sc=(CFG.home.scenes||[])[i];if(!sc)return;HM.scene=sc.name;for(const [n,v] of Object.entries(sc.set))hmSet(n,v)}
 function hmTile(n){const d=hmFind(n);if(!d)return `<div class="jf-glass hm-t gone"><div class="ic">${hmSvg('switch')}</div><b>${esc(n)}</b><small>Not found</small></div>`;
   const st=!d.reach?'Not responding':!d.on?'Off':d.type==='light'&&d.bri!=null?`On · ${d.bri}%`:d.type==='fan'&&d.speed?`On · ${d.speed}%`:'On';
-  return `<div class="jf-glass hm-t ${d.on&&d.reach?'on':'off'}" style="--lc:${hmColor(d)}" onclick="hmSet('${esc(d.name).replace(/'/g,"\\'")}',{on:${!d.on}})"><div class="ic ${d.type}">${hmSvg(d.type)}</div><b>${esc(d.name)}</b><small>${st}</small></div>`}
+  return `<div class="jf-glass hm-t ${d.on&&d.reach?'on':'off'}" style="--lc:${hmColor(d)}" onclick="hmSet('${esc(d.name).replace(/'/g,"\\'")}',{on:${!d.on}})"><div class="ic ${hmKind(d)}">${hmSvg(hmKind(d))}</div><b>${esc(d.name)}</b><small>${st}</small></div>`}
 function renderHome(){const b=$('hmBody');if(!b)return;const H=CFG.home||{};
   if(!HM.devs.length){b.innerHTML=`<div class="hm-msg">${HM.err?esc(HM.err)+'.<br>Run the nova-home setup on this Mac.':'Loading your devices…'}</div>`;return}
   const h=hmFind(H.hero);let hero='';
@@ -4724,7 +4726,19 @@ async function loadSpotlight(){
   const n=new Date(),p=x=>String(x).padStart(2,'0'),out=[];
   if(Date.now()-SP.at>3*3600e3||!SP.items.length){
     try{const j=await (await tfetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/featured/${n.getFullYear()}/${p(n.getMonth()+1)}/${p(n.getDate())}`,15000)).json();
-      (j.onthisday||[]).filter(e=>e.text&&!spGrim.test(e.text)).slice(0,8).forEach(e=>{const pg=(e.pages||[]).find(x=>x.thumbnail)||{};out.push({k:'otd',tag:`📜 On this day · ${e.year}`,text:e.text,img:(pg.thumbnail||{}).source||'',ago:n.getFullYear()-e.year})});
+      /* more of today's history (all events + famous birthdays), the ones closest to home first */
+      let all={};try{all=await (await tfetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/all/${p(n.getMonth()+1)}/${p(n.getDate())}`,15000)).json()}catch(e){}
+      const rel=e=>{const t=e.text+' '+(e.pages||[]).map(x=>(x.description||'')+' '+(x.normalizedtitle||'')).join(' ');let sc=0;
+        if(/canad|ontario|toronto|london, ontario|qu[eé]bec|montreal|vancouver|ottawa/i.test(t))sc+=5;
+        if(/hockey|\bnhl\b|maple leafs|stanley cup|blue jays|world series|super bowl|olympi|baseball|basketball|football|f1|grand prix/i.test(t))sc+=4;
+        if(/video game|nintendo|xbox|playstation|sega|atari|apple|iphone|macintosh|microsoft|windows|internet|google|world wide web|computer/i.test(t))sc+=4;
+        if(/\bnasa\b|space|moon|apollo|astronaut|satellite|mars|telescope/i.test(t))sc+=3;
+        if(/film|movie|album|song|single|band|beatles|rock|television|tv series|sitcom|star wars|disney|pixar|marvel|broadway/i.test(t))sc+=3;
+        if(/invent|patent|discover|first|record|founded|opens|unveil|launch/i.test(t))sc+=1;
+        if((e.pages||[]).some(x=>x.thumbnail))sc+=1;return sc};
+      const evs=[...(j.onthisday||[]),...(all.selected||[]),...(all.events||[])].filter((e,i,a)=>e.text&&!spGrim.test(e.text)&&a.findIndex(x=>x.text===e.text)===i);
+      evs.sort((a,b)=>rel(b)-rel(a)).slice(0,10).forEach(e=>{const pg=(e.pages||[]).find(x=>x.thumbnail)||{};out.push({k:'otd',tag:`📜 On this day · ${e.year}`,text:e.text,img:(pg.thumbnail||{}).source||'',ago:n.getFullYear()-e.year})});
+      (all.births||[]).filter(e=>e.text&&e.year&&rel(e)>=4).sort((a,b)=>rel(b)-rel(a)).slice(0,6).forEach(e=>{const pg=(e.pages||[]).find(x=>x.thumbnail)||{};out.push({k:'born',tag:`🎂 Born today · ${e.year}`,text:e.text.replace(/,\s*/,': ').replace(/\s*\(d\. \d+\)/,''),img:(pg.thumbnail||{}).source||'',age:n.getFullYear()-e.year})});
       (j.dyk||[]).map(d=>spPlain(d.html||d.text)).filter(t=>t&&!spGrim.test(t)).slice(0,6).forEach(t=>out.push({k:'dyk',tag:'💡 Did you know',text:t.replace(/^\.\.\.\s*/,'… ')}));
       if(j.image&&j.image.thumbnail){const d=spPlain((j.image.description||{}).text||(j.image.description||{}).html||'');out.push({k:'pic',tag:'🖼️ Picture of the day',text:(d.split(/(?<=\.)\s/)[0]||'').slice(0,160),img:j.image.thumbnail.source})}
       if(j.tfa&&j.tfa.extract&&!spGrim.test(j.tfa.extract))out.push({k:'tfa',tag:'📖 Today on Wikipedia',title:j.tfa.normalizedtitle||j.tfa.title,text:j.tfa.extract.split(/(?<=\.)\s/).slice(0,2).join(' '),img:(j.tfa.thumbnail||{}).source||''});
@@ -4740,8 +4754,8 @@ async function loadSpotlight(){
   }
   if(out.length){
     /* mix them: on this day, trivia, did you know, trivia, picture ... */
-    const by=k=>out.filter(x=>x.k===k),o=by('otd'),d=by('dyk'),pic=by('pic').concat(by('tfa')),mix=[];
-    for(let i=0;i<12;i++){const s=[o[i],d[i],pic[i]].filter(Boolean);if(!s.length&&i>2)break;mix.push(...s)}
+    const by=k=>out.filter(x=>x.k===k),o=by('otd'),d=by('dyk'),bo=by('born'),pic=by('pic').concat(by('tfa')),mix=[];
+    for(let i=0;i<12;i++){const s=[o[i],d[i],bo[i],pic[i]].filter(Boolean);if(!s.length&&i>2)break;mix.push(...s)}
     SP.items=mix;
   }
 }
@@ -4753,6 +4767,13 @@ function spNext(){
   if(!pool.length)return null;
   SP.idx=(SP.idx+1)%pool.length;return pool[SP.idx];
 }
+/* make the whole text fit the card: smaller type instead of cutting it off */
+function spFit(el){const tx=el.querySelector('.sp-txt'),inn=el.querySelector('.sp-in');if(!tx||!inn)return;
+  const go=()=>{tx.style.fontSize='';tx.style.webkitLineClamp='unset';tx.style.display='block';let f=parseFloat(getComputedStyle(tx).fontSize),min=f*.55;
+    const over=()=>inn.scrollHeight>inn.clientHeight+1||tx.scrollHeight>tx.clientHeight+1;
+    for(let g=0;g<14&&over()&&f>min;g++){f*=.93;tx.style.fontSize=f+'px'}
+    if(over()){tx.style.display='';tx.style.webkitLineClamp=''}};
+  go();const im=el.querySelector('.sp-img img');if(im&&!im.complete)im.addEventListener('load',go,{once:true})}
 function renderSpot(midVisit){
   const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();
   const left=((window._pgEnd||Infinity)-Date.now())/1000,need=((CFG.spotlight&&CFG.spotlight.answerSecs)||12)+4;
@@ -4763,9 +4784,10 @@ function renderSpot(midVisit){
   const img=it.img?`<div class="sp-img"><img src="${esc(it.img)}" alt="" onerror="this.parentNode.remove()"></div>`:'';
   let body='';
   if(it.k==='trivia')body=`<div class="sp-q">${esc(it.text)}</div><div class="sp-opts">${it.opts.map((o,i)=>`<div data-a="${o===it.ans?1:0}"><i>${'ABCD'[i]}</i>${esc(o)}</div>`).join('')}</div><div class="sp-timer"><i></i></div>`;
-  else body=`${it.title?`<b class="sp-t">${esc(it.title)}</b>`:''}<div class="sp-txt">${esc(it.text)}</div>${it.k==='otd'&&it.ago>0?`<div class="sp-ago">${it.ago} year${it.ago===1?'':'s'} ago today</div>`:''}`;
+  else body=`${it.title?`<b class="sp-t">${esc(it.title)}</b>`:''}<div class="sp-txt">${esc(it.text)}</div>${it.k==='otd'&&it.ago>0?`<div class="sp-ago">${it.ago} year${it.ago===1?'':'s'} ago today</div>`:''}${it.k==='born'&&it.age>0?`<div class="sp-ago">${it.age} years ago today</div>`:''}`;
   el.className='card sp-'+it.k+(it.img||it.k==='trivia'?'':' sp-noimg');
   el.innerHTML=`<div class="sp-in"><div class="sp-tag">${esc(it.tag)}</div>${it.k==='trivia'?'':img}${body}</div>`;
+  spFit(el);
   if(it.k==='trivia'){const secs=Math.max(5,Math.min((CFG.spotlight&&CFG.spotlight.answerSecs)||12,left-4));const t=el.querySelector('.sp-timer i');if(t)t.style.animationDuration=secs+'s';
     SP.reveal=setTimeout(()=>{el.querySelectorAll('.sp-opts>div').forEach(d=>d.classList.add(d.dataset.a==='1'?'right':'wrong'));el.classList.add('revealed')},secs*1000)}
 }
