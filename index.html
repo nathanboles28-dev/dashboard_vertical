@@ -1082,10 +1082,10 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .hm-rooms{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;gap:calc(2*var(--u))}
 .hm-room h3{margin:0 0 calc(1.1*var(--u));font-size:calc(2.2*var(--u));letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700;display:flex;justify-content:space-between}.hm-room h3 span{letter-spacing:0;text-transform:none;font-weight:600}
 .hm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(1.6*var(--u))}
-.hm-t{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:calc(1.2*var(--u));padding:calc(2*var(--u)) calc(2.2*var(--u))!important;cursor:pointer;transition:background .6s,border-color .6s}
+.hm-t{position:relative;overflow:hidden;display:flex;flex-direction:row;align-items:center;gap:calc(1.6*var(--u));padding:calc(1.6*var(--u)) calc(2*var(--u))!important;cursor:pointer;transition:background .6s,border-color .6s}
 .hm-t .ic{width:calc(6.4*var(--u));height:calc(6.4*var(--u));border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08)}
 .hm-t .ic svg{width:58%;height:58%;fill:none;stroke:rgba(255,255,255,.6);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.hm-t b{font-size:calc(2.5*var(--u));color:#fff;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hm-t small{font-size:calc(2*var(--u));color:var(--dim)}
+.hm-t>div:last-child{min-width:0;display:flex;flex-direction:column;gap:calc(.3*var(--u))}.hm-t .ic{flex:none}.hm-t b{font-size:calc(2.4*var(--u));color:#fff;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.hm-t small{font-size:calc(2*var(--u));color:var(--dim)}
 .hm-t.on{background:linear-gradient(150deg,color-mix(in srgb,var(--lc) 34%,transparent),rgba(255,255,255,.04))!important;border-color:color-mix(in srgb,var(--lc) 60%,transparent)!important}
 .hm-t.on .ic{background:var(--lc);box-shadow:0 0 calc(3*var(--u)) var(--lc)}.hm-t.on .ic svg{stroke:rgba(20,16,10,.8)}.hm-t.on small{color:#fff}
 .hm-t.off{opacity:.75}.hm-t.gone{opacity:.4}
@@ -1691,13 +1691,15 @@ const CFG={
   xbox:{on:true, jumpSecs:10, mini:true},
   // Home: devices come from Homebridge through the small nova-home helper on this Mac. Names must match Homebridge exactly.
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
-    rooms:[{name:'Office', devices:['Office Light','Large Light','Small Lamp','Office Roku']},
+    rooms:[{name:'Office', devices:['Office Light','Office Roku']},
+           {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
            {name:'Bedroom', devices:['Nathan Bedside Light','Erinn bedside light']},
-           {name:'Around the house', devices:['Kitchen Lights','Rosemary Fan','Upstairs Roku']}],
-    scenes:[{name:'Work',   icon:'💼', set:{'Office Light':{on:true,bri:100,ct:250},'Large Light':{on:true},'Small Lamp':{on:true}}},
-            {name:'Gaming', icon:'🎮', set:{'Office Light':{on:true,bri:45,color:'#6c4dff'},'Large Light':{on:false},'Small Lamp':{on:true}}},
-            {name:'Chill',  icon:'🛋️', set:{'Office Light':{on:true,bri:30,ct:450},'Large Light':{on:false},'Small Lamp':{on:true}}},
-            {name:'Office off', icon:'🌙', set:{'Office Light':{on:false},'Large Light':{on:false},'Small Lamp':{on:false}}}]},   // mini: the 'playing on Xbox' bar at the bottom of every page
+           {name:'Kitchen', devices:['Kitchen Lights']},
+           {name:'Rosemary Bedroom', devices:['Rosemary Fan']}],
+    scenes:[{name:'Work',   icon:'💼', set:{'Office Light':{on:true,bri:100,ct:250}}},
+            {name:'Gaming', icon:'🎮', set:{'Office Light':{on:true,bri:45,color:'#6c4dff'}}},
+            {name:'Chill',  icon:'🛋️', set:{'Office Light':{on:true,bri:30,ct:450}}},
+            {name:'Office off', icon:'🌙', set:{'Office Light':{on:false},'Office Roku':{on:false}}}]},
   wazeMap:{on:true, reloadMin:15, views:[
     {name:'Woodstock → London', sub:'401 traffic · Waze reports', lat:43.0500, lon:-81.0000, z:11},
     {name:'Woodstock', lat:43.1300, lon:-80.7500, z:12},
@@ -2319,9 +2321,9 @@ async function hmLoad(){const H=CFG.home;if(!H||!H.on)return;try{const r=await f
 async function hmSet(name,v){const d=hmFind(name);if(!d)return;Object.assign(d,v.color?{}:v);if(v.ct)d.mode='ct';if(v.hue!=null)d.mode='hs';renderHome();hmBadge();
   try{await fetch(CFG.home.helper+'/set',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({id:d.id,...v})})}catch(e){}setTimeout(hmLoad,1500)}
 function hmScene(i){const sc=(CFG.home.scenes||[])[i];if(!sc)return;HM.scene=sc.name;for(const [n,v] of Object.entries(sc.set))hmSet(n,v)}
-function hmTile(n){const d=hmFind(n);if(!d)return `<div class="jf-glass hm-t gone"><div class="ic">${hmSvg('switch')}</div><b>${esc(n)}</b><small>Not found</small></div>`;
+function hmTile(n){const d=hmFind(n);if(!d)return `<div class="jf-glass hm-t gone"><div class="ic">${hmSvg('switch')}</div><div><b>${esc(n)}</b><small>Not found</small></div></div>`;
   const st=!d.reach?'Not responding':!d.on?'Off':d.type==='light'&&d.bri!=null?`On · ${d.bri}%`:d.type==='fan'&&d.speed?`On · ${d.speed}%`:'On';
-  return `<div class="jf-glass hm-t ${d.on&&d.reach?'on':'off'}" style="--lc:${hmColor(d)}" onclick="hmSet('${esc(d.name).replace(/'/g,"\\'")}',{on:${!d.on}})"><div class="ic ${hmKind(d)}">${hmSvg(hmKind(d))}</div><b>${esc(d.name)}</b><small>${st}</small></div>`}
+  return `<div class="jf-glass hm-t ${d.on&&d.reach?'on':'off'}" style="--lc:${hmColor(d)}" onclick="hmSet('${esc(d.name).replace(/'/g,"\\'")}',{on:${!d.on}})"><div class="ic ${hmKind(d)}">${hmSvg(hmKind(d))}</div><div><b>${esc(d.name)}</b><small>${st}</small></div></div>`}
 function renderHome(){const b=$('hmBody');if(!b)return;const H=CFG.home||{};
   if(!HM.devs.length){b.innerHTML=`<div class="hm-msg">${HM.err?esc(HM.err)+'.<br>Run the nova-home setup on this Mac.':'Loading your devices…'}</div>`;return}
   const h=hmFind(H.hero);let hero='';
