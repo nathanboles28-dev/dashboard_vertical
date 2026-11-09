@@ -2346,11 +2346,12 @@ let hmSent='';function hmReply(){try{if(!SECRETS||!SECRETS.topic)return;const st
 /* what's wrong with the smart home, in plain words ('' = fine) */
 function hmWhy(){if(HM.err)return 'home helper not running on this Mac';if(!HM.devs.length)return '';
   const dead=HM.devs.filter(d=>!d.reach).length;if(dead===HM.devs.length)return 'no devices answering: the Alexa sign-in in Homebridge may have expired';
-  if(Date.now()-HM.at>10*60000)return 'not updated in 10 min';return ''}
+  if(Date.now()-HM.at>15*60000)return 'not updated in 15 min';return ''}
 let hmWarned='';setInterval(()=>{if(!(CFG.home&&CFG.home.on))return;const w=hmWhy();if(w&&w!==hmWarned)toast(`<b>Home</b>${esc(w)}`);hmWarned=w},60000);
 function hmRemote(o){if(o.ping){hmSent='';hmReply();return}if(o.scene!=null){const i=(CFG.home.scenes||[]).findIndex(s=>s.name===o.scene);if(i>=0)hmScene(i);return}if(o.n)hmSet(o.n,o.v||{})}
 function hmSay(){const on=HM.devs.filter(d=>d.on&&d.reach).map(d=>d.name);return on.length?`On right now: ${on.join(', ')}.`:'Everything is off.'}
-setInterval(()=>{const vis=$('pHome')&&$('pHome').classList.contains('on');if(vis||Date.now()-HM.at>20000)hmLoad()},5000);setTimeout(hmLoad,1200);
+/* gentle on Amazon: every 15 s while the Home page is up, every 2 min otherwise */
+setInterval(()=>{const vis=$('pHome')&&$('pHome').classList.contains('on');if(Date.now()-HM.at>(vis?15000:120000))hmLoad()},5000);setTimeout(hmLoad,1200);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const dayStart=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 const daysUntil=d=>Math.round((dayStart(d)-dayStart(new Date()))/864e5);
