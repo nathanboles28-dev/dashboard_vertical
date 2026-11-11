@@ -698,7 +698,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .wr-u b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wr-u>span:last-child{color:var(--dim);font-variant-numeric:tabular-nums}
 .wr-bar{height:calc(1.4*var(--u));border-radius:calc(1*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.wr-bar i{display:block;height:100%;border-radius:calc(1*var(--u))}
 /* ===== Visual refresh: page accent colours, icons, glow and entrance animation ===== */
-#shift{--acc:#6ea8ff}#pLive{--acc:#ff5c6c}#pGames{--acc:#4d8bff;--ico:'🏒'}#pJelly{--acc:#b18cff;--ico:'🍿'}#pGameday{--acc:#4d8bff;--ico:'🍁'}
+#shift{--acc:#6ea8ff}#pLive{--acc:#ff5c6c}#pKgd{--acc:#21a35d;--ico:'⚔️'}#pGames{--acc:#4d8bff;--ico:'🏒'}#pJelly{--acc:#b18cff;--ico:'🍿'}#pGameday{--acc:#4d8bff;--ico:'🍁'}
 #pLocal{--acc:#2fd3c0;--ico:'🚗'}#pFc{--acc:#5db7ff;--ico:'⛅'}#pNews{--acc:#ff9f43;--ico:'📰'}#pStand{--acc:#5fd88a;--ico:'📊'}
 #pComing{--acc:#ffd84a;--ico:'📅'}#pHub{--acc:#4d8bff;--ico:'🏒'}#pWS{--acc:#ffd84a;--ico:'⚾'}#pWrap{--acc:#ff5c8a;--ico:'🎬'}#pPhotos{--acc:#ffb84d}
 .page::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
@@ -1064,6 +1064,62 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 #pTx{--acc:#5fd88a;--ico:'🔁'}
 #pXbox{--acc:#52d273;--ico:'🎮'}
 #pHome{--acc:#ffc46b;--ico:'🏠'}
+/* ---- new game pages (ng-) ---- */
+.ng-body{position:absolute;left:5%;right:5%;top:calc(11*var(--u));bottom:calc(5*var(--u));display:flex;flex-direction:column;gap:calc(1.7*var(--u));overflow:hidden}
+.ng-body>*{flex-shrink:0}
+.ng-k{font-size:calc(1.75*var(--u));letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:800}.ng-k b{color:#fff;letter-spacing:.05em;font-size:calc(2.2*var(--u))}
+.ng-sb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(2.2*var(--u)) calc(3*var(--u))!important}
+.ng-tm{display:flex;align-items:center;gap:calc(1.8*var(--u));min-width:0}.ng-tm.r{justify-content:flex-end;text-align:right}
+.ng-lg{width:calc(9*var(--u));height:calc(9*var(--u));object-fit:contain;flex:none;filter:drop-shadow(0 calc(.4*var(--u)) calc(1*var(--u)) rgba(0,0,0,.4))}
+.ng-lg.ph{border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:calc(2.4*var(--u));background:rgba(255,255,255,.08);border:calc(.35*var(--u)) solid var(--c)}
+.ng-tm b{display:block;font-size:calc(3*var(--u));font-weight:800;letter-spacing:.04em}.ng-tm small{display:block;font-size:calc(1.8*var(--u));color:var(--dim);font-weight:600}
+.ng-sc{font-size:calc(9*var(--u));font-weight:800;line-height:1;font-variant-numeric:tabular-nums}.ng-sc.lo{color:rgba(255,255,255,.42)}
+.ng-mid{text-align:center;padding:0 calc(1*var(--u))}.ng-mid b{display:block;font-size:calc(2.7*var(--u));font-weight:800;letter-spacing:.12em;white-space:nowrap}
+.ng-mid b *{display:inline!important;white-space:nowrap}.ng-mid span{display:block;font-size:calc(1.85*var(--u));color:var(--dim);font-weight:700;letter-spacing:.12em;margin-top:calc(.5*var(--u))}
+.ng-live{color:#ff6b6b}.ng-live i{display:inline-block;width:calc(1.1*var(--u));height:calc(1.1*var(--u));border-radius:50%;background:#ff4d4d;box-shadow:0 0 calc(1.4*var(--u)) #ff4d4d;margin-right:calc(.8*var(--u));vertical-align:middle;animation:ngBlink 1.4s infinite}
+@keyframes ngBlink{50%{opacity:.35}}
+.ng-pp{display:inline-block!important;margin-top:calc(.9*var(--u))!important;padding:calc(.35*var(--u)) calc(1.4*var(--u));border-radius:calc(2*var(--u));background:rgba(255,209,102,.16);border:1px solid rgba(255,209,102,.5);color:#ffd166!important}
+.ng-call{border-left:calc(.6*var(--u)) solid var(--c,#3b7bff);padding:calc(.3*var(--u)) 0 calc(.3*var(--u)) calc(2.3*var(--u))}
+.ng-call b{font-size:calc(3.3*var(--u));font-weight:800;line-height:1.15}.ng-call p{font-size:calc(2.25*var(--u));color:rgba(255,255,255,.82);margin:calc(.5*var(--u)) 0 0;line-height:1.35}
+.ng-ch{padding:calc(2*var(--u)) calc(2.6*var(--u))!important}.ng-chh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:calc(.8*var(--u))}
+.ng-chart{height:calc(32*var(--u));position:relative}
+.ng-body>.ng-ch:has(.ng-chart){flex:1 0 auto;display:flex;flex-direction:column;max-height:calc(50*var(--u))}.ng-ch .ng-chart{flex:1}.ng-chart svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ng-row{display:grid;gap:calc(1.6*var(--u))}
+.ng-star{padding:calc(1.7*var(--u)) calc(1.2*var(--u))!important;text-align:center;position:relative}.ng-star .st{position:absolute;top:calc(1.1*var(--u));left:calc(1.5*var(--u));color:#ffc94d;font-size:calc(1.9*var(--u))}
+.ng-star b{display:block;font-size:calc(2.5*var(--u));font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-star small{font-size:calc(1.9*var(--u));color:var(--dim)}
+.ng-hs{width:calc(8*var(--u));height:calc(8*var(--u));border-radius:50%;margin:0 auto calc(.9*var(--u));display:grid;place-items:center;font-weight:800;font-size:calc(2.5*var(--u));overflow:hidden;
+ background:linear-gradient(160deg,#2c3a55,#141b2a);border:calc(.38*var(--u)) solid var(--c,#3b7bff);flex:none}.ng-hs img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.ng-box{padding:calc(1.9*var(--u)) calc(2.3*var(--u))!important}.ng-box .ng-k{display:flex;justify-content:space-between;margin-bottom:calc(1.3*var(--u))}
+.ng-gl{display:grid;grid-template-columns:auto 1fr auto auto;gap:calc(1.1*var(--u)) calc(1.5*var(--u));align-items:center;font-size:calc(2.35*var(--u))}
+.ng-gl b{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-gl span{color:var(--dim)}.ng-pos{color:#4ade80!important;font-weight:800}.ng-neg{color:#ff6b6b!important;font-weight:800}
+.ng-dot{width:calc(2*var(--u));height:calc(2*var(--u));border-radius:50%;background:var(--c)}
+.ng-xb{height:calc(1.2*var(--u));border-radius:9px;overflow:hidden;display:flex;margin:calc(.4*var(--u)) 0 calc(1.1*var(--u))}.ng-xb i{display:block;height:100%}
+.ng-xn{display:flex;justify-content:space-between;font-size:calc(3.3*var(--u));font-weight:800}
+.ng-xs{font-size:calc(1.95*var(--u));color:rgba(255,255,255,.8);margin-top:calc(.9*var(--u));line-height:1.4}
+.ng-strip{display:flex;align-items:center;justify-content:space-between;gap:calc(2*var(--u));padding:calc(1.5*var(--u)) calc(2.3*var(--u))!important;font-size:calc(2.3*var(--u))}.ng-strip b{font-weight:800}
+.ng-goals{padding:calc(1.5*var(--u)) calc(2.3*var(--u))!important}
+.ng-gr{display:grid;grid-template-columns:calc(5.8*var(--u)) 1fr auto;align-items:center;gap:calc(1.7*var(--u));padding:calc(1*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08);font-size:calc(2.45*var(--u))}
+.ng-gr:first-of-type{border-top:0}.ng-gr .ng-hs{width:calc(5.8*var(--u));height:calc(5.8*var(--u));margin:0;font-size:calc(1.8*var(--u));border-width:calc(.3*var(--u))}
+.ng-gr b{font-weight:800}.ng-gr span{color:var(--dim)}.ng-gr em{font-style:normal;font-weight:800;font-size:calc(2.15*var(--u));white-space:nowrap}
+.ng-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(2.6*var(--u)) calc(3*var(--u))!important}
+.ng-vs .ng-t{text-align:center;min-width:0}.ng-vs .ng-lg{width:calc(12*var(--u));height:calc(12*var(--u));margin:0 auto calc(1*var(--u));display:block}.ng-vs .ng-lg.ph{display:grid}
+.ng-vs .ng-t b{display:block;font-size:calc(3.3*var(--u));font-weight:800}.ng-vs .ng-t small{font-size:calc(2*var(--u));color:var(--dim)}
+.ng-fm{display:flex;gap:calc(.55*var(--u));justify-content:center;margin-top:calc(1*var(--u))}.ng-fm i{width:calc(3.3*var(--u));height:calc(3.3*var(--u));border-radius:calc(.8*var(--u));display:grid;place-items:center;font-style:normal;font-size:calc(1.5*var(--u));font-weight:800}
+.ng-fm .W{background:rgba(34,197,94,.2);color:#4ade80}.ng-fm .L{background:rgba(239,68,68,.2);color:#ff8a86}.ng-fm .O{background:rgba(245,158,11,.2);color:#fbbf24}
+.ng-when{text-align:center;padding:0 calc(1*var(--u))}.ng-when b{display:block;font-size:calc(5.6*var(--u));font-weight:300;line-height:1}.ng-when span{display:block;font-size:calc(1.9*var(--u));color:var(--dim);margin-top:calc(.9*var(--u))}
+.ng-when em{font-style:normal;display:block;margin-top:calc(1.2*var(--u));font-size:calc(1.75*var(--u));font-weight:800;letter-spacing:.12em;color:#9cc2ff}.ng-cd{font-variant-numeric:tabular-nums;color:#fff!important;font-weight:700}
+.ng-cr{display:grid;grid-template-columns:calc(9*var(--u)) 1fr calc(9*var(--u));align-items:center;gap:calc(1.5*var(--u));padding:calc(.9*var(--u)) 0;font-size:calc(2.5*var(--u));font-weight:800}
+.ng-cr .lb{text-align:center;font-size:calc(1.7*var(--u));color:var(--dim);letter-spacing:.14em;text-transform:uppercase}.ng-cr .ng-xb{height:calc(1*var(--u));margin:calc(.5*var(--u)) 0 0}.ng-cr>span:last-child{text-align:right}
+.ng-pl{padding:calc(1.6*var(--u)) calc(1.9*var(--u))!important;display:flex;align-items:center;gap:calc(1.5*var(--u));min-width:0}.ng-pl .ng-hs{width:calc(6.8*var(--u));height:calc(6.8*var(--u));margin:0;font-size:calc(2*var(--u))}
+.ng-pl b{display:block;font-size:calc(2.4*var(--u));font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ng-pl small{font-size:calc(1.85*var(--u));color:var(--dim)}.ng-pl>div:last-child{min-width:0}
+.ng-big{font-size:calc(4.2*var(--u));font-weight:300}
+@media (orientation:landscape){.ng-body{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:none;align-content:start}.ng-body>.ng-wide{grid-column:1/3}.ng-chart{height:calc(26*var(--u))}}
+/* ---- deep gradient backgrounds (replace the colour blobs) ---- */
+#bg[data-bg]:not([data-bg="photo"]){background:radial-gradient(120% 70% at 0% 0%,color-mix(in srgb,var(--c1) calc(var(--bo)*100%),transparent),transparent 62%),
+ radial-gradient(110% 70% at 100% 100%,color-mix(in srgb,var(--c2) calc(var(--bo)*110%),transparent),transparent 64%),linear-gradient(165deg,var(--b0),var(--b1) 50%,var(--b2))!important}
+#bg[data-bg]:not([data-bg="photo"]) b{display:none!important}
+#bg::after{background:radial-gradient(130% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.25))!important}
+#pglow{display:none!important}
 #clock{position:relative}
 #tkTimers{position:absolute;top:calc(3.4*var(--u));right:0;display:flex;flex-direction:column;align-items:flex-end;gap:calc(1.2*var(--u));z-index:2}
 .tk-t{display:flex;align-items:center;gap:calc(1.4*var(--u));padding:calc(1*var(--u)) calc(2*var(--u)) calc(1*var(--u)) calc(1*var(--u));border-radius:calc(5*var(--u));background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
@@ -1560,6 +1616,7 @@ html.liquid[data-theme="glass"] #bg{opacity:.8}
 <div id="npMini"></div>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
+<section id="pKgd" class="page"><div id="kgdBody"></div></section>
 <section id="pLocal" class="page"><div id="locBody"></div></section>
 <section id="pJelly" class="page"><div id="jfBg"></div><div id="jfBody"></div></section>
 <section id="pComing" class="page"><div class="pwrap"><div class="ptitle">Coming up</div><div id="comingBody"></div></div></section>
@@ -1577,7 +1634,7 @@ const CFG={
   // or one fixed colour: 'midnight' (deep navy), 'graphite' (charcoal), 'ocean' (deep teal), 'plum' (dark purple), or 'photo' (blurred photos from your folder)
   background:'cycle',
   bgMinutes:3,   // cycle: minutes on each colour before it slowly fades to the next
-  bgColours:['midnight','ember','ocean','rose','forest','sunset','plum','aurora','cobalt','graphite'],   // the colours the cycle moves through (remove any you don't like)
+  bgColours:['midnight','ocean','plum','forest','wine','aurora','cobalt','graphite'],   // the colours the cycle moves through (remove any you don't like)
   gameDayColours:true,   // on days your team plays, the background switches to that team's colours
   // Scores: one box per league, shown left to right.
   // type 'espn' covers NHL, MLB, NBA etc. ('sport/league' as ESPN names them).
@@ -1608,7 +1665,8 @@ const CFG={
     // sports (game day / live / World Series only show when they're on)
     {type:'recap',     secs:40},   // morning after a Leafs/Knights game, until noon
     {type:'ws',        secs:30},
-    {type:'gameday',   secs:40},
+    {type:'gameday',   secs:40},   // Leafs game day
+    {type:'kgameday',  secs:40},   // Knights game day
     {type:'live',      secs:60},
     {type:'hub',       secs:40},
     {type:'khub',      secs:40},   // Knights hub (OHL season)
@@ -1660,6 +1718,7 @@ const CFG={
   jellyfin:{on:true, jumpWhenPlaying:true, jumpSecs:30},
   // Game day board: shows only on days your team plays, until puck drop (team = NHL abbreviation).
   gameday:{on:true, team:'TOR'},
+  kgameday:{on:true, team:'LDN'},   // Knights game day (shows only on a Knights game day)
   // Live game page: while one of your teams is playing. secs = time on the live page; otherSecs = time on every other page during the game.
   // mlbTeamId: your MLB team's number (Blue Jays = 141).
   live:{on:true, secs:60, otherSecs:10, mlbTeamId:141, replaySecs:180},   // replaySecs: how long a new goal replay plays on the live page
@@ -1772,15 +1831,13 @@ document.documentElement.dataset.theme=CFG.theme||'dusk';
 if(CFG.liquid&&(CFG.theme||'')==='glass'){document.documentElement.classList.add('liquid');
   document.body.insertAdjacentHTML('afterbegin','<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgBend" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.004 0.007" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="2" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="28" xChannelSelector="R" yChannelSelector="G"/></filter></svg><div id="lgOrbs"><i></i><i></i><i></i><i></i></div>')}
 const BGP={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
-  ocean:{b:['#0d3a44','#071a20','#020607'],c:['#0f7a86','#1d4f8a','#0d6a5e','#14507a'],o:.58},
-  plum:{b:['#33204a','#150d22','#05030a'],c:['#6b2fa0','#2f3f9a','#8a2f7a','#4a2f9a'],o:.56},
-  graphite:{b:['#2a2d33','#121317','#050506'],c:['#5a6170','#3a3f4a','#4a5262','#2f343e'],o:.42},
-  ember:{b:['#3d1a12','#1c0b08','#060203'],c:['#b8441c','#8a1f3a','#d9772a','#6b2a1a'],o:.5},
-  forest:{b:['#12352a','#081a14','#020806'],c:['#1f7a52','#2a6b3a','#127a7a','#3d8a4a'],o:.52},
-  rose:{b:['#3a1530','#1a0915','#070206'],c:['#b0306e','#6a2f9a','#d0507a','#8a2a5a'],o:.5},
-  aurora:{b:['#0e2e3a','#06141c','#020609'],c:['#12a07a','#4a3fb0','#1f8ab0','#7a3fb0'],o:.5},
-  sunset:{b:['#3a1f3a','#1a0d1c','#060208'],c:['#d0602a','#9a2f6a','#e0952f','#5a2f8a'],o:.48},
-  cobalt:{b:['#0d2a5a','#061430','#02060f'],c:['#2a6fe0','#1fa0c8','#4a4fd0','#1f5fa8'],o:.55},
+  ocean:{b:['#0d3a44','#071a20','#020607'],c:['#0f7a86','#14507a','#0d6a5e','#14507a'],o:.55},
+  plum:{b:['#33204a','#150d22','#05030a'],c:['#6b2fa0','#2f3f9a','#8a2f7a','#4a2f9a'],o:.55},
+  graphite:{b:['#2a2d33','#121317','#050506'],c:['#5a6170','#3a3f4a','#4a5262','#2f343e'],o:.5},
+  forest:{b:['#12352a','#081a14','#020806'],c:['#1f7a52','#127a7a','#127a7a','#3d8a4a'],o:.52},
+  wine:{b:['#2e0f1c','#14070d','#050203'],c:['#8a1f3a','#4a1f6a','#8a2a5a','#4a1f6a'],o:.55},
+  aurora:{b:['#0e2e3a','#06141c','#020609'],c:['#12a07a','#4a3fb0','#1f8ab0','#7a3fb0'],o:.45},
+  cobalt:{b:['#0d2a5a','#061430','#02060f'],c:['#2a6fe0','#1f5fa8','#4a4fd0','#1f5fa8'],o:.5},
   /* game-day team colours */
   'NHL:TOR':{b:['#0e2552','#071534','#02060f'],c:['#1d4fb8','#00307a','#3a6fd8','#5c7fc4'],o:.58},
   'OHL:LDN':{b:['#0f3a26','#082116','#020805'],c:['#1d6b43','#154734','#b8923a','#2f8a58'],o:.55},
@@ -1794,7 +1851,7 @@ function bgApply(n){const el=document.getElementById('bg'),p=BGP[n]||BGP.midnigh
   if(mode==='photo')return;
   if(mode!=='cycle'){el.style.setProperty('--fade','0s');bgApply(mode);return}
   /* every few minutes the background drifts to a new colour, in a shuffled order so the same two never repeat back to back */
-  const all=(CFG.bgColours&&CFG.bgColours.length?CFG.bgColours:['midnight','ember','ocean','rose','forest','sunset','plum','aurora','cobalt','graphite']).filter(n=>BGP[n]);
+  const all=(CFG.bgColours&&CFG.bgColours.length?CFG.bgColours:['midnight','ocean','plum','forest','wine','aurora','cobalt','graphite']).filter(n=>BGP[n]);
   let order=[],last='';const nextBg=()=>{if(!order.length){order=all.slice().sort(()=>Math.random()-.5);if(order[0]===last&&order.length>1)order.push(order.shift())}last=order.shift();return last};
   bgApply(nextBg());
   setInterval(()=>{if(bgGame)return;bgApply(nextBg())},Math.max(1,+CFG.bgMinutes||4)*60000);
@@ -2241,10 +2298,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2270,7 +2327,8 @@ function nextPage(force,hold){
   if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
-  if(p.type==='gameday'){renderGameday();loadGameday()}
+  if(p.type==='gameday'){window._gdK=false;gdSig='';renderGameday();loadGameday()}
+  if(p.type==='kgameday'){window._gdK=true;gdSig='';renderGameday();loadKGD()}
   if(p.type==='local'){renderLocal();loadLocal();if(Date.now()-drvAt>290000)loadDrives()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   if(p.type==='ws'){renderWS();loadWS()}
@@ -3207,47 +3265,66 @@ const gdLogo=(u,ab)=>u&&/^https?:\/\//i.test(u)?`<img class="gd-lg" src="${esc(u
 /* player photo in a circle. MLB cut-outs sit at the bottom of the circle; if one is missing, fall back to the regular headshot, framed wider */
 const gdHead=(u,cls='')=>{if(!(u&&/^https?:\/\//i.test(u)))return `<div class="gd-hs ${cls}"></div>`;const mlb=/mlbstatic\.com/.test(u);
   return `<div class="gd-hs ${cls}${mlb?' mlb':''}"><img src="${esc(u)}" alt="" onerror="if(this.src.includes('/headshot/silo/')){this.src=this.src.replace('/headshot/silo/','/headshot/67/');this.parentNode.classList.add('port')}else this.remove()"></div>`};
+/* Knights (OHL) game day from the relay; same renderer as the Leafs one, its own page */
+let KGD=null,kgdAt=0;const GDX=()=>window._gdK?KGD:GD;
+async function loadKGD(){const C=CFG.kgameday||{};if(C.on===false||!CFG.relay)return;if(KGD&&Date.now()-kgdAt<9*60000)return;
+  const L=(CFG.leagues||[]).find(x=>x.type==='hockeytech'&&x.code==='ohl')||{};
+  for(const key of (L.keys||[])){try{const d=await (await tfetch(relayBase()+'/kgameday?team='+(C.team||'LDN')+'&ht='+encodeURIComponent(key),25000)).json();if(!d.error){KGD=d;kgdAt=Date.now();break}}catch(e){console.warn('kgameday',e)}}
+  if(window._gdK&&$('pKgd').classList.contains('on'))renderGameday()}
+const kgdToday=()=>{if(!KGD||!KGD.game)return false;const s=new Date(KGD.game.start);return s.toDateString()===new Date().toDateString()&&Date.now()<s.getTime()+10*60000};
+setTimeout(loadKGD,14000);setInterval(loadKGD,10*60000);
 function renderGameday(){
-  const b=$('gdBody');
-  if(!GD||!GD.game){b.innerHTML='<div class="jf-wait">No game scheduled</div>';gdSig='';return}
-  const g=GD.game,U=GD.us||{},T=GD.them||{},us=nick(g.us.name),them=nick(g.them.name);
-  const st=new Date(g.start);
-  const row=(label,a,c,hi)=>{if(a==null||c==null)return '';const tot=(+a)+(+c)||1,aw=hi==='low'?(+a)<(+c):(+a)>(+c),cw=hi==='low'?(+c)<(+a):(+c)>(+a);
-    return `<div class="gd-r"><span class="${aw?'w':''}">${esc(a)}${label.pct?'%':''}</span><div class="gd-mid"><small>${label.t}</small><div class="gd-bar"><i class="a" style="width:${(a/tot*100).toFixed(1)}%"></i><i class="b" style="width:${(c/tot*100).toFixed(1)}%"></i></div></div><span class="${cw?'w':''}">${esc(c)}${label.pct?'%':''}</span></div>`};
+  const b=$(window._gdK?'kgdBody':'gdBody');
+  if(!GDX()||!GDX().game){b.innerHTML='<div class="jf-wait">No game scheduled</div>';gdSig='';return}
+  const g=GDX().game,U=GDX().us||{},T=GDX().them||{},us=nick(g.us.name),them=nick(g.them.name);
+  const st=new Date(g.start),[cU,cT]=ngCols(g.us.abbr,g.them.abbr);
+  /* away on the left, home on the right */
+  const L={T:g.home?g.them:g.us,X:g.home?T:U,c:g.home?cT:cU,n:g.home?them:us},R={T:g.home?g.us:g.them,X:g.home?U:T,c:g.home?cU:cT,n:g.home?us:them};
   const form=f=>(f||[]).map(x=>`<i class="${x==='W'?'W':x==='OT'?'O':'L'}">${x}</i>`).join('');
-  const team=(X,name)=>`<div class="jf-glass gd-card"><h2>${esc(name)}${X.l10?' · last 10: '+esc(X.l10):''}</h2>${X.form&&X.form.length?`<div class="gd-form">${form(X.form)}</div>`:''}
-    ${X.goalies&&X.goalies.length?`<div class="gd-sub">GOALIES</div>${X.goalies.map(p=>`<div class="gd-p gd-gk">${gdHead(p.img)}<div><b>${esc(p.name)}</b><small>${esc(p.rec)}${p.sv?' · '+esc(p.sv):''}${p.gaa?' · '+esc(p.gaa)+' GAA':''}</small></div></div>`).join('')}`:''}
-    ${X.scorers&&X.scorers.length?`<div class="gd-sub">TOP SCORERS</div>${X.scorers.map(p=>`<div class="gd-p gd-sc">${gdHead(p.img)}<div><b>${esc(p.name)}</b><small>${esc(p.p)} PTS · ${esc(p.g)}G ${esc(p.a)}A</small></div></div>`).join('')}`:''}</div>`;
-  const L=GD.last,S=GD.series||{};
-  const lead=S.played?(S.us>S.them?`${us} lead series ${S.us}–${S.them}`:S.us<S.them?`${them} lead series ${S.them}–${S.us}`:`Series tied ${S.us}–${S.them}`):'';
-  const lastTxt=L?`Last meeting <b>${new Date(L.date).toLocaleDateString([],{month:'short',day:'numeric'})}</b> · ${L.res==='W'?esc(us):esc(them)} <b>${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}</b>${L.res==='OT'?' (OT)':''}`:'First meeting this season';
+  const side=S=>`<div class="ng-t">${ngLogo(S.T,S.c)}<b>${esc(S.n)}</b><small>${esc(S.X.rec||'')}${S.X.pts!=null?' · '+esc(S.X.pts)+' pts':''}</small><div class="ng-fm">${form(S.X.form)}</div></div>`;
+  const tS=X=>X.gfpg!=null&&X.gapg!=null?ngStr(X.gfpg-X.gapg,1):X.gd!=null&&X.gp?ngStr(X.gd,X.gp):1;
+  const wp=ngWP(0,0,{sF:tS(U),sO:tS(T),home:!!g.home});
+  const wins5=f=>(f||[]).filter(x=>x==='W').length,gdT=X=>X.gd!=null?X.gd:null,sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v);
+  const why=[];if(g.home)why.push('Home ice');else why.push('On the road');
+  if(gdT(U)!=null&&gdT(T)!=null&&gdT(U)!==gdT(T))why.push(`${gdT(U)>gdT(T)?'a better':'a worse'} goal differential (${sg(gdT(U))} vs ${sg(gdT(T))})`);
+  if((U.form||[]).length)why.push(`${wins5(U.form)===5?'five straight wins':wins5(U.form)+' win'+(wins5(U.form)===1?'':'s')+' in the last five'}`);
+  const Lm=GDX().last,S=GDX().series||{};
+  let lastLine='';if(Lm){const w=Lm.res==='W';lastLine=` ${w?us:them} won ${S.played>1?'the last meeting':'the only meeting so far'}, ${Math.max(Lm.us,Lm.them)}–${Math.min(Lm.us,Lm.them)}${Lm.res==='OT'?' in OT':''}.`}
+  const fav=wp>=0.5,pc=ngPct(wp);
+  const call=`<div class="ng-call ng-wide" style="--c:${cU}"><b>${esc(us)} ${fav?'are':'are underdogs at'} ${fav?pc+'% favourites':(100-pc)+'–'+pc}</b><p>${esc(why.join(', ').replace(/^./,c=>c.toUpperCase()))}.${esc(lastLine)}</p></div>`;
+  const bar=`<div class="jf-glass ng-ch ng-wide"><div class="ng-chh"><span class="ng-k">Pre-game win chance</span><span class="ng-k">${esc(us)} <b>${pc}%</b></span></div>
+    <div class="ng-xb" style="height:calc(2*var(--u));margin:0"><i style="width:${g.home?100-pc:pc}%;background:${L.c}"></i><i style="width:${g.home?pc:100-pc}%;background:${R.c}"></i></div>
+    <div class="ng-xn" style="margin-top:calc(.9*var(--u))"><span style="color:${L.c}">${esc(L.T.abbr)} ${g.home?100-pc:pc}%</span><span style="color:${R.c}">${esc(R.T.abbr)} ${g.home?pc:100-pc}%</span></div></div>`;
+  const row=(label,a,c,hi,pct)=>{if(a==null||c==null||a===''||c==='')return '';const tot=(+a)+(+c)||1,aw=hi==='low'?(+a)<(+c):(+a)>(+c);
+    return `<div class="ng-cr"><span style="color:${L.c}">${esc(a)}${pct?'%':''}</span><div><div class="lb">${label}</div><div class="ng-xb"><i style="width:${(a/tot*100).toFixed(1)}%;background:${L.c}"></i><i style="width:${(c/tot*100).toFixed(1)}%;background:${R.c}"></i></div></div><span style="color:${R.c}">${esc(c)}${pct?'%':''}</span></div>`};
+  const cmp=`<div class="jf-glass ng-box"><div class="ng-k"><span>Head to head</span><span>${esc(L.T.abbr)} · ${esc(R.T.abbr)}</span></div>
+    ${row('Goals for / game',L.X.gfpg,R.X.gfpg,'high')}${row('Goals against / game',L.X.gapg,R.X.gapg,'low')}${row('Power play',L.X.pp,R.X.pp,'high',1)}${row('Penalty kill',L.X.pk,R.X.pk,'high',1)}</div>`;
+  const sc=[0,1].map(i=>[L,R].map(S=>{const p=(S.X.scorers||[])[i];return p?`<div class="jf-glass ng-pl">${ngHs(p.img,p.name,S.c)}<div><b>${esc(String(p.name).split(' ').slice(-1)[0])}</b><small>${esc(p.p)} pts · ${esc(p.g)} G ${esc(p.a)} A</small></div></div>`:'<div></div>'}).join('')).join('');
+  const gks=S=>`<div class="jf-glass ng-box"><div class="ng-k"><span>${esc(S.T.abbr)} goalies</span><span>SV%</span></div><div class="ng-gl" style="grid-template-columns:auto 1fr auto">${(S.X.goalies||[]).map((p,i)=>`<i class="ng-dot" style="--c:${S.c};opacity:${i?.5:1}"></i><b>${esc(String(p.name).split(' ').slice(-1)[0])}</b><span>${esc(p.sv||'—')}</span>`).join('')}</div></div>`;
+  const hr=(S,home)=>{const r=home?S.X.homeRec:S.X.roadRec;if(!r)return '';const p=r.split('-').map(Number),gp=p.reduce((a,b)=>a+b,0),pts=p[0]+(p.slice(2).reduce((a,b)=>a+b,0));
+    return `<div class="jf-glass ng-box"><div class="ng-k"><span>${esc(S.n)} ${home?'at home':'on the road'}</span></div><div class="ng-big">${esc(r)}</div><div class="ng-xs" style="margin-top:calc(.3*var(--u))">${gp?`Points in ${pts} of ${gp} ${home?'home':'road'} games`:''}</div></div>`};
+  const hrRow=hr(L,false)+hr(R,true);
+  const lastTxt=Lm?`<b>${Lm.res==='W'?esc(g.us.abbr):esc(g.them.abbr)} ${Math.max(Lm.us,Lm.them)}–${Math.min(Lm.us,Lm.them)}${Lm.res==='OT'?' OT':''}</b> · ${new Date(/^\d{4}-\d\d-\d\d$/.test(Lm.date)?Lm.date+'T12:00':Lm.date).toLocaleDateString([],{month:'short',day:'numeric'})} ${Lm.home?'at home':'away'}`:'First meeting this season';
   const html=`<div class="jf-title">Game day</div>
-   <div class="gd-body">
-    <div class="jf-glass gd-hero"><div class="gd-kick">${esc(us.toUpperCase())} GAME DAY</div>
-      <div class="gd-vs"><div class="gd-tm">${gdLogo(g.us.logo,g.us.abbr)}<b>${esc(us)}</b><span>${esc(U.rec||'')} · ${esc(U.pts||0)} pts</span></div>
-        <div class="gd-at">${g.home?'vs':'at'}</div>
-        <div class="gd-tm">${gdLogo(g.them.logo,g.them.abbr)}<b>${esc(them)}</b><span>${esc(T.rec||'')} · ${esc(T.pts||0)} pts</span></div></div>
-      <div class="gd-cd" id="gdCd"></div>
-      <div class="gd-cdl">Puck drop <b>${fmt(st)}</b>${g.venue?' · '+esc(g.venue):''}</div>
-      ${g.nets&&g.nets.length?`<div class="gd-tv">${g.nets.map(n=>`<span class="hb-net">📺 ${esc(netName(n))}</span>`).join('')}</div>`:''}
-      <div class="gd-lm"><span>${lastTxt}</span>${lead?`<span class="gd-pill">${esc(lead)}</span>`:''}</div></div>
-    <div class="jf-glass gd-card gd-cmp"><h2>Head to head this season</h2>
-      ${row({t:'Goals for / game'},U.gfpg,T.gfpg,'high')}${row({t:'Goals against / game'},U.gapg,T.gapg,'low')}
-      ${row({t:'Power play',pct:1},U.pp,T.pp,'high')}${row({t:'Penalty kill',pct:1},U.pk,T.pk,'high')}
-      ${U.streak||T.streak?`<div class="gd-r gd-streak"><span class="w">${esc(U.streak)}</span><div class="gd-mid"><small>Current streak</small></div><span>${esc(T.streak)}</span></div>`:''}</div>
-    <div class="gd-two">${team(U,us)}${team(T,them)}</div>
+   <div class="ng-body gd-body">
+    <div class="jf-glass ng-vs ng-wide">${side(L)}<div class="ng-when"><b>${esc(fmt(st).replace(/ ?[AP]M$/,''))}</b><span>${/PM$/.test(fmt(st))?'PM':/AM$/.test(fmt(st))?'AM':''} ${st.toDateString()===new Date().toDateString()?'tonight':st.toLocaleDateString([],{weekday:'long'})}${g.venue?' · '+esc(g.venue):''}</span><span>Puck drop in <span class="ng-cd" id="gdCd"></span></span>${g.nets&&g.nets.length?`<em>${g.nets.map(n=>esc(netName(n).toUpperCase())).join(' · ')}</em>`:''}</div>${side(R)}</div>
+    ${call}${bar}${cmp}
+    <div class="ng-row" style="grid-template-columns:1fr 1fr">${sc}</div>
+    <div class="ng-row" style="grid-template-columns:1fr 1fr">${gks(L)}${gks(R)}</div>
+    ${hrRow?`<div class="ng-row" style="grid-template-columns:1fr 1fr">${hrRow}</div>`:''}
+    <div class="jf-glass ng-strip ng-wide"><span class="ng-k">Last meeting</span><span>${lastTxt}</span></div>
    </div>`;
   if(html!==gdSig){gdSig=html;b.innerHTML=html}
   fitGameday();setTimeout(fitGameday,400);
   gdTick();
 }
 /* too tall? drop the 2nd scorer, then the streak row, then the 2nd goalie (each team) */
-function fitGameday(){const b=document.querySelector('#gdBody .gd-body');if(!b)return;const over=()=>b.scrollHeight>b.clientHeight+2;
-  const drop=sel=>{const cards=b.querySelectorAll('.gd-two .gd-card');let did=false;cards.forEach(c=>{const x=c.querySelectorAll(sel);if(x.length>1){x[x.length-1].remove();did=true}});return did};
-  if(over())drop('.gd-sc');if(over()){const r=b.querySelector('.gd-streak');if(r)r.remove()}if(over())drop('.gd-gk');}
-function gdTick(){const el=$('gdCd');if(!el||!GD||!GD.game)return;const ms=new Date(GD.game.start)-Date.now();
-  if(ms<=0){el.textContent='Puck drop!';return}const s=Math.floor(ms/1000);el.textContent=Math.floor(s/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
-setInterval(()=>{if($('pGameday').classList.contains('on'))gdTick()},1000);
+function fitGameday(){const b=document.querySelector((window._gdK?'#kgdBody':'#gdBody')+' .gd-body');if(!b)return;const over=()=>b.scrollHeight>b.clientHeight+2;
+  for(let i=0;i<8&&over();i++){const x=[...b.querySelectorAll('.ng-row')];const pl=b.querySelectorAll('.ng-pl');
+    const hr=x.find(r=>/at home|on the road/.test(r.textContent));if(hr){hr.remove();continue}if(pl.length>2){pl[pl.length-1].remove();pl[pl.length-2].remove();continue}const gk=x.find(r=>/goalies/i.test(r.textContent));if(gk){gk.remove();continue}break}}
+function gdTick(){const el=document.querySelector((window._gdK?'#kgdBody':'#gdBody')+' #gdCd');if(!el||!GDX()||!GDX().game)return;const ms=new Date(GDX().game.start)-Date.now();
+  if(ms<=0){el.textContent='moments';return}const s=Math.floor(ms/1000);el.textContent=Math.floor(s/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
+setInterval(()=>{if($('pGameday').classList.contains('on')||$('pKgd').classList.contains('on'))gdTick()},1000);
 function gdSay(){
   if(!GD||!GD.game)return 'I don\'t see an upcoming game.';
   const g=GD.game,us=nick(g.us.name),them=nick(g.them.name),st=new Date(g.start),d=daysUntil(st);
@@ -3537,7 +3614,115 @@ function baseballParts(A,H){
       ${pitcherCard()}</div>`;
     return {ls,sit,zones};
 }
+/* ================= new game pages: shared bits ================= */
+const NGC={ANA:'#fc4c02',BOS:'#ffb81c',BUF:'#2f6fd6',CGY:'#e0413a',CAR:'#e2312f',CHI:'#e03a3e',COL:'#b0506a',CBJ:'#2f5ea8',DAL:'#00a36c',DET:'#e2393c',EDM:'#ff6f1a',FLA:'#e03a3e',
+  LAK:'#a2aaad',MIN:'#2a9a5c',MTL:'#e2433f',NSH:'#ffb81c',NJD:'#e03a3e',NYI:'#f47d30',NYR:'#2f6fd6',OTT:'#e03a3e',PHI:'#f74902',PIT:'#fcb514',SJS:'#00a3ad',SEA:'#68d2df',STL:'#2f6fd6',
+  TBL:'#2f6fd6',TOR:'#3b7bff',UTA:'#71afe5',VAN:'#2f8fd6',VGK:'#b4975a',WSH:'#e03a3e',WPG:'#4b79c8',LDN:'#21a35d'};
+const ngBlue=c=>/^#(2f6fd6|3b7bff|2f5ea8|2f8fd6|4b79c8|71afe5|68d2df|00a3ad)$/i.test(c);
+function ngCols(favAb,oppAb){const f=NGC[favAb]||'#3b7bff';let o=NGC[oppAb]||'#e2433f';if(o===f||(ngBlue(f)&&ngBlue(o))||(f==='#21a35d'&&/2a9a5c|00a36c/.test(o)))o='#e2433f';if(o===f)o='#f5b342';return [f,o]}
+const ngHs=(img,name,c)=>{const ini=String(name||'').split(/\s+/).filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  return `<div class="ng-hs" style="--c:${c}">${img&&/^https?:\/\//.test(img)?`<img src="${esc(img)}" alt="" onerror="this.replaceWith(document.createTextNode('${esc(ini)}'))">`:esc(ini)}</div>`};
+const ngLogo=(T,c)=>T.logo&&/^https?:\/\//i.test(T.logo)?`<img class="ng-lg" src="${esc(T.logo)}" alt="" onerror="this.style.visibility='hidden'">`:`<div class="ng-lg ph" style="--c:${c}">${esc(T.abbr)}</div>`;
+/* win chance: goals as a Poisson process for the time left (about 3 goals a team per 60 minutes), adjusted for team strength,
+   home ice and a power play in progress; a tie after regulation goes to 3-on-3 OT (sudden death), then a shootout (coin flip) */
+function ngWP(now,diff,o={}){const LAM=3.05/3600,sF=o.sF||1,sO=o.sO||1,hm=o.home==null?1:o.home?1.04:0.96,lF=LAM*sF*hm,lO=LAM*sO*(2-hm),po=!!o.playoff;
+  const pois=(k,m)=>{let p=Math.exp(-m);for(let i=1;i<=k;i++)p*=m/i;return p};
+  const ot=(T)=>{const L=lF+lO,pf=lF/L;if(po)return pf;const q=1-Math.exp(-L*T);return pf*q+(1-q)*0.5};
+  if(now>=3600){if(diff)return diff>0?1:0;const T=po?Math.max(1,1200-((now-3600)%1200)):Math.max(0,300-(now-3600));return ot(T)}
+  const T=3600-now;let mF=lF*T,mO=lO*T;const pr=Math.min(o.ppRem||0,T);
+  if(pr>0&&o.pp){if(o.pp==='f'){mF+=lF*pr*2.2;mO-=lO*pr*0.6}else{mO+=lO*pr*2.2;mF-=lF*pr*0.6}}
+  let win=0,tie=0;for(let x=0;x<=12;x++){const px=pois(x,mF);for(let y=0;y<=12;y++){const p=px*pois(y,mO),d=diff+x-y;if(d>0)win+=p;else if(!d)tie+=p}}
+  return Math.max(0.001,Math.min(0.999,win+tie*ot(300)))}
+/* team strength from goal difference per game (+1 goal/game ≈ 35% more scoring than the other side) */
+const ngStr=(gd,gp)=>gp?Math.max(0.75,Math.min(1.3,1+0.17*(gd/gp))):1;
+const ngPct=x=>Math.round(x*100);
+
+/* ================= live hockey page in the new style ================= */
+function ngLiveData(){const L=LV,fA=lvFav('a'),fH=lvFav('h'),favS=fA&&!fH?'a':'h',oppS=favS==='h'?'a':'h',F=favS==='h'?L.home:L.away,O=favS==='h'?L.away:L.home;
+  const [cF,cO]=ngCols(F.abbr,O.abbr);
+  let goals=(L.goals&&L.goals[0]&&L.goals[0].t!=null?L.goals:L.goalsT)||[];
+  let now=L.now;if(L.league==='OHL'||now==null){const per=String((L._g&&L._g.live&&L._g.live.per)||L.per||'1st'),pi=/OT/i.test(per)?3:Math.max(0,(parseInt(per)||1)-1);
+    const rem=L._g&&L._g.live&&L._g.live.clock!=null?Math.max(0,L._g.live.clock-Math.floor((Date.now()-L._at)/1000)):null;now=pi*1200+(rem==null?(L.state==='int'?1200:600):(pi>=3?300:1200)-rem)}
+  if(goals.length)now=Math.max(now,goals[goals.length-1].t+1);
+  if(L.state==='final'){const last=goals.length?goals[goals.length-1].t:3600;now=Math.max(3600,last)}
+  const rec=L.rec||{},sf=r=>r&&r.gp?ngStr(r.gd,r.gp):1;
+  const opt={sF:sf(rec[favS]),sO:sf(rec[oppS]),home:favS==='h',playoff:L.gameType===3};
+  const ppAt=t=>{for(const q of (L.ppInt||[]))if(t>=q.t&&t<q.t+q.len)return {pp:q.s===favS?'f':'o',ppRem:q.t+q.len-t};return {}};
+  const sc=(t,incl)=>{let f=0,o=0;goals.forEach(g=>{if(g.t<t||(incl&&g.t===t)){if(g.s===favS)f++;else o++}});return f-o};
+  const pts=[],step=Math.max(15,Math.round(now/120));
+  for(let t=0;t<now;t+=step)pts.push([t,ngWP(t,sc(t,true),{...opt,...ppAt(t)})]);
+  goals.forEach(g=>{pts.push([g.t,ngWP(g.t,sc(g.t,false),{...opt,...ppAt(g.t)}),1]);pts.push([g.t+0.01,ngWP(g.t,sc(g.t,true),opt),2])});
+  const fin=L.state==='final';const cur=fin?(sc(1e9,true)>0?1:0):ngWP(now,sc(now,true),{...opt,...(L.pp?{pp:L.pp.s===favS?'f':'o',ppRem:90}:{})});
+  pts.push([now,cur]);pts.sort((a,b)=>a[0]-b[0]);
+  /* the swing of the night */
+  let big=null;goals.forEach(g=>{const b4=ngWP(g.t,sc(g.t,false),opt),af=ngWP(g.t,sc(g.t,true),opt),d=Math.abs(af-b4);if(!big||d>big.d)big={g,b4,af,d}});
+  return {L,favS,oppS,F,O,cF,cO,goals,now,cur,pts,big,fin}}
+function ngChart(el,D){const W=el.clientWidth,H=el.clientHeight;if(W<50||H<50)return;const L=D.L,top=18,bot=H-34,y=p=>top+(1-p)*(bot-top),ym=y(.5);
+  const ot=D.now>3600||(D.L.state!=='final'&&D.now>=3600),tot=ot?(D.L.gameType===3?4800:3900):3600,x=t=>Math.min(W,t/tot*W);
+  const line=D.pts.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' '),last=D.pts[D.pts.length-1];
+  const area=`M0 ${ym} `+D.pts.map(p=>'L'+x(p[0]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ')+` L${x(last[0]).toFixed(1)} ${ym} Z`;
+  const per=[1200,2400,3600].concat(ot&&D.L.gameType===3?[4800]:[]).filter(t=>t<tot).map(t=>`<line x1="${x(t)}" y1="${top}" x2="${x(t)}" y2="${bot}" stroke="rgba(255,255,255,.12)" stroke-dasharray="4 6"/>`).join('');
+  const lab=['1ST','2ND','3RD'].concat(ot?['OT']:[]).map((t,i)=>{const a=i*1200,b=i<3?a+1200:tot;return `<text x="${x((a+b)/2)}" y="${bot+22}" font-size="${Math.round(H*.055)}" font-weight="800" fill="rgba(255,255,255,${D.now>a?.55:.25})" text-anchor="middle">${t}</text>`}).join('');
+  const r=Math.max(14,Math.min(24,H*.07));let mk='';
+  D.goals.forEach((g,i)=>{const p=D.pts.find(q=>q[2]===2&&Math.abs(q[0]-g.t-0.01)<0.02)||[g.t,.5],cx=x(g.t),cy=y(p[1]),c=g.s===D.favS?D.cF:D.cO,id='ngc'+i;
+    const ini=String(g.name||'').slice(0,2).toUpperCase();
+    mk+=`<clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r-2}"/></clipPath><circle cx="${cx}" cy="${cy}" r="${r}" fill="#141b2a" stroke="${c}" stroke-width="3.5"/><text x="${cx}" y="${cy+r*.32}" font-size="${r*.8}" font-weight="800" fill="#fff" text-anchor="middle">${esc(ini)}</text>${g.img?`<image href="${esc(g.img)}" x="${cx-r}" y="${cy-r*0.9}" width="${r*2}" height="${r*2}" clip-path="url(#${id})" preserveAspectRatio="xMidYMin slice"/>`:''}`});
+  const ppS=(D.L.ppInt||[]).filter(q=>q.t<D.now).map(q=>`<rect x="${x(q.t)}" y="${H-8}" width="${Math.max(4,x(Math.min(q.t+q.len,D.now))-x(q.t))}" height="6" rx="3" fill="${q.s===D.favS?D.cF:D.cO}" opacity=".9"/>`).join('');
+  const cx=x(last[0]),cy=y(last[1]),pc=ngPct(D.cur),lg=D.goals[D.goals.length-1],near=lg&&cx-x(lg.t)<r*1.6,bx=Math.min(W-74,cx+14+(near?r:0)),bub=D.fin?'':`<rect x="${bx}" y="${cy-18}" width="64" height="34" rx="17" fill="${D.cur>=.5?D.cF:D.cO}"/><text x="${bx+32}" y="${cy+6}" text-anchor="middle" font-size="19" font-weight="800" fill="#fff">${pc}%</text>${near?'':`<circle cx="${cx}" cy="${cy}" r="8" fill="#fff"><animate attributeName="r" values="6;11;6" dur="1.6s" repeatCount="indefinite"/></circle>`}`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}"><defs><clipPath id="ngTop"><rect x="0" y="0" width="${W}" height="${ym}"/></clipPath><clipPath id="ngBot"><rect x="0" y="${ym}" width="${W}" height="${H}"/></clipPath>
+    <linearGradient id="ngGF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${D.cF}" stop-opacity=".55"/><stop offset="1" stop-color="${D.cF}" stop-opacity=".08"/></linearGradient>
+    <linearGradient id="ngGO" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${D.cO}" stop-opacity=".55"/><stop offset="1" stop-color="${D.cO}" stop-opacity=".08"/></linearGradient></defs>
+    <line x1="0" y1="${y(.75)}" x2="${W}" y2="${y(.75)}" stroke="rgba(255,255,255,.06)"/><line x1="0" y1="${y(.25)}" x2="${W}" y2="${y(.25)}" stroke="rgba(255,255,255,.06)"/>
+    <line x1="0" y1="${ym}" x2="${W}" y2="${ym}" stroke="rgba(255,255,255,.25)" stroke-dasharray="4 6"/><text x="${W-4}" y="${ym-6}" text-anchor="end" font-size="15" font-weight="700" fill="rgba(255,255,255,.35)">50%</text>${per}
+    <path d="${area}" fill="url(#ngGF)" clip-path="url(#ngTop)"/><path d="${area}" fill="url(#ngGO)" clip-path="url(#ngBot)"/>
+    <path d="${line}" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
+    <text x="6" y="${top+16}" font-size="19" font-weight="800" fill="${D.cF}">${esc(D.F.abbr)}</text><text x="6" y="${bot-6}" font-size="19" font-weight="800" fill="${D.cO}">${esc(D.O.abbr)}</text>
+    ${lab}${ppS}${mk}${bub}</svg>`}
+function renderHockeyLive(){const b=$('lvBody'),D=ngLiveData(),L=D.L,F=D.F,O=D.O,fN=nick(F.name),oN=nick(O.name),A=L.away,H=L.home;
+  const col=s=>s===D.favS?D.cF:D.cO,fin=D.fin,base=false;
+  const per=L.league==='OHL'&&L._g?(L._g.live.per||''):(L.per||'');
+  const recTxt=s=>{const r=(L.rec||{})[s];return r&&r.rec?r.rec:`SOG ${(s==='h'?H:A).sog||0}`};
+  const status=fin?`FINAL${/OT|SO/.test(per)?' · '+esc(per):''}`:L.state==='int'?`INT · ${esc(per)}`:`<span class="ng-live"><i></i>${esc(per)} · <span id="lvClk">${esc(lvClockTxt())}</span></span>`;
+  const sb=`<div class="jf-glass ng-sb ng-wide"><div class="ng-tm">${ngLogo(A,col('a'))}<div><b>${esc(A.abbr)}</b><small>${esc(recTxt('a'))}</small></div><div class="ng-sc${fin&&A.score<H.score?' lo':''}" style="margin-left:calc(1.2*var(--u))">${esc(A.score)}</div></div>
+    <div class="ng-mid"><b>${status}</b><span>SHOTS ${esc(A.sog||0)}–${esc(H.sog||0)}</span>${L.pp&&!fin?`<span class="ng-pp">${esc((L.pp.s==='h'?H:A).abbr)} PP${L.pp.time?' · '+esc(String(L.pp.time).replace(/^0(\d:)/,'$1')):''}</span>`:''}</div>
+    <div class="ng-tm r"><div class="ng-sc${fin&&H.score<A.score?' lo':''}" style="margin-right:calc(1.2*var(--u))">${esc(H.score)}</div><div><b>${esc(H.abbr)}</b><small>${esc(recTxt('h'))}</small></div>${ngLogo(H,col('h'))}</div></div>`;
+  /* the call-out: biggest swing so far, plus how the game is going */
+  const P=L.periods||[],cp=P[P.length-1];let ctx='';
+  if(cp&&!fin){const fs=D.favS==='h'?cp.hs:cp.as,os=D.favS==='h'?cp.as:cp.hs;if(fs+os>=6&&Math.abs(fs-os)>=4)ctx=` ${fs>os?fN:oN} ${fs>os?'have':'have'} outshot ${fs>os?oN:fN} ${Math.max(fs,os)}–${Math.min(fs,os)} this period.`}
+  if(L.pp&&!fin)ctx+=` ${L.pp.s===D.favS?fN+' are':oN+' are'} on the power play now.`;
+  let call='';if(D.big){const g=D.big.g,up=g.s===D.favS;call=`<div class="ng-call ng-wide" style="--c:${col(g.s)}"><b>${esc(g.name||'Goal')}, ${esc(g.per)} ${esc(g.time)}</b><p>${up?'Took':'Dropped'} the ${esc(fN)} from ${ngPct(D.big.b4)}% to ${ngPct(D.big.af)}%.${fin?` ${D.cur>.5?esc(fN)+' won it':esc(oN)+' won it'}${/OT|SO/.test(per)?' in '+esc(per):''}.`:''}${esc(ctx)}</p></div>`}
+  else call=`<div class="ng-call ng-wide" style="--c:${D.cF}"><b>${fin?'Final':'No goals yet'}</b><p>${esc(fN)} win chance ${ngPct(D.cur)}% right now.${esc(ctx)}</p></div>`;
+  const chart=`<div class="jf-glass ng-ch ng-wide"><div class="ng-chh"><span class="ng-k">${fin?'How it swung':'How it\'s swinging'}</span><span class="ng-k">${esc(fN)} win chance <b>${ngPct(D.cur)}%</b></span></div><div class="ng-chart" id="ngChart"></div></div>`;
+  /* stars */
+  let stars=L.stars;if(!stars||!stars.length){const t=[...((L.top||{}).a||[]).map(p=>({...p,s:'a'})),...((L.top||{}).h||[]).map(p=>({...p,s:'h'}))];
+    stars=t.map(p=>({...p,gs:p.g*0.75+p.a*0.62+p.sog*0.075})).sort((x,y)=>y.gs-x.gs).slice(0,3)}
+  const starsH=stars&&stars.length?`<div class="ng-row" style="grid-template-columns:repeat(${stars.length},1fr)">${stars.map((p,i)=>`<div class="jf-glass ng-star"><span class="st">${'★'.repeat(stars.length-i)}</span>${ngHs(p.img,p.name,col(p.s))}<b>${esc(String(p.name).split(' ').slice(-1)[0])}</b><small>${p.pos==='G'?`Goalie · ${p.saves}/${p.shots}`:[p.g?p.g+' G':'',p.a?p.a+' A':'',p.sog?p.sog+' SOG':''].filter(Boolean).join(' · ')||'—'}</small></div>`).join('')}</div>`:'';
+  /* goalies + expected goals (NHL) or goalies + shots by period (OHL) */
+  const gk=L.gk||{},gs=L.goalies||{};
+  const gkRow=s=>{const x=gk[s]||gs[s];if(!x)return '';const v=x.gsax;return `<i class="ng-dot" style="--c:${col(s)}"></i><b>${esc(String(x.name).split(' ').slice(-1)[0])}</b><span>${esc(x.saves)}/${esc(x.shots)}</span><span class="${v==null?'':v>=0?'ng-pos':'ng-neg'}">${v==null?(x.sv||''):(v>=0?'+':'')+v.toFixed(1)}</span>`};
+  const gkH=`<div class="jf-glass ng-box"><div class="ng-k"><span>Goalies</span><span>${L.gk?'vs expected':'SV%'}</span></div><div class="ng-gl">${gkRow(D.favS)}${gkRow(D.oppS)}</div></div>`;
+  let xgH='';if(L.xg){const xf=L.xg[D.favS+'5'],xo=L.xg[D.oppS+'5'],tot=xf+xo||1,hf=D.favS==='h'?L.xg.hdH:L.xg.hdA,ho=D.favS==='h'?L.xg.hdA:L.xg.hdH;
+    xgH=`<div class="jf-glass ng-box"><div class="ng-k"><span>5v5 expected goals</span><span>${esc(F.abbr)} ${ngPct(xf/tot)}%</span></div><div class="ng-xb"><i style="width:${xf/tot*100}%;background:${D.cF}"></i><i style="width:${xo/tot*100}%;background:${D.cO}"></i></div>
+      <div class="ng-xn"><span style="color:${D.cF}">${xf.toFixed(2)}</span><span style="color:${D.cO}">${xo.toFixed(2)}</span></div><div class="ng-xs">High-danger chances <b>${hf}–${ho}</b>${hf-ho>=3?` · ${esc(fN)} owning the slot`:ho-hf>=3?` · ${esc(oN)} getting the good looks`:''}</div></div>`}
+  else{xgH=`<div class="jf-glass ng-box"><div class="ng-k"><span>Shots by period</span><span>${esc(F.abbr)}–${esc(O.abbr)}</span></div><div class="ng-gl" style="grid-template-columns:1fr auto">${P.map(p=>`<span>${esc(p.p)}</span><b>${D.favS==='h'?p.hs:p.as}–${D.favS==='h'?p.as:p.hs}</b>`).join('')}</div></div>`}
+  const pS=P.map(p=>`${esc(p.p)} <b>${D.favS==='h'?p.hs:p.as}–${D.favS==='h'?p.as:p.hs}</b>`).join(' · ');
+  const gsT=L.gsTop&&L.gsTop[D.favS];
+  const strip=L.xg?`<div class="ng-row" style="grid-template-columns:auto 1fr">${gsT?`<div class="jf-glass ng-strip"><span class="ng-k">Game score</span><span><b>${esc(String(gsT.name).split(' ').slice(-1)[0])}</b> ${gsT.gs>=0?'+':''}${gsT.gs.toFixed(2)}</span></div>`:'<div></div>'}<div class="jf-glass ng-strip"><span class="ng-k">Shots</span><span>${pS||'—'}</span></div></div>`:'';
+  const gl=D.goals.slice().reverse();
+  const goalsH=`<div class="jf-glass ng-goals ng-wide"><div class="ng-k" style="display:flex;justify-content:space-between;margin-bottom:calc(.6*var(--u))"><span>Goals</span><span>${D.goals.length?D.goals.length+(fin?'':' so far'):'none yet'}</span></div>
+    ${gl.map(g=>{const fs=D.favS==='h'?g.h:g.a,os=D.favS==='h'?g.a:g.h,ld=fs>os?F.abbr+' ':os>fs?O.abbr+' ':'';return `<div class="ng-gr">${ngHs(g.img,(g.first?g.first+' ':'')+g.name,col(g.s))}<div><b>${esc(g.name)}</b> <span>· ${esc(g.per)} ${esc(g.time)}${g.str?' · '+esc(g.str):''}</span></div><em>${esc(ld)}${Math.max(fs,os)}–${Math.min(fs,os)}</em></div>`}).join('')||'<div class="cnote">Waiting for the first goal…</div>'}</div>`;
+  const mid=replayOn()?lvReplayCard():starsH+`<div class="ng-row" style="grid-template-columns:1fr 1fr">${gkH}${xgH}</div>`+strip;
+  const html=`<div class="jf-title"><i class="jf-live"></i>${fin?'Final':'Tonight'} · ${esc(L.league)}</div><div class="ng-body">${sb}${call}${chart}${mid}${goalsH}</div>`;
+  const sig=html+'|'+Math.round(D.now/30);
+  if(sig!==lvSig){lvSig=sig;b.innerHTML=html;const c=$('ngChart');if(c)requestAnimationFrame(()=>{ngChart(c,D);ngFit(b)})}
+  if(replayOn())mountVideo('live','#lvVid',[latestClip()],true);
+}
+/* too tall? fewer goals in the list, then drop the game-score row, then the stars */
+function ngFit(b){const body=b.querySelector('.ng-body');if(!body)return;const over=()=>body.scrollHeight>body.clientHeight+2;
+  for(let g=0;g<20&&over();g++){const rows=body.querySelectorAll('.ng-gr');if(rows.length>2){rows[rows.length-1].remove();continue}
+    const st=body.querySelector('.ng-strip');if(st){st.parentNode.remove();continue}const sr=body.querySelector('.ng-star');if(sr){sr.parentNode.remove();continue}break}}
 function renderLive2(){
+  if(LV&&LV.sport==='hockey'&&CFG.newGame!==false)return renderHockeyLive();
   const b=$('lvBody');
   if(!LV){b.innerHTML=`<div class="jf-title"><i class="jf-live"></i>Live</div><div class="jf-wait">${esc(lvErr||'Loading the game…')}</div>`;lvSig='';return}
   const A=LV.away,H=LV.home,base=LV.sport==='baseball';
@@ -5228,7 +5413,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 107';
+document.getElementById('ver').textContent='build nova 108';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
