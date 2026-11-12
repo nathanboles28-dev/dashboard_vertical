@@ -3834,6 +3834,8 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   /* after midnight it's still "today" until you've slept: the night version (tomorrow's weather and calendar) only runs 7 PM to midnight */
   const per=o.per||(h>=4&&h<12?'morning':h>=19?'night':'day'),Q=!!o.quick,who=o.who||R.name||'';
   const t12=d=>d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),dayS=d=>{const k=daysUntil(d);return k===0?(d.getHours()>=17?'tonight':'today'):k===1?'tomorrow':d.toLocaleDateString([],{weekday:'long'})};
+  const nw=n=>{n=Math.round(+n||0);const o=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'],t=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+    const u=x=>x<20?o[x]:t[Math.floor(x/10)]+(x%10?'-'+o[x%10]:''),h=x=>x>=100?o[Math.floor(x/100)]+' hundred'+(x%100?' and '+u(x%100):''):u(x);return n<0?'minus '+nw(-n):n>=1000?nw(Math.floor(n/1000))+' thousand'+(n%1000?(n%1000<100?' and ':' ')+h(n%1000):''):h(n)};
   const andJ=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1],cut=(t,w)=>{const x=String(t).split(/\s+/);return x.length>w?x.slice(0,w).join(' ')+'…':t};
   const greet=(h<4?'Up late':h<12?'Good morning':h<17?'Good afternoon':'Good evening')+(who?', '+who:'');
   const tomorrow=per==='night';
@@ -3897,13 +3899,21 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     return {key:'home',tag:'HOME',title:'House',kicker:tomorrow?'Home // before bed':'Home',value:String(lights.length),unit:lights.length===1?'Light on':'Lights on',big:lights.length?`${lights.length} light${lights.length===1?'':'s'} ${tomorrow?'still on':'on'}`:'All lights off',gauge:lights.length/all,color:C.orange,
       lines:rooms.slice(0,3).map(r=>`<b>${esc(r.name)}</b> · ${r.on.map(d=>esc(d.name)+(d.bri!=null&&hmKind(d)==='light'?' '+d.bri+'%':'')).join(', ')}`),
       say:lights.length?`${lights.length===1?'One light is':lights.length+' lights are'} ${tomorrow?'still ':''}on: ${andJ(lights.map(d=>d.name))}.${tvs.length?` The ${andJ(tvs.map(d=>d.name))} ${tvs.length===1?'is':'are'} on too.`:''}`:'All the lights are off.'}});
-  /* 9. Jellyfin (and what the person asking has been watching) */
+  /* 9. Jellyfin: pick up where you left off (the last thing you were watching), plus what's new */
   if(per!=='morning')sg(()=>{if(!WT)return;const wk=(WT.fresh||[]).filter(x=>Date.now()-Date.parse(x.added)<7*864e5),st=(typeof JF!=='undefined'&&JF&&JF.streams)||[];
-    const mine=who&&WT.lately&&Object.entries(WT.lately).find(([k])=>k.toLowerCase().startsWith(who.toLowerCase())),my=mine&&mine[1]&&mine[1].list&&mine[1].list[0];if(!wk.length&&!st.length&&!my)return;
-    const say=[wk.length?`${wk.length===1?'One new movie':wk.length+' new movies'} on Jellyfin this week, including ${andJ(wk.slice(0,2).map(x=>x.title))}.`:'',
-      my&&mine[1].mode==='recent'?`You've been watching a lot of ${my.title} lately.`:'',st.length?`${st.length} ${st.length===1?'person is':'people are'} watching right now.`:''].filter(Boolean).join(' ');
-    return {key:'jf',tag:'JF',title:'Jellyfin',kicker:'Jellyfin // This week',value:String(wk.length),unit:wk.length===1?'New movie':'New movies',big:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:my?`Lately: ${my.title}`:`${st.length} watching now`,gauge:Math.min(1,wk.length/8),color:C.pink,
-      lines:[wk.length?'New: '+wk.slice(0,3).map(x=>`<b>${esc(x.title)}</b>`).join(', '):'',my?`${esc(mine[0])} lately: <b>${esc(my.title)}</b>`:'',st.length?`<b>${st.length}</b> watching right now`:''].filter(Boolean),say}});
+    const me=String(who||'').toLowerCase(),R0=(WT.resume||[]).slice().sort((a,b)=>Date.parse(b.last)-Date.parse(a.last)),res=R0.find(r=>me&&String(r.user).toLowerCase().startsWith(me))||(!me?R0[0]:null);
+    /* nothing part-way through? the most recent thing in your "lately" list */
+    const mine=me&&WT.lately&&Object.entries(WT.lately).find(([k])=>k.toLowerCase().startsWith(me)),lat=mine&&mine[1]&&mine[1].mode==='recent'?(mine[1].list||[]).slice().sort((a,b)=>Date.parse(b.last)-Date.parse(a.last))[0]:null;
+    if(!wk.length&&!st.length&&!res&&!lat)return;
+    const ep=res&&/^S(\d+) · E(\d+)/.exec(res.sub||''),nm=who?who+', ':'';
+    const say=[res?`${nm}don't forget to keep watching ${res.title}${ep?`. You're on season ${ep[1]}, episode ${ep[2]}`:''}${res.pct>=5&&res.pct<=95?`, ${res.pct>=60?'most of the way through':res.pct>=35?'about halfway through':'just getting into it'}`:''}.`
+        :lat?`${nm}you were last watching ${lat.title}${lat.type==='Series'?". There's more waiting when you're ready":''}.`:'',
+      wk.length?`${wk.length===1?'One new movie':wk.length+' new movies'} on Jellyfin this week, including ${andJ(wk.slice(0,2).map(x=>x.title))}.`:'',
+      st.length?`${st.length} ${st.length===1?'person is':'people are'} watching right now.`:''].filter(Boolean).join(' ');
+    const big=res?`Continue: ${res.title}`:lat?`Last watched: ${lat.title}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st.length} watching now`;
+    return {key:'jf',tag:'JF',title:'Jellyfin',kicker:res||lat?'Jellyfin // Pick up where you left off':'Jellyfin // This week',value:res?(res.pct||0)+'%':String(wk.length),unit:res?'Watched':wk.length===1?'New movie':'New movies',big,
+      gauge:res?Math.max(.05,(res.pct||0)/100):Math.min(1,wk.length/8),color:C.pink,
+      lines:[res?`<b>${esc(res.title)}</b> · ${esc(res.sub||'')}`:'',wk.length?'New: '+wk.slice(0,3).map(x=>`<b>${esc(x.title)}</b>`).join(', '):'',st.length?`<b>${st.length}</b> watching right now`:''].filter(Boolean),say}});
   /* 10. countdowns */
   sg(()=>{const L=countdownList().filter(c=>daysUntil(c.date)>=0).slice(0,3);if(!L.length)return;const d0=daysUntil(L[0].date),ds=d=>d===0?'today':d===1?'tomorrow':`in ${d} days`;
     return {key:'cd',tag:'SOON',title:'Countdown',kicker:'Countdowns',value:String(d0),unit:d0===1?'Day':'Days',big:`${L[0].emoji||''} ${L[0].name} ${d0===0?'is today!':ds(d0)}`,gauge:Math.max(.03,1-d0/100),color:C.gold,
@@ -3912,7 +3922,7 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   sg(()=>{const L=healthList(),bad=L.filter(x=>!x.ok),ok=L.length-bad.length;const net=TS&&TS.machines&&Object.values(TS.machines).find(m=>m.speeds&&m.speeds.length);const sp=net&&net.speeds[net.speeds.length-1];
     return {key:'sys',tag:'SYS',title:'Systems',kicker:'Systems check',value:`${ok}/${L.length}`,unit:bad.length?'Need a look':'Online',big:bad.length?`${bad.length} need${bad.length===1?'s':''} a look`:'All systems nominal',gauge:L.length?ok/L.length:1,color:bad.length?C.pink:'#7ee0a8',
       lines:[...(sp?[`Internet <b>${Math.round(sp[1])} Mbps</b> down · <b>${Math.round(sp[2])}</b> up`]:[]),...(bad.length?bad.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${esc(x.why||'problem')}`):['Relay, weather, calendar, scores, remote: <b>all good</b>'])],
-      say:bad.length?`Heads up: ${andJ(bad.slice(0,3).map(x=>x.name.replace(/\s*\(.*\)/,'')))} ${bad.length===1?'needs':'need'} a look.`:`All systems nominal.${sp?` Internet is running at ${Math.round(sp[1])} megabits.`:''}`}});
+      say:bad.length?`Heads up: ${andJ(bad.slice(0,3).map(x=>x.name.replace(/\s*\(.*\)/,'')))} ${bad.length===1?'needs':'need'} a look.`:`All systems nominal.${sp?` Internet is running at ${nw(sp[1])} megabits.`:''}`}});
   /* 12. the closer: something from this day in history */
   sg(()=>{const it=(SP.items||[]).find(x=>x.k==='otd'&&x.ago>0&&!spGrim.test(x.text||''))||(SP.items||[]).find(x=>x.k==='otd'&&x.ago>0);if(!it)return;const yr=n.getFullYear()-it.ago,txt=cut(String(it.text).replace(/\s*\(.*?\)\s*/g,' ').trim(),28);
     return {key:'otd',tag:'HIST',title:'On this day',kicker:'On this day // '+yr,value:String(yr),unit:it.ago+' years ago',big:`${yr}`,gauge:Math.min(1,it.ago/150),color:C.purple,lines:[esc(txt)],say:`And on this day in ${yr}: ${txt.replace(/…$/,'')}.`}});
@@ -5637,7 +5647,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 116';
+document.getElementById('ver').textContent='build nova 117';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
