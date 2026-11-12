@@ -3148,6 +3148,8 @@ function handleCommand(raw){
   if(has(/\b(trades?|signings?|signed|free agen(t|ts|cy)|hot stove|transactions?)\b/)){showFor('tx');const x=TX&&(TX.mine[0]||TX.nhl[0]||TX.mlb[0]);return reply(x?(x.kind==='trade'?`Latest: the ${x.nameA} get ${x.aGets||'something'}, the ${x.nameB} get ${x.bGets||'something'}.`:`Latest: the ${x.team} signed ${x.who}.`):'No trades or signings lately.')}
   if(has(/\b(now playing|what song|this song|apple music|the music|what'?s this song)\b/)){const st=npState();if(st)showFor('np');return reply(st?(npYT(st)?`${st.title}, on YouTube`:`${st.title} by ${st.artist}`):'Nothing is playing right now.')}
   if(has(/\b(backed up|backup (is )?done|did (a|the) backup|log (a|the) backup)\b/)){showFor('tech');markBackup();return reply('Got it, the '+TC().backup+' backup is logged for today.')}
+  if(has(/\b(exit|close|stop|leave|end)( the)? (hud|command cent(er|re))\b|\b(normal mode|back to normal|hud off)\b/)){hudSet(false);return reply('Back to the normal pages.')}
+  if(has(/\b(hud|command cent(er|re)|away mode)\b/)){hudSet(true);return reply('Command center is up. Say "normal mode" to go back.')}
   if(has(/\bred alert\b/)&&roundupGo({egg:'red'}))return;
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
@@ -3829,7 +3831,8 @@ function tColHours(){document.querySelectorAll('#hours .day').forEach(d=>{const 
 /* ================= Nova Roundup: data for the sci-fi intro =================
    o.who: who's asking (greeting + their Jellyfin), o.quick: 15-second version. Morning, daytime and night versions pick different sections. */
 function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=NovaRoundup.C,segs=[],sg=f=>{try{const x=f();if(x)segs.push(x)}catch(e){console.warn('roundup seg',e)}};
-  const per=h>=4&&h<12?'morning':h>=19||h<4?'night':'day',Q=!!o.quick,who=o.who||R.name||'';
+  /* after midnight it's still "today" until you've slept: the night version (tomorrow's weather and calendar) only runs 7 PM to midnight */
+  const per=o.per||(h>=4&&h<12?'morning':h>=19?'night':'day'),Q=!!o.quick,who=o.who||R.name||'';
   const t12=d=>d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),dayS=d=>{const k=daysUntil(d);return k===0?(d.getHours()>=17?'tonight':'today'):k===1?'tomorrow':d.toLocaleDateString([],{weekday:'long'})};
   const andJ=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1],cut=(t,w)=>{const x=String(t).split(/\s+/);return x.length>w?x.slice(0,w).join(' ')+'…':t};
   const greet=(h<4?'Up late':h<12?'Good morning':h<17?'Good afternoon':'Good evening')+(who?', '+who:'');
@@ -3865,13 +3868,16 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     return {key:'drv',tag:'DRV',title:'Drive times',kicker:'Traffic // right now',value:String(L[0].min),unit:'Min to '+L[0].name,big:slow?'Some traffic out there':'Roads look clear',gauge:Math.min(1,L[0].min/60),color:C.gold,
       lines:L.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${x.min} min${x.delay>=3?` (+${x.delay} traffic)`:''}`),say:(slow?'Some traffic this morning. ':'Roads look clear. ')+drvSay()}});
   /* 6. the teams */
-  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L=X.last,nx=(X.next||[])[0];if(!L&&!nx)return;if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
+  const NHLN={ANA:'Ducks',BOS:'Bruins',BUF:'Sabres',CGY:'Flames',CAR:'Hurricanes',CHI:'Blackhawks',COL:'Avalanche',CBJ:'Blue Jackets',DAL:'Stars',DET:'Red Wings',EDM:'Oilers',FLA:'Panthers',LAK:'Kings',MIN:'Wild',MTL:'Canadiens',NSH:'Predators',
+    NJD:'Devils',NYI:'Islanders',NYR:'Rangers',OTT:'Senators',PHI:'Flyers',PIT:'Penguins',SJS:'Sharks',SEA:'Kraken',STL:'Blues',TBL:'Lightning',TOR:'Maple Leafs',UTA:'Utah Mammoth',VAN:'Canucks',VGK:'Golden Knights',WSH:'Capitals',WPG:'Jets'};
+  const tn=(X,o)=>X===HUB?(NHLN[o]||o):String(o||'').replace(/^(London|Kitchener|Sarnia|Windsor|Erie|Guelph|Owen Sound|Flint|Saginaw|Sault Ste\.? Marie|Soo|Barrie|Brampton|Brantford|Kingston|North Bay|Niagara|Oshawa|Ottawa|Peterborough|Sudbury)\s+/i,'');
+  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L0=X.last,n0=(X.next||[])[0];if(!L0&&!n0)return;const L=L0&&{...L0,opp:tn(X,L0.opp)},nx=n0&&{...n0,opp:tn(X,n0.opp)};if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
     const res=L?(L.res==='W'?'W':'L'):'',sc=L?`${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}`:'';
     if(Q){if(!nx)return;const d=new Date(nx.start);return {key,tag,title:name,kicker:name,value:nx.home?'VS':'AT',unit:nx.opp,big:`${name} ${dayS(d)} ${nx.home?'vs':'at'} ${nx.opp}`,gauge:.5,color,lines:[],say:`The ${name} play ${dayS(d)} ${nx.home?'against':'at'} ${nx.opp}, ${fmt(d)}.`}}
     let say='';if(L)say=`The ${name} ${L.res==='W'?'beat':'lost to'} the ${L.opp} ${Math.max(L.us,L.them)} to ${Math.min(L.us,L.them)}${L.ot?(L.so?' in a shootout':' in overtime'):''}.`;
     if(X.record)say+=` They're ${String(X.record).replace(/-/g,', ')}.`;
     if(nx){const d=new Date(nx.start);say+=` Next, ${nx.home?'the '+nx.opp+' visit':'they visit the '+nx.opp} ${dayS(d)} at ${fmt(d)}${nx.nets&&nx.nets.length?', on '+nx.nets.join(' and '):''}.`}
-    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${L.opp}`:nx.opp,big:L?`${L.res==='W'?'Won':'Lost'} ${sc}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`Next: ${nx.opp}`,
+    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${X===HUB?L0.opp:L.opp}`:(X===HUB?n0.opp:nx.opp),big:L?`${L.res==='W'?'Won':'Lost'} ${sc}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`Next: ${nx.opp}`,
       gauge:X.pts&&X.gp?Math.min(1,X.pts/(X.gp*2)):.5,color,lines:[X.record?`Record <b>${esc(X.record)}</b>${X.pts!=null?' · '+X.pts+' pts':''}`:'',
         nx?`Next: <b>${esc(dayS(new Date(nx.start)))} ${nx.home?'vs':'at'} ${esc(nx.opp)}</b>, ${fmt(new Date(nx.start))}${nx.nets&&nx.nets.length?' on '+esc(nx.nets.join(', ')):''}`:''].filter(Boolean),say}});
   if(typeof hubOn==='function'&&hubOn())team('tor','TOR','Leafs',HUB,C.blue);
@@ -3919,6 +3925,9 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   return {ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,''),voice:novaVoice,volume:R.volume==null?.8:R.volume,tasks,segs,quick:Q,skin,
     hdr:Q?'NOVA · QUICK ROUNDUP':per==='morning'?'NOVA · MORNING ROUNDUP':per==='night'?'NOVA · NIGHT ROUNDUP':'NOVA · SYSTEM ROUNDUP',
     greet:Q?`${greet}. Quick roundup.`:`${greet}. It's ${t12(n)} on ${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}. ${per==='night'?"Here's your night roundup.":"Here's your roundup."}`,outro:out}}
+/* HUD mode: the roundup look as a permanent screen (stays on through the nightly reload until you turn it off) */
+function hudSet(on){try{localStorage.setItem('nova-hud',on?'1':'0')}catch(e){}if(typeof NovaRoundup==='undefined')return;if(on){wakeScreen();NovaRoundup.hud(()=>ruData({per:'day'}))}else NovaRoundup.hudOff()}
+setTimeout(()=>{try{if(localStorage.getItem('nova-hud')==='1')hudSet(true)}catch(e){}},6000);
 function roundupGo(o){const R=CFG.roundup||{};if(R.on===false||typeof NovaRoundup==='undefined')return false;if(NovaRoundup.busy())return true;o=o||{};
   wakeScreen();if(SECRETS.topic)nbPub(`${SECRETS.topic}-reply`,o.egg?'Watch the dashboard 👀':'Starting your roundup on the dashboard.').catch(()=>{});
   try{if(speechSynthesis.speaking)speechSynthesis.cancel()}catch(e){}
@@ -5628,7 +5637,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 115';
+document.getElementById('ver').textContent='build nova 116';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -5667,7 +5676,7 @@ const CSS=`
 #ru .frame path{fill:none;stroke:url(#ruFG);stroke-width:2.2;stroke-dasharray:3000;stroke-dashoffset:3000;transition:stroke-dashoffset 1.6s cubic-bezier(.6,0,.2,1)}
 #ru.f1 .frame path{stroke-dashoffset:0}
 #ru .frame .cross{stroke:rgba(120,220,255,.35);stroke-width:1.5;stroke-dasharray:none;stroke-dashoffset:0;opacity:0;transition:opacity 1s}#ru.f1 .frame .cross{opacity:1}
-#ru .hdr{position:absolute;left:0;right:0;top:calc(2.2*var(--s));text-align:center;font-family:'Share Tech Mono',monospace;font-size:calc(1.7*var(--s));letter-spacing:.5em;color:rgba(140,230,255,.75);opacity:0;transition:opacity .8s}
+#ru .hdr{position:absolute;left:calc(26*var(--s));right:calc(26*var(--s));top:calc(2.4*var(--s));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font-family:'Share Tech Mono',monospace;font-size:calc(1.8*var(--s));letter-spacing:.24em;padding-left:.24em;color:rgba(140,230,255,.75);opacity:0;transition:opacity .8s}
 #ru.f1 .hdr{opacity:1}
 #ru .clk{position:absolute;right:calc(5*var(--s));top:calc(6.4*var(--s));font-family:'Share Tech Mono',monospace;font-size:calc(1.7*var(--s));color:rgba(140,230,255,.6);opacity:0;transition:opacity .8s}#ru.f1 .clk{opacity:1}
 #ru .date{position:absolute;left:calc(7*var(--s));right:calc(7*var(--s));top:calc(9*var(--s));display:flex;align-items:center;gap:calc(3*var(--s));opacity:0;transform:translateY(calc(-3*var(--s)));transition:all .9s cubic-bezier(.2,.8,.2,1)}
@@ -5697,8 +5706,9 @@ const CSS=`
 #ru.f4 .core{opacity:1;transform:scale(1)}
 #ru .core.pulse{animation:ruPulse 1.2s ease-out}@keyframes ruPulse{0%{transform:scale(1.35)}100%{transform:scale(1)}}
 #ru .cv{font-family:'Orbitron',sans-serif;font-weight:900;font-size:128px;text-anchor:middle;dominant-baseline:central;fill:#fff;filter:drop-shadow(0 0 18px rgba(255,140,80,.6))}
-#ru .cu{font-family:'Orbitron',sans-serif;font-weight:700;font-size:30px;letter-spacing:.3em;text-anchor:middle;fill:rgba(255,220,200,.85)}
-#ru .ct{font-family:'Share Tech Mono',monospace;font-size:24px;letter-spacing:.25em;text-anchor:middle;fill:rgba(140,230,255,.8)}
+#ru .cu{font-family:'Orbitron',sans-serif;font-weight:700;font-size:30px;letter-spacing:.22em;text-anchor:middle;fill:rgba(255,220,200,.85);transform:translateX(3.3px)}
+#ru .ct{font-family:'Share Tech Mono',monospace;font-size:24px;letter-spacing:.22em;text-anchor:middle;fill:rgba(140,230,255,.8);transform:translateX(2.6px)}
+#ru .cv{letter-spacing:0}
 #ru .card{position:absolute;left:calc(7*var(--s));right:calc(7*var(--s));top:calc(126*var(--s));min-height:calc(24*var(--s));padding:calc(2.6*var(--s)) calc(3.4*var(--s));opacity:0;transform:translateY(calc(2*var(--s)));transition:all .6s cubic-bezier(.2,.8,.2,1);
   background:linear-gradient(135deg,rgba(20,40,80,.45),rgba(40,10,60,.35));border:1px solid rgba(120,200,255,.25);clip-path:polygon(0 0,calc(100% - 3*var(--s)) 0,100% calc(3*var(--s)),100% 100%,calc(3*var(--s)) 100%,0 calc(100% - 3*var(--s)));backdrop-filter:blur(6px)}
 #ru .card.on{opacity:1;transform:none}
@@ -5956,7 +5966,63 @@ function selfDestruct(o={}){return play({...o,quick:true,music:false,hdr:'NOVA �
   X.$('.white').classList.add('go');X.S.boom(1);X.S.whoosh(1.5,.5,false);B.classList.remove('on');X.R.classList.remove('alarming','red');await X.sleep(1400);
   B.style.textShadow='0 0 40px #ff4fa3,0 0 90px #9b5cff';B.innerHTML='<span style="font-size:.45em">JUST</span><br><span style="font-size:.45em">KIDDING</span>';B.classList.add('on','tk');X.S.chime();
   await X.say('Just kidding. Nice try.');await X.sleep(500);B.classList.remove('on')}})}
-window.NovaRoundup={play,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}},busy:()=>busy,C};
+/* ---------------- HUD mode: the same look as a permanent screen. Updates itself; no sound. ---------------- */
+const HCSS=`
+#ru.hud .hgrid{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));top:calc(106*var(--s));bottom:calc(9*var(--s));display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:calc(1.6*var(--s));opacity:0;transition:opacity 1s}
+#ru.hud.f3 .hgrid{opacity:1}
+#ru .hc{position:relative;padding:calc(1.6*var(--s)) calc(2*var(--s)) calc(1.4*var(--s)) calc(2.6*var(--s));overflow:hidden;background:linear-gradient(135deg,rgba(20,40,80,.42),rgba(40,10,60,.32));border:1px solid rgba(120,200,255,.2);
+  clip-path:polygon(0 0,calc(100% - 2*var(--s)) 0,100% calc(2*var(--s)),100% 100%,calc(2*var(--s)) 100%,0 calc(100% - 2*var(--s)))}
+#ru .hc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:calc(.45*var(--s));background:var(--c);box-shadow:0 0 calc(1.6*var(--s)) var(--c)}
+#ru .hc .k{font-family:'Share Tech Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.22em;color:var(--c);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ru .hc .b{font-family:'Orbitron',sans-serif;font-weight:700;font-size:calc(2.9*var(--s));line-height:1.15;margin-top:calc(.6*var(--s));color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ru .hc .l{margin-top:calc(.6*var(--s));font-size:calc(1.9*var(--s));font-weight:600;color:rgba(225,240,255,.85);line-height:1.35}#ru .hc .l div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ru .hc .l b{color:var(--c)}
+#ru .hc.wide{grid-column:1/3}
+#ru .htick{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(3.6*var(--s));height:calc(3.6*var(--s));overflow:hidden;font-family:'Share Tech Mono',monospace;font-size:calc(1.7*var(--s));letter-spacing:.12em;color:rgba(200,230,255,.75);
+  display:flex;align-items:center;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);opacity:0;transition:opacity 1s}
+#ru.hud.f3 .htick{opacity:1}#ru .htick div{white-space:nowrap;animation:ruTick var(--d,80s) linear infinite;padding-left:100%}#ru .htick i{font-style:normal;color:#ff7ab6;margin:0 1.2em}
+@keyframes ruTick{to{transform:translateX(-100%)}}
+#ru.hud .hud{left:calc(16*var(--s));width:calc(68*var(--s));height:calc(68*var(--s));top:calc(34*var(--s))}#ru.hud .bars{top:calc(33*var(--s))}
+#ru.hud{cursor:default}#ru.hud .card,#ru.hud .wave,#ru.hud .chips{display:none}
+#ru.hud .stage{animation:ruDrift 600s ease-in-out infinite alternate}@keyframes ruDrift{0%{margin-left:-2px;margin-top:-2px}100%{margin-left:2px;margin-top:3px}}
+`;
+let hudOn=false,hudT=null,hudStop=null,hudSig='';
+function hud(getData){if(hudOn)return;hudOn=true;
+  if(!document.getElementById('ruCss')){const st=document.createElement('style');st.id='ruCss';st.textContent=CSS;document.head.appendChild(st);
+    const ln=document.createElement('link');ln.rel='stylesheet';ln.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap';document.head.appendChild(ln)}
+  if(!document.getElementById('ruHudCss')){const st=document.createElement('style');st.id='ruHudCss';st.textContent=HCSS;document.head.appendChild(st)}
+  let D=getData();const P=Object.assign({a:'#3ee8ff',b:'#4f8dff',c:'#ff8a3d',d:'#ff4fa3',e:'#9b5cff',core:['#ffb35c','#ff5a3d','#ff3d8b']},(D.skin&&D.skin.P)||{});
+  const hex=()=>Array.from({length:160},()=>Math.random().toString(16).slice(2,8).toUpperCase()).join('\n');
+  const R=document.createElement('div');R.id='ru';R.className='hud';R.style.setProperty('--k1',P.a);R.style.zIndex='99990';
+  R.innerHTML=`<div class="bgg"></div><canvas></canvas>
+   <div class="stage"><svg class="frame" viewBox="0 0 1000 1777" preserveAspectRatio="none"><defs><linearGradient id="ruFG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ee8ff"/><stop offset=".5" stop-color="#9b5cff"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient></defs>
+     <path d="M30 140 L30 40 L230 40 L280 10 L720 10 L770 40 L970 40 L970 140"/><path d="M30 1637 L30 1737 L230 1737 L280 1767 L720 1767 L770 1737 L970 1737 L970 1637"/><path d="M12 400 L12 1377"/><path d="M988 400 L988 1377"/></svg>
+    <div class="hdr">NOVA · COMMAND CENTER</div><div class="clk" id="ruClk"></div>
+    <div class="date"></div>
+    <div class="side l"><pre>${hex()}</pre></div><div class="side r"><pre>${hex()}</pre></div>
+    <div class="bars l">${'<i></i>'.repeat(22)}</div><div class="bars r">${'<i></i>'.repeat(22)}</div>
+    <div class="hud">${hudSVG(D.segs||[],P)}</div>
+    <div class="hgrid"></div><div class="htick"><div></div></div></div><div class="scan"></div><div class="vig"></div>`;
+  document.body.appendChild(R);const $=x=>R.querySelector(x);const stopNet=net($('canvas'));
+  requestAnimationFrame(()=>{R.classList.add('on','f1','f2','f3','f4');R.querySelectorAll('.blk').forEach(b=>b.classList.add('on'))});
+  const bars=[...R.querySelectorAll('.bars i')];let wt=0;
+  const paint=()=>{try{D=getData()}catch(e){return}const now=new Date(),segs=(D.segs||[]).filter(Boolean);
+    const mo=now.toLocaleDateString('en-US',{month:'long'}).toUpperCase(),wd=now.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
+    const dh=`<div class="dmo"><b>${mo}</b><span>${now.getFullYear()}</span></div><div class="dday">${now.getDate()}</div><div class="tasks">${(D.tasks||[]).slice(0,6).map(t=>`<div><u>${esc(t[0])}</u> ${esc(t[1])}</div>`).join('')||'<div><i>NO EVENTS TODAY</i></div>'}<div><i>${wd}</i></div></div>`;
+    const keep=['live','alert','wx','cal','tor','ldn','home','sys','tk','cd','jf','drv'],cards=keep.map(k=>segs.find(x=>x.key===k)).filter(Boolean).slice(0,8);
+    const gh=cards.map((c,i)=>`<div class="hc${cards.length%2&&i===cards.length-1?' wide':''}" style="--c:${c.color}"><div class="k">◆ ${esc(c.kicker||c.title)}</div><div class="b">${esc(c.big||'')}</div><div class="l">${(c.lines||[]).slice(0,2).map(x=>`<div>${x}</div>`).join('')}</div></div>`).join('');
+    const tk=segs.filter(x=>['otd','cd','jf','tk'].includes(x.key)).map(x=>`${esc((x.title||'').toUpperCase())}: ${esc(String(x.say||x.big||'').replace(/^And /,''))}`);
+    const sig=dh+gh+tk.join('|');if(sig!==hudSig){hudSig=sig;$('.date').innerHTML=dh;$('.hgrid').innerHTML=gh;const t=$('.htick div');t.innerHTML=tk.join('<i>◆</i>');t.style.setProperty('--d',Math.max(40,tk.join('').length*.22)+'s')}
+    /* the nodes around the ring light up for whatever has something to say */
+    R.querySelectorAll('.node').forEach(n=>{const sg=segs.find(x=>x.key===n.dataset.k);n.classList.toggle('done',!!sg);n.classList.toggle('on',!!sg&&(sg.key==='live'||sg.key==='alert'))});};
+  const tick=()=>{const n=new Date(),hh=n.getHours(),mm=n.getMinutes();$('#ruClk').textContent=n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit'});
+    $('#ruCV').textContent=`${hh%12||12}:${String(mm).padStart(2,'0')}`;$('#ruCU').textContent=hh<12?'AM':'PM';$('#ruCT').textContent=n.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
+    const day=(hh*60+mm)/1440;$('#ruGauge').style.stroke=P.d;$('#ruGauge').style.strokeDashoffset=String(100-Math.round(day*100));
+    wt+=.18;bars.forEach((b,i)=>b.style.height=(20+60*Math.abs(Math.sin(wt*.5+i*.5))*Math.random())+'%')};
+  $('#ruCV').style.fontSize='104px';
+  paint();tick();const t1=setInterval(tick,1000),t2=setInterval(paint,30000);
+  hudStop=()=>{clearInterval(t1);clearInterval(t2);stopNet();R.classList.add('bye');setTimeout(()=>R.remove(),1400);hudOn=false;hudSig=''}}
+function hudOff(){if(hudStop){hudStop();hudStop=null}}
+window.NovaRoundup={play,hud,hudOff,hudOn:()=>hudOn,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}},busy:()=>busy,C};
 })();
 
 </script>
