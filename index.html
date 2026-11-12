@@ -1859,7 +1859,7 @@ const CFG={
   wrapped:{on:true, days:3},   // Jellyfin Wrapped shows the first 3 days of each month, recapping the month before
   // Around town page: nearest 511 traffic cameras, road events within roadKm, planes within planeKm of your lat/lon.
   // Around Woodstock page: cams = how many traffic cameras; road events shown only if within nearKm of town, on the 401/403 within hwyKm, or a full closure within closureKm
-  local:{on:true, drives:[{name:'London',lat:42.9836,lon:-81.2497},{name:'Kitchener',lat:43.4516,lon:-80.4925},{name:'Brantford',lat:43.1394,lon:-80.2644},{name:'Toronto',lat:43.6435,lon:-79.3791}], cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
+  local:{on:true, drives:[{name:'London',lat:42.9836,lon:-81.2497},{name:'Kitchener',lat:43.4516,lon:-80.4925},{name:'Brantford',lat:43.1394,lon:-80.2644},{name:'Burlington',lat:43.3704,lon:-79.7957}], cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
   // Plane radar page: radiusKm = how far out it looks, cards = how many flights listed under the radar
   planes:{on:true, radiusKm:40, cards:4},
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
@@ -3861,14 +3861,14 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     const td=calEvents.filter(e=>e.start.toDateString()===ds&&(tomorrow||e.allDay||e.end>n)).sort((a,b)=>a.start-b.start),tw=calEvents.filter(e=>e.start.toDateString()===nx).sort((a,b)=>a.start-b.start);
     const ln=e=>`${e.allDay?'All day':t12(e.start)} · <b>${esc(e.title)}</b>`,sp=e=>`${e.title}${e.allDay?'':' at '+t12(e.start).replace(':00','')}`,when=tomorrow?'tomorrow':'today';
     if(Q&&!td.length)return;
-    let say=td.length?`You've got ${td.length===1?'one thing':td.length+' things'} ${when}: ${andJ(td.slice(0,3).map(sp))}.`:`Nothing on the calendar ${when}.`;
+    let say=td.length?`You've got ${td.length===1?'one thing':nw(td.length)+' things'} ${when}: ${andJ(td.slice(0,4).map(sp))}${td.length>4?', plus '+nw(td.length-4)+' more':''}.`:`Nothing on the calendar ${when}.`;
     if(!Q&&!tomorrow&&tw.length)say+=` Tomorrow, ${sp(tw[0])}${tw.length>1?', plus '+(tw.length-1)+' more':''}.`;
     return {key:'cal',tag:'CAL',title:tomorrow?'Tomorrow':'Today',kicker:'Calendar // '+day.toLocaleDateString([],{weekday:'long'}),value:String(td.length),unit:td.length===1?'Event':'Events',big:td.length?`${td.length} thing${td.length===1?'':'s'} ${when}`:'Clear schedule',
-      gauge:Math.min(1,td.length/5),color:C.purple,lines:[...td.slice(0,3).map(ln),...(!tomorrow&&tw.length?['Tomorrow · '+ln(tw[0])]:[])],say}});
+      gauge:Math.min(1,td.length/5),color:C.purple,lines:[...td.slice(0,4).map(ln),...(td.length>4?[`+ ${td.length-4} more`]:!tomorrow&&tw.length&&td.length<4?['Tomorrow · '+ln(tw[0])]:[])],say}});
   /* 5. drive times (mornings) */
   if(per==='morning'&&!Q)sg(()=>{const L=((DRV&&DRV.drives)||[]).filter(x=>!x.error&&x.min!=null);if(!L.length)return;const slow=L.some(x=>x.delay>=5);
     return {key:'drv',tag:'DRV',title:'Drive times',kicker:'Traffic // right now',value:String(L[0].min),unit:'Min to '+L[0].name,big:slow?'Some traffic out there':'Roads look clear',gauge:Math.min(1,L[0].min/60),color:C.gold,
-      lines:L.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${x.min} min${x.delay>=3?` (+${x.delay} traffic)`:''}`),say:(slow?'Some traffic this morning. ':'Roads look clear. ')+drvSay()}});
+      lines:L.slice(0,5).map(x=>`<b>${esc(x.name)}</b> · ${x.min} min${x.delay>=3?` (+${x.delay} traffic)`:''}`),say:(slow?'Some traffic this morning. ':'Roads look clear. ')+drvSay()}});
   /* 6. the teams */
   const NHLN={ANA:'Ducks',BOS:'Bruins',BUF:'Sabres',CGY:'Flames',CAR:'Hurricanes',CHI:'Blackhawks',COL:'Avalanche',CBJ:'Blue Jackets',DAL:'Stars',DET:'Red Wings',EDM:'Oilers',FLA:'Panthers',LAK:'Kings',MIN:'Wild',MTL:'Canadiens',NSH:'Predators',
     NJD:'Devils',NYI:'Islanders',NYR:'Rangers',OTT:'Senators',PHI:'Flyers',PIT:'Penguins',SJS:'Sharks',SEA:'Kraken',STL:'Blues',TBL:'Lightning',TOR:'Maple Leafs',UTA:'Utah Mammoth',VAN:'Canucks',VGK:'Golden Knights',WSH:'Capitals',WPG:'Jets'};
@@ -5377,7 +5377,10 @@ function renderWatch(){
   const N=(WT.fresh||[]).slice(0,12),pass=N.length>=4?[...N,...N]:N;
   const fresh=N.length?`<div class="jf-glass gd-card wt-fr"><h2>✨ New on Jellyfin<span class="wt-hn">${N.length} added this month</span></h2><div class="${N.length>=4?'wt-mq':''}"><div class="${N.length>=4?'wt-mqt wt-frt':'wt-frt'}" style="--dur:${Math.max(30,N.length*7)}s">${pass.map(x=>`<div class="wt-it">${po(x.id,x.title)}<i class="wt-new">NEW</i><b>${esc(x.title)}</b><small>${x.ep?esc(x.ep)+' · ':''}${ago(x.added)}</small></div>`).join('')}</div></div></div>`:'';
   /* what each of you has been watching lately (last 30 days; falls back to all-time if nothing recent) */
-  const LT=WT.lately||Object.fromEntries(Object.entries(WT.users||{}).map(([n,l])=>[n,{mode:'all',list:l}])),names=Object.keys(LT);
+  const LT0=WT.lately||Object.fromEntries(Object.entries(WT.users||{}).map(([n,l])=>[n,{mode:'all',list:l}]));
+  /* only watched one or two things lately? top it up with all-time favourites so there are always at least 3 */
+  const LT=Object.fromEntries(Object.entries(LT0).map(([n,M])=>{const L=(M&&M.list||[]).slice(),seen=new Set(L.map(x=>x.title));
+    for(const x of ((WT.users||{})[n]||[]))if(L.length<3&&!seen.has(x.title)){L.push({...x,last:null});seen.add(x.title)}return [n,{...M,list:L}]})),names=Object.keys(LT);
   const most=names.length?`<div class="wt-two wt-lt">${names.map(n=>{const M=LT[n]||{list:[]};return `<div class="jf-glass gd-card wt-u"><h2><span class="jf-av" style="background:${jfCol(n)}">${esc(n.charAt(0))}</span>${esc(n)}<span class="wt-hn">${M.mode==='recent'?'last 30 days':'all-time'}</span></h2>
       ${(M.list||[]).slice(0,5).map((x,i)=>`<div class="wt-ur">${po(x.id,x.title,'sm')}<div><b>${esc(x.title)}</b><small>${x.type==='Series'?x.plays+' episode'+(x.plays===1?'':'s'):x.plays>1?'watched '+x.plays+' times':'movie'}${x.last?' · '+ago2(x.last):''}</small></div><em style="color:${i===0?jfCol(n):''}">${i+1}</em></div>`).join('')||'<div class="cnote">Nothing lately</div>'}</div>`}).join('')}</div>`:'';
   /* continue watching */
@@ -5388,8 +5391,9 @@ function renderWatch(){
   if(html!==wtSig){wtSig=html;b.innerHTML=html}
   /* too tall? trim the lately lists, then drop continue-watching */
   const fit=()=>{const x=document.querySelector('#wtBody .wt-body');if(!x)return;const over=()=>x.scrollHeight>x.clientHeight+2;
-    for(let g=0;g<4&&over();g++)x.querySelectorAll('.wt-u').forEach(c=>{const r=c.querySelectorAll('.wt-ur');if(r.length>2)r[r.length-1].remove()});
-    if(over()){const c=x.querySelector('.wt-cw');if(c)c.remove()}};
+    const trim=min=>{for(let g=0;g<5&&over();g++)x.querySelectorAll('.wt-u').forEach(c=>{const r=c.querySelectorAll('.wt-ur');if(r.length>min)r[r.length-1].remove()})};
+    /* keep at least 3 shows each: drop the continue-watching row before going down to 2 */
+    trim(3);if(over()){const c=x.querySelector('.wt-cw');if(c)c.remove()}trim(2)};
   setTimeout(fit,600);
 }
 
@@ -5647,7 +5651,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 117';
+document.getElementById('ver').textContent='build nova 119';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -5727,7 +5731,7 @@ const CSS=`
 #ru .cb{font-family:'Orbitron',sans-serif;font-weight:700;font-size:calc(5.2*var(--s));line-height:1.1;margin-top:calc(.9*var(--s));color:#fff;text-shadow:0 0 calc(2*var(--s)) color-mix(in srgb,var(--c,#3ee8ff) 60%,transparent)}
 #ru .cl{margin-top:calc(1.4*var(--s));display:grid;gap:calc(.6*var(--s))}
 #ru .cl div{font-size:calc(2.9*var(--s));font-weight:600;color:rgba(225,240,255,.9);letter-spacing:.03em;opacity:0;transform:translateX(calc(-2*var(--s)));transition:all .45s}
-#ru .cl div.on{opacity:1;transform:none}#ru .cl div b{color:var(--c,#3ee8ff);font-weight:700}
+#ru .cl div.on{opacity:1;transform:none}#ru .cl.many div{font-size:calc(2.45*var(--s))}#ru .cl.many{gap:calc(.35*var(--s))}#ru .cl div b{color:var(--c,#3ee8ff);font-weight:700}
 #ru .side{position:absolute;top:calc(40*var(--s));height:calc(80*var(--s));width:calc(5.4*var(--s));overflow:hidden;font-family:'Share Tech Mono',monospace;font-size:calc(1.15*var(--s));line-height:1.5;color:rgba(120,220,255,.4);opacity:0;transition:opacity 1s;
   -webkit-mask:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
 #ru.f2 .side{opacity:1}#ru .side.l{left:calc(.8*var(--s))}#ru .side.r{right:calc(.8*var(--s));text-align:right;color:rgba(255,122,182,.4)}
@@ -5945,7 +5949,7 @@ async function play(D){
       const cg=$('#ruCoreG');cg.classList.remove('pulse');void cg.getBBox;requestAnimationFrame(()=>cg.classList.add('pulse'));
       $('#ruCoreF').style.opacity='.95';shock(s.color,6);S.blip(660+si*90,.09,.22);
       countTo($('#ruCV'),s.value,900);decode($('#ruCU'),String(s.unit||'').toUpperCase(),500);decode($('#ruCT'),String(s.title||s.tag).toUpperCase(),500);
-      $('.ck').textContent='';$('.cb').textContent='';$('.cl').innerHTML=(s.lines||[]).map(l=>`<div>${l}</div>`).join('');
+      $('.ck').textContent='';$('.cb').textContent='';$('.cl').innerHTML=(s.lines||[]).map(l=>`<div>${l}</div>`).join('');$('.cl').classList.toggle('many',(s.lines||[]).length>3);
       card.classList.add('on');S.chatter(6);decode($('.ck'),'◆ '+(s.kicker||s.title||''),450);await decode($('.cb'),s.big||'',650);
       const sp=say(s.say,V,RATE);
       for(const d of card.querySelectorAll('.cl div')){await sleep(260);d.classList.add('on');S.tick(3000,.025)}
