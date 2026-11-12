@@ -5603,7 +5603,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 112';
+document.getElementById('ver').textContent='build nova 113';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -5818,11 +5818,14 @@ function countTo(el,to,ms=1100){const m=String(to).match(/^(-?\d+)(.*)$/);if(!m)
 
 /* ---------------- speech ---------------- */
 let wavePulse=0;
-function say(text,voice,rate){return new Promise(res=>{if(!text||!('speechSynthesis' in window)){setTimeout(res,1200);return}
-  const words=text.split(/\s+/).length,max=words*520+3500;let done=false;const fin=()=>{if(done)return;done=true;wavePulse=0;res()};
+function say(text,voice,rate){return new Promise(res=>{if(!text){setTimeout(res,600);return}
+  /* if the browser blocks speech (no sound permission yet), keep the same pacing so the visuals still play out properly */
+  const words=text.split(/\s+/).length,est=words*400+900,max=words*520+3500,t0=Date.now();let done=false;
+  const fin=()=>{if(done)return;done=true;wavePulse=0;res()},soft=()=>{const left=est-(Date.now()-t0);if(left>300){wavePulse=.5;setTimeout(fin,left)}else fin()};
+  if(!('speechSynthesis' in window)){soft();return}
   try{speechSynthesis.cancel()}catch(e){}
   setTimeout(()=>{const u=new SpeechSynthesisUtterance(text);window._ruUtt=u;if(voice){u.voice=voice;u.lang=voice.lang}u.rate=rate||1;u.pitch=.95;
-    u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=fin;u.onerror=fin;speechSynthesis.speak(u)},120);
+    u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=soft;u.onerror=e=>{console.warn('roundup voice',e&&e.error);soft()};speechSynthesis.speak(u)},120);
   setTimeout(fin,max)})}
 
 /* ---------------- play ---------------- */
@@ -5860,6 +5863,9 @@ async function play(D){
     wavePulse*=.9;const sp=(window.speechSynthesis&&speechSynthesis.speaking)?Math.max(.35,wavePulse):wavePulse;
     wv.forEach((b,i)=>{const c=1-Math.abs(i-wv.length/2)/(wv.length/2);b.style.height=(8+sp*110*(.25+.75*c)*(.35+.65*Math.random()))+'%'})},70);
   snd(D.volume==null?.8:D.volume);
+  /* Chrome blocks sound until the screen has been clicked (or Chrome was started with the autoplay flag): say so on the HUD, and a click fixes it */
+  setTimeout(()=>{if(A&&A.state!=='running'){const h=$('.hdr');if(h){h.textContent='SOUND LOCKED · CLICK THE SCREEN ONCE';h.style.color='#ff9aa4'}}},700);
+  R.addEventListener('click',()=>{try{A&&A.resume()}catch(e){}const h=$('.hdr');if(h&&/LOCKED/.test(h.textContent)){h.textContent='SOUND ON';h.style.color=''}});
   const V=D.voice||null,RATE=D.rate||1.02;
   const blocks=[...R.querySelectorAll('.blk')];
   const X={R,$,S,say:t=>say(t,V,RATE),sleep,decode,countTo,P,blocks,shock:(...a)=>shock(...a)};
