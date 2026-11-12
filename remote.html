@@ -168,11 +168,35 @@ const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('t
 /* no channel saved yet (e.g. a phone home-screen icon keeps its own storage): let it be typed in once */
 function askTopic(){const h=$('heard');h.innerHTML='<button id="setTopic" style="font:inherit;padding:.6em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Tap to enter your Nova channel name</button>';
   $('setTopic').onclick=()=>{const v=(prompt('Nova channel name (the topic)')||'').trim().replace(/^.*#topic=/,'');if(v){try{localStorage.setItem('nova-topic',v)}catch(e){}location.reload()}}}
+/* where the message bus lives (your Cloudflare nova-bus); open once with #bus=https://... to change it */
+const BUS_URL=(()=>{const d='https://nova-bus.nathanboles28.workers.dev';try{const v=new URLSearchParams(location.hash.slice(1)).get('bus');if(v)localStorage.setItem('nova-bus',v);return localStorage.getItem('nova-bus')||d}catch(e){return d}})();
+const nbBase=()=>BUS_URL.replace(/\/$/,'');
+/* ---------- message bus: your own Cloudflare "nova-bus" (no daily limit); falls back to ntfy.sh if it isn't set up yet ---------- */
+const NB={ok:null,wait:null};
+function nbCheck(){if(NB.ok!==null)return Promise.resolve(NB.ok);if(NB.wait)return NB.wait;const b=nbBase();if(!b){NB.ok=false;return Promise.resolve(false)}
+  const ac=new AbortController();setTimeout(()=>ac.abort(),8000);
+  NB.wait=fetch(b+'/bus/ping',{signal:ac.signal,cache:'no-store'}).then(r=>r.json()).then(j=>NB.ok=!!(j&&j.ok)).catch(()=>NB.ok=false).finally(()=>{NB.wait=null});return NB.wait}
+function nbPub(topic,body){return nbCheck().then(ok=>fetch(ok?`${nbBase()}/bus/${topic}`:`https://ntfy.sh/${topic}`,{method:'POST',body}))}
+/* subscribe: onMsg gets ntfy-shaped messages {event,time,message}; since = '' | 'latest' | '3h' */
+function nbSub(topic,since,onMsg,onState){nbCheck().then(ok=>{
+  if(!ok){if(!window.EventSource)return;const es=new EventSource(`https://ntfy.sh/${topic}/sse${since?'?since='+since:''}`);
+    es.onopen=()=>onState&&onState(true);es.onerror=()=>onState&&onState(es.readyState===1);es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}onMsg(d)};return}
+  let ws,back=2000,pinger,last=0,rt;
+  const go=()=>{try{ws=new WebSocket(nbBase().replace(/^http/,'ws')+`/bus/${topic}/ws`+(last?'?since='+last:since?'?since='+since:''))}catch(e){rt=setTimeout(go,back);return}
+    ws.onopen=()=>{back=2000;onState&&onState(true);clearInterval(pinger);pinger=setInterval(()=>{try{ws.send('ping')}catch(e){}},30000)};
+    ws.onmessage=e=>{if(e.data==='pong')return;let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event==='message'&&d.time)last=Math.max(last,d.time);onMsg(d)};
+    ws.onclose=()=>{clearInterval(pinger);onState&&onState(false);clearTimeout(rt);rt=setTimeout(go,back);back=Math.min(30000,Math.round(back*1.6))};
+    ws.onerror=()=>{try{ws.close()}catch(e){}}};
+  go();
+  /* phones pause pages in the background: reconnect straight away when it comes back */
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ws&&ws.readyState===3){clearTimeout(rt);back=2000;go()}});
+})}
+
 /* ---------- send a command to the dashboard ---------- */
 function send(text){
   if(!T){setConn(false,'Not set up');askTopic();return}
   $('heard').textContent='“'+text+'”';
-  fetch('https://ntfy.sh/'+T,{method:'POST',body:text}).then(r=>{if(!r.ok)throw 0;setConn(true)}).catch(()=>setConn(false,'Can\'t reach relay'));
+  nbPub(T,text).then(r=>{if(!r.ok)throw r.status;setConn(true)}).catch(e=>setConn(false,e===429?'Message limit reached':'Can\'t reach the dashboard'));
 }
 document.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{unlockSpeech();send(b.dataset.c)}));
 $('sayX').addEventListener('click',()=>{clearTimeout(window._sayT);$('sayCard').style.display='none';if(window.speechSynthesis)speechSynthesis.cancel()});
@@ -184,18 +208,16 @@ $('speakSw').classList.toggle('on',speakOn);
 $('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak-v2',speakOn?'1':'0')}catch(e){}};
 function listen(){
   if(!T){setConn(false,'Not set up');askTopic();return}
-  const es=new EventSource('https://ntfy.sh/'+T+'-reply/sse');
-  es.onopen=()=>setConn(true);
-  es.onerror=()=>setConn(false,'Reconnecting…');
-  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;
+  nbSub(T+'-reply','',d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;
-    $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)};
+    $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)},
+    ok=>setConn(ok,ok?'':'Reconnecting…'));
 }
 listen();
 
 /* ---------- Home: your lights, plugs and Rokus (state comes from the dashboard) ---------- */
 let HM=null,hmHold=0;
-function hmCmd(o){if(!T)return;fetch('https://ntfy.sh/'+T,{method:'POST',body:JSON.stringify({hm:o})}).catch(()=>setConn(false,'Can\'t reach relay'))}
+function hmCmd(o){if(!T)return;nbPub(T,JSON.stringify({hm:o})).catch(()=>setConn(false,'Can\'t reach the dashboard'))}
 function hmEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function hmRender(){if(!HM||!HM.devices||!HM.devices.length)return;$('hmSec').style.display='';const c=$('hmCard');c.style.display='flex';
   const h=HM.devices.find(d=>d.n===HM.hero),on=h&&h.on&&h.r!==false;
@@ -209,14 +231,13 @@ function hmRender(){if(!HM||!HM.devices||!HM.devices.length)return;$('hmSec').st
   c.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>hmCmd({scene:b.dataset.sc}));
   c.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>{hmHold=Date.now();if(h){h.on=true;h.c=sw[+b.dataset.sw][0];hmRender()}hmCmd({n:HM.hero,v:sw[+b.dataset.sw][1]})});
   const r=$('hmBri');if(r){r.oninput=()=>{hmHold=Date.now()};r.onchange=()=>{hmHold=Date.now();if(h){h.on=true;h.b=+r.value}hmCmd({n:HM.hero,v:{bri:+r.value}});hmRender()}}}
-function hmListen(){if(!T)return;const es=new EventSource('https://ntfy.sh/'+T+'-home/sse?since=latest');
-  es.onopen=()=>hmCmd({ping:1});
-  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}}}
+function hmListen(){if(!T)return;
+  nbSub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}},ok=>{if(ok)hmCmd({ping:1})})}
 hmListen();
 
 /* ---------- Timers, reminders, list (state comes from the dashboard) ---------- */
 let TKS=null;
-function tkSend(o){if(!T)return;fetch('https://ntfy.sh/'+T,{method:'POST',body:JSON.stringify({tk:o})}).catch(()=>setConn(false,'Can\'t reach relay'))}
+function tkSend(o){if(!T)return;nbPub(T,JSON.stringify({tk:o})).catch(()=>setConn(false,'Can\'t reach the dashboard'))}
 const tkC=ms=>{const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
 function tkRender(){const S=TKS||{timers:[],rems:[],list:[],ring:[]};
   $('tkRing').style.display=S.ring&&S.ring.length?'flex':'none';$('tkRingT').textContent=(S.ring||[])[0]||'';
@@ -231,8 +252,8 @@ $('tkDone').onclick=()=>{tkSend({dismiss:1});if(TKS){TKS.ring=[];tkRender()}};
 const tkAdd=()=>{const v=$('tkIn').value.trim();if(!v)return;tkSend({add:v});if(TKS){v.split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>TKS.list.push({t:x}));tkRender()}$('tkIn').value=''};
 $('tkAddB').onclick=tkAdd;$('tkIn').onkeydown=e=>{if(e.key==='Enter')tkAdd()};
 setInterval(()=>document.querySelectorAll('#tkTm [data-end]').forEach(b=>b.textContent=tkC(+b.dataset.end-Date.now())),1000);
-function tkListen(){if(!T)return;const es=new EventSource('https://ntfy.sh/'+T+'-tasks/sse?since=latest');es.onopen=()=>tkSend({ping:1});
-  es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event&&d.event!=='message')return;try{TKS=JSON.parse(d.message);tkRender()}catch(x){}}}
+function tkListen(){if(!T)return;
+  nbSub(T+'-tasks','latest',d=>{if(d.event&&d.event!=='message')return;try{TKS=JSON.parse(d.message);tkRender()}catch(x){}},ok=>{if(ok)tkSend({ping:1})})}
 tkRender();tkListen();
 
 /* ---------- speaking ---------- */
