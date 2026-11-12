@@ -3866,12 +3866,12 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
       lines:L.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${x.min} min${x.delay>=3?` (+${x.delay} traffic)`:''}`),say:(slow?'Some traffic this morning. ':'Roads look clear. ')+drvSay()}});
   /* 6. the teams */
   const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L=X.last,nx=(X.next||[])[0];if(!L&&!nx)return;if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
-    const res=L?(L.res==='W'?'W':'L'):'',sc=L?`${L.us}–${L.them}`:'';
+    const res=L?(L.res==='W'?'W':'L'):'',sc=L?`${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}`:'';
     if(Q){if(!nx)return;const d=new Date(nx.start);return {key,tag,title:name,kicker:name,value:nx.home?'VS':'AT',unit:nx.opp,big:`${name} ${dayS(d)} ${nx.home?'vs':'at'} ${nx.opp}`,gauge:.5,color,lines:[],say:`The ${name} play ${dayS(d)} ${nx.home?'against':'at'} ${nx.opp}, ${fmt(d)}.`}}
-    let say='';if(L)say=`The ${name} ${L.res==='W'?'beat':'lost to'} the ${L.opp} ${L.us} to ${L.them}${L.ot?(L.so?' in a shootout':' in overtime'):''}.`;
+    let say='';if(L)say=`The ${name} ${L.res==='W'?'beat':'lost to'} the ${L.opp} ${Math.max(L.us,L.them)} to ${Math.min(L.us,L.them)}${L.ot?(L.so?' in a shootout':' in overtime'):''}.`;
     if(X.record)say+=` They're ${String(X.record).replace(/-/g,', ')}.`;
     if(nx){const d=new Date(nx.start);say+=` Next, ${nx.home?'the '+nx.opp+' visit':'they visit the '+nx.opp} ${dayS(d)} at ${fmt(d)}${nx.nets&&nx.nets.length?', on '+nx.nets.join(' and '):''}.`}
-    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${L.opp}`:nx.opp,big:L?`${L.res==='W'?'Won':'Lost'} ${L.res==='W'?sc:L.them+'–'+L.us}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`Next: ${nx.opp}`,
+    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${L.opp}`:nx.opp,big:L?`${L.res==='W'?'Won':'Lost'} ${sc}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`Next: ${nx.opp}`,
       gauge:X.pts&&X.gp?Math.min(1,X.pts/(X.gp*2)):.5,color,lines:[X.record?`Record <b>${esc(X.record)}</b>${X.pts!=null?' · '+X.pts+' pts':''}`:'',
         nx?`Next: <b>${esc(dayS(new Date(nx.start)))} ${nx.home?'vs':'at'} ${esc(nx.opp)}</b>, ${fmt(new Date(nx.start))}${nx.nets&&nx.nets.length?' on '+esc(nx.nets.join(', ')):''}`:''].filter(Boolean),say}});
   if(typeof hubOn==='function'&&hubOn())team('tor','TOR','Leafs',HUB,C.blue);
@@ -3913,7 +3913,7 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   }
   /* game day: the whole HUD in team colours, and it ends with the chant */
   const L1=typeof gdToday==='function'&&gdToday(),K1=typeof kgdToday==='function'&&kgdToday();
-  const skin=L1?{P:{a:'#4f8dff',b:'#ffffff',c:'#7fb2ff',d:'#3b7bff',e:'#9ec2ff',core:['#cfe0ff','#4f8dff','#1f4fbf']},label:'GO LEAFS GO'}:K1?{P:{a:'#3fd47f',b:'#ffd23f',c:'#ffd23f',d:'#21a35d',e:'#9be8b8',core:['#fff3b0','#ffd23f','#21a35d']},label:'GO KNIGHTS GO'}:null;
+  const skin=K1?{P:{a:'#3fd47f',b:'#ffd23f',c:'#ffd23f',d:'#21a35d',e:'#9be8b8',core:['#fff3b0','#ffd23f','#21a35d']},label:'GO KNIGHTS GO'}:null;
   const tasks=(typeof calOn==='function'&&calOn()?calEvents.filter(e=>e.start.toDateString()===n.toDateString()).sort((a,b)=>a.start-b.start).slice(0,5).map(e=>[e.allDay?'ALL DAY':t12(e.start),e.title]):[]);
   const out=(Q?"That's the quick version.":per==='night'?"That's your roundup. Have a good night.":per==='morning'?"That's your roundup. Have a great day.":"That's your roundup. Have a good one.")+(skin?` ${skin.label.toLowerCase().replace(/^\w/,c=>c.toUpperCase()).replace(/ go$/,', go')}!`:'');
   return {ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,''),voice:novaVoice,volume:R.volume==null?.8:R.volume,tasks,segs,quick:Q,skin,
@@ -5628,7 +5628,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 114';
+document.getElementById('ver').textContent='build nova 115';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
