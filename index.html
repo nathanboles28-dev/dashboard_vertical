@@ -5380,9 +5380,9 @@ function renderWatch(){
   const LT0=WT.lately||Object.fromEntries(Object.entries(WT.users||{}).map(([n,l])=>[n,{mode:'all',list:l}]));
   /* only watched one or two things lately? top it up with all-time favourites so there are always at least 3 */
   const LT=Object.fromEntries(Object.entries(LT0).map(([n,M])=>{const L=(M&&M.list||[]).slice(),seen=new Set(L.map(x=>x.title));
-    for(const x of ((WT.users||{})[n]||[]))if(L.length<3&&!seen.has(x.title)){L.push({...x,last:null});seen.add(x.title)}return [n,{...M,list:L}]})),names=Object.keys(LT);
+    for(const x of ((WT.users||{})[n]||[]))if(L.length<5&&!seen.has(x.title)){L.push({...x,last:null,fav:1});seen.add(x.title)}return [n,{...M,list:L}]})),names=Object.keys(LT);
   const most=names.length?`<div class="wt-two wt-lt">${names.map(n=>{const M=LT[n]||{list:[]};return `<div class="jf-glass gd-card wt-u"><h2><span class="jf-av" style="background:${jfCol(n)}">${esc(n.charAt(0))}</span>${esc(n)}<span class="wt-hn">${M.mode==='recent'?'last 30 days':'all-time'}</span></h2>
-      ${(M.list||[]).slice(0,5).map((x,i)=>`<div class="wt-ur">${po(x.id,x.title,'sm')}<div><b>${esc(x.title)}</b><small>${x.type==='Series'?x.plays+' episode'+(x.plays===1?'':'s'):x.plays>1?'watched '+x.plays+' times':'movie'}${x.last?' · '+ago2(x.last):''}</small></div><em style="color:${i===0?jfCol(n):''}">${i+1}</em></div>`).join('')||'<div class="cnote">Nothing lately</div>'}</div>`}).join('')}</div>`:'';
+      ${(M.list||[]).slice(0,5).map((x,i)=>`<div class="wt-ur">${po(x.id,x.title,'sm')}<div><b>${esc(x.title)}</b><small>${x.type==='Series'?x.plays+' episode'+(x.plays===1?'':'s'):x.plays>1?'watched '+x.plays+' times':'movie'}${x.last?' · '+ago2(x.last):x.fav?' · all-time favourite':''}</small></div><em style="color:${i===0?jfCol(n):''}">${i+1}</em></div>`).join('')||'<div class="cnote">Nothing lately</div>'}</div>`}).join('')}</div>`:'';
   /* continue watching */
   const R=(WT.resume||[]).slice(0,3);
   const cont=R.length?`<div class="jf-glass gd-card wt-cw"><h2>▶ Pick up where you left off</h2><div class="wt-cwg">${R.map(r=>{const u=jfImg(r.ep,'Primary'),h=jfHash(r.title)%360;
@@ -5651,7 +5651,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 119';
+document.getElementById('ver').textContent='build nova 120';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
