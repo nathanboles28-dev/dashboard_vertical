@@ -1810,6 +1810,8 @@ html.nv2 .fnow #fDesc{font-family:var(--head);font-weight:500}
 html.nv2 #fDays .fday b,html.nv2 #fDays>div>b{font-family:var(--head);font-weight:500}
 html.nv2 :is(.gnone,.jf-wait){font-family:var(--head);font-weight:400;letter-spacing:.04em;color:#a9a6cc}
 html.nv2 .gnone::before,html.nv2 .jf-wait::before{content:'';display:inline-block;width:calc(1*var(--u));height:calc(1*var(--u));border-radius:50%;background:#9b6bff;box-shadow:0 0 calc(1.4*var(--u)) #9b6bff;margin-right:calc(1.4*var(--u));vertical-align:middle;animation:vmp 1.6s ease-in-out infinite}
+
+html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
 </style>
 </head>
 <body>
@@ -2037,7 +2039,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
-  roundup:{on:true, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
+  roundup:{on:true, music:true, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
            {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
@@ -3049,6 +3051,7 @@ let comSig='';
 const PG_NAMES={dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2FitTitles(){document.querySelectorAll('.page.on :is(.jf-title,.ptitle)').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
   while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
+setInterval(()=>{if(CFG.style==='nova2')n2FitTitles()},2000);
 function pageName(p){return p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
@@ -4171,13 +4174,21 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   const NHLN={ANA:'Ducks',BOS:'Bruins',BUF:'Sabres',CGY:'Flames',CAR:'Hurricanes',CHI:'Blackhawks',COL:'Avalanche',CBJ:'Blue Jackets',DAL:'Stars',DET:'Red Wings',EDM:'Oilers',FLA:'Panthers',LAK:'Kings',MIN:'Wild',MTL:'Canadiens',NSH:'Predators',
     NJD:'Devils',NYI:'Islanders',NYR:'Rangers',OTT:'Senators',PHI:'Flyers',PIT:'Penguins',SJS:'Sharks',SEA:'Kraken',STL:'Blues',TBL:'Lightning',TOR:'Maple Leafs',UTA:'Utah Mammoth',VAN:'Canucks',VGK:'Golden Knights',WSH:'Capitals',WPG:'Jets'};
   const tn=(X,o)=>X===HUB?(NHLN[o]||o):String(o||'').replace(/^(London|Kitchener|Sarnia|Windsor|Erie|Guelph|Owen Sound|Flint|Saginaw|Sault Ste\.? Marie|Soo|Barrie|Brampton|Brantford|Kingston|North Bay|Niagara|Oshawa|Ottawa|Peterborough|Sudbury)\s+/i,'');
-  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L0=X.last,n0=(X.next||[])[0];if(!L0&&!n0)return;const L=L0&&{...L0,opp:tn(X,L0.opp)},nx=n0&&{...n0,opp:tn(X,n0.opp)};if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
+  /* "9-4-2" -> "nine wins, four losses and two overtime losses" (OHL has a 4th column for shootout losses: added to the OT losses) */
+  const recSay=r=>{const p=String(r||'').split('-').map(x=>parseInt(x,10)).filter(x=>!isNaN(x));if(p.length<2)return '';const ot=(p[2]||0)+(p[3]||0),pl=(k,w)=>`${nw(k)} ${w}${k===1?'':/loss$/.test(w)?'es':'s'}`;
+    return `${pl(p[0],'win')}, ${ot?pl(p[1],'loss')+' and '+pl(ot,'overtime loss'):'and '+pl(p[1],'loss')}`.replace(/^(.*), and /,'$1 and ')};
+  const recent=L0=>{if(!L0)return false;const d=Date.parse(L0.date||L0.start||'');if(isNaN(d))return false;
+    /* dates without a time are the game day: count it from 10 PM that night */
+    const end=/T\d/.test(String(L0.date||L0.start))?d+3*3600e3:new Date(new Date(d).toISOString().slice(0,10)+'T22:00:00').getTime();return Date.now()-end<20*3600e3};
+  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L00=X.last,n0=(X.next||[])[0],L0=recent(L00)?L00:null;if(!L0&&!n0)return;const L=L0&&{...L0,opp:tn(X,L0.opp)},nx=n0&&{...n0,opp:tn(X,n0.opp)};if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
     const res=L?(L.res==='W'?'W':'L'):'',sc=L?`${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}`:'';
     if(Q){if(!nx)return;const d=new Date(nx.start);return {key,tag,title:name,kicker:name,value:nx.home?'VS':'AT',unit:nx.opp,big:`${name} ${dayS(d)} ${nx.home?'vs':'at'} ${nx.opp}`,gauge:.5,color,lines:[],say:`The ${name} play ${dayS(d)} ${nx.home?'against':'at'} ${nx.opp}, ${fmt(d)}.`}}
     let say='';if(L)say=`The ${name} ${L.res==='W'?'beat':'lost to'} the ${L.opp} ${Math.max(L.us,L.them)} to ${Math.min(L.us,L.them)}${L.ot?(L.so?' in a shootout':' in overtime'):''}.`;
-    if(X.record)say+=` They're ${String(X.record).replace(/-/g,', ')}.`;
-    if(nx){const d=new Date(nx.start);say+=` Next, ${nx.home?'the '+nx.opp+' visit':'they visit the '+nx.opp} ${dayS(d)} at ${fmt(d)}${nx.nets&&nx.nets.length?', on '+nx.nets.join(' and '):''}.`}
-    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${X===HUB?L0.opp:L.opp}`:(X===HUB?n0.opp:nx.opp),big:L?`${L.res==='W'?'Won':'Lost'} ${sc}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`Next: ${nx.opp}`,
+    const rs=recSay(X.record),tm=d=>fmt(d).replace(':00','').replace(/\s?([AP])M/i,(m,a)=>' '+a.toLowerCase()+'m');
+    if(L){if(rs)say+=` That puts them at ${rs}.`;
+      if(nx){const d=new Date(nx.start);say+=` Next, ${nx.home?'the '+nx.opp+' visit':'they visit the '+nx.opp} ${dayS(d)} at ${tm(d)}${nx.nets&&nx.nets.length?', on '+nx.nets.join(' and '):''}.`}}
+    else if(nx){const d=new Date(nx.start);say=`The ${name} play ${dayS(d)} at ${tm(d)}, ${nx.home?'at home against':'away at'} the ${nx.opp}${rs?`, with a record of ${rs}`:''}.`}
+    return {key,tag,title:name,kicker:name,value:L?res:(nx.home?'VS':'AT'),unit:L?`${sc} ${L.home?'vs':'at'} ${X===HUB?L0.opp:L.opp}`:(X===HUB?n0.opp:nx.opp),big:L?`${L.res==='W'?'Won':'Lost'} ${sc}${L.ot?' (OT)':''} ${L.home?'vs':'at'} ${L.opp}`:`${dayS(new Date(nx.start)).replace(/^./,c=>c.toUpperCase())} ${fmt(new Date(nx.start))} ${nx.home?'vs':'at'} ${nx.opp}`,
       gauge:X.pts&&X.gp?Math.min(1,X.pts/(X.gp*2)):.5,color,lines:[X.record?`Record <b>${esc(X.record)}</b>${X.pts!=null?' · '+X.pts+' pts':''}`:'',
         nx?`Next: <b>${esc(dayS(new Date(nx.start)))} ${nx.home?'vs':'at'} ${esc(nx.opp)}</b>, ${fmt(new Date(nx.start))}${nx.nets&&nx.nets.length?' on '+esc(nx.nets.join(', ')):''}`:''].filter(Boolean),say}});
   if(typeof hubOn==='function'&&hubOn())team('tor','TOR','Leafs',HUB,C.blue);
@@ -4198,14 +4209,14 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
       lines:rooms.slice(0,3).map(r=>`<b>${esc(r.name)}</b> · ${r.on.map(d=>esc(d.name)+(d.bri!=null&&hmKind(d)==='light'?' '+d.bri+'%':'')).join(', ')}`),
       say:lights.length?`${lights.length===1?'One light is':lights.length+' lights are'} ${tomorrow?'still ':''}on: ${andJ(lights.map(d=>d.name))}.${tvs.length?` The ${andJ(tvs.map(d=>d.name))} ${tvs.length===1?'is':'are'} on too.`:''}`:'All the lights are off.'}});
   /* 9. Jellyfin: pick up where you left off (the last thing you were watching), plus what's new */
-  if(per!=='morning')sg(()=>{if(!WT)return;const wk=(WT.fresh||[]).filter(x=>Date.now()-Date.parse(x.added)<7*864e5),st=(typeof JF!=='undefined'&&JF&&JF.streams)||[];
+  if(per!=='morning')sg(()=>{if(!WT)return;const wk=(WT.fresh||[]).filter(x=>!x.old&&Date.now()-Date.parse(x.added)<7*864e5),st=(typeof JF!=='undefined'&&JF&&JF.streams)||[];
     const me=String(who||'').toLowerCase(),R0=(WT.resume||[]).slice().sort((a,b)=>Date.parse(b.last)-Date.parse(a.last)),res=R0.find(r=>me&&String(r.user).toLowerCase().startsWith(me))||(!me?R0[0]:null);
     /* nothing part-way through? the most recent thing in your "lately" list */
     const mine=me&&WT.lately&&Object.entries(WT.lately).find(([k])=>k.toLowerCase().startsWith(me)),lat=mine&&mine[1]&&mine[1].mode==='recent'?(mine[1].list||[]).slice().sort((a,b)=>Date.parse(b.last)-Date.parse(a.last))[0]:null;
     if(!wk.length&&!st.length&&!res&&!lat)return;
     const ep=res&&/^S(\d+) · E(\d+)/.exec(res.sub||''),nm=who?who+', ':'';
-    const say=[res?`${nm}don't forget to keep watching ${res.title}${ep?`. You're on season ${ep[1]}, episode ${ep[2]}`:''}${res.pct>=5&&res.pct<=95?`, ${res.pct>=60?'most of the way through':res.pct>=35?'about halfway through':'just getting into it'}`:''}.`
-        :lat?`${nm}you were last watching ${lat.title}${lat.type==='Series'?". There's more waiting when you're ready":''}.`:'',
+    const say=[res?`${nm}continue watching ${res.title}${ep?`, you're on season ${nw(+ep[1])}, episode ${nw(+ep[2])}`:''}${res.pct>=5&&res.pct<=95?`, ${res.pct>=60?'most of the way through':res.pct>=35?'about halfway through':'just getting into it'}`:''}.`
+        :lat?`${nm}continue watching ${lat.title}${lat.type==='Series'?", there's more waiting when you're ready":''}.`:'',
       wk.length?`${wk.length===1?'One new movie':wk.length+' new movies'} on Jellyfin this week, including ${andJ(wk.slice(0,2).map(x=>x.title))}.`:'',
       st.length?`${st.length} ${st.length===1?'person is':'people are'} watching right now.`:''].filter(Boolean).join(' ');
     const big=res?`Continue: ${res.title}`:lat?`Last watched: ${lat.title}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st.length} watching now`;
@@ -4222,7 +4233,10 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
       lines:[...(sp?[`Internet <b>${Math.round(sp[1])} Mbps</b> down · <b>${Math.round(sp[2])}</b> up`]:[]),...(bad.length?bad.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${esc(x.why||'problem')}`):['Relay, weather, calendar, scores, remote: <b>all good</b>'])],
       say:bad.length?`Heads up: ${andJ(bad.slice(0,3).map(x=>x.name.replace(/\s*\(.*\)/,'')))} ${bad.length===1?'needs':'need'} a look.`:`All systems nominal.${sp?` Internet is running at ${nw(sp[1])} megabits.`:''}`}});
   /* 12. the closer: something from this day in history */
-  sg(()=>{const it=(SP.items||[]).find(x=>x.k==='otd'&&x.ago>0&&!spGrim.test(x.text||''))||(SP.items||[]).find(x=>x.k==='otd'&&x.ago>0);if(!it)return;const yr=n.getFullYear()-it.ago,txt=cut(String(it.text).replace(/\s*\(.*?\)\s*/g,' ').trim(),28);
+  sg(()=>{const all=(SP.items||[]).filter(x=>x.k==='otd'&&x.ago>0),nice=all.filter(x=>!spGrim.test(x.text||'')),pool=nice.length?nice:all;if(!pool.length)return;
+    /* a different one each time: skip the last few it told you */
+    let used=[];try{used=JSON.parse(localStorage.getItem('nova-ru-otd')||'[]')}catch(e){}const key=x=>String(x.text).slice(0,40),fresh=pool.filter(x=>!used.includes(key(x))),pick=(fresh.length?fresh:pool);
+    const it=pick[Math.floor(Math.random()*pick.length)];try{localStorage.setItem('nova-ru-otd',JSON.stringify([key(it),...used.filter(u=>u!==key(it))].slice(0,12)))}catch(e){}const yr=n.getFullYear()-it.ago,txt=cut(String(it.text).replace(/\s*\(.*?\)\s*/g,' ').trim(),28);
     return {key:'otd',tag:'HIST',title:'On this day',kicker:'On this day // '+yr,value:String(yr),unit:it.ago+' years ago',big:`${yr}`,gauge:Math.min(1,it.ago/150),color:C.purple,lines:[esc(txt)],say:`And on this day in ${yr}: ${txt.replace(/…$/,'')}.`}});
   }
   /* game day: the whole HUD in team colours, and it ends with the chant */
@@ -5224,7 +5238,8 @@ setTimeout(heartbeat,90000);setInterval(heartbeat,5*60000);
    "Hey Nova" + a command runs it straight away ("hey nova, red alert"). "Hey Nova" on its own: chime, then it listens
    for a few seconds; say a command, or say nothing and you get the roundup. While the roundup talks it only listens for "stop". */
 const VOICE={st:'off',err:'',heard:'',at:0,armed:0,armT:0,rec:null,fails:0};
-const WAKE=/\b(?:hey|hi|hello|ok|okay|yo)[,\s]+(?:nova|novah|nover|noba|nora|noah|novo)\b[,\s]*(.*)$/i;
+/* said quickly, "hey nova" often comes back as "hey nova", "heynova", "hanover", "a nova", "hey noah", "innova"... all count */
+const WAKE=/(?:^|\b)(?:(?:hey|hay|hi|hello|ok|okay|yo|a|eh|uh)[,\s]*(?:nova|novah|nover|noba|nava|novo|noah|nora|noa)|heynova|hanover|hannover|innova|casanova|^\s*nova)\b[,.\s]*(.*)$/i;
 function voiceUI(){let el=$('vMic');if(!el){el=document.createElement('div');el.id='vMic';document.body.appendChild(el)}
   el.className=VOICE.armed?'arm':VOICE.st==='on'?'on':'off';
   let E=$('vEdge');if(!E){E=document.createElement('div');E.id='vEdge';document.body.appendChild(E)}E.classList.toggle('on',!!VOICE.armed);el.innerHTML=VOICE.armed?'<i></i><b>Listening…</b>'+(VOICE.heard?`<small>${esc(VOICE.heard)}</small>`:''):'<i></i>'}
@@ -5238,14 +5253,16 @@ function voiceArm(){VOICE.armed=1;VOICE.heard='';voiceChime(true);wakeScreen&&wa
   VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),((CFG.voice||{}).wait||6)*1000)}
 function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(V.on===false){VOICE.st='off';return}if(!SR){VOICE.st='err';VOICE.err='this browser has no speech recognition';return}
-  const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
+  const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=5;
   rec.onstart=()=>{VOICE.st='on';VOICE.err='';voiceUI()};
   rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();
     const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
     if(ru){if(fin&&/\b(stop|cancel|shut up|quiet|enough)\b/i.test(txt)){NovaRoundup.stop();voiceChime(false)}continue}   // ignore its own voice
-    if(VOICE.armed){VOICE.heard=txt;voiceUI();if(fin&&txt){voiceRun(txt)}continue}
-    const m=txt.match(WAKE);if(!m)continue;
-    if(fin){VOICE.fails=0;m[1]&&m[1].trim().length>1?(voiceChime(true),voiceRun(m[1])):voiceArm()}}};
+    if(VOICE.armed){const w=txt.match(WAKE),c=w?(w[1]||'').trim():txt;VOICE.heard=c;voiceUI();if(fin){VOICE.pre=0;if(c)voiceRun(c)}continue}
+    let m=null;for(let a=0;a<R.length&&!m;a++)m=(R[a].transcript||'').trim().match(WAKE);if(!m)continue;
+    if(fin){VOICE.fails=0;VOICE.pre=0;m[1]&&m[1].trim().length>1?(VOICE.armed||voiceChime(true),voiceRun(m[1])):(VOICE.armed?null:voiceArm())}
+    else if(!VOICE.pre&&!(m[1]||'').trim()){VOICE.pre=1;voiceArm()}   // light up as soon as "hey nova" is heard, not after the pause
+  }};
   rec.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
   rec.onend=()=>{VOICE.st=VOICE.err?'err':'off';voiceUI();setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
   try{rec.start()}catch(e){VOICE.st='err';VOICE.err=e.message}}
@@ -5747,7 +5764,7 @@ function renderWatch(){
   const ago2=d=>{const n=Math.round((Date.now()-Date.parse(d))/864e5);return n<=0?'today':n===1?'yesterday':n<7?n+' days ago':Math.round(n/7)+' wk ago'};
   /* new on Jellyfin: a slow conveyor of posters */
   const N=(WT.fresh||[]).slice(0,12),pass=N.length>=4?[...N,...N]:N;
-  const fresh=N.length?`<div class="jf-glass gd-card wt-fr"><h2>✨ New on Jellyfin<span class="wt-hn">${N.length} added this month</span></h2><div class="${N.length>=4?'wt-mq':''}"><div class="${N.length>=4?'wt-mqt wt-frt':'wt-frt'}" style="--dur:${Math.max(30,N.length*7)}s">${pass.map(x=>`<div class="wt-it">${po(x.id,x.title)}<i class="wt-new">NEW</i><b>${esc(x.title)}</b><small>${x.ep?esc(x.ep)+' · ':''}${ago(x.added)}</small></div>`).join('')}</div></div></div>`:'';
+  const fresh=N.length?`<div class="jf-glass gd-card wt-fr"><h2>✨ New on Jellyfin<span class="wt-hn">${(()=>{const k=N.filter(x=>!x.old).length;return k?k+' added this month':'recently added'})()}</span></h2><div class="${N.length>=4?'wt-mq':''}"><div class="${N.length>=4?'wt-mqt wt-frt':'wt-frt'}" style="--dur:${Math.max(30,N.length*7)}s">${pass.map(x=>`<div class="wt-it">${po(x.id,x.title)}${x.old?'':'<i class="wt-new">NEW</i>'}<b>${esc(x.title)}</b><small>${x.ep?esc(x.ep)+' · ':''}${ago(x.added)}</small></div>`).join('')}</div></div></div>`:'';
   /* what each of you has been watching lately (last 30 days; falls back to all-time if nothing recent) */
   const LT0=WT.lately||Object.fromEntries(Object.entries(WT.users||{}).map(([n,l])=>[n,{mode:'all',list:l}]));
   /* only watched one or two things lately? top it up with all-time favourites so there are always at least 3 */
@@ -6024,7 +6041,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 130';
+document.getElementById('ver').textContent='build nova 132';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6179,6 +6196,21 @@ const S={
         if(i%8===4){const s2=A.createBufferSource();s2.buffer=noise();const hp=A.createBiquadFilter();hp.type='highpass';hp.frequency.value=6000;const hg=A.createGain();hg.gain.setValueAtTime(.0001,t);hg.gain.exponentialRampToValueAtTime(.25,t+.003);hg.gain.exponentialRampToValueAtTime(.0001,t+.09);s2.connect(hp);hp.connect(hg);hg.connect(g);s2.start(t);s2.stop(t+.1)}
         i++;next+=st}},50);
     S._mus={g,f,iv}},
+  /* a chill synthwave loop under the whole roundup (Am - F - C - G): pads, bass, a delayed arpeggio, soft kick and hats */
+  bed(on){if(!A)return;if(!on){if(S._bed){const m=S._bed;S._bed=null;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.exponentialRampToValueAtTime(.0001,t+2.4);setTimeout(()=>clearInterval(m.iv),2500)}return}
+    if(S._bed)return;const g=A.createGain(),t0=A.currentTime;g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(.5,t0+2.5);out(g,.42);
+    const dl=A.createDelay(1),fb=A.createGain(),dg=A.createGain(),bpm=96,st=60/bpm/4;dl.delayTime.value=st*3;fb.gain.value=.38;dg.gain.value=.5;dl.connect(fb);fb.connect(dl);dl.connect(dg);dg.connect(g);
+    const CH=[{b:55,p:[220,261.6,329.6],a:[440,523.3,659.3,880]},{b:43.65,p:[174.6,220,261.6],a:[349.2,440,523.3,698.5]},{b:65.4,p:[196,261.6,329.6],a:[523.3,659.3,784,1046.5]},{b:49,p:[196,246.9,293.7],a:[392,493.9,587.3,784]}];
+    let i=0,next=t0+.1;const tone=(type,fr,t,a,d,v,dest)=>{const o=A.createOscillator(),e=A.createGain();o.type=type;o.frequency.value=fr;e.gain.setValueAtTime(.0001,t);e.gain.exponentialRampToValueAtTime(v,t+a);e.gain.exponentialRampToValueAtTime(.0001,t+a+d);o.connect(e);e.connect(dest);o.start(t);o.stop(t+a+d+.05);return o};
+    const iv=setInterval(()=>{while(next<A.currentTime+.25){const t=next,s16=i%16,c=CH[Math.floor(i/16)%4];
+        if(s16===0){const pf=A.createBiquadFilter();pf.type='lowpass';pf.frequency.setValueAtTime(700,t);pf.frequency.linearRampToValueAtTime(1500,t+st*8);pf.frequency.linearRampToValueAtTime(800,t+st*16);pf.connect(g);
+          c.p.forEach(fr=>[-6,6].forEach(dt=>{const o=tone('sawtooth',fr,t,.6,st*16,.035,pf);o.detune.value=dt}))}
+        if([0,3,6,8,11,14].includes(s16))tone('triangle',c.b*2,t,.008,st*1.6,.32,g);
+        if(s16%2===0){const o=tone('triangle',c.a[(i/2)%4|0],t,.005,st*1.4,.07,g);const e2=A.createGain();e2.gain.value=.6;o.connect(e2);e2.connect(dl)}
+        if(s16===0||s16===8){const k=A.createOscillator(),kg=A.createGain();k.frequency.setValueAtTime(130,t);k.frequency.exponentialRampToValueAtTime(40,t+.16);kg.gain.setValueAtTime(.0001,t);kg.gain.exponentialRampToValueAtTime(.55,t+.004);kg.gain.exponentialRampToValueAtTime(.0001,t+.28);k.connect(kg);kg.connect(g);k.start(t);k.stop(t+.3)}
+        if(s16%4===2){const n2=A.createBufferSource();n2.buffer=noise();const hp=A.createBiquadFilter();hp.type='highpass';hp.frequency.value=7000;const hg=A.createGain();hg.gain.setValueAtTime(.0001,t);hg.gain.exponentialRampToValueAtTime(.09,t+.003);hg.gain.exponentialRampToValueAtTime(.0001,t+.06);n2.connect(hp);hp.connect(hg);hg.connect(g);n2.start(t);n2.stop(t+.07)}
+        i++;next+=st}},60);
+    S._bed={g,iv}},
   siren(n=3){if(!A)return;for(let k=0;k<n;k++){const t=A.currentTime+k*.9,o=A.createOscillator(),g=A.createGain(),f=A.createBiquadFilter();f.type='lowpass';f.frequency.value=2200;o.type='square';
     o.frequency.setValueAtTime(620,t);o.frequency.linearRampToValueAtTime(980,t+.42);o.frequency.linearRampToValueAtTime(620,t+.85);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.03);g.gain.setValueAtTime(.12,t+.8);g.gain.exponentialRampToValueAtTime(.0001,t+.88);o.connect(f);f.connect(g);out(g,.4);o.start(t);o.stop(t+.9)}},
   horn(){if(!A)return;const t=A.currentTime,g=A.createGain(),f=A.createBiquadFilter();f.type='lowpass';f.frequency.value=1500;f.connect(g);out(g,.5);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.22,t+.06);g.gain.setValueAtTime(.22,t+1.4);g.gain.exponentialRampToValueAtTime(.0001,t+1.9);
@@ -6304,7 +6336,7 @@ async function play(D){
       stage.classList.add('glitch');S.chatter(10);setTimeout(()=>stage.classList.remove('glitch'),800);
       R.classList.add('f3');await sleep(1200)}
     /* --- core ignites --- */
-    R.classList.add('f4');$('.flash').classList.add('go');shock(P.core[0],12);S.boom(.7);S.chime();S.music(false);
+    R.classList.add('f4');$('.flash').classList.add('go');shock(P.core[0],12);S.boom(.7);S.chime();S.music(false);if(!D.special&&D.music!==false&&!(typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.music===false)){S.bed(true);S.humOff()}
     decode($('#ruCV'),D.coreTxt||'NOVA',800);decode($('#ruCU'),'ONLINE',800);decode($('#ruCT'),'SYSTEMS',600);
     await sleep(D.quick?400:900);
     if(D.special){await D.special(X)}else{
@@ -6315,7 +6347,7 @@ async function play(D){
       R.querySelectorAll('.chips span').forEach(n=>{if(n.classList.contains('on')){n.classList.remove('on');n.classList.add('done')}});
       const nd=R.querySelector(`.node[data-k="${s.key}"]`),cp=R.querySelector(`.chips span[data-k="${s.key}"]`);if(nd)nd.classList.add('on');if(cp)cp.classList.add('on');
       const card=$('.card');card.classList.remove('on');S.whoosh(.6,.18,si%2===0);await sleep(280);
-      R.classList.toggle('alarming',!!s.alarm);if(s.alarm){S.siren(3);await sleep(600)}if(s.sting==='horn')S.horn();
+      R.classList.toggle('alarming',!!s.alarm);if(s.alarm){S.siren(3);await sleep(600)}
       card.style.setProperty('--c',s.color);$('#ruGauge').style.stroke=s.color;$('#ruGauge').style.strokeDashoffset=String(100-Math.round(100*Math.max(0,Math.min(1,s.gauge==null?1:s.gauge))));
       blocks.forEach((b,i)=>{b.classList.remove('hot');b.style.setProperty('--c',s.color)});const hot=Math.round(blocks.length*Math.max(0,Math.min(1,s.gauge==null?1:s.gauge)));
       blocks.slice(0,hot).forEach((b,i)=>setTimeout(()=>{b.classList.add('hot');if(i%4===0)S.tick(2400+i*30,.02)},i*22));
@@ -6331,12 +6363,11 @@ async function play(D){
     /* --- outro --- */
     if(alive){$('.card').classList.remove('on');$('#ruBye').textContent='';R.querySelectorAll('.node.on,.chips .on').forEach(n=>{n.classList.remove('on');n.classList.add('done')});
       $('#ruGauge').style.stroke='#ff4fa3';$('#ruGauge').style.strokeDashoffset='0';countTo($('#ruCV'),'100',700);decode($('#ruCU'),'COMPLETE',500);decode($('#ruCT'),'ROUNDUP',500);S.chime();
-      if(D.skin&&D.skin.label)S.horn();
       await say(D.outro,V,RATE);}
     }
-    R.classList.add('out');S.down();S.humOff();decode($('#ruBye'),(D.skin&&D.skin.label)||'NOVA',600);await sleep((D.skin&&D.skin.label)?2600:1500);
+    R.classList.add('out');S.bed(false);S.down();S.humOff();decode($('#ruBye'),(D.skin&&D.skin.label)||'NOVA',600);await sleep((D.skin&&D.skin.label)?2600:1500);
   }catch(e){console.warn('roundup',e)}
-  R.classList.add('bye');await sleep(1400);clearInterval(ck);clearInterval(anim);stopNet();R.remove();busy=false;stopFn=null;
+  S.bed(false);R.classList.add('bye');await sleep(1400);clearInterval(ck);clearInterval(anim);stopNet();R.remove();busy=false;stopFn=null;
 }
 /* ---------------- easter eggs ---------------- */
 function redAlert(o={}){return play({...o,quick:true,music:false,hdr:'NOVA · DEFENCE GRID',coreTxt:'ALERT',segs:[],special:async X=>{const B=X.$('#ruBig');
