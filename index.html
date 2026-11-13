@@ -3449,6 +3449,8 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Continue watching',()=>((typeof WT!=='undefined'&&WT&&WT.resume)||[]).slice(0,5).map(r=>`${r.user}: ${r.title} ${r.sub||''} ${r.pct||0}%`).join('\n'));
   add('New on Jellyfin',()=>((typeof WT!=='undefined'&&WT&&WT.fresh)||[]).filter(x=>!x.old).map(x=>x.title).join(', '));
   add('House',()=>CFG.home&&CFG.home.on?hmSay():'');
+  add('Devices you can control',()=>CFG.home&&CFG.home.on&&HM.devs.length?HM.devs.map(d=>`${d.name} (${hmKind(d)}${d.reach?'':', unreachable'}): ${d.on?'on'+(d.bri!=null?' '+d.bri+'%':''):'off'}`).join('\n')+
+    `\nScenes: ${(CFG.home.scenes||[]).map(s=>s.name).join(', ')||'none'}\nTO CONTROL THEM: when asked to change a device, add tags at the very end of your answer, one per change, exactly like [[on:Device Name]] [[off:Device Name]] [[bri:Device Name:40]] [[scene:Scene Name]]. Use the exact names above. Say briefly what you did.`:'');
   add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
   add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
   add('Countdowns',()=>countdownList().slice(0,6).map(c=>`${c.name} in ${daysUntil(c.date)} days`).join(', '));
@@ -3462,6 +3464,12 @@ async function askNova(q){if(aiBusy)return;aiBusy=true;wakeScreen&&wakeScreen();
   try{const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:aiContext(),who})});
     const j=await r.json().catch(()=>({}));a=j.answer||'';if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":/credit|balance|billing/i.test(j.error||'')?"I'm out of AI credits. Top up in the Anthropic console and I'll be back.":"Sorry, I couldn't reach my brain just now."}}
   catch(e){a="Sorry, I couldn't reach my brain just now."}
+  /* run any house actions Claude asked for, and keep the tags out of what's said */
+  try{const acts=[...a.matchAll(/\[\[(on|off|bri|scene):([^\]:]+)(?::(\d{1,3}))?\]\]/gi)];
+    if(acts.length&&CFG.home&&CFG.home.on)acts.forEach(([,k,n,v])=>{k=k.toLowerCase();n=n.trim();
+      if(k==='scene'){const i=(CFG.home.scenes||[]).findIndex(s=>s.name.toLowerCase()===n.toLowerCase());if(i>=0)hmScene(i)}
+      else{const d=HM.devs.find(x=>x.name.toLowerCase()===n.toLowerCase());if(d)hmSet(d.name,k==='bri'?{on:true,bri:Math.max(1,Math.min(100,+v||50))}:{on:k==='on'})}});
+    a=a.replace(/\s*\[\[[^\]]*\]\]/g,'').trim()}catch(e){}
   aiBusy=false;reply(a);if(!(CFG.remote||{}).speak)speak(a)}
 function reply(text){
   const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;
@@ -3524,7 +3532,15 @@ function handleCommand(raw){
     if(has(/\b(smart home|my devices|devices|my lights|the lights)\b/)&&!/\b(on|off)\b/.test(t)){showFor('home');return reply(hmSay())}
     const sc=(CFG.home.scenes||[]).findIndex(s=>new RegExp('\\b'+s.name.toLowerCase()+'\\b').test(t));
     if(sc>=0&&has(/\b(scene|mode|lights|time)\b|^\w+( \w+)?$/)){hmScene(sc);return reply(`${CFG.home.scenes[sc].name} scene on.`)}
-    const m=t.match(/^(?:turn |switch )?(on|off) (?:the )?(.+)$/)||t.match(/^(?:turn |switch )?(?:the )?(.+?) (on|off)$/);
+    /* polite versions too: "can you turn off the office light please" */
+    const t2=t.replace(/^((can|could|would|will) you|please|hey|yo)\s+/,'').replace(/^((can|could|would|will) you|please)\s+/,'').replace(/\s+(please|for me|thanks|thank you)$/,'').trim();
+    const dev=nm=>{nm=nm.replace(/^(the|my) /,'').replace(/\s+(lights?|lamp)$/,m=>HM.devs.some(x=>x.name.toLowerCase()===nm)?m:m).trim();
+      return HM.devs.find(x=>x.name.toLowerCase()===nm)||HM.devs.find(x=>x.name.toLowerCase().includes(nm)||nm.includes(x.name.toLowerCase()))};
+    if(/^(turn|switch|shut) (off )?(all|everything|all the lights|every light)( off)?$|^(all|everything) off$|^lights off everywhere$/.test(t2)){
+      const L=HM.devs.filter(d=>d.on&&/light|plug/.test(hmKind(d)));L.forEach(d=>hmSet(d.name,{on:false}));return reply(L.length?`Turned off ${L.length===1?L[0].name:L.length+' things'}.`:'Everything was already off.')}
+    {const b=t2.match(/^(?:dim|set|turn|put|bring)(?: the)? (.+?) (?:to|at|down to|up to) (\d{1,3})(?: ?%| percent)?$/)||t2.match(/^(?:dim|brighten)(?: the)? (.+)$/);
+     if(b){const d=dev(b[1]);if(d){const v=b[2]!=null?Math.max(1,Math.min(100,+b[2])):/^brighten/.test(t2)?100:30;hmSet(d.name,{on:true,bri:v});return reply(`${d.name} at ${v} percent.`)}}}
+    const m=t2.match(/^(?:turn |switch |shut )?(on|off) (?:the )?(.+)$/)||t2.match(/^(?:turn |switch |shut )?(?:the )?(.+?) (on|off)$/);
     if(m){const st=m[1]==='on'||m[1]==='off'?m[1]:m[2],nm=(m[1]===st?m[2]:m[1]).replace(/^the /,'');
       const d=HM.devs.find(x=>x.name.toLowerCase()===nm)||HM.devs.find(x=>x.name.toLowerCase().includes(nm)||nm.includes(x.name.toLowerCase()));
       if(d){hmSet(d.name,{on:st==='on'});return reply(`${d.name} ${st}.`)}}
@@ -6175,7 +6191,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 147';
+document.getElementById('ver').textContent='build nova 148';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
