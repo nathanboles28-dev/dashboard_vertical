@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shield Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600&family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--u:1vh}
 :root{--ink:#fbf6f2;--dim:rgba(250,240,232,.68);--glass:rgba(255,255,255,.075);--edge:rgba(255,255,255,.15);
@@ -819,6 +819,10 @@ i.ws-lg{border-radius:50%;background:rgba(255,255,255,.12)}
 .gd-hs.mlb{background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.22),rgba(255,255,255,.06))}
 .gd-hs.mlb img{object-fit:contain;object-position:center bottom;top:12%;height:88%}
 .gd-hs.mlb.port img{object-fit:cover;object-position:center 22%;top:0;height:100%;transform:scale(1.02)}
+#nclk{position:fixed;inset:0;z-index:19;background:#020000;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity 3s;cursor:none}#nclk.on{opacity:1;pointer-events:auto}
+#nclk .t{font-family:'Inter',system-ui,sans-serif;font-weight:200;font-size:calc(22*var(--u));color:#b3261e;opacity:.8;letter-spacing:-.02em;text-align:center;line-height:1;text-shadow:0 0 calc(4*var(--u)) rgba(180,30,20,.3)}
+#nclk .d{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:calc(2.2*var(--u));letter-spacing:.35em;color:#7a1a14;text-align:center;margin-top:calc(2*var(--u))}
+#nclk .x{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:calc(1.9*var(--u));letter-spacing:.2em;color:#5a130f;text-align:center;margin-top:calc(6*var(--u));line-height:2}
 #night{position:fixed;inset:0;z-index:20;background:#000;opacity:0;pointer-events:none;transition:opacity 2.5s}#night.on{opacity:1;pointer-events:auto;cursor:none}
 
 /* ===== Sunrise wake-up ===== */
@@ -1083,6 +1087,50 @@ body.aqua.hasTicker #pAqua{bottom:0}body.aqua.hasTicker #ticker{background:rgba(
 .ts-sg i{width:calc(1.3*var(--u));height:calc(1.3*var(--u));border-radius:50%;flex:none;background:#5fd88a;box-shadow:0 0 calc(1*var(--u)) rgba(95,216,138,.7)}
 .ts-sg .bad i{background:#ff5c6c;box-shadow:0 0 calc(1*var(--u)) rgba(255,92,108,.8);animation:ngBlink 1.4s infinite}.ts-sg .bad b{color:#ff9aa4}.ts-sg small{flex-basis:100%;padding-left:calc(2.3*var(--u));font-size:calc(1.5*var(--u));color:var(--dim)}
 .ts-lib{margin-top:calc(1.4*var(--u));padding-top:calc(1.2*var(--u));border-top:1px solid rgba(255,255,255,.08);font-size:calc(1.9*var(--u));color:rgba(235,235,245,.85)}.ts-lib b{color:#7ee0a8;font-weight:600}
+
+/* ---- now playing visualizer: a glow ring round the cover and bars that pulse along (the dashboard can't hear the music, so it's a rhythm, not real levels) ---- */
+#npBody .np-art{overflow:visible}#npBody .np-art img{border-radius:inherit}
+#npBody .np-art::before{content:'';position:absolute;inset:calc(-3.2*var(--u));border-radius:50%;border:2px dotted color-mix(in srgb,var(--np1,#ff8a3d) 60%,#fff);opacity:.45;animation:npRing 30s linear infinite;pointer-events:none}
+#npBody .np-art::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 calc(8*var(--u)) color-mix(in srgb,var(--np1,#ff5a3d) 80%,transparent);animation:npGlow 1.9s ease-in-out infinite;pointer-events:none}
+#npBody.paused .np-art::after,#npBody.paused .np-art::before{animation-play-state:paused;opacity:.2}
+@keyframes npRing{to{transform:rotate(360deg)}}@keyframes npGlow{50%{opacity:.45}}
+.np-viz{position:relative;z-index:1;display:flex;align-items:flex-end;gap:calc(.55*var(--u));height:calc(12*var(--u));width:84%;margin-top:calc(2.4*var(--u))}
+.np-viz i{flex:1;height:var(--h);border-radius:calc(.6*var(--u)) calc(.6*var(--u)) 0 0;background:linear-gradient(180deg,#ffb35c,#ff3d8b 55%,#9b5cff);opacity:.85;transform-origin:bottom;animation:npBar var(--d) ease-in-out infinite alternate}
+#npBody.paused .np-viz i{animation-play-state:paused;opacity:.3}
+@keyframes npBar{0%{transform:scaleY(.18)}100%{transform:scaleY(1)}}
+@media (orientation:landscape){.np-viz{display:none}}
+.pg-gk{display:grid;grid-template-columns:1fr 1fr;gap:calc(2*var(--u))}.pg-gk b{display:block;font-size:calc(3*var(--u));font-weight:700}.pg-gk small{display:block;font-size:calc(1.9*var(--u));color:var(--dim);margin-top:calc(.3*var(--u))}
+.pg-b{display:inline-block;margin-top:calc(.7*var(--u));font-style:normal;font-size:calc(1.4*var(--u));letter-spacing:.14em;font-weight:700;padding:calc(.3*var(--u)) calc(1*var(--u));background:rgba(255,255,255,.1);color:var(--dim)}
+.pg-b.ok{background:rgba(63,212,127,.2);color:#7ef0a8}.pg-b.mb{background:rgba(255,210,63,.2);color:#ffd23f}
+.pg-n{padding:calc(.9*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.pg-n:first-of-type{border-top:0}.pg-n b{display:block;font-size:calc(2.2*var(--u));font-weight:600;line-height:1.3}.pg-n small{font-size:calc(1.7*var(--u));color:var(--dim)}
+.ng-body.pg .ng-when b{font-size:calc(4.6*var(--u))}.ng-body.pg .ng-cd{font-size:calc(5*var(--u));display:block;margin-top:calc(.6*var(--u));color:#fff!important;text-shadow:0 0 calc(2*var(--u)) rgba(63,212,127,.6)}
+
+/* =================== HUD style: one look for every page =================== */
+html.hud body{font-family:'Inter',-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+/* headings and big numbers in Chakra Petch, small labels in JetBrains Mono */
+html.hud :is(#time,#temp,#fTemp,.jf-title,.ng-sc,.ng-tm b,.ng-vs .ng-t b,.ng-when b,.ng-call b,.ng-xn,.ng-big,.ng-star b,.pg-gk b,.wt-info>b,.hm-hh>div:first-child b,.hm-cnt b,.cdr-n b,.ts-nrow b,.ts-fun b,.wr-big,.hb2-rec,.sn-big,.np-t,.dv-sum b,.dv-day b,.lc-drm,.gr .when b,.gr .sc,.gnone)
+  {font-family:'Chakra Petch','Inter',sans-serif!important;letter-spacing:.01em}
+html.hud :is(.card h2,.gd-card h2,.ng-k,.wt-hn,.wt-k,.hm-hh small,.hm-cnt small,.pg-b,.np-hd,.np-src,.hm-rm small,.ts-sg b,#date span)
+  {font-family:'JetBrains Mono',ui-monospace,monospace!important}
+html.hud .ptitle{font-family:'Chakra Petch',sans-serif!important;text-transform:uppercase;letter-spacing:.14em;font-weight:600;color:color-mix(in srgb,var(--acc,#3ee8ff) 65%,#fff)}
+html.hud .jf-title{text-transform:uppercase;letter-spacing:.14em;font-weight:600;color:color-mix(in srgb,var(--acc,#3ee8ff) 65%,#fff);font-size:calc(2.8*var(--u))}
+html.hud .jf-title::after{content:'';display:block;width:calc(14*var(--u));height:2px;margin-left:calc(1*var(--u));background:linear-gradient(90deg,var(--acc,#3ee8ff),transparent);align-self:center}
+/* cards: cut corners, a deep blue-violet glass, hairline edge and a glowing colour bar on the left */
+html.hud :is(.card,.jf-glass,.gr){border-radius:0!important;border:1px solid rgba(120,200,255,.18)!important;
+  background:linear-gradient(135deg,rgba(18,36,78,.5),rgba(38,12,62,.36))!important;
+  clip-path:polygon(0 0,calc(100% - 1.8*var(--u)) 0,100% calc(1.8*var(--u)),100% 100%,calc(1.8*var(--u)) 100%,0 calc(100% - 1.8*var(--u)));
+  box-shadow:inset calc(.45*var(--u)) 0 0 color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 85%,transparent),inset calc(2.4*var(--u)) 0 calc(3*var(--u)) calc(-2*var(--u)) color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 45%,transparent)!important}
+html.hud :is(.card,.jf-glass,.gr)::before{border-radius:0!important}
+html.hud .card h2,html.hud .gd-card h2{text-transform:uppercase;letter-spacing:.2em;font-size:calc(1.5*var(--u))!important;font-weight:600;color:color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 80%,#fff)!important}
+html.hud .card h2::before,html.hud .gd-card h2::before{content:'◆ ';opacity:.8}
+/* the frame round the screen, scanlines and a drifting network of lines behind everything */
+#hudFrame,#hudScan,#hudNet{display:none}
+html.hud #hudFrame{display:block;position:fixed;inset:0;z-index:15;pointer-events:none;width:100%;height:100%}
+html.hud #hudFrame path{fill:none;stroke:url(#hudFG);stroke-width:2;vector-effect:non-scaling-stroke;opacity:.85}
+html.hud #hudScan{display:block;position:fixed;inset:0;z-index:16;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+html.hud #hudNet{display:block;position:fixed;inset:-4%;width:108%;height:108%;z-index:0;pointer-events:none;opacity:.5;animation:hudDrift 240s ease-in-out infinite alternate}
+@keyframes hudDrift{to{transform:translate(-2.5%,-2%) rotate(.6deg)}}
+html.hud body.aqua #hudNet,html.hud body.aqua #hudFrame{display:none}
 /* ---- a bit more colour on the main page ---- */
 #shift>.card{position:relative;overflow:hidden}
 #shift>.card::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(75% 65% at 0% 0%,color-mix(in srgb,var(--cc,transparent) 24%,transparent),transparent 72%);border-radius:inherit}
@@ -1674,6 +1722,8 @@ const CFG={
   clock24:false,
   // Colour theme: 'glass' (dark, frosted glass over your blurred photos), 'aurora' (blue, purple, pink), 'dusk' (warm amber and rose), 'graphite' (neutral dark), 'forest' (green), 'midnight' (the original blue and violet)
   theme:'glass',
+  // Look: 'hud' = the sci-fi frame, cut-corner cards and Chakra Petch / Inter / JetBrains Mono on every page. '' = the old glass look.
+  style:'hud',
   liquid:true,   // liquid glass look for the 'glass' theme (clearer glass, lit edges, colour glows behind). false = the classic frosted glass
   // Background for the glass theme: 'cycle' (lava-lamp glow that slowly moves through all the colours below),
   // or one fixed colour: 'midnight' (deep navy), 'graphite' (charcoal), 'ocean' (deep teal), 'plum' (dark purple), or 'photo' (blurred photos from your folder)
@@ -1794,7 +1844,7 @@ const CFG={
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
   // Morning mode: between these times the board stays on one "get going" page (weather, calendar, drives, roads, games today, headlines)
   // Now playing (Apple Music on the Macbook, via the remote's channel): full page in the rotation, mini player on other pages, card on the home page
-  nowPlaying:{on:true, page:true, mini:true, card:true, peekSecs:10},   // peekSecs: when a new song starts, show the Now playing page this long, then go back (0 = off)
+  nowPlaying:{on:true, page:true, mini:true, card:true, peekSecs:60, viz:true},   // peekSecs: when a new song starts, show the Now playing page this long, then go back (0 = off)
   // Trades & signings page: last N days; your teams: Leafs (ESPN abbreviation) and Blue Jays (MLB team id)
   transactions:{on:true, days:30, nhlTeam:'TOR', mlbTeam:141},
   morningMode:{on:true, from:'07:00', to:'09:00', headlines:4},
@@ -1815,6 +1865,8 @@ const CFG={
   xbox:{on:true, jumpSecs:10, mini:true},
   // Home: devices come from Homebridge through the small nova-home helper on this Mac. Names must match Homebridge exactly.
   // Roundup: say "hello Nova" (Siri / the remote) for the sci-fi intro + spoken roundup. morning: also play it when the screen wakes up
+  // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
+  nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   roundup:{on:true, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
@@ -1898,6 +1950,7 @@ function nbSub(topic,since,onMsg,onState){nbCheck().then(ok=>{
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ws&&ws.readyState===3){clearTimeout(rt);back=2000;go()}});
 })}
 document.documentElement.dataset.theme=CFG.theme||'dusk';
+if(CFG.style==='hud')document.documentElement.classList.add('hud');
 if(CFG.liquid&&(CFG.theme||'')==='glass'){document.documentElement.classList.add('liquid');
   document.body.insertAdjacentHTML('afterbegin','<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgBend" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.004 0.007" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="2" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="28" xChannelSelector="R" yChannelSelector="G"/></filter></svg><div id="lgOrbs"><i></i><i></i><i></i><i></i></div>')}
 const BGP={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
@@ -2389,6 +2442,7 @@ function nextPage(force,hold){
   let p,stay=false;
   if(force||force===0)window._userHoldUntil=Date.now()+((hold||15)*1000);
   else if(typeof mornOn==='function'&&mornOn()){force='morn';hold=60;stay=$('pMorn').classList.contains('on')}
+  else if(typeof pgActive==='function'&&pgActive()){const pa=pgActive();force=pa.type;hold=60;stay=$(PAGE_EL[pa.type]).classList.contains('on')&&(pa.type==='kgameday')===!!window._gdK}
   if(force){const i=list.findIndex(q=>q.type===force);if(i>=0)pIdx=i;p=i>=0?list[i]:{type:force}}
   else if(force===0){for(let n=0;n<list.length;n++){pIdx=(pIdx-1+list.length)%list.length;if(canShow(list[pIdx]))break}p=list[pIdx]}
   else{for(let n=0;n<list.length;n++){pIdx=(pIdx+1)%list.length;if(canShow(list[pIdx]))break}p=list[pIdx]}
@@ -2398,8 +2452,8 @@ function nextPage(force,hold){
   if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
-  if(p.type==='gameday'){window._gdK=false;gdSig='';renderGameday();loadGameday()}
-  if(p.type==='kgameday'){window._gdK=true;gdSig='';renderGameday();loadKGD()}
+  if(p.type==='gameday'){window._gdK=false;gdSig='';renderGameday();loadGameday();loadPregame()}
+  if(p.type==='kgameday'){window._gdK=true;gdSig='';renderGameday();loadKGD();loadPregame()}
   if(p.type==='local'){renderLocal();loadLocal();if(Date.now()-drvAt>290000)loadDrives()}
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   if(p.type==='ws'){renderWS();loadWS()}
@@ -3067,9 +3121,25 @@ function goodnight(){
   setTimeout(()=>{const n=$('night');n.classList.add('on');
     if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'sleep'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'sleep').catch(()=>{})}},4000);
 }
-function wakeScreen(){$('night').classList.remove('on')}
+function wakeScreen(){$('night').classList.remove('on');nclkSnooze=Date.now()+10*60000;const c=$('nclk');if(c)c.classList.remove('on')}
+/* ---------- night clock: 11 PM to midnight, a very dim red clock; then the screen goes off until 7 ---------- */
+let nclkSnooze=0,nclkSlept=(()=>{try{return localStorage.getItem('nova-slept')==='1'}catch(e){return false}})();
+const nclkSet=v=>{nclkSlept=v;try{localStorage.setItem('nova-slept',v?'1':'0')}catch(e){}};
+function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false){if(el)el.classList.remove('on');return}
+  if(!el){el=document.createElement('div');el.id='nclk';document.body.appendChild(el)}
+  const n=new Date(),h=n.getHours(),from=C.from==null?23:C.from,off=C.offAt==null?0:C.offAt,wake=C.wakeAt==null?7:C.wakeAt;
+  const inClock=off===0?h>=from:(h>=from&&h<off),busy=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
+  if(inClock&&Date.now()>nclkSnooze&&!busy){
+    const lo=WXD&&WXD.dl?Math.round(WXD.dl.temperature_2m_min[1]):null;
+    el.innerHTML=`<div><div class="t">${n.getHours()%12||12}:${String(n.getMinutes()).padStart(2,'0')}</div><div class="d">${n.toLocaleDateString([],{weekday:'long'}).toUpperCase()} · ${n.toLocaleDateString([],{month:'short',day:'numeric'}).toUpperCase()}</div>
+      <div class="x">${C.alarm?'ALARM '+esc(C.alarm):''}${lo!=null?(C.alarm?' · ':'')+lo+'° OVERNIGHT':''}<br>SCREEN OFF AT ${off===0?'12:00':off+':00'}</div></div>`;el.classList.add('on')}
+  else el.classList.remove('on');
+  /* midnight: lights out. 7 AM: back on */
+  if(h===off&&n.getMinutes()<2&&!nclkSlept&&Date.now()>nclkSnooze){nclkSet(true);el.classList.remove('on');goodnight()}
+  if(h===wake&&nclkSlept){nclkSet(false);wakeScreen();nclkSnooze=0;if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})}}}
+setInterval(nclkTick,20000);setTimeout(nclkTick,3000);
 ['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,()=>{const n=$('night');if(n&&n.classList.contains('on')&&Date.now()-(n._at||0)>3000)wakeScreen()},{passive:true}));
-setInterval(()=>{const n=$('night'),h=new Date().getHours();if(n.classList.contains('on')&&!n._at)n._at=Date.now();if(!n.classList.contains('on'))n._at=0;if(n.classList.contains('on')&&h>=6&&h<10)wakeScreen()},5000);
+setInterval(()=>{const n=$('night'),h=new Date().getHours();if(n.classList.contains('on')&&!n._at)n._at=Date.now();if(!n.classList.contains('on'))n._at=0;if(n.classList.contains('on')&&h>=((CFG.nightClock&&CFG.nightClock.wakeAt)||7)&&h<10)wakeScreen()},5000);
 function reply(text){
   const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;
   if(RM.showAnswers!==false){
@@ -3120,6 +3190,9 @@ function teamIn(t){
 function handleCommand(raw){
   const t=String(raw||'').toLowerCase().replace(/[?.!]/g,'').replace(/^\s*(hey|ok|okay)?\s*nova[,\s]*/,'').trim();
   if(!t)return;
+  /* automations from the iPhones (Shortcuts): "presence nathan arrived" / "presence erinn left" / "alarm off nathan" */
+  {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
+   const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
   toast(`<b>Nova</b>${esc(t)}`);
   const has=re=>re.test(t);
   {const r=tkCmd(t);if(r)return reply(r)}
@@ -3365,6 +3438,17 @@ async function loadKGD(){const C=CFG.kgameday||{};if(C.on===false||!CFG.relay)re
   if(window._gdK&&$('pKgd').classList.contains('on'))renderGameday()}
 const kgdToday=()=>{if(!KGD||!KGD.game)return false;const s=new Date(KGD.game.start);return s.toDateString()===new Date().toDateString()&&Date.now()<s.getTime()+10*60000};
 setTimeout(loadKGD,14000);setInterval(loadKGD,10*60000);
+/* ---------- game night: from an hour before puck drop the game day page takes over, with starting goalies and the latest news ---------- */
+let PG={k:'',d:null,at:0};
+const tAgo=t=>{const m=Math.round((Date.now()-t)/60000);return m<60?Math.max(1,m)+' min ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago'};
+function pgActive(){if(CFG.pregame&&CFG.pregame.on===false)return null;const now=Date.now(),win=((CFG.pregame&&CFG.pregame.mins)||60)*60000;
+  const chk=(X,type)=>{if(!X||!X.game)return null;const st=Date.parse(X.game.start);return now>=st-win&&now<st?{type,X,st}:null};
+  return chk(typeof KGD!=='undefined'&&KGD,'kgameday')||chk(GD,'gameday')}
+async function loadPregame(){const pa=pgActive();if(!pa)return;const g=pa.X.game,k=pa.type+g.id;if(PG.k===k&&Date.now()-PG.at<8*60000)return;
+  const ohl=pa.type==='kgameday',L=(CFG.leagues||[]).find(x=>x.type==='hockeytech'&&x.code==='ohl')||{};
+  const u=relayBase()+'/pregame?lg='+(ohl?'ohl':'nhl')+'&us='+encodeURIComponent(nick(g.us.name))+'&them='+encodeURIComponent(nick(g.them.name))+'&home='+(g.home?1:0)+(ohl?'&game='+g.id+'&ht='+encodeURIComponent((L.keys||[])[0]||''):'');
+  try{const d=await (await tfetch(u,20000)).json();if(!d.error){PG={k,d,at:Date.now()};gdSig='';if($(PAGE_EL[pa.type]).classList.contains('on'))renderGameday()}}catch(e){}}
+setInterval(()=>{if(pgActive())loadPregame()},60000);
 function renderGameday(){
   const b=$(window._gdK?'kgdBody':'gdBody');
   if(!GDX()||!GDX().game){b.innerHTML='<div class="jf-wait">No game scheduled</div>';gdSig='';return}
@@ -3397,12 +3481,17 @@ function renderGameday(){
     return `<div class="jf-glass ng-box"><div class="ng-k"><span>${esc(S.n)} ${home?'at home':'on the road'}</span></div><div class="ng-big">${esc(r)}</div><div class="ng-xs" style="margin-top:calc(.3*var(--u))">${gp?`Points in ${pts} of ${gp} ${home?'home':'road'} games`:''}</div></div>`};
   const hrRow=hr(L,false)+hr(R,true);
   const lastTxt=Lm?`<b>${Lm.res==='W'?esc(g.us.abbr):esc(g.them.abbr)} ${Math.max(Lm.us,Lm.them)}–${Math.min(Lm.us,Lm.them)}${Lm.res==='OT'?' OT':''}</b> · ${new Date(/^\d{4}-\d\d-\d\d$/.test(Lm.date)?Lm.date+'T12:00':Lm.date).toLocaleDateString([],{month:'short',day:'numeric'})} ${Lm.home?'at home':'away'}`:'First meeting this season';
-  const html=`<div class="jf-title">Game day</div>
-   <div class="ng-body gd-body">
+  const pa=pgActive(),pre=pa&&(pa.type==='kgameday')===!!window._gdK,P=pre&&PG.k===pa.type+g.id?PG.d:null;
+  let pgH='';if(pre){const gs=P&&P.goalies,badge=x=>{const st=String(x&&x.status||'').toLowerCase();return st.startsWith('confirm')?'<i class="pg-b ok">CONFIRMED</i>':/likely|probable|expected/.test(st)?'<i class="pg-b mb">PROBABLE</i>':x?'<i class="pg-b">UNCONFIRMED</i>':''};
+    const gk=(x,c,r)=>`<div style="text-align:${r?'right':'left'}"><b style="color:${c}">${x?esc(x.name):'Not posted yet'}</b>${x&&(x.sv||x.gaa)?`<small>${x.sv?'.'+String(x.sv).replace(/^0?\./,'').slice(0,3)+' SV%':''}${x.gaa?' · '+(+x.gaa).toFixed(2)+' GAA':''}</small>`:''}${badge(x)}</div>`;
+    pgH=`<div class="jf-glass ng-box ng-wide"><div class="ng-k"><span>Starting goalies</span><span>${esc(g.us.abbr)} · ${esc(g.them.abbr)}</span></div><div class="pg-gk">${gk(gs&&gs.us,cU,0)}${gk(gs&&gs.them,cT,1)}</div></div>`;
+    const N=(P&&P.news)||[];if(N.length)pgH+=`<div class="jf-glass ng-box ng-wide pg-news"><div class="ng-k"><span>Lineup & news</span><span>latest</span></div>${N.slice(0,4).map(n=>`<div class="pg-n"><b>${esc(n.t)}</b><small>${esc(n.src||'')}${n.at?' · '+tAgo(n.at):''}</small></div>`).join('')}</div>`}
+  const html=`<div class="jf-title">${pre?'Game night':'Game day'}</div>
+   <div class="ng-body gd-body${pre?' pg':''}">
     <div class="jf-glass ng-vs ng-wide">${side(L)}<div class="ng-when"><b>${esc(fmt(st).replace(/ ?[AP]M$/,''))}</b><span>${/PM$/.test(fmt(st))?'PM':/AM$/.test(fmt(st))?'AM':''} ${st.toDateString()===new Date().toDateString()?'tonight':st.toLocaleDateString([],{weekday:'long'})}${g.venue?' · '+esc(g.venue):''}</span><span>Puck drop in <span class="ng-cd" id="gdCd"></span></span>${g.nets&&g.nets.length?`<em>${g.nets.map(n=>esc(netName(n).toUpperCase())).join(' · ')}</em>`:''}</div>${side(R)}</div>
-    ${call}${bar}${cmp}
+    ${pre?pgH+call:call+bar}${cmp}
     <div class="ng-row" style="grid-template-columns:1fr 1fr">${sc}</div>
-    <div class="ng-row" style="grid-template-columns:1fr 1fr">${gks(L)}${gks(R)}</div>
+    ${pre?'':`<div class="ng-row" style="grid-template-columns:1fr 1fr">${gks(L)}${gks(R)}</div>`}
     ${hrRow?`<div class="ng-row" style="grid-template-columns:1fr 1fr">${hrRow}</div>`:''}
     <div class="jf-glass ng-strip ng-wide"><span class="ng-k">Last meeting</span><span>${lastTxt}</span></div>
    </div>`;
@@ -3413,7 +3502,8 @@ function renderGameday(){
 /* too tall? drop the 2nd scorer, then the streak row, then the 2nd goalie (each team) */
 function fitGameday(){const b=document.querySelector((window._gdK?'#kgdBody':'#gdBody')+' .gd-body');if(!b)return;const over=()=>b.scrollHeight>b.clientHeight+2;
   for(let i=0;i<8&&over();i++){const x=[...b.querySelectorAll('.ng-row')];const pl=b.querySelectorAll('.ng-pl');
-    const hr=x.find(r=>/at home|on the road/.test(r.textContent));if(hr){hr.remove();continue}if(pl.length>2){pl[pl.length-1].remove();pl[pl.length-2].remove();continue}const gk=x.find(r=>/goalies/i.test(r.textContent));if(gk){gk.remove();continue}break}}
+    const hr=x.find(r=>/at home|on the road/.test(r.textContent));if(hr){hr.remove();continue}if(pl.length>2){pl[pl.length-1].remove();pl[pl.length-2].remove();continue}const gk=x.find(r=>/goalies/i.test(r.textContent));if(gk){gk.remove();continue}break}
+  for(let i=0;i<4&&over();i++){const n=b.querySelectorAll('.pg-n');if(n.length>1)n[n.length-1].remove();else break}}
 function gdTick(){const el=document.querySelector((window._gdK?'#kgdBody':'#gdBody')+' #gdCd');if(!el||!GDX()||!GDX().game)return;const ms=new Date(GDX().game.start)-Date.now();
   if(ms<=0){el.textContent='moments';return}const s=Math.floor(ms/1000);el.textContent=Math.floor(s/3600)+':'+jfPad(Math.floor(s%3600/60))+':'+jfPad(s%60)}
 setInterval(()=>{if($('pGameday').classList.contains('on')||$('pKgd').classList.contains('on'))gdTick()},1000);
@@ -3932,17 +4022,51 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   const skin=K1?{P:{a:'#3fd47f',b:'#ffd23f',c:'#ffd23f',d:'#21a35d',e:'#9be8b8',core:['#fff3b0','#ffd23f','#21a35d']},label:'GO KNIGHTS GO'}:null;
   const tasks=(typeof calOn==='function'&&calOn()?calEvents.filter(e=>e.start.toDateString()===n.toDateString()).sort((a,b)=>a.start-b.start).slice(0,5).map(e=>[e.allDay?'ALL DAY':t12(e.start),e.title]):[]);
   const out=(Q?"That's the quick version.":per==='night'?"That's your roundup. Have a good night.":per==='morning'?"That's your roundup. Have a great day.":"That's your roundup. Have a good one.")+(skin?` ${skin.label.toLowerCase().replace(/^\w/,c=>c.toUpperCase()).replace(/ go$/,', go')}!`:'');
-  return {ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,''),voice:novaVoice,volume:R.volume==null?.8:R.volume,tasks,segs,quick:Q,skin,
-    hdr:Q?'NOVA · QUICK ROUNDUP':per==='morning'?'NOVA · MORNING ROUNDUP':per==='night'?'NOVA · NIGHT ROUNDUP':'NOVA · SYSTEM ROUNDUP',
-    greet:Q?`${greet}. Quick roundup.`:`${greet}. It's ${t12(n)} on ${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}. ${per==='night'?"Here's your night roundup.":"Here's your roundup."}`,outro:out}}
+  let greetTxt=Q?`${greet}. Quick roundup.`:`${greet}. It's ${t12(n)} on ${n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}. ${per==='night'?"Here's your night roundup.":"Here's your roundup."}`;
+  if(o.welcome){const oth=o.welcome.others||[],tt=WXD?Math.round(WXD.c.temperature_2m):null;
+    greetTxt=`Welcome home${who?', '+who:''}.${tt!=null?` It's ${tt} degrees out.`:''}${oth.length?` ${andJ(oth)} ${oth.length>1?'are':'is'} home too.`:''}`}
+  return {ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,''),voice:novaVoice,volume:R.volume==null?.8:R.volume,tasks,segs,quick:Q,skin,coreTxt:o.welcome?'HOME':undefined,
+    hdr:o.welcome?'NOVA · WELCOME HOME':Q?'NOVA · QUICK ROUNDUP':per==='morning'?'NOVA · MORNING ROUNDUP':per==='night'?'NOVA · NIGHT ROUNDUP':'NOVA · SYSTEM ROUNDUP',
+    greet:greetTxt,outro:o.welcome?`That's what's up. ${out.replace(/^That's the quick version\.\s*/,'')}`.trim():out}}
 /* HUD mode: the roundup look as a permanent screen (stays on through the nightly reload until you turn it off) */
-function hudSet(on){try{localStorage.setItem('nova-hud',on?'1':'0')}catch(e){}if(typeof NovaRoundup==='undefined')return;if(on){wakeScreen();NovaRoundup.hud(()=>ruData({per:'day'}))}else NovaRoundup.hudOff()}
+function hudSet(on){try{localStorage.setItem('nova-hud',on?'1':'0');if(!on)localStorage.removeItem('nova-hud-auto')}catch(e){}if(typeof NovaRoundup==='undefined')return;if(on){wakeScreen();NovaRoundup.hud(()=>ruData({per:'day'}))}else NovaRoundup.hudOff()}
 setTimeout(()=>{try{if(localStorage.getItem('nova-hud')==='1')hudSet(true)}catch(e){}},6000);
+/* ---------- who's home ---------- */
+const PRES=(()=>{try{return JSON.parse(localStorage.getItem('nova-pres')||'{}')||{}}catch(e){return {}}})();
+const presSave=()=>{try{localStorage.setItem('nova-pres',JSON.stringify(PRES))}catch(e){}};
+const capN=w=>w?w.charAt(0).toUpperCase()+w.slice(1):'';
+function presence(who,home){const was=!!(PRES[who]&&PRES[who].home);PRES[who]={home,at:Date.now()};presSave();
+  const h=new Date().getHours(),anyone=Object.values(PRES).some(p=>p.home);let auto=false;try{auto=localStorage.getItem('nova-hud-auto')==='1'}catch(e){}
+  if(home){
+    /* back from an empty house: Command Center goes away */
+    if(auto){hudSet(false);try{localStorage.removeItem('nova-hud-auto')}catch(e){}}
+    if(was||h<7||h>=22)return;          /* already home, or it's night: just note it */
+    const others=Object.keys(PRES).filter(k=>k!==who&&PRES[k].home).map(capN);
+    roundupGo({who:capN(who),quick:true,welcome:{others}});
+  }else if(!anyone&&!(CFG.roundup&&CFG.roundup.awayHud===false)){
+    /* nobody home: switch to Command Center until someone comes back */
+    let on=false;try{on=localStorage.getItem('nova-hud')==='1'}catch(e){}
+    if(!on){hudSet(true);try{localStorage.setItem('nova-hud-auto','1')}catch(e){}}
+  }}
+/* the alarm was turned off (not snoozed): morning roundup */
+function alarmOff(who){const h=new Date().getHours();if(h<4||h>=12)return;wakeScreen();setTimeout(()=>roundupGo({who:capN(who)}),1500)}
 function roundupGo(o){const R=CFG.roundup||{};if(R.on===false||typeof NovaRoundup==='undefined')return false;if(NovaRoundup.busy())return true;o=o||{};
   wakeScreen();if(SECRETS.topic)nbPub(`${SECRETS.topic}-reply`,o.egg?'Watch the dashboard 👀':'Starting your roundup on the dashboard.').catch(()=>{});
   try{if(speechSynthesis.speaking)speechSynthesis.cancel()}catch(e){}
   const base={voice:novaVoice,volume:R.volume==null?.8:R.volume,ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,'')};
   if(o.egg==='red')NovaRoundup.redAlert(base);else if(o.egg==='boom')NovaRoundup.selfDestruct(base);else NovaRoundup.play(ruData(o));return true}
+/* HUD style: the frame, scanlines and a still network of lines (drawn once, drifts slowly with CSS so it costs nothing) */
+(function hudLayer(){if(CFG.style!=='hud')return;const add=h=>{const d=document.createElement('div');d.innerHTML=h;document.body.appendChild(d.firstElementChild)};
+  add(`<svg id="hudFrame" viewBox="0 0 1000 1000" preserveAspectRatio="none"><defs><linearGradient id="hudFG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ee8ff"/><stop offset=".5" stop-color="#9b5cff"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient></defs>
+    <path d="M12 60 L12 14 L230 14 L262 3 L738 3 L770 14 L988 14 L988 60"/><path d="M12 940 L12 986 L230 986 L262 997 L738 997 L770 986 L988 986 L988 940"/></svg>`);
+  add('<div id="hudScan"></div>');
+  const cv=document.createElement('canvas');cv.id='hudNet';document.body.insertBefore(cv,document.body.firstChild);
+  const draw=()=>{const W=cv.width=Math.round(innerWidth*1.08),H=cv.height=Math.round(innerHeight*1.08),x=cv.getContext('2d'),cols=[[62,232,255],[155,92,255],[255,79,163],[79,141,255]];
+    const P=Array.from({length:Math.round(W*H/22000)},()=>({x:Math.random()*W,y:Math.random()*H,c:cols[Math.floor(Math.random()*4)]})),D=Math.min(W,H)*.15;
+    for(let i=0;i<P.length;i++){const a=P[i];for(let j=i+1;j<P.length;j++){const b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<D){x.strokeStyle=`rgba(${a.c},${(1-d/D)*.3})`;x.lineWidth=1;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+      x.fillStyle=`rgba(${a.c},.6)`;x.fillRect(a.x-1,a.y-1,2,2)}
+    for(let k=0;k<2;k++){const c=cols[k*2],y0=Math.random()*H;x.strokeStyle=`rgba(${c},.18)`;x.lineWidth=2;x.beginPath();x.moveTo(0,y0);x.lineTo(W,y0+(Math.random()-.5)*H);x.stroke()}};
+  draw();setInterval(draw,30*60000)})();
 function renderLive2(){
   if(LV&&LV.sport==='hockey'&&CFG.newGame!==false)return renderHockeyLive();
   const b=$('lvBody');
@@ -4387,7 +4511,8 @@ function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return
   b.innerHTML=`<div class="np-hd">${yt?'▶️':'🎵'} ${s.state==='paused'?'Paused':yt?'Now watching':'Now playing'}</div><div class="np-art none${yt?' yt':''}"></div>
     <div class="np-meta"><div class="np-t">${esc(s.title||(yt?'YouTube video':'Unknown song'))}</div><div class="np-a">${esc(s.artist||'')}</div>${s.album&&!yt?`<div class="np-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
     ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}
-    <div class="np-src">${npEq} ${s.state==='paused'?'Paused':yt?'Watching':'Playing'} on ${esc(s.dev||'Macbook')} · ${yt?'YouTube':'Apple Music'}</div></div>`;
+    <div class="np-src">${npEq} ${s.state==='paused'?'Paused':yt?'Watching':'Playing'} on ${esc(s.dev||'Macbook')} · ${yt?'YouTube':'Apple Music'}</div></div>
+    ${NPC().viz!==false?`<div class="np-viz">${Array.from({length:28},(_,i)=>`<i style="--d:${(0.38+((i*37)%23)/40).toFixed(2)}s;--h:${30+((i*53)%60)}%;animation-delay:-${((i*17)%10)/10}s"></i>`).join('')}</div>`:''}`;
   npPaint();npTick()}
 function renderNPMini(){if(window._mnXb&&xbPl()){xbMini();return}const s=npState();if(!s)return;
   const yt=npYT(s);$('npMini').className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
@@ -4878,6 +5003,13 @@ function healthDot(){const L=healthList(),bad=L.filter(x=>!x.ok),crit=bad.some(x
   const d=$('hdot');d.className=bad.length?(crit?'bad':'warn'):'ok';d.title=bad.length?bad.map(x=>x.name+': '+x.why).join('\n'):'All good';
   if($('hpanel').classList.contains('on'))healthPanel()}
 setInterval(healthDot,30000);
+/* check in with nova-bus every 5 minutes: if this screen goes quiet, or something it needs stays broken, nova-bus pushes an alert to your phone (ntfy app, channel TOPIC-alert).
+   Only things you can actually fix are reported; radar, scores and news fix themselves. */
+const HB_WATCH=/^(Relay|Weather|Calendar|Jellyfin|Home devices|Remote)/;
+function heartbeat(){const T=SECRETS.topic;if(!T)return;nbCheck().then(ok=>{if(!ok)return;
+  const bad=healthList().filter(x=>!x.ok&&HB_WATCH.test(x.name)).map(x=>({name:x.name.replace(/\s*\(.*\)/,''),why:x.why||''}));
+  nbPub(`${T}-hb`,JSON.stringify({at:Date.now(),v:(($('ver')&&$('ver').textContent)||''),bad})).catch(()=>{})})}
+setTimeout(heartbeat,90000);setInterval(heartbeat,5*60000);
 /* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
 const bootAt=Date.now();setInterval(()=>{const n=new Date();if(n.getHours()===4&&n.getMinutes()<10&&Date.now()-bootAt>3600e3)location.reload()},60000);
 function healthPanel(){const L=healthList();$('hpanel').innerHTML=`<h3>🩺 Status</h3>${L.map(x=>`<div class="${x.ok?'ok':'bad'}"><i></i><b>${esc(x.name)}</b><span>${x.ok?'OK':esc(x.why||'problem')}</span></div>`).join('')}<small>${esc(HC.relay.v||'')} · ${esc($('ver')?$('ver').textContent:'')}</small>`}
@@ -5652,7 +5784,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 123';
+document.getElementById('ver').textContent='build nova 124';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -5675,7 +5807,7 @@ setInterval(moon,3600000);
    Everything (visuals and sound) is generated here: no images, no audio files. */
 (function(){
 const CSS=`
-#ru{--s:min(1vw,.5625vh);position:fixed;inset:0;z-index:99999;text-align:left;background:#03040b;overflow:hidden;opacity:0;transition:opacity .6s;font-family:'Rajdhani','Share Tech Mono',system-ui,sans-serif;color:#dff8ff;cursor:none}
+#ru{--s:min(1vw,.5625vh);position:fixed;inset:0;z-index:99999;text-align:left;background:#03040b;overflow:hidden;opacity:0;transition:opacity .6s;font-family:'Inter',system-ui,sans-serif;color:#dff8ff;cursor:none}
 #ru.on{opacity:1}#ru.bye{opacity:0;transition:opacity 1.4s}
 #ru canvas{position:absolute;inset:0;width:100%;height:100%}
 #ru .bgg{position:absolute;inset:-10%;background:radial-gradient(60% 45% at 20% 15%,rgba(155,92,255,.22),transparent 70%),radial-gradient(55% 45% at 85% 85%,rgba(255,79,163,.18),transparent 70%),radial-gradient(70% 50% at 50% 45%,rgba(30,120,255,.20),transparent 70%),linear-gradient(165deg,#070a1c,#04050d 55%,#0b0414);animation:ruBg 18s ease-in-out infinite alternate}
@@ -5691,16 +5823,16 @@ const CSS=`
 #ru .frame path{fill:none;stroke:url(#ruFG);stroke-width:2.2;stroke-dasharray:3000;stroke-dashoffset:3000;transition:stroke-dashoffset 1.6s cubic-bezier(.6,0,.2,1)}
 #ru.f1 .frame path{stroke-dashoffset:0}
 #ru .frame .cross{stroke:rgba(120,220,255,.35);stroke-width:1.5;stroke-dasharray:none;stroke-dashoffset:0;opacity:0;transition:opacity 1s}#ru.f1 .frame .cross{opacity:1}
-#ru .hdr{position:absolute;left:calc(26*var(--s));right:calc(26*var(--s));top:calc(2.4*var(--s));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font-family:'Share Tech Mono',monospace;font-size:calc(1.8*var(--s));letter-spacing:.24em;padding-left:.24em;color:rgba(140,230,255,.75);opacity:0;transition:opacity .8s}
+#ru .hdr{position:absolute;left:calc(26*var(--s));right:calc(26*var(--s));top:calc(2.4*var(--s));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;font-family:'JetBrains Mono',monospace;font-size:calc(1.8*var(--s));letter-spacing:.24em;padding-left:.24em;color:rgba(140,230,255,.75);opacity:0;transition:opacity .8s}
 #ru.f1 .hdr{opacity:1}
-#ru .clk{position:absolute;right:calc(5*var(--s));top:calc(6.4*var(--s));font-family:'Share Tech Mono',monospace;font-size:calc(1.7*var(--s));color:rgba(140,230,255,.6);opacity:0;transition:opacity .8s}#ru.f1 .clk{opacity:1}
+#ru .clk{position:absolute;right:calc(5*var(--s));top:calc(6.4*var(--s));font-family:'JetBrains Mono',monospace;font-size:calc(1.7*var(--s));color:rgba(140,230,255,.6);opacity:0;transition:opacity .8s}#ru.f1 .clk{opacity:1}
 #ru .date{position:absolute;left:calc(7*var(--s));right:calc(7*var(--s));top:calc(9*var(--s));display:flex;align-items:center;gap:calc(3*var(--s));opacity:0;transform:translateY(calc(-3*var(--s)));transition:all .9s cubic-bezier(.2,.8,.2,1)}
 #ru.f3 .date{opacity:1;transform:none}
-#ru .dmo{font-family:'Orbitron',sans-serif;font-weight:900;line-height:.95;text-align:right}
+#ru .dmo{font-family:'Chakra Petch',sans-serif;font-weight:700;line-height:.95;text-align:right}
 #ru .dmo b{display:block;font-size:calc(6.2*var(--s));letter-spacing:.06em;background:linear-gradient(90deg,#4ff0ff,#7aa8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 #ru .dmo span{display:block;font-size:calc(4.6*var(--s));color:#9fc7ff;letter-spacing:.12em;margin-top:calc(.6*var(--s))}
-#ru .dday{font-family:'Orbitron',sans-serif;font-weight:900;font-size:calc(17*var(--s));line-height:.85;background:linear-gradient(170deg,#ffb35c,#ff6a3d 45%,#ff3d8b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 calc(2*var(--s)) rgba(255,110,70,.45))}
-#ru .tasks{flex:1;font-family:'Share Tech Mono',monospace;font-size:calc(1.75*var(--s));line-height:1.55;color:rgba(200,235,255,.8);text-transform:uppercase;border-left:2px solid rgba(155,92,255,.5);padding-left:calc(2*var(--s))}
+#ru .dday{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(17*var(--s));line-height:.85;background:linear-gradient(170deg,#ffb35c,#ff6a3d 45%,#ff3d8b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 calc(2*var(--s)) rgba(255,110,70,.45))}
+#ru .tasks{flex:1;font-family:'JetBrains Mono',monospace;font-size:calc(1.75*var(--s));line-height:1.55;color:rgba(200,235,255,.8);text-transform:uppercase;border-left:2px solid rgba(155,92,255,.5);padding-left:calc(2*var(--s))}
 #ru .tasks i{font-style:normal;color:#ff7ab6}#ru .tasks u{text-decoration:none;color:#ffb35c}
 #ru .hud{position:absolute;left:calc(7*var(--s));width:calc(86*var(--s));height:calc(86*var(--s));top:calc(36*var(--s))}
 #ru .hud svg{width:100%;height:100%;overflow:visible}
@@ -5713,27 +5845,27 @@ const CSS=`
 #ru .blk.on{fill:color-mix(in srgb,var(--k1) 13%,transparent);stroke:color-mix(in srgb,var(--k1) 75%,transparent)}
 #ru .blk.hot{fill:color-mix(in srgb,var(--c) 45%,transparent);stroke:var(--c)}
 #ru .node circle{fill:rgba(5,10,25,.9);stroke:rgba(62,232,255,.35);stroke-width:3;transition:all .4s}
-#ru .node text{fill:rgba(160,230,255,.45);font-family:'Orbitron',sans-serif;font-weight:700;font-size:22px;text-anchor:middle;dominant-baseline:central;transition:fill .4s}
+#ru .node text{fill:rgba(160,230,255,.45);font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:22px;text-anchor:middle;dominant-baseline:central;transition:fill .4s}
 #ru .node.on circle{stroke:var(--c);fill:color-mix(in srgb,var(--c) 30%,#050a19);filter:drop-shadow(0 0 14px var(--c))}#ru .node.on text{fill:#fff}
 #ru .node.done circle{stroke:color-mix(in srgb,var(--c) 70%,transparent)}#ru .node.done text{fill:color-mix(in srgb,var(--c) 80%,#fff)}
 #ru .gauge{transition:stroke-dashoffset 1.4s cubic-bezier(.3,.9,.2,1),stroke .6s}
 #ru .core{transform-origin:500px 500px;transform-box:view-box;transition:transform 1.2s cubic-bezier(.2,.9,.2,1),opacity 1s;opacity:0;transform:scale(.2)}
 #ru.f4 .core{opacity:1;transform:scale(1)}
 #ru .core.pulse{animation:ruPulse 1.2s ease-out}@keyframes ruPulse{0%{transform:scale(1.35)}100%{transform:scale(1)}}
-#ru .cv{font-family:'Orbitron',sans-serif;font-weight:900;font-size:128px;text-anchor:middle;dominant-baseline:central;fill:#fff;filter:drop-shadow(0 0 18px rgba(255,140,80,.6))}
-#ru .cu{font-family:'Orbitron',sans-serif;font-weight:700;font-size:30px;letter-spacing:.22em;text-anchor:middle;fill:rgba(255,220,200,.85);transform:translateX(3.3px)}
-#ru .ct{font-family:'Share Tech Mono',monospace;font-size:24px;letter-spacing:.22em;text-anchor:middle;fill:rgba(140,230,255,.8);transform:translateX(2.6px)}
+#ru .cv{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:128px;text-anchor:middle;dominant-baseline:central;fill:#fff;filter:drop-shadow(0 0 18px rgba(255,140,80,.6))}
+#ru .cu{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:30px;letter-spacing:.22em;text-anchor:middle;fill:rgba(255,220,200,.85);transform:translateX(3.3px)}
+#ru .ct{font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:.22em;text-anchor:middle;fill:rgba(140,230,255,.8);transform:translateX(2.6px)}
 #ru .cv{letter-spacing:0}
 #ru .card{position:absolute;left:calc(7*var(--s));right:calc(7*var(--s));top:calc(126*var(--s));min-height:calc(24*var(--s));padding:calc(2.6*var(--s)) calc(3.4*var(--s));opacity:0;transform:translateY(calc(2*var(--s)));transition:all .6s cubic-bezier(.2,.8,.2,1);
   background:linear-gradient(135deg,rgba(20,40,80,.45),rgba(40,10,60,.35));border:1px solid rgba(120,200,255,.25);clip-path:polygon(0 0,calc(100% - 3*var(--s)) 0,100% calc(3*var(--s)),100% 100%,calc(3*var(--s)) 100%,0 calc(100% - 3*var(--s)));backdrop-filter:blur(6px)}
 #ru .card.on{opacity:1;transform:none}
 #ru .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:calc(.6*var(--s));background:var(--c,#3ee8ff);box-shadow:0 0 calc(2*var(--s)) var(--c,#3ee8ff)}
-#ru .ck{font-family:'Share Tech Mono',monospace;font-size:calc(1.9*var(--s));letter-spacing:.35em;color:var(--c,#3ee8ff);text-transform:uppercase}
-#ru .cb{font-family:'Orbitron',sans-serif;font-weight:700;font-size:calc(5.2*var(--s));line-height:1.1;margin-top:calc(.9*var(--s));color:#fff;text-shadow:0 0 calc(2*var(--s)) color-mix(in srgb,var(--c,#3ee8ff) 60%,transparent)}
+#ru .ck{font-family:'JetBrains Mono',monospace;font-size:calc(1.9*var(--s));letter-spacing:.35em;color:var(--c,#3ee8ff);text-transform:uppercase}
+#ru .cb{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(5.2*var(--s));line-height:1.1;margin-top:calc(.9*var(--s));color:#fff;text-shadow:0 0 calc(2*var(--s)) color-mix(in srgb,var(--c,#3ee8ff) 60%,transparent)}
 #ru .cl{margin-top:calc(1.4*var(--s));display:grid;gap:calc(.6*var(--s))}
 #ru .cl div{font-size:calc(2.9*var(--s));font-weight:600;color:rgba(225,240,255,.9);letter-spacing:.03em;opacity:0;transform:translateX(calc(-2*var(--s)));transition:all .45s}
 #ru .cl div.on{opacity:1;transform:none}#ru .cl.many div{font-size:calc(2.45*var(--s))}#ru .cl.many{gap:calc(.35*var(--s))}#ru .cl div b{color:var(--c,#3ee8ff);font-weight:700}
-#ru .side{position:absolute;top:calc(40*var(--s));height:calc(80*var(--s));width:calc(5.4*var(--s));overflow:hidden;font-family:'Share Tech Mono',monospace;font-size:calc(1.15*var(--s));line-height:1.5;color:rgba(120,220,255,.4);opacity:0;transition:opacity 1s;
+#ru .side{position:absolute;top:calc(40*var(--s));height:calc(80*var(--s));width:calc(5.4*var(--s));overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:calc(1.15*var(--s));line-height:1.5;color:rgba(120,220,255,.4);opacity:0;transition:opacity 1s;
   -webkit-mask:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
 #ru.f2 .side{opacity:1}#ru .side.l{left:calc(.8*var(--s))}#ru .side.r{right:calc(.8*var(--s));text-align:right;color:rgba(255,122,182,.4)}
 #ru .side pre{margin:0;animation:ruUp 14s linear infinite}@keyframes ruUp{to{transform:translateY(-50%)}}
@@ -5742,7 +5874,7 @@ const CSS=`
 #ru .wave{position:absolute;left:calc(14*var(--s));right:calc(14*var(--s));bottom:calc(8.5*var(--s));height:calc(7*var(--s));display:flex;align-items:center;gap:calc(.35*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .wave{opacity:1}
 #ru .wave i{flex:1;height:8%;border-radius:9px;background:linear-gradient(180deg,#ffb35c,#ff3d8b 50%,#9b5cff);transition:height .09s}
 #ru .chips{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(3*var(--s));display:flex;justify-content:center;gap:calc(1*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .chips{opacity:1}
-#ru .chips span{font-family:'Share Tech Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.18em;padding:calc(.5*var(--s)) calc(1.1*var(--s));border:1px solid rgba(120,200,255,.25);color:rgba(160,220,255,.5);transition:all .4s}
+#ru .chips span{font-family:'JetBrains Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.18em;padding:calc(.5*var(--s)) calc(1.1*var(--s));border:1px solid rgba(120,200,255,.25);color:rgba(160,220,255,.5);transition:all .4s}
 #ru .chips span.on{color:#fff;border-color:var(--c);background:color-mix(in srgb,var(--c) 30%,transparent);box-shadow:0 0 calc(1.5*var(--s)) color-mix(in srgb,var(--c) 60%,transparent)}
 #ru .chips span.done{color:color-mix(in srgb,var(--c) 75%,#fff);border-color:color-mix(in srgb,var(--c) 45%,transparent)}
 #ru.out .hud{transition:transform 1.1s cubic-bezier(.7,0,.8,.2),opacity 1.1s;transform:scale(.05) rotate(200deg);opacity:0}
@@ -5752,11 +5884,11 @@ const CSS=`
 #ru .alarm{position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 60% at 50% 50%,transparent 40%,rgba(255,30,50,.55));opacity:0}
 #ru.alarming .alarm{animation:ruAl .9s ease-in-out infinite}@keyframes ruAl{50%{opacity:1}}
 #ru.red .stage{filter:hue-rotate(170deg) saturate(1.5) brightness(1.05)}#ru.red .bgg{filter:hue-rotate(150deg) saturate(1.8)}
-#ru .big{position:absolute;left:0;right:0;top:46%;transform:translateY(-50%);text-align:center;font-family:'Orbitron',sans-serif;font-weight:900;font-size:calc(30*var(--s));line-height:1;color:#fff;opacity:0;text-shadow:0 0 calc(4*var(--s)) #ff3b3b,0 0 calc(10*var(--s)) #ff3b3b;pointer-events:none}
+#ru .big{position:absolute;left:0;right:0;top:46%;transform:translateY(-50%);text-align:center;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(30*var(--s));line-height:1;color:#fff;opacity:0;text-shadow:0 0 calc(4*var(--s)) #ff3b3b,0 0 calc(10*var(--s)) #ff3b3b;pointer-events:none}
 #ru .big.on{opacity:1}#ru .big.tk{animation:ruTk .9s ease-out}@keyframes ruTk{0%{transform:translateY(-50%) scale(1.6);opacity:0}20%{opacity:1}100%{transform:translateY(-50%) scale(1)}}
 #ru .big small{display:block;font-size:calc(4*var(--s));letter-spacing:.3em;margin-top:calc(2*var(--s))}
 #ru .white{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}#ru .white.go{animation:ruWh 2.2s ease-out}@keyframes ruWh{0%{opacity:0}5%{opacity:1}100%{opacity:0}}
-#ru .bye-t{position:absolute;left:0;right:0;top:46%;text-align:center;font-family:'Orbitron',sans-serif;font-weight:900;font-size:calc(6*var(--s));letter-spacing:.3em;opacity:0;transition:opacity .6s;background:linear-gradient(90deg,#4ff0ff,#9b5cff,#ff3d8b,#ffb35c);-webkit-background-clip:text;background-clip:text;color:transparent}
+#ru .bye-t{position:absolute;left:0;right:0;top:46%;text-align:center;font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(6*var(--s));letter-spacing:.3em;opacity:0;transition:opacity .6s;background:linear-gradient(90deg,#4ff0ff,#9b5cff,#ff3d8b,#ffb35c);-webkit-background-clip:text;background-clip:text;color:transparent}
 #ru.out .bye-t{opacity:1}
 `;
 const C={cyan:'#3ee8ff',blue:'#4f8dff',purple:'#9b5cff',pink:'#ff4fa3',orange:'#ff8a3d',gold:'#ffc35c',green:'#4ff0a0'};
@@ -5884,7 +6016,7 @@ async function play(D){
   if(busy)return;busy=true;
   const P=Object.assign({a:'#3ee8ff',b:'#4f8dff',c:'#ff8a3d',d:'#ff4fa3',e:'#9b5cff',core:['#ffb35c','#ff5a3d','#ff3d8b']},(D.skin&&D.skin.P)||{});
   if(!document.getElementById('ruCss')){const st=document.createElement('style');st.id='ruCss';st.textContent=CSS;document.head.appendChild(st);
-    const ln=document.createElement('link');ln.rel='stylesheet';ln.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap';document.head.appendChild(ln)}
+    const ln=document.createElement('link');ln.rel='stylesheet';ln.href='https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap';document.head.appendChild(ln)}
   const segs=(D.segs||[]).filter(Boolean),hex=()=>Array.from({length:160},()=>Math.random().toString(16).slice(2,8).toUpperCase()).join('\n');
   const now=new Date(),mo=now.toLocaleDateString('en-US',{month:'long'}).toUpperCase(),wd=now.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
   const R=document.createElement('div');R.id='ru';R.style.setProperty('--k1',P.a);R.innerHTML=`<div class="bgg"></div><canvas></canvas><div class="flash"></div>
@@ -5988,11 +6120,11 @@ const HCSS=`
 #ru .hc{position:relative;padding:calc(1.6*var(--s)) calc(2*var(--s)) calc(1.4*var(--s)) calc(2.6*var(--s));overflow:hidden;background:linear-gradient(135deg,rgba(20,40,80,.42),rgba(40,10,60,.32));border:1px solid rgba(120,200,255,.2);
   clip-path:polygon(0 0,calc(100% - 2*var(--s)) 0,100% calc(2*var(--s)),100% 100%,calc(2*var(--s)) 100%,0 calc(100% - 2*var(--s)))}
 #ru .hc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:calc(.45*var(--s));background:var(--c);box-shadow:0 0 calc(1.6*var(--s)) var(--c)}
-#ru .hc .k{font-family:'Share Tech Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.22em;color:var(--c);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#ru .hc .b{font-family:'Orbitron',sans-serif;font-weight:700;font-size:calc(2.9*var(--s));line-height:1.15;margin-top:calc(.6*var(--s));color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#ru .hc .k{font-family:'JetBrains Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.22em;color:var(--c);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ru .hc .b{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(2.9*var(--s));line-height:1.15;margin-top:calc(.6*var(--s));color:#fff;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #ru .hc .l{margin-top:calc(.6*var(--s));font-size:calc(1.9*var(--s));font-weight:600;color:rgba(225,240,255,.85);line-height:1.35}#ru .hc .l div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#ru .hc .l b{color:var(--c)}
 #ru .hc.wide{grid-column:1/3}
-#ru .htick{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(3.6*var(--s));height:calc(3.6*var(--s));overflow:hidden;font-family:'Share Tech Mono',monospace;font-size:calc(1.7*var(--s));letter-spacing:.12em;color:rgba(200,230,255,.75);
+#ru .htick{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(3.6*var(--s));height:calc(3.6*var(--s));overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:calc(1.7*var(--s));letter-spacing:.12em;color:rgba(200,230,255,.75);
   display:flex;align-items:center;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);opacity:0;transition:opacity 1s}
 #ru.hud.f3 .htick{opacity:1}#ru .htick div{white-space:nowrap;animation:ruTick var(--d,80s) linear infinite;padding-left:100%}#ru .htick i{font-style:normal;color:#ff7ab6;margin:0 1.2em}
 @keyframes ruTick{to{transform:translateX(-100%)}}
@@ -6003,7 +6135,7 @@ const HCSS=`
 let hudOn=false,hudT=null,hudStop=null,hudSig='';
 function hud(getData){if(hudOn)return;hudOn=true;
   if(!document.getElementById('ruCss')){const st=document.createElement('style');st.id='ruCss';st.textContent=CSS;document.head.appendChild(st);
-    const ln=document.createElement('link');ln.rel='stylesheet';ln.href='https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap';document.head.appendChild(ln)}
+    const ln=document.createElement('link');ln.rel='stylesheet';ln.href='https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap';document.head.appendChild(ln)}
   if(!document.getElementById('ruHudCss')){const st=document.createElement('style');st.id='ruHudCss';st.textContent=HCSS;document.head.appendChild(st)}
   let D=getData();const P=Object.assign({a:'#3ee8ff',b:'#4f8dff',c:'#ff8a3d',d:'#ff4fa3',e:'#9b5cff',core:['#ffb35c','#ff5a3d','#ff3d8b']},(D.skin&&D.skin.P)||{});
   const hex=()=>Array.from({length:160},()=>Math.random().toString(16).slice(2,8).toUpperCase()).join('\n');
