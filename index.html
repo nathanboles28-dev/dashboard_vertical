@@ -2039,7 +2039,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
-  roundup:{on:true, music:true, musicVol:0.25, song:'roundup.mp3', name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
+  roundup:{on:true, music:true, musicVol:0.25, song:'roundup.mp3', songStart:30, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
            {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
@@ -6045,7 +6045,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 135';
+document.getElementById('ver').textContent='build nova 136';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6208,7 +6208,7 @@ const S={
     return new Promise(done=>{const el=new Audio();el.preload='auto';el.loop=true;
       const fail=()=>{done(false)},to=setTimeout(fail,2500);
       el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.02,(+RC.songVol||.55));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
-        S._song={el,g,v};el.play().then(()=>done(true)).catch(fail)}catch(e){fail()}};
+        S._song={el,g,v};try{if(+RC.songStart>0&&el.duration>+RC.songStart)el.currentTime=+RC.songStart}catch(e){}el.play().then(()=>done(true)).catch(fail)}catch(e){fail()}};
       el.onerror=()=>{clearTimeout(to);fail()};el.src=RC.song})},
   /* while Nova talks the song dips, then comes back up */
   duck(on){const m=S._song;if(!m||!A)return;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.linearRampToValueAtTime(on?m.v*.38:m.v,t+.35)},
