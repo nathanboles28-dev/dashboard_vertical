@@ -95,6 +95,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
     <div id="heard">Say “Nova, show me the weather”</div>
   </div>
 
+  <div class="tk-add ask"><input id="askIn" placeholder="Ask Nova or type a command…" enterkeyhint="send" autocomplete="off"><button id="askB">Send</button></div>
   <div class="card say" id="sayCard"><button class="sayx" id="sayX" aria-label="Close">✕</button><small>Nova</small><p id="sayText"></p></div>
 
   <div class="sec" id="hmSec" style="display:none">Home</div>
@@ -159,6 +160,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
   </div>
 
   <div class="card toggle"><span>Read answers out loud</span><div class="sw" id="speakSw"></div></div>
+  <div class="card" id="alertCh" style="display:none;flex-direction:column;align-items:flex-start;gap:.5em"><span style="opacity:.7;font-size:.85em">Phone alerts channel (subscribe to this in the ntfy app)</span><b id="alertName" style="font-size:1.15em;word-break:break-all;user-select:all"></b><button id="alertCopy" style="font:inherit;padding:.5em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Copy</button></div>
   <p class="tip">Keep this page open in its own window. Say “Nova” and then what you want, or say “Nova”, wait for the glow, then ask.</p>
 </div>
 
@@ -170,6 +172,12 @@ const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('t
 /* no channel saved yet (e.g. a phone home-screen icon keeps its own storage): let it be typed in once */
 function askTopic(){const h=$('heard');h.innerHTML='<button id="setTopic" style="font:inherit;padding:.6em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Tap to enter your Nova channel name</button>';
   $('setTopic').onclick=()=>{const v=(prompt('Nova channel name (the topic)')||'').trim().replace(/^.*#topic=/,'');if(v){try{localStorage.setItem('nova-topic',v)}catch(e){}location.reload()}}}
+/* type to Nova: questions, commands, "voice test"... */
+{const go=()=>{const v=$('askIn').value.trim();if(!v)return;send(v);$('askIn').value='';$('askIn').blur()};$('askB').onclick=go;$('askIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go()}})}
+/* show the phone-alerts channel name so it can be copied into the ntfy app */
+if(T){const n=T+'-alert';$('alertName').textContent=n;$('alertCh').style.display='flex';
+  $('alertCopy').onclick=()=>{const done=()=>{$('alertCopy').textContent='Copied ✓'};
+    (navigator.clipboard?navigator.clipboard.writeText(n).then(done):Promise.reject()).catch(()=>{const r=document.createRange();r.selectNodeContents($('alertName'));const sl=getSelection();sl.removeAllRanges();sl.addRange(r);document.execCommand('copy');done()})}}
 /* where the message bus lives (your Cloudflare nova-bus); open once with #bus=https://... to change it */
 const BUS_URL=(()=>{const d='https://nova-bus.nathanboles28.workers.dev';try{const v=new URLSearchParams(location.hash.slice(1)).get('bus');if(v)localStorage.setItem('nova-bus',v);return localStorage.getItem('nova-bus')||d}catch(e){return d}})();
 const nbBase=()=>BUS_URL.replace(/\/$/,'');
