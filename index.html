@@ -2937,7 +2937,7 @@ function renderTown(){const tb=$('townBody');if(!TOWN.length){tb.innerHTML='<div
     <div class="card n3c1"><h2 class="hwx"><span>Local headlines</span><em>WOODSTOCK · OXFORD · LONDON</em></h2>${rest.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag)}<div>${nTag(n.tag)}<b>${esc(n.t)}</b><small>${esc(n.src||'')} · ${ago(new Date(n.at))}</small></div></div>`).join('')}</div>`;
   if(tb.dataset.h!==html){tb.dataset.h=html;tb.innerHTML=html}
   tb.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';newsFit(tb,'.n3r',2)}
-async function loadNews(){if(CFG.newsFeed&&await loadNewsFeed())return;
+async function loadNews(){if(CFG.newsFeed){if(await loadNewsFeed())return;clearTimeout(window._nfT);window._nfT=setTimeout(loadNews,120000)}
   const N=CFG.news||{},items=[],maxAge=(N.days||5)*864e5;
   await Promise.all((N.teams||[]).map(async T=>{try{
     if(T.espn){const j=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${T.espn}/news?team=${T.team}&limit=15`,12000)).json();
@@ -2951,8 +2951,9 @@ async function loadNews(){if(CFG.newsFeed&&await loadNewsFeed())return;
   /* your team named in the headline counts most, then how recent it is */
   const fresh=items.filter(i=>Date.now()-i.date<maxAge),seen=new Set();
   const named=i=>(i.T.words||[]).some(w=>new RegExp('\\b'+w+'\\b','i').test(i.title));
-  const out=fresh.filter(i=>{const k=i.title.toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>b.date-a.date);
-  if(out.length)newsItems=out;
+  const junk=/power rankings?|odds|betting|picks|parlay|prediction|fantasy|free agency tracker|mock draft/i;
+  const out=fresh.filter(i=>!(CFG.newsFeed&&(junk.test(i.title)||!named(i)))).filter(i=>{const k=i.title.toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>b.date-a.date);
+  if(out.length||CFG.newsFeed)newsItems=out;
   if($('pNews').classList.contains('on'))renderNews();
 }
 /* the featured story's text: ESPN gives the article body, the Knights feed already has it */
@@ -6173,7 +6174,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 145';
+document.getElementById('ver').textContent='build nova 146';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
