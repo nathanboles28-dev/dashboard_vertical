@@ -5315,7 +5315,9 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
   rec.onerror=e=>{vLog('error: '+e.error);if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
   rec.onend=()=>{VOICE.ends.push(Date.now());VOICE.ends=VOICE.ends.filter(t=>Date.now()-t<120000);VOICE.st=VOICE.err?'err':'restart';voiceUI();vLog('stopped'+(VOICE.paused?' (paused)':''));if(VOICE.paused)return;setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
   try{rec.start()}catch(e){VOICE.st='err';VOICE.err=e.message}}
-setTimeout(voiceStart,4000);
+/* only ONE copy of the dashboard may listen: two windows/tabs fight over the mic and abort each other non-stop.
+   The first copy takes the lock; any other copy waits quietly until that one closes. */
+setTimeout(()=>{if(navigator.locks&&navigator.locks.request){vLog('waiting for the mic…');navigator.locks.request('nova-voice',()=>{vLog('this window has the mic');voiceStart();return new Promise(()=>{})})}else voiceStart()},4000);
 /* the mic switches off while the roundup plays (so it can't hear itself) and back on 2 seconds after */
 setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking);
   /* Chrome's speech queue can get stuck "speaking" forever: after 45 s, clear it so the mic comes back */
@@ -6097,7 +6099,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 140';
+document.getElementById('ver').textContent='build nova 141';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
