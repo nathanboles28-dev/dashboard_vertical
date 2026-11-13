@@ -1121,13 +1121,15 @@ html.hud :is(.card,.jf-glass,.gr){border-radius:0!important;border:1px solid rgb
   clip-path:polygon(0 0,calc(100% - 1.8*var(--u)) 0,100% calc(1.8*var(--u)),100% 100%,calc(1.8*var(--u)) 100%,0 calc(100% - 1.8*var(--u)));
   box-shadow:inset calc(.45*var(--u)) 0 0 color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 85%,transparent),inset calc(2.4*var(--u)) 0 calc(3*var(--u)) calc(-2*var(--u)) color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 45%,transparent)!important}
 html.hud :is(.card,.jf-glass,.gr)::before{border-radius:0!important}
-html.hud .card h2,html.hud .gd-card h2{text-transform:uppercase;letter-spacing:.2em;font-size:calc(1.5*var(--u))!important;font-weight:600;color:color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 80%,#fff)!important}
+html.hud .card h2,html.hud .gd-card h2{text-transform:uppercase;letter-spacing:.1em;font-size:calc(1.5*var(--u))!important;font-weight:600;color:color-mix(in srgb,var(--cc,var(--acc,#3ee8ff)) 80%,#fff)!important}
 html.hud .card h2::before,html.hud .gd-card h2::before{content:'◆ ';opacity:.8}
+html.hud :is(.card,.gd-card) h2:is(.hwx,.air-h)::before{display:none}
+html.hud :is(.card,.gd-card) h2:is(.hwx,.air-h)>:first-child::before{content:'◆ ';opacity:.8}
 /* the frame round the screen, scanlines and a drifting network of lines behind everything */
 #hudFrame,#hudScan,#hudNet{display:none}
-html.hud #hudFrame{display:block;position:fixed;inset:0;z-index:15;pointer-events:none;width:100%;height:100%}
+html.hud #hudFrame{display:none;position:fixed;inset:0;z-index:15;pointer-events:none;width:100%;height:100%}
 html.hud #hudFrame path{fill:none;stroke:url(#hudFG);stroke-width:2;vector-effect:non-scaling-stroke;opacity:.85}
-html.hud #hudScan{display:block;position:fixed;inset:0;z-index:16;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+html.hud #hudScan{display:none;position:fixed;inset:0;z-index:16;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
 html.hud #hudNet{display:block;position:fixed;inset:-4%;width:108%;height:108%;z-index:0;pointer-events:none;opacity:.5;animation:hudDrift 240s ease-in-out infinite alternate}
 @keyframes hudDrift{to{transform:translate(-2.5%,-2%) rotate(.6deg)}}
 html.hud body.aqua #hudNet,html.hud body.aqua #hudFrame{display:none}
@@ -1386,13 +1388,13 @@ body.npCardOn #npCard{display:flex}
 .wz-tag{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));background:rgba(10,14,24,.8);padding:calc(.7*var(--u)) calc(1.5*var(--u));border-radius:calc(1.3*var(--u));display:flex;flex-direction:column;z-index:2}
 .wz-tag.bot{top:auto;bottom:calc(1.6*var(--u))}.wz-tag b{font-size:calc(2.4*var(--u));font-weight:600;color:#fff}.wz-tag small{font-size:calc(1.7*var(--u));color:#bec8d7}
 .wz-src{position:absolute;right:calc(1.2*var(--u));bottom:calc(1.2*var(--u));background:rgba(10,14,24,.7);color:#e6ebf5;font-size:calc(1.6*var(--u));padding:calc(.3*var(--u)) calc(1*var(--u));border-radius:calc(.9*var(--u));z-index:2}
-.lc-gm{position:relative;padding:0!important;overflow:hidden;flex:1 1 0!important;min-height:calc(46*var(--u));display:flex}
+.lc-gm{position:relative;padding:0!important;overflow:hidden;flex:1 1 0!important;min-height:calc(36*var(--u));display:flex}
 .lc-gmap,#gmHost{flex:1;width:100%;height:100%;min-height:inherit;background:#1d2c4d}
 .gm-leg{position:absolute;left:calc(1.6*var(--u));top:calc(1.6*var(--u));display:flex;gap:calc(1.2*var(--u));background:rgba(10,14,24,.75);padding:calc(.7*var(--u)) calc(1.2*var(--u));border-radius:calc(1.2*var(--u));font-size:calc(1.5*var(--u));z-index:2}
 .gm-leg span{display:flex;align-items:center;gap:calc(.6*var(--u))}.gm-leg i{width:calc(2*var(--u));height:calc(.6*var(--u));border-radius:3px}
 .gm-upd{position:absolute;right:calc(1.6*var(--u));top:calc(1.6*var(--u));background:rgba(10,14,24,.75);padding:calc(.7*var(--u)) calc(1.2*var(--u));border-radius:calc(1.2*var(--u));font-size:calc(1.5*var(--u));z-index:2}
-.lc-ev2{display:flex;gap:calc(1.4*var(--u));align-items:center;padding:calc(.9*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.lc-ev2:first-of-type{border-top:0}
-.lc-ev2 i{font-style:normal;font-size:calc(2.6*var(--u))}.lc-ev2 b{display:block;font-size:calc(2*var(--u))}.lc-ev2 small{display:block;font-size:calc(1.6*var(--u));color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-ev2{display:flex;gap:calc(1.4*var(--u));align-items:flex-start;padding:calc(.9*var(--u)) 0;border-top:1px solid rgba(255,255,255,.08)}.lc-ev2:first-of-type{border-top:0}
+.lc-ev2 i{font-style:normal;font-size:calc(2.6*var(--u))}.lc-ev2 b{display:block;font-size:calc(2*var(--u))}.lc-ev2 small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;font-size:calc(1.6*var(--u));line-height:1.35;color:var(--dim);overflow:hidden}
 .lc-ev2>div{flex:1;min-width:0}.lc-ev2 span{flex:none;font-size:calc(1.6*var(--u));color:var(--dim)}
 /* hide Google's own corner buttons/links that aren't needed on a TV */
 .lc-gm .gm-style-cc,.lc-gm a[title*="Report errors"],.lc-gm .gmnoprint:not(.gm-style-cc){opacity:.55}
@@ -5784,7 +5786,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 124';
+document.getElementById('ver').textContent='build nova 125';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
