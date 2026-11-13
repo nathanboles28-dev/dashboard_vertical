@@ -1797,6 +1797,19 @@ html.nv2 .wz-tag small{font-family:var(--mono);letter-spacing:.06em}
 #vEdge.on{opacity:1}
 #vEdge.go{opacity:1}#vEdge.go::before,#vEdge.go::after{animation-duration:.7s}
 @keyframes vspin{to{--va:360deg}}
+
+/* nova2 batch 2: titles never run under the clock, now playing + forecast + empty states */
+html.nv2 :is(.jf-title,.ptitle){max-width:calc(90% - 22vw);overflow:hidden}
+html.nv2 .np-hd{font-family:var(--mono);font-size:calc(1.7*var(--u));letter-spacing:.22em;text-transform:uppercase;color:#ffd0e6;display:flex;align-items:center;gap:calc(1.1*var(--u))}
+html.nv2 .np-t{font-family:var(--head);font-weight:600;letter-spacing:.01em;font-size:calc(6.6*var(--u))}
+html.nv2 .np-a{font-family:var(--head);font-weight:500}
+html.nv2 .np-tm{font-family:var(--mono)}
+html.nv2 .np-src{font-family:var(--mono)}
+html.nv2 .fnow #fTemp{font-weight:300;letter-spacing:-.02em}
+html.nv2 .fnow #fDesc{font-family:var(--head);font-weight:500}
+html.nv2 #fDays .fday b,html.nv2 #fDays>div>b{font-family:var(--head);font-weight:500}
+html.nv2 :is(.gnone,.jf-wait){font-family:var(--head);font-weight:400;letter-spacing:.04em;color:#a9a6cc}
+html.nv2 .gnone::before,html.nv2 .jf-wait::before{content:'';display:inline-block;width:calc(1*var(--u));height:calc(1*var(--u));border-radius:50%;background:#9b6bff;box-shadow:0 0 calc(1.4*var(--u)) #9b6bff;margin-right:calc(1.4*var(--u));vertical-align:middle;animation:vmp 1.6s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -2663,6 +2676,7 @@ function nextPage(force,hold){
   if(typeof npApply==='function')npApply();
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
+  if(CFG.style==='nova2')setTimeout(n2FitTitles,60);
   {const vis=list.filter(canShow),k=vis.findIndex(q=>q===p);$('dots').dataset.nm=k<0?'':`${String(k+1).padStart(2,'0')} / ${vis.length} · ${pageName(p)}`}
   $('dots').innerHTML=p.type!=='morn'&&list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
   clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
@@ -3033,6 +3047,8 @@ function monthHTML(){
 }
 let comSig='';
 const PG_NAMES={dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+function n2FitTitles(){document.querySelectorAll('.page.on :is(.jf-title,.ptitle)').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
+  while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
 function pageName(p){return p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
@@ -6008,7 +6024,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 129';
+document.getElementById('ver').textContent='build nova 130';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
