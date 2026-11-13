@@ -2901,7 +2901,7 @@ let TOWN=[],REP=null,repAt=0;
 const nfSpec=L=>(L||[]).filter(x=>!x[3]||(()=>{const m=new Date().getMonth();return m>=x[3][0]&&m<=x[3][1]})()).map(x=>[x[0],x[1],x[2]||''].join('|')).join(';');
 const notOntario=/woodstock,? (n\.?y|ga|ill|vt|va|nb|new brunswick|georgia|illinois|vermont|virginia|new york)\b|london,? (england|uk)\b|\bu\.?k\.?\b/i;
 async function loadNewsFeed(){const F=CFG.newsFeed,K=SECRETS.calkey;if(!F||!CFG.relay||!K)return false;
-  const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${F.days||3}&f=${encodeURIComponent(nfSpec(L))}`,15000);const j=await r.json();if(j.error)throw new Error(j.error);return j.items||[]};
+  const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${F.days||3}&f=${encodeURIComponent(nfSpec(L))}`,15000);const j=await r.json();if(j.error)throw new Error(j.error);(window.NFD=window.NFD||{})[L===F.team?'team':'local']=j.dbg||null;return j.items||[]};
   let ok=false;
   try{const it=await get(F.team);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
   if(F.local)try{TOWN=(await get(F.local)).filter(n=>!notOntario.test(n.t))}catch(e){console.warn('newsfeed local',e)}
@@ -5330,6 +5330,7 @@ function healthList(){
   if(typeof calOn==='function'&&calOn())add('Calendar',!calErr&&calAt>0,calErr||(calAt?'':'not loaded yet'));
   lastRes.forEach(r=>add(r.L.label+' scores',!r.failed,r.failed?'not loading':''));
   add('News',newsItems.length>0,newsItems.length?'':'no headlines');
+  if(CFG.newsFeed){const D=(window.NFD||{}).team,n=newsItems.length&&!newsItems[0].T;add('News feed (relay)',n,n?'':D?D.map(d=>`${d.tag} G${d.gs||'?'}:${d.google} B${d.bs||'?'}:${d.bing}${d.gerr?' '+d.gerr:''}`).join(' · '):'relay not answering')}
   if(typeof jfOn==='function'&&jfOn())add('Jellyfin',!!(JF&&JF.up&&!jfErr),jfErr||(JF&&!JF.up?'server offline':JF?'':'not loaded'));
   if(typeof locOn==='function'&&locOn()&&drvList().length&&(drvAt||drvErr))add('Drive times',!drvErr,drvErr);
   if(typeof locOn==='function'&&locOn())add('Traffic cams',!locErr&&!!LOC,locErr||(LOC?'':'not loaded'));
@@ -6174,7 +6175,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 146';
+document.getElementById('ver').textContent='build nova 147';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
