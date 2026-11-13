@@ -1815,6 +1815,10 @@ html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
 
 #answer .ai-think i{display:inline-block;animation:aiD 1.2s infinite}#answer .ai-think i:nth-child(2){animation-delay:.2s}#answer .ai-think i:nth-child(3){animation-delay:.4s}
 @keyframes aiD{0%,60%,100%{opacity:.2}30%{opacity:1}}
+
+#vTest{position:fixed;left:3vw;right:3vw;top:calc(9*var(--u));z-index:61;background:rgba(10,9,24,.92);border:1.5px solid #9b6bff;border-radius:calc(2*var(--u));padding:calc(1.6*var(--u)) calc(2.2*var(--u));font:500 calc(2*var(--u)) 'JetBrains Mono',monospace;color:#e8e6ff;pointer-events:none}
+#vTest i{display:block;font:600 calc(3*var(--u)) Inter,sans-serif;color:#fff;font-style:normal;margin:calc(1*var(--u)) 0}
+#vTest small{display:block;font-size:calc(1.6*var(--u));color:#a9a6cc;line-height:1.5}
 </style>
 </head>
 <body>
@@ -3385,7 +3389,7 @@ async function askNova(q){if(aiBusy)return;aiBusy=true;wakeScreen&&wakeScreen();
   $('answer').innerHTML='<small>NOVA</small><p class="ai-think">Thinking<i>.</i><i>.</i><i>.</i></p>';$('answer').classList.add('on');clearTimeout(ansT);
   const who=(PRES&&PRES.last)||'';let a='';
   try{const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:aiContext(),who})});
-    const j=await r.json().catch(()=>({}));a=j.answer||'';if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":"Sorry, I couldn't reach my brain just now."}}
+    const j=await r.json().catch(()=>({}));a=j.answer||'';if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":/credit|balance|billing/i.test(j.error||'')?"I'm out of AI credits. Top up in the Anthropic console and I'll be back.":"Sorry, I couldn't reach my brain just now."}}
   catch(e){a="Sorry, I couldn't reach my brain just now."}
   aiBusy=false;reply(a);if(!(CFG.remote||{}).speak)speak(a)}
 function reply(text){
@@ -3476,6 +3480,7 @@ function handleCommand(raw){
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
+  if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
   /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
   if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
   if(has(/\b(morning (mode|page|briefing|rundown)|get going)\b/)){showFor('morn');return reply('Here\'s your morning.')}
@@ -5278,11 +5283,14 @@ setTimeout(heartbeat,90000);setInterval(heartbeat,5*60000);
 /* ===== "Hey Nova" wake word: Chrome's built-in speech recognition on the mic plugged into this Mac =====
    "Hey Nova" + a command runs it straight away ("hey nova, red alert"). "Hey Nova" on its own: chime, then it listens
    for a few seconds; say a command, or say nothing and you get the roundup. While the roundup talks it only listens for "stop". */
-const VOICE={st:'off',err:'',heard:'',at:0,armed:0,armT:0,rec:null,fails:0};
+const VOICE={st:'off',err:'',heard:'',at:0,armed:0,armT:0,rec:null,fails:0,log:[],test:0,ends:[]};
+function vLog(m){VOICE.log.push(new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'})+' '+m);VOICE.log=VOICE.log.slice(-8);if(VOICE.test)voiceTestUI()}
+function voiceTestUI(){let el=$('vTest');if(!VOICE.test||Date.now()>VOICE.test){if(el)el.remove();VOICE.test=0;return}if(!el){el=document.createElement('div');el.id='vTest';document.body.appendChild(el)}
+  el.innerHTML=`<b>🎙️ Voice test</b> · mic ${VOICE.st}${VOICE.paused?' (paused)':''} · restarts last min: ${VOICE.ends.filter(t=>Date.now()-t<60000).length}<br><i>${esc(VOICE.live||'…')}</i><small>${VOICE.log.map(esc).join('<br>')}</small>`}
 /* said quickly, "hey nova" often comes back as "hey nova", "heynova", "hanover", "a nova", "hey noah", "innova"... all count */
 const WAKE=/(?:^|\b)(?:(?:hey|hay|hi|hello|ok|okay|yo|a|eh|uh)[,\s]*(?:nova|novah|nover|noba|nava|novo|noah|nora|noa)|heynova|hanover|hannover|innova|casanova|^\s*nova)\b[,.\s]*(.*)$/i;
 function voiceUI(){let el=$('vMic');if(!el){el=document.createElement('div');el.id='vMic';document.body.appendChild(el)}
-  el.className=VOICE.armed?'arm':VOICE.st==='on'?'on':'off';
+  el.className=VOICE.armed?'arm':(VOICE.st==='on'||VOICE.st==='restart')?'on':'off';
   let E=$('vEdge');if(!E){E=document.createElement('div');E.id='vEdge';document.body.appendChild(E)}E.classList.toggle('on',!!VOICE.armed);el.innerHTML=VOICE.armed?'<i></i><b>Listening…</b>'+(VOICE.heard?`<small>${esc(VOICE.heard)}</small>`:''):'<i></i>'}
 function voiceChime(up){try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime;[up?660:880,up?990:660].forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type='sine';o.frequency.value=f;
   g.gain.setValueAtTime(0,t+i*.12);g.gain.linearRampToValueAtTime(.18,t+i*.12+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g).connect(A.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)});setTimeout(()=>A.close(),900)}catch(e){}}
@@ -5295,8 +5303,8 @@ function voiceArm(){VOICE.armed=1;VOICE.heard='';voiceChime(true);wakeScreen&&wa
 function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(V.on===false){VOICE.st='off';return}if(!SR){VOICE.st='err';VOICE.err='this browser has no speech recognition';return}
   const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=5;
-  rec.onstart=()=>{VOICE.st='on';VOICE.err='';voiceUI()};
-  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();
+  rec.onstart=()=>{VOICE.st='on';VOICE.err='';voiceUI();vLog('listening')};
+  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();VOICE.live=txt;VOICE.fails=0;if(VOICE.test){if(fin)vLog('heard: "'+txt+'"');voiceTestUI()}
     const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
     if(ru||VOICE.paused)continue;   // never act on its own voice
     if(VOICE.armed){const w=txt.match(WAKE),c=w?(w[1]||'').trim():txt;VOICE.heard=c;voiceUI();if(fin){VOICE.pre=0;if(c)voiceRun(c)}continue}
@@ -5304,12 +5312,15 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
     if(fin){VOICE.fails=0;VOICE.pre=0;m[1]&&m[1].trim().length>1?(VOICE.armed||voiceChime(true),voiceRun(m[1])):(VOICE.armed?null:voiceArm())}
     else if(!VOICE.pre&&!(m[1]||'').trim()){VOICE.pre=1;voiceArm()}   // light up as soon as "hey nova" is heard, not after the pause
   }};
-  rec.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
-  rec.onend=()=>{VOICE.st=VOICE.err?'err':'off';voiceUI();if(VOICE.paused)return;setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
+  rec.onerror=e=>{vLog('error: '+e.error);if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
+  rec.onend=()=>{VOICE.ends.push(Date.now());VOICE.ends=VOICE.ends.filter(t=>Date.now()-t<120000);VOICE.st=VOICE.err?'err':'restart';voiceUI();vLog('stopped'+(VOICE.paused?' (paused)':''));if(VOICE.paused)return;setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
   try{rec.start()}catch(e){VOICE.st='err';VOICE.err=e.message}}
 setTimeout(voiceStart,4000);
 /* the mic switches off while the roundup plays (so it can't hear itself) and back on 2 seconds after */
-setInterval(()=>{const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||(window.speechSynthesis&&speechSynthesis.speaking),R=VOICE.rec;if(!R)return;
+setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking);
+  /* Chrome's speech queue can get stuck "speaking" forever: after 45 s, clear it so the mic comes back */
+  if(spk){VOICE.spk=VOICE.spk||Date.now();if(Date.now()-VOICE.spk>45000&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())){try{speechSynthesis.cancel()}catch(e){}vLog('cleared stuck speech');spk=false;VOICE.spk=0}}else VOICE.spk=0;
+  const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||spk,R=VOICE.rec;if(VOICE.test)voiceTestUI();if(!R)return;
   if(ru&&!VOICE.paused){VOICE.paused=1;VOICE.armed=0;clearTimeout(VOICE.armT);voiceUI();try{R.abort()}catch(e){}}
   else if(!ru&&VOICE.paused){if(!VOICE.pz)VOICE.pz=Date.now();if(Date.now()-VOICE.pz>2000){VOICE.paused=0;VOICE.pz=0;try{R.start()}catch(e){}}}},300);
 /* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
@@ -6086,7 +6097,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 138';
+document.getElementById('ver').textContent='build nova 140';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
