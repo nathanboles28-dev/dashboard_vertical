@@ -1643,6 +1643,160 @@ html.liquid #lgOrbs i:nth-child(4){width:30vmax;height:30vmax;left:40%;top:38%;b
 @keyframes lgf{to{transform:translate(7vmax,5vmax) scale(1.1)}}
 html.liquid[data-theme="glass"] #bg{opacity:.8}
 
+/* =================== NOVA 2 look (CFG.style:'nova2'): dark aurora, glass panels with gradient edges, Chakra Petch / Inter / JetBrains Mono =================== */
+html.nv2{--o2:#ff9a3c;--p2:#ff4fa3;--v2:#9b6bff;--b2c:#3ec7ff;--g2:#3fe0a0;--mono:'JetBrains Mono',ui-monospace,monospace;--head:'Chakra Petch','Inter',sans-serif}
+html.nv2 body{font-family:'Inter',-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;background:#07060f}
+/* background: the per-page deep gradient stays, with slow warm/cool glows and a fine grain on top */
+html.nv2 #lgOrbs{display:block;position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;mix-blend-mode:screen;opacity:.8}
+html.nv2 #lgOrbs i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;animation:lgf 44s ease-in-out infinite alternate}
+html.nv2 #lgOrbs i:nth-child(1){width:60vmax;height:60vmax;left:-22vmax;top:-16vmax;background:radial-gradient(circle,#4a35e0 0 38%,transparent 70%)}
+html.nv2 #lgOrbs i:nth-child(2){width:50vmax;height:50vmax;right:-20vmax;top:24%;background:radial-gradient(circle,#d42a86 0 38%,transparent 70%);animation-duration:52s}
+html.nv2 #lgOrbs i:nth-child(3){width:55vmax;height:55vmax;left:-6vmax;bottom:-24vmax;background:radial-gradient(circle,#1278c0 0 38%,transparent 70%);animation-duration:58s}
+html.nv2 #lgOrbs i:nth-child(4){width:34vmax;height:34vmax;right:-8vmax;top:-10vmax;left:auto;background:radial-gradient(circle,#ff7a2f 0 32%,transparent 70%);opacity:.32;animation-duration:64s}
+html.nv2 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:.55vw .55vw}
+/* panels */
+html.nv2 body :is(.card,.jf-glass,.gr):not(#clock){
+  border:1.5px solid transparent!important;border-radius:calc(2.8*var(--u))!important;
+  background:linear-gradient(160deg,rgba(30,28,62,.74),rgba(14,12,30,.74)) padding-box,
+    linear-gradient(135deg,color-mix(in srgb,var(--cc,var(--acc,#3ec7ff)) 75%,transparent),rgba(255,255,255,.05) 38%,rgba(255,255,255,.03) 62%,rgba(255,79,163,.45)) border-box!important;
+  box-shadow:0 calc(1.8*var(--u)) calc(5*var(--u)) rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(18px) saturate(150%)!important;-webkit-backdrop-filter:blur(18px) saturate(150%)!important;clip-path:none!important}
+html.nv2 body :is(.card,.jf-glass,.gr)::before{border-radius:inherit!important}
+html.nv2 #shift>.card::before{opacity:.55}
+/* small headings: mono, spaced, with a glowing dot */
+html.nv2 :is(.card,.gd-card,.jf-glass)>h2{font-family:var(--mono)!important;text-transform:uppercase;letter-spacing:.2em!important;font-size:calc(1.55*var(--u))!important;font-weight:600!important;
+  color:color-mix(in srgb,var(--cc,var(--acc,#3ec7ff)) 70%,#fff)!important;display:flex;align-items:center;gap:calc(1.1*var(--u))}
+html.nv2 :is(.card,.gd-card,.jf-glass)>h2:not(.hwx):not(.air-h)::before,html.nv2 :is(.card,.gd-card,.jf-glass)>h2:is(.hwx,.air-h)>:first-child::before{
+  content:'';display:inline-block;flex:none;width:calc(.85*var(--u));height:calc(.85*var(--u));border-radius:50%;background:currentColor;box-shadow:0 0 calc(1.2*var(--u)) currentColor;margin-right:calc(1.1*var(--u));vertical-align:middle}
+html.nv2 :is(.card,.gd-card,.jf-glass)>h2:is(.hwx,.air-h){justify-content:flex-start}
+html.nv2 :is(.card,.gd-card,.jf-glass)>h2:is(.hwx,.air-h)>:last-child:not(:first-child){margin-left:auto;letter-spacing:.04em;font-family:var(--mono)}
+/* page titles: big gradient caps */
+html.nv2 :is(.jf-title,.ptitle){font-family:var(--head)!important;text-transform:uppercase;letter-spacing:.06em!important;font-weight:600!important;font-size:calc(5.4*var(--u))!important;
+  background:linear-gradient(90deg,#fff,color-mix(in srgb,var(--acc,#ff4fa3) 35%,#ffc9e6) 60%,#c8b6ff);-webkit-background-clip:text;background-clip:text;color:transparent!important;text-shadow:none!important;white-space:nowrap}
+html.nv2 :is(.jf-title,.ptitle)::before{-webkit-text-fill-color:initial;color:#fff;font-size:.8em;margin-right:.4em}
+html.nv2 :is(.jf-title,.ptitle)::after{display:none!important}
+/* numbers and labels */
+html.nv2 :is(#time,#temp,#fTemp,.ng-sc,.ng-tm b,.ng-when b,.ng-big,.wr-big,.sn-big,.lc-drm,.gr .when b,.gr .sc,.cdr-n b,.ts-nrow b,.hm-cnt b,.np-t,.dv-sum b,.wt-info>b,.n2rg b,.n2mt .vs)
+  {font-family:var(--head)!important}
+html.nv2 :is(.cday,.cev>span,.mleg,.ng-k,.wt-hn,.wt-k,.hm-hh small,.hm-cnt small,.pg-b,.np-hd,.np-src,.hm-rm small,.lc-drs-k,.lc-dr small,.lc-ev2>span)
+  {font-family:var(--mono)!important}
+/* ticker along the top */
+html.nv2 #nticker{background:rgba(8,7,20,.62);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:none;border-bottom:1px solid rgba(255,255,255,.07)}
+html.nv2 #nticker::after{height:1px;opacity:.5}
+html.nv2 .nt-k{font-family:var(--mono);font-weight:600;letter-spacing:.12em}
+html.nv2 .nt-sep{color:#5d5a80}
+/* bottom: page progress bars + page name instead of dots */
+html.nv2 #dots{left:4.2vw;right:4.2vw;transform:none;bottom:calc(2.6*var(--u));gap:.55vw;align-items:center}
+html.nv2 #dots::before{content:attr(data-nm);font:600 calc(1.6*var(--u)) var(--mono);letter-spacing:.2em;color:#cfcbef;white-space:nowrap;margin-right:1.6vw;text-transform:uppercase}
+html.nv2 #dots i{flex:1;width:auto!important;height:.45vw!important;border-radius:.3vw!important;background:rgba(255,255,255,.13)!important;opacity:1!important}
+html.nv2 #dots i.on{background:linear-gradient(90deg,var(--o2),var(--p2))!important;box-shadow:0 0 1vw rgba(255,79,163,.6)}
+html.nv2 #mini{font-family:var(--head)}
+
+/* ---------- MAIN PAGE ---------- */
+@media (orientation:portrait){
+ html.nv2 #shift{grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto minmax(0,1fr) auto;
+   grid-template-areas:"clock wx" "air air" "spot news" "sports sports";gap:2.4vw;padding:5vw 4vw 7vw}
+ html.nv2 #clock{justify-content:flex-end;padding:1vw 0 0 .6vw;overflow:visible!important}html.nv2 #shift>#wx{overflow:visible!important;min-width:0}
+ html.nv2 #time{font-size:21vw;font-weight:300;letter-spacing:-.02em;text-shadow:0 0 6vw rgba(155,107,255,.35)}
+ html.nv2 #time small{font-size:4.2vw;color:#9c99bd;letter-spacing:.05em;font-weight:500}
+ html.nv2 #date{font-family:var(--head);font-size:4.1vw;font-weight:500;color:#eef0ff;margin-top:1.6vw}
+ html.nv2 #date span{color:#c8b6ff}
+ html.nv2 #shift>#wx{background:none!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+   flex-direction:column;align-items:flex-end;justify-content:flex-end;text-align:right;padding:0 0 .5vw!important;gap:0}
+ html.nv2 #shift>#wx::before{display:none}
+ html.nv2 #wx>div:nth-child(2){max-width:none}
+ html.nv2 #wxicon{font-size:7vw;line-height:1;order:0;margin-bottom:-1vw}
+ html.nv2 #temp{font-size:15vw;font-weight:300}
+ html.nv2 #wxdesc{font-family:var(--head);font-size:3.2vw;font-weight:500;margin-top:.6vw}
+ html.nv2 #wxsub,html.nv2 #wxTm{font-size:2vw;color:#9c99bd;margin-top:.5vw;white-space:normal}
+ /* next 12 hours: a temperature curve, with the radar beside it */
+ html.nv2 #shift>#air{display:grid;grid-template-columns:minmax(0,1fr) 34%;grid-template-rows:auto minmax(0,1fr);column-gap:3vw;padding:2.6vw 0 2.4vw 3vw!important;overflow:hidden;min-height:44vw}
+ html.nv2 #air>h2{grid-column:1;grid-row:1;margin:0 0 .6vw}
+ html.nv2 #air>.n2air{grid-column:1;grid-row:2;display:flex;flex-direction:column;min-height:0}
+ html.nv2 #air #radar{grid-column:2;grid-row:1/3;margin:-2.6vw 0 -2.4vw;border-radius:0;border-left:1px solid rgba(255,255,255,.08);min-height:0}
+ html.nv2 .n2curve{flex:1;min-height:14vw;position:relative}
+ html.nv2 .n2curve svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+ html.nv2 #air #hours{height:auto;margin-top:.8vw;justify-content:space-around}html.nv2 #air #hours .day{flex:1}
+ html.nv2 #hours .day span{font-size:2.6vw;margin:.2vw 0}
+ html.nv2 #hours .day b{font-family:var(--mono);font-size:1.6vw;color:#9c99bd}
+ html.nv2 #hours .day i.tc,html.nv2 #hours .day{font-family:var(--head);font-weight:600}
+ html.nv2 #hours .day{display:flex;flex-direction:column-reverse;font-size:3vw}
+ html.nv2 #airSun{font-family:var(--mono);font-size:1.5vw}
+ html.nv2 #spot,html.nv2 #news{min-height:0}
+ html.nv2 #sports{padding-bottom:2.2vw!important}
+}
+
+/* ---------- COMING UP ---------- */
+html.nv2 .n2tl .cday{font-family:var(--mono);font-size:calc(1.75*var(--u));letter-spacing:.18em;color:#c8b6ff;margin:calc(1.7*var(--u)) 0 calc(.3*var(--u))}
+html.nv2 .n2tl .cday:first-of-type{margin-top:calc(1.6*var(--u))}
+html.nv2 .n2tl .cday>:last-child{font-family:var(--head);letter-spacing:0;color:#9c99bd;font-size:1.15em}
+html.nv2 .n2tl .cev{position:relative;grid-template-columns:calc(15*var(--u)) minmax(0,1fr) auto;align-items:center;border:0;padding:calc(1*var(--u)) 0 calc(1*var(--u)) calc(4.6*var(--u))}
+html.nv2 .n2tl .cev::before{content:'';position:absolute;left:calc(1.15*var(--u));top:0;bottom:0;width:2px;background:linear-gradient(#9b6bff,rgba(155,107,255,.15))}
+html.nv2 .n2tl .cev::after{content:'';position:absolute;left:calc(.5*var(--u));top:50%;width:calc(1.5*var(--u));height:calc(1.5*var(--u));margin-top:calc(-.75*var(--u));border-radius:50%;background:#07060f;border:3px solid var(--ec,#3ec7ff);box-shadow:0 0 calc(1.3*var(--u)) var(--ec,#3ec7ff)}
+html.nv2 .n2tl .cev.tdy{--ec:#ff9a3c}html.nv2 .n2tl .cev.tdy>span{color:#ffb878}
+html.nv2 .n2tl .cev>span{font-size:calc(2.3*var(--u));color:#9c99bd}
+html.nv2 .n2tl .cev b{font-size:calc(3*var(--u));font-weight:600}
+html.nv2 .n2tag{font:600 calc(1.4*var(--u)) var(--mono);letter-spacing:.12em;padding:calc(.5*var(--u)) calc(1.1*var(--u));border-radius:calc(.8*var(--u));background:rgba(255,154,60,.16);color:#ffb878;white-space:nowrap;text-transform:uppercase}
+html.nv2 .n2tag.lv{background:rgba(255,59,48,.75);color:#fff}
+html.nv2 .mgrid{font-family:var(--head)}
+html.nv2 .mc{gap:calc(.15*var(--u));padding:0}html.nv2 .mc b{width:calc(4.1*var(--u));height:calc(4.1*var(--u));font-size:calc(2.4*var(--u))}
+html.nv2 .mc.today b{background:linear-gradient(135deg,#ff9a3c,#ff4fa3);color:#fff;box-shadow:0 0 calc(2*var(--u)) rgba(255,79,163,.6);border-radius:calc(1.2*var(--u))}
+html.nv2 #comingBody{gap:calc(2.4*var(--u))!important}
+html.nv2 .n2rings{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:calc(1.6*var(--u));margin-top:calc(1*var(--u))}
+html.nv2 .n2rg{text-align:center;min-width:0}
+html.nv2 .n2rg .rr{position:relative;width:min(100%,calc(12.5*var(--u)));aspect-ratio:1;margin:0 auto}
+html.nv2 .n2rg svg{width:100%;height:100%;transform:rotate(-90deg)}
+html.nv2 .n2rg .in{position:absolute;inset:0;display:grid;place-items:center;align-content:center}
+html.nv2 .n2rg b{display:block;font-size:calc(4.2*var(--u));font-weight:600;line-height:1}
+html.nv2 .n2rg .in small{font:500 calc(1.4*var(--u)) var(--mono);color:#9c99bd;letter-spacing:.2em;margin-top:calc(.3*var(--u))}
+html.nv2 .n2rg h3{font-size:calc(2.2*var(--u));font-weight:600;margin-top:calc(.8*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.nv2 .n2rg p{font-size:calc(1.7*var(--u));color:#9c99bd;margin-top:calc(.3*var(--u))}
+html.nv2 .n2mu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(1.6*var(--u));margin-top:calc(1.6*var(--u))}
+html.nv2 .n2mt.cgr{border-top:0;align-items:flex-start;text-align:left;grid-template-columns:none}
+html.nv2 .n2mt{position:relative;overflow:hidden;border-radius:calc(2*var(--u));padding:calc(1.4*var(--u)) calc(2*var(--u));background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));display:flex;flex-direction:column;gap:calc(.7*var(--u));min-width:0}
+html.nv2 .n2mt::before{content:'';position:absolute;right:calc(-3*var(--u));top:calc(-3*var(--u));width:calc(16*var(--u));height:calc(16*var(--u));border-radius:50%;background:var(--c);filter:blur(calc(4*var(--u)));opacity:.5}
+html.nv2 .n2mt>*{position:relative}
+html.nv2 .n2mt .w{font:600 calc(1.4*var(--u)) var(--mono);letter-spacing:.18em;text-transform:uppercase;opacity:.9}
+html.nv2 .n2mt .vs{width:100%;display:flex;align-items:center;gap:calc(1.2*var(--u));font-size:calc(3*var(--u));font-weight:600}
+html.nv2 .n2mt .vs img{width:calc(5*var(--u));height:calc(5*var(--u));object-fit:contain}
+html.nv2 .n2mt .vs i{font:500 calc(1.9*var(--u)) var(--mono);font-style:normal;color:#9c99bd}
+html.nv2 .n2mt .when{font-family:var(--head);font-size:calc(2.2*var(--u));font-weight:500;margin-left:auto}
+html.nv2 .n2mt small{font-size:calc(1.7*var(--u));color:#9c99bd}
+
+/* ---------- AROUND TOWN ---------- */
+html.nv2 .lc-now{--cc:#3fe0a0}
+html.nv2 .lc-now.ok>i{font-size:0!important;width:calc(2*var(--u));height:calc(2*var(--u));border-radius:50%;background:#3fe0a0;box-shadow:0 0 0 calc(.8*var(--u)) rgba(63,224,160,.18),0 0 calc(2.4*var(--u)) #3fe0a0;flex:none;margin:0 calc(.6*var(--u))}
+html.nv2 .lc-now.ok::after{content:'ALL CLEAR';margin-left:auto;font:600 calc(1.5*var(--u)) var(--mono);letter-spacing:.2em;color:#6ff0bd}
+html.nv2 .lc-now.bad{--cc:#ff9a3c}html.nv2 .lc-now.red{--cc:#ff4d5e}
+html.nv2 .lc-dr{border-radius:calc(2*var(--u));background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:0}
+html.nv2 .lc-drm{font-size:calc(5.2*var(--u));font-weight:500}
+html.nv2 .lc-ev2>i{width:calc(5.2*var(--u));height:calc(5.2*var(--u));border-radius:calc(1.4*var(--u));display:grid;place-items:center;flex:none;background:rgba(255,154,60,.15);box-shadow:inset 0 0 0 1px rgba(255,154,60,.35)}
+html.nv2 .lc-ev2>span{color:#ffb878!important;font-weight:600}
+html.nv2 .lc-ev2 b{font-size:calc(2.3*var(--u))}html.nv2 .lc-ev2 small{font-size:calc(1.8*var(--u))}
+html.nv2 :is(.lc-gm,.tm-map,.wzBox){border-radius:calc(2.6*var(--u))!important}
+html.nv2 :is(.wz-tag,.wz-src){background:rgba(10,9,24,.84)!important}
+html.nv2 .wz-tag small{font-family:var(--mono);letter-spacing:.06em}
+
+#vMic{position:fixed;left:calc(1.6*var(--u));top:calc(7.4*var(--u));z-index:60;display:flex;align-items:center;gap:calc(1*var(--u));pointer-events:none}
+#vMic i{width:calc(1*var(--u));height:calc(1*var(--u));border-radius:50%;background:#3fe0a0;opacity:.55;box-shadow:0 0 calc(1*var(--u)) #3fe0a0}
+#vMic.off i{background:#888;box-shadow:none;opacity:.35}
+#vMic.arm{left:50%;top:auto;bottom:calc(9*var(--u));transform:translateX(-50%);padding:calc(1.6*var(--u)) calc(3*var(--u));border-radius:calc(5*var(--u));
+  background:rgba(10,9,24,.86);backdrop-filter:blur(20px);box-shadow:0 0 0 1.5px rgba(255,79,163,.6),0 0 calc(5*var(--u)) rgba(155,107,255,.55);flex-wrap:wrap;justify-content:center;max-width:80vw}
+#vMic.arm i{width:calc(2*var(--u));height:calc(2*var(--u));opacity:1;background:#ff4fa3;box-shadow:0 0 calc(2*var(--u)) #ff4fa3;animation:vmp 1s ease-in-out infinite}
+#vMic.arm b{font:600 calc(3*var(--u)) 'Chakra Petch',Inter,sans-serif;letter-spacing:.06em;color:#fff}
+#vMic.arm small{flex-basis:100%;text-align:center;font-size:calc(2.2*var(--u));color:#cfcbef}
+@keyframes vmp{50%{transform:scale(1.35);opacity:.7}}
+
+/* Siri-style glow around the whole screen while Nova is listening */
+@property --va{syntax:'<angle>';initial-value:0deg;inherits:false}
+#vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
+#vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(1.1*var(--u));
+  background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:vspin 2.4s linear infinite}
+#vEdge::after{filter:blur(calc(3*var(--u)));padding:calc(2.6*var(--u));opacity:.9}
+#vEdge.on{opacity:1}
+#vEdge.go{opacity:1}#vEdge.go::before,#vEdge.go::after{animation-duration:.7s}
+@keyframes vspin{to{--va:360deg}}
 </style>
 </head>
 <body>
@@ -1725,7 +1879,7 @@ const CFG={
   // Colour theme: 'glass' (dark, frosted glass over your blurred photos), 'aurora' (blue, purple, pink), 'dusk' (warm amber and rose), 'graphite' (neutral dark), 'forest' (green), 'midnight' (the original blue and violet)
   theme:'glass',
   // Look: 'hud' = the sci-fi frame, cut-corner cards and Chakra Petch / Inter / JetBrains Mono on every page. '' = the old glass look.
-  style:'hud',
+  style:'nova2',   // 'nova2' = the rebuilt look · 'hud' = last week's · '' = the original
   liquid:true,   // liquid glass look for the 'glass' theme (clearer glass, lit edges, colour glows behind). false = the classic frosted glass
   // Background for the glass theme: 'cycle' (lava-lamp glow that slowly moves through all the colours below),
   // or one fixed colour: 'midnight' (deep navy), 'graphite' (charcoal), 'ocean' (deep teal), 'plum' (dark purple), or 'photo' (blurred photos from your folder)
@@ -1869,6 +2023,7 @@ const CFG={
   // Roundup: say "hello Nova" (Siri / the remote) for the sci-fi intro + spoken roundup. morning: also play it when the screen wakes up
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
+  voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
   roundup:{on:true, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
@@ -1953,6 +2108,20 @@ function nbSub(topic,since,onMsg,onState){nbCheck().then(ok=>{
 })}
 document.documentElement.dataset.theme=CFG.theme||'dusk';
 if(CFG.style==='hud')document.documentElement.classList.add('hud');
+if(CFG.style==='nova2'){document.documentElement.classList.add('nv2');
+  /* main page: the radar moves next to the 12-hour curve */
+  try{const air=$('air'),hrs=$('hours'),w=document.createElement('div');w.className='n2air';w.innerHTML='<div class="n2curve" id="n2curve"></div>';
+    hrs.parentNode.insertBefore(w,hrs);w.appendChild(hrs);if(window.matchMedia('(orientation:portrait)').matches)air.appendChild($('radar'));
+    new MutationObserver(()=>n2Curve()).observe(hrs,{childList:true,subtree:true,characterData:true})}catch(e){console.warn('nova2',e)}}
+/* the temperature curve behind "Next 12 hours" */
+function n2Curve(){const el=$('n2curve');if(!el)return;const T=[...document.querySelectorAll('#hours .day')].map(d=>{const m=d.textContent.match(/(-?\d+)°/);return m?+m[1]:null}).filter(v=>v!=null);
+  if(T.length<2){el.innerHTML='';return}const W=600,H=200,lo=Math.min(...T),hi=Math.max(...T),sp=Math.max(4,hi-lo),pad=24,
+    P=T.map((t,i)=>[(i+.5)*W/T.length,pad+(1-(t-lo)/sp)*(H-pad*2)]);
+  let d=`M${P[0][0]},${P[0][1]}`;for(let i=1;i<P.length;i++){const [x0,y0]=P[i-1],[x1,y1]=P[i],mx=(x0+x1)/2;d+=` C${mx},${y0} ${mx},${y1} ${x1},${y1}`}
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="n2cg" x1="0" x2="1"><stop offset="0" stop-color="#3ec7ff"/><stop offset=".5" stop-color="#9b6bff"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient>
+    <linearGradient id="n2cf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9b6bff" stop-opacity=".38"/><stop offset="1" stop-color="#9b6bff" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${P[P.length-1][0]},${H} L${P[0][0]},${H}Z" fill="url(#n2cf)"/><path d="${d}" fill="none" stroke="url(#n2cg)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    ${P.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${i?5:8}" fill="${i?'#cfc4ff':'#3ec7ff'}" vector-effect="non-scaling-stroke"/>`).join('')}</svg>`}
 if(CFG.liquid&&(CFG.theme||'')==='glass'){document.documentElement.classList.add('liquid');
   document.body.insertAdjacentHTML('afterbegin','<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgBend" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.004 0.007" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="2" result="nb"/><feDisplacementMap in="SourceGraphic" in2="nb" scale="28" xChannelSelector="R" yChannelSelector="G"/></filter></svg><div id="lgOrbs"><i></i><i></i><i></i><i></i></div>')}
 const BGP={midnight:{b:['#16233f','#0a0f1d','#03050a'],c:['#1f4b9a','#3a2f7a','#14618c','#2b3f8f'],o:.6},
@@ -2494,6 +2663,7 @@ function nextPage(force,hold){
   if(typeof npApply==='function')npApply();
   document.querySelector('.aurora').style.filter=p.hue?`hue-rotate(${p.hue}deg)`:'';
   $('bg').style.filter=(CFG.theme==='glass'&&p.hue)?`hue-rotate(${Math.round(p.hue/3)}deg)`:'';
+  {const vis=list.filter(canShow),k=vis.findIndex(q=>q===p);$('dots').dataset.nm=k<0?'':`${String(k+1).padStart(2,'0')} / ${vis.length} · ${pageName(p)}`}
   $('dots').innerHTML=p.type!=='morn'&&list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
   clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
 }
@@ -2862,41 +3032,60 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
+const PG_NAMES={dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+function pageName(p){return p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
   const tm=e=>e.allDay?'All day':fmt(e.start);
-  const evRow=e=>{const r=e.loc?rtGet(e.loc):null;if(e.loc&&!r)routeTo(e.loc);
-    return `<div class="cev"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div></div>`};
+  const N2=CFG.style==='nova2';
+  const tag=e=>{if(!N2||e.allDay)return '';const m=Math.round((e.start-now)/60000);if(m<=0)return e.end>now?'<span class="n2tag lv">Now</span>':'';
+    return m>=24*60?'':`<span class="n2tag">In ${m<60?m+' min':Math.round(m/60)+' h'}</span>`};
+  const evRow=(e,td)=>{const r=e.loc?rtGet(e.loc):null;if(e.loc&&!r)routeTo(e.loc);
+    if(N2)return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div>${td?tag(e):''}</div>`;
+    return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div></div>`};
   let cal='';
   if(calOn()){
     const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
     let days='',last='';
-    later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday"><span>${daysUntil(e.start)===1?'Tomorrow':e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${dayWx(e.start)}</div>`}days+=evRow(e)});
-    cal=`<div class="card stcard"><h2 class="hwx"><span>Today</span>${dayWx(now)}</h2>${today.length?today.map(evRow).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}</div>
+    later.forEach(e=>{const k=e.start.toDateString();if(k!==last){last=k;days+=`<div class="cday"><span>${daysUntil(e.start)===1?'Tomorrow · '+e.start.toLocaleDateString([],{weekday:'short',day:'numeric'}):e.start.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${dayWx(e.start)}</div>`}days+=evRow(e)});
+    if(N2){const tot=today.length+later.length;
+      cal=`<div class="card stcard n2tl"><h2 class="hwx"><span>Your week</span><em>${tot?tot+(tot===1?' thing':' things'):''}</em></h2>
+        <div class="cday"><span>Today · ${now.toLocaleDateString([],{weekday:'short',day:'numeric'})}</span>${dayWx(now)}</div>
+        ${today.length?today.map(e=>evRow(e,1)).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}
+        ${days||(calErr?'':`<div class="cday"><span>Rest of the week</span></div><div class="cnote">Nothing else this week</div>`)}</div>${routeCard()}`}
+    else cal=`<div class="card stcard"><h2 class="hwx"><span>Today</span>${dayWx(now)}</h2>${today.length?today.map(e=>evRow(e,1)).join(''):`<div class="cnote">${calErr||'Nothing on the calendar today'}</div>`}</div>
       ${routeCard()}
       <div class="card stcard"><h2>This week</h2>${days||`<div class="cnote">${calErr||'Nothing else this week'}</div>`}</div>`;
   }
-  const cds=countdownList().slice(0,4),span=Math.max(30,...cds.map(c=>daysUntil(c.date)));
-  const cdHTML=cds.length?`<div class="card stcard cdl"><h2>Countdowns</h2>${cds.map(c=>{const n=daysUntil(c.date);
+  const cds=countdownList().slice(0,CFG.style==='nova2'?3:4),span=Math.max(30,...cds.map(c=>daysUntil(c.date)));
+  const RG=[['#ff9a3c','#ff4fa3'],['#ff4fa3','#9b6bff'],['#9b6bff','#3ec7ff'],['#3ec7ff','#3fe0a0']];
+  const cdN2=()=>`<div class="card stcard cdl"><h2>Countdowns</h2><div class="n2rings" style="--n:${cds.length}">${cds.map((c,i)=>{const n=daysUntil(c.date),f=Math.max(.03,1-n/span),C=2*Math.PI*44;
+    return `<div class="n2rg"><div class="rr"><svg viewBox="0 0 100 100"><defs><linearGradient id="n2r${i}"><stop offset="0" stop-color="${RG[i%4][0]}"/><stop offset="1" stop-color="${RG[i%4][1]}"/></linearGradient></defs><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/><circle cx="50" cy="50" r="44" fill="none" stroke="url(#n2r${i})" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-f)).toFixed(1)}"/></svg>
+      <div class="in">${n===0?'<b>🎉</b><small>TODAY</small>':`<b>${n}</b><small>${n===1?'DAY':'DAYS'}</small>`}</div></div><h3>${c.emoji} ${esc(c.name)}</h3><p>${c.date.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}</p></div>`}).join('')}</div></div>`;
+  const cdHTML=!cds.length?'':N2?cdN2():`<div class="card stcard cdl"><h2>Countdowns</h2>${cds.map(c=>{const n=daysUntil(c.date);
     return `<div class="cdr${n===0?' now':''}"><i class="cdr-em">${c.emoji}</i><div class="cdr-t"><b>${esc(c.name)}</b><small>${c.date.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'})}</small>
-      <div class="cdr-bar"><i style="width:${Math.max(4,100-n/span*100).toFixed(0)}%"></i></div></div><div class="cdr-n">${n===0?'<b>Today</b>':`<b>${n}</b><span>${n===1?'day':'days'}</span>`}</div></div>`}).join('')}</div>`:'';
+      <div class="cdr-bar"><i style="width:${Math.max(4,100-n/span*100).toFixed(0)}%"></i></div></div><div class="cdr-n">${n===0?'<b>Today</b>':`<b>${n}</b><span>${n===1?'day':'days'}</span>`}</div></div>`}).join('')}</div>`;
   loadSchedules();
   /* your teams' games in the next week */
   const gms=[];try{(HUB&&HUB.next||[]).forEach(g=>gms.push({...g,tm:'Leafs',c:'#3b7bff',lg:(HUB.logo||'')}));(KH&&KH.next||[]).forEach(g=>gms.push({...g,tm:'Knights',c:'#21a35d'}))}catch(e){}
   const wk=gms.filter(g=>{const n=daysUntil(new Date(g.start));return n>=0&&n<=7}).sort((a,b)=>new Date(a.start)-new Date(b.start)).slice(0,4);
-  const gmHTML=wk.length?`<div class="card stcard cgm" id="gmCard"><h2>Games this week</h2>${wk.map(g=>{const d=new Date(g.start),n=daysUntil(d);
-    return `<div class="cgr" style="--c:${g.c}"><span class="cgt">${g.tm}</span><b>${g.home?'vs':'at'} ${esc(g.opp)}</b><em>${n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})} · ${fmt(d)}</em><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div>`:'';
+  const gmN2=()=>`<div class="card stcard cgm" id="gmCard"><h2>Games this week</h2><div class="n2mu">${wk.map(g=>{const d=new Date(g.start),n=daysUntil(d);
+    return `<div class="n2mt cgr" style="--c:${g.c}"><span class="w">${g.tm} · ${n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',day:'numeric'})}</span><div class="vs"><i>${g.home?'vs':'at'}</i>${g.logo?`<img src="${esc(g.logo)}" alt="" onerror="this.remove()">`:''}${esc(g.opp)}<span class="when">${fmt(d)}</span></div><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div></div>`;
+  const gmHTML=!wk.length?'':N2?gmN2():`<div class="card stcard cgm" id="gmCard"><h2>Games this week</h2>${wk.map(g=>{const d=new Date(g.start),n=daysUntil(d);
+    return `<div class="cgr" style="--c:${g.c}"><span class="cgt">${g.tm}</span><b>${g.home?'vs':'at'} ${esc(g.opp)}</b><em>${n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})} · ${fmt(d)}</em><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div>`;
   const html=cal+monthHTML()+`<div id="cdCard">${cdHTML}</div>`+gmHTML;
-  $('comingBody').style.cssText='display:flex;flex-direction:column;gap:calc(3*var(--u));flex:1;min-height:0;overflow:hidden';
+  $('comingBody').style.cssText='position:relative;display:flex;flex-direction:column;gap:calc(3*var(--u));flex:1;min-height:0;overflow:hidden';
   if(html!==comSig){comSig=html;$('comingBody').innerHTML=html;drawRouteMaps();fitComing();setTimeout(fitComing,500)}
 }
 /* too much for the screen? drop countdowns first, then trim the week list from the bottom */
 function fitComing(){
-  const cb=$('comingBody');[...cb.children].forEach(c=>c.style.flexShrink='0');const over=()=>cb.scrollHeight>cb.clientHeight+2;
+  const cb=$('comingBody');[...cb.children].forEach(c=>c.style.flexShrink='0');
+  /* measured without the entrance animation's slide (offsets ignore transforms) */
+  const over=()=>{const L=cb.lastElementChild;return !!L&&L.offsetTop+L.offsetHeight>cb.clientHeight+2};
   if(!over())return;
   const gm=$('gmCard');if(gm){let r=gm.querySelectorAll('.cgr');for(let k=r.length-1;k>0&&over();k--)r[k].remove();if(over())gm.remove();if(!over())return}
   const cd=$('cdCard');if(cd)cd.remove();
-  const rows=[...$('comingBody').querySelectorAll('.cev')].filter(r=>!r.closest('.card').querySelector('h2.hwx span')||r.closest('.card').querySelector('h2.hwx span').textContent!=='Today');
+  const rows=[...$('comingBody').querySelectorAll('.cev:not(.tdy)')];
   while(over()&&rows.length>1){const r=rows.pop(),prev=r.previousElementSibling;r.remove();if(prev&&prev.classList.contains('cday')&&(!prev.nextElementSibling||prev.nextElementSibling.classList.contains('cday')))prev.remove()}
   if(over()){const m=cb.querySelector('.mgrid');if(m)m.closest('.card').remove()}
 }
@@ -3190,8 +3379,9 @@ function teamIn(t){
   return '';
 }
 function handleCommand(raw){
-  const t=String(raw||'').toLowerCase().replace(/[?.!]/g,'').replace(/^\s*(hey|ok|okay)?\s*nova[,\s]*/,'').trim();
-  if(!t)return;
+  const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
+  /* just "hey nova" / "hello nova" on its own = the roundup */
+  if(!t){if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
   /* automations from the iPhones (Shortcuts): "presence nathan arrived" / "presence erinn left" / "alarm off nathan" */
   {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
@@ -4987,6 +5177,7 @@ function healthList(){
   const out=[],add=(name,ok,why,crit)=>out.push({name,ok,why,crit});
   if(CFG.relay)add('Relay (Cloudflare Worker)',HC.relay.ok!==false,HC.relay.ok===false?'not answering':'',true);
   add('Weather',!!WXD,WXD?'':'not loaded',true);
+  if((CFG.voice||{}).on!==false)add('Voice (Hey Nova)',VOICE.st==='on'||(!VOICE.err&&VOICE.st!=='err'),VOICE.err||'');
   if(!(CFG.radarLoop&&CFG.radarLoop.on===false)&&RL.times.length)add('Radar loop',!RL.err,RL.err?'Environment Canada frames not loading':'');
   add('Rain radar',RS.ec!==false||RS.rv===true,RS.ec===false&&RS.rv===false?'both sources down':RS.ec===false?'Environment Canada down (RainViewer OK)':'');
   if(typeof calOn==='function'&&calOn())add('Calendar',!calErr&&calAt>0,calErr||(calAt?'':'not loaded yet'));
@@ -5012,6 +5203,37 @@ function heartbeat(){const T=SECRETS.topic;if(!T)return;nbCheck().then(ok=>{if(!
   const bad=healthList().filter(x=>!x.ok&&HB_WATCH.test(x.name)).map(x=>({name:x.name.replace(/\s*\(.*\)/,''),why:x.why||''}));
   nbPub(`${T}-hb`,JSON.stringify({at:Date.now(),v:(($('ver')&&$('ver').textContent)||''),bad})).catch(()=>{})})}
 setTimeout(heartbeat,90000);setInterval(heartbeat,5*60000);
+
+/* ===== "Hey Nova" wake word: Chrome's built-in speech recognition on the mic plugged into this Mac =====
+   "Hey Nova" + a command runs it straight away ("hey nova, red alert"). "Hey Nova" on its own: chime, then it listens
+   for a few seconds; say a command, or say nothing and you get the roundup. While the roundup talks it only listens for "stop". */
+const VOICE={st:'off',err:'',heard:'',at:0,armed:0,armT:0,rec:null,fails:0};
+const WAKE=/\b(?:hey|hi|hello|ok|okay|yo)[,\s]+(?:nova|novah|nover|noba|nora|noah|novo)\b[,\s]*(.*)$/i;
+function voiceUI(){let el=$('vMic');if(!el){el=document.createElement('div');el.id='vMic';document.body.appendChild(el)}
+  el.className=VOICE.armed?'arm':VOICE.st==='on'?'on':'off';
+  let E=$('vEdge');if(!E){E=document.createElement('div');E.id='vEdge';document.body.appendChild(E)}E.classList.toggle('on',!!VOICE.armed);el.innerHTML=VOICE.armed?'<i></i><b>Listening…</b>'+(VOICE.heard?`<small>${esc(VOICE.heard)}</small>`:''):'<i></i>'}
+function voiceChime(up){try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime;[up?660:880,up?990:660].forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(0,t+i*.12);g.gain.linearRampToValueAtTime(.18,t+i*.12+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g).connect(A.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)});setTimeout(()=>A.close(),900)}catch(e){}}
+function voiceRun(cmd){VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
+  cmd=(cmd||'').trim();if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
+  wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
+function voiceFlash(){const E=$('vEdge');if(!E)return;E.classList.add('go');clearTimeout(E._t);E._t=setTimeout(()=>E.classList.remove('go'),1400)}
+function voiceArm(){VOICE.armed=1;VOICE.heard='';voiceChime(true);wakeScreen&&wakeScreen();voiceUI();clearTimeout(VOICE.armT);
+  VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),((CFG.voice||{}).wait||6)*1000)}
+function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(V.on===false){VOICE.st='off';return}if(!SR){VOICE.st='err';VOICE.err='this browser has no speech recognition';return}
+  const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
+  rec.onstart=()=>{VOICE.st='on';VOICE.err='';voiceUI()};
+  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();
+    const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
+    if(ru){if(fin&&/\b(stop|cancel|shut up|quiet|enough)\b/i.test(txt)){NovaRoundup.stop();voiceChime(false)}continue}   // ignore its own voice
+    if(VOICE.armed){VOICE.heard=txt;voiceUI();if(fin&&txt){voiceRun(txt)}continue}
+    const m=txt.match(WAKE);if(!m)continue;
+    if(fin){VOICE.fails=0;m[1]&&m[1].trim().length>1?(voiceChime(true),voiceRun(m[1])):voiceArm()}}};
+  rec.onerror=e=>{if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
+  rec.onend=()=>{VOICE.st=VOICE.err?'err':'off';voiceUI();setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
+  try{rec.start()}catch(e){VOICE.st='err';VOICE.err=e.message}}
+setTimeout(voiceStart,4000);
 /* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
 const bootAt=Date.now();setInterval(()=>{const n=new Date();if(n.getHours()===4&&n.getMinutes()<10&&Date.now()-bootAt>3600e3)location.reload()},60000);
 function healthPanel(){const L=healthList();$('hpanel').innerHTML=`<h3>🩺 Status</h3>${L.map(x=>`<div class="${x.ok?'ok':'bad'}"><i></i><b>${esc(x.name)}</b><span>${x.ok?'OK':esc(x.why||'problem')}</span></div>`).join('')}<small>${esc(HC.relay.v||'')} · ${esc($('ver')?$('ver').textContent:'')}</small>`}
@@ -5786,7 +6008,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 125';
+document.getElementById('ver').textContent='build nova 129';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
