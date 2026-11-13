@@ -2039,7 +2039,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
-  roundup:{on:true, music:true, musicVol:0.25, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
+  roundup:{on:true, music:true, musicVol:0.25, song:'roundup.mp3', name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
            {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
@@ -6045,7 +6045,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 134';
+document.getElementById('ver').textContent='build nova 135';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6200,6 +6200,18 @@ const S={
         if(i%8===4){const s2=A.createBufferSource();s2.buffer=noise();const hp=A.createBiquadFilter();hp.type='highpass';hp.frequency.value=6000;const hg=A.createGain();hg.gain.setValueAtTime(.0001,t);hg.gain.exponentialRampToValueAtTime(.25,t+.003);hg.gain.exponentialRampToValueAtTime(.0001,t+.09);s2.connect(hp);hp.connect(hg);hg.connect(g);s2.start(t);s2.stop(t+.1)}
         i++;next+=st}},50);
     S._mus={g,f,iv}},
+  /* your own song (an mp3 next to index.html) under the roundup; if it's missing, the synth loop plays instead */
+  song(on){if(!A)return Promise.resolve(false);const RC=(typeof CFG!=='undefined'&&CFG.roundup)||{};
+    if(!on){const m=S._song;if(!m)return Promise.resolve(true);S._song=null;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.exponentialRampToValueAtTime(.0001,t+2.5);
+      setTimeout(()=>{try{m.el.pause()}catch(e){}},2700);return Promise.resolve(true)}
+    if(!RC.song||S._song)return Promise.resolve(!!S._song);
+    return new Promise(done=>{const el=new Audio();el.preload='auto';el.loop=true;
+      const fail=()=>{done(false)},to=setTimeout(fail,2500);
+      el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.02,(+RC.songVol||.55));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
+        S._song={el,g,v};el.play().then(()=>done(true)).catch(fail)}catch(e){fail()}};
+      el.onerror=()=>{clearTimeout(to);fail()};el.src=RC.song})},
+  /* while Nova talks the song dips, then comes back up */
+  duck(on){const m=S._song;if(!m||!A)return;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.linearRampToValueAtTime(on?m.v*.38:m.v,t+.35)},
   /* a chill synthwave loop under the whole roundup (Am - F - C - G): pads, bass, a delayed arpeggio, soft kick and hats */
   bed(on){if(!A)return;if(!on){if(S._bed){const m=S._bed;S._bed=null;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.exponentialRampToValueAtTime(.0001,t+2.4);setTimeout(()=>clearInterval(m.iv),2500)}return}
     if(S._bed)return;const g=A.createGain(),t0=A.currentTime;const mv=Math.max(.01,+((typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.musicVol)??.35));g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(.5*mv,t0+2.5);out(g,.42);
@@ -6276,7 +6288,7 @@ function countTo(el,to,ms=1100){const m=String(to).match(/^(-?\d+)(.*)$/);if(!m)
 
 /* ---------------- speech ---------------- */
 let wavePulse=0;
-function say(text,voice,rate){return new Promise(res=>{if(!text){setTimeout(res,600);return}
+function say(text,voice,rate){if(text)S.duck(true);return new Promise(res0=>{const res=()=>{S.duck(false);res0()};if(!text){setTimeout(res0,600);return}
   /* if the browser blocks speech (no sound permission yet), keep the same pacing so the visuals still play out properly */
   const words=text.split(/\s+/).length,est=words*400+900,max=words*520+3500,t0=Date.now();let done=false;
   const fin=()=>{if(done)return;done=true;wavePulse=0;res()},soft=()=>{const left=est-(Date.now()-t0);if(left>300){wavePulse=.5;setTimeout(fin,left)}else fin()};
@@ -6340,7 +6352,7 @@ async function play(D){
       stage.classList.add('glitch');S.chatter(10);setTimeout(()=>stage.classList.remove('glitch'),800);
       R.classList.add('f3');await sleep(1200)}
     /* --- core ignites --- */
-    R.classList.add('f4');$('.flash').classList.add('go');shock(P.core[0],12);S.boom(.7);S.chime();S.music(false);if(!D.special&&D.music!==false&&!(typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.music===false)){S.bed(true);S.humOff()}
+    R.classList.add('f4');$('.flash').classList.add('go');shock(P.core[0],12);S.boom(.7);S.chime();S.music(false);if(!D.special&&D.music!==false&&!(typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.music===false)){S.humOff();S.song(true).then(ok=>{console.info('roundup music:',ok?'your song':'synth loop');if(!ok&&alive)S.bed(true)})}
     decode($('#ruCV'),D.coreTxt||'NOVA',800);decode($('#ruCU'),'ONLINE',800);decode($('#ruCT'),'SYSTEMS',600);
     await sleep(D.quick?400:900);
     if(D.special){await D.special(X)}else{
@@ -6369,9 +6381,9 @@ async function play(D){
       $('#ruGauge').style.stroke='#ff4fa3';$('#ruGauge').style.strokeDashoffset='0';countTo($('#ruCV'),'100',700);decode($('#ruCU'),'COMPLETE',500);decode($('#ruCT'),'ROUNDUP',500);S.chime();
       await say(D.outro,V,RATE);}
     }
-    R.classList.add('out');S.bed(false);S.down();S.humOff();decode($('#ruBye'),(D.skin&&D.skin.label)||'NOVA',600);await sleep((D.skin&&D.skin.label)?2600:1500);
+    R.classList.add('out');S.bed(false);S.song(false);S.down();S.humOff();decode($('#ruBye'),(D.skin&&D.skin.label)||'NOVA',600);await sleep((D.skin&&D.skin.label)?2600:1500);
   }catch(e){console.warn('roundup',e)}
-  S.bed(false);R.classList.add('bye');await sleep(1400);clearInterval(ck);clearInterval(anim);stopNet();R.remove();busy=false;stopFn=null;
+  S.bed(false);S.song(false);R.classList.add('bye');await sleep(1400);clearInterval(ck);clearInterval(anim);stopNet();R.remove();busy=false;stopFn=null;
 }
 /* ---------------- easter eggs ---------------- */
 function redAlert(o={}){return play({...o,quick:true,music:false,hdr:'NOVA · DEFENCE GRID',coreTxt:'ALERT',segs:[],special:async X=>{const B=X.$('#ruBig');
