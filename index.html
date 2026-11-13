@@ -1790,10 +1790,10 @@ html.nv2 .wz-tag small{font-family:var(--mono);letter-spacing:.06em}
 /* Siri-style glow around the whole screen while Nova is listening */
 @property --va{syntax:'<angle>';initial-value:0deg;inherits:false}
 #vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
-#vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(1.1*var(--u));
+#vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(.45*var(--u));
   background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:vspin 2.4s linear infinite}
-#vEdge::after{filter:blur(calc(3*var(--u)));padding:calc(2.6*var(--u));opacity:.9}
+#vEdge::after{filter:blur(calc(1.4*var(--u)));padding:calc(1*var(--u));opacity:.75}
 #vEdge.on{opacity:1}
 #vEdge.go{opacity:1}#vEdge.go::before,#vEdge.go::after{animation-duration:.7s}
 @keyframes vspin{to{--va:360deg}}
@@ -1812,6 +1812,9 @@ html.nv2 :is(.gnone,.jf-wait){font-family:var(--head);font-weight:400;letter-spa
 html.nv2 .gnone::before,html.nv2 .jf-wait::before{content:'';display:inline-block;width:calc(1*var(--u));height:calc(1*var(--u));border-radius:50%;background:#9b6bff;box-shadow:0 0 calc(1.4*var(--u)) #9b6bff;margin-right:calc(1.4*var(--u));vertical-align:middle;animation:vmp 1.6s ease-in-out infinite}
 
 html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
+
+#answer .ai-think i{display:inline-block;animation:aiD 1.2s infinite}#answer .ai-think i:nth-child(2){animation-delay:.2s}#answer .ai-think i:nth-child(3){animation-delay:.4s}
+@keyframes aiD{0%,60%,100%{opacity:.2}30%{opacity:1}}
 </style>
 </head>
 <body>
@@ -2038,8 +2041,9 @@ const CFG={
   // Roundup: say "hello Nova" (Siri / the remote) for the sci-fi intro + spoken roundup. morning: also play it when the screen wakes up
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
+  ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
-  roundup:{on:true, music:true, musicVol:0.25, song:'roundup.mp3', songStart:30, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
+  roundup:{on:true, music:true, musicVol:0.16, song:'roundup.mp3', songStart:30, songVol:0.08, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
            {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
@@ -3350,6 +3354,40 @@ function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false)
 setInterval(nclkTick,20000);setTimeout(nclkTick,3000);
 ['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,()=>{const n=$('night');if(n&&n.classList.contains('on')&&Date.now()-(n._at||0)>3000)wakeScreen()},{passive:true}));
 setInterval(()=>{const n=$('night'),h=new Date().getHours();if(n.classList.contains('on')&&!n._at)n._at=Date.now();if(!n.classList.contains('on'))n._at=0;if(n.classList.contains('on')&&h>=((CFG.nightClock&&CFG.nightClock.wakeAt)||7)&&h<10)wakeScreen()},5000);
+/* ===== Ask Nova (Claude) ===== */
+const aiOn=()=>!!((CFG.ai||{}).on!==false&&CFG.relay&&SECRETS.calkey);
+function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f():f;if(v&&String(v).trim())L.push(`## ${k}\n${String(v).replace(/<[^>]+>/g,'').trim()}`)}catch(e){}};
+  const D=n=>n.toLocaleString([],{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  add('Weather now',()=>wxSay());add('Weather tomorrow',()=>wxSay(true));
+  add('Hourly (next 12 h)',()=>{const H=WXD&&WXD.hr;if(!H||!H.time)return '';const i0=H.time.findIndex(t=>Date.parse(t)>=Date.now()-36e5);return H.time.slice(i0,i0+12).map((t,i)=>`${new Date(t).getHours()}:00 ${Math.round(H.temperature_2m[i0+i])}° ${(WXT[H.weather_code[i0+i]]||'').toLowerCase()} ${H.precipitation_probability?H.precipitation_probability[i0+i]+'% precip':''}`).join('; ')});
+  add('7-day',()=>{const d=WXD&&WXD.dl;if(!d)return '';return d.time.slice(0,7).map((t,i)=>`${new Date(t+'T12:00').toLocaleDateString([],{weekday:'short'})} ${Math.round(d.temperature_2m_max[i])}/${Math.round(d.temperature_2m_min[i])} ${(WXT[d.weather_code[i]]||'').toLowerCase()} ${(d.precipitation_probability_max||[])[i]||0}%`).join('; ')});
+  add('Weather alerts',()=>wxAlerts.map(a=>a.alert_name_en).join(', '));
+  add('Calendar (next 2 weeks)',()=>calEvents.filter(e=>e.end>Date.now()&&e.start-Date.now()<14*864e5).sort((a,b)=>a.start-b.start).slice(0,25).map(e=>`${e.allDay?e.start.toDateString()+' all day':D(e.start)} – ${e.title}${e.loc?' @ '+e.loc:''}`).join('\n'));
+  add('Week ahead',()=>weekSay());
+  add('Leafs',()=>typeof hubOn==='function'&&hubOn()?hubSay():'');add('Knights',()=>typeof khOn==='function'&&khOn()?khSay():'');
+  add('Game day',()=>gdSay());add('Live game',()=>typeof LV!=='undefined'&&LV?liveSay():'');add('Recent results',()=>recapSay());
+  add('Starting goalies / pregame news',()=>{if(typeof PG==='undefined'||!PG||!PG.d)return '';const g=PG.d.goalies;return [g?`Goalies: us ${g.us&&g.us.name||'?'} (${g.us&&g.us.status||''}), them ${g.them&&g.them.name||'?'} (${g.them&&g.them.status||''})`:'',...(PG.d.news||[]).slice(0,5).map(n=>'News: '+n.t)].filter(Boolean).join('\n')});
+  add('Scores today',()=>[...(stNHL||[]),...(stOHL||[])].slice(0,20).map(g=>typeof g==='string'?g:[g.away||g.a,g.home||g.h,g.status||g.st||''].filter(Boolean).join(' ')).join('; '));
+  add('Team news headlines',()=>(newsItems||[]).slice(0,8).map(n=>n.title).join('\n'));
+  add('Now playing',()=>NP&&NP.state==='playing'?`${NP.title} by ${NP.artist}${NP.album?' ('+NP.album+')':''}`:'Nothing playing');
+  add('Jellyfin',()=>jfSay());
+  add('Continue watching',()=>((typeof WT!=='undefined'&&WT&&WT.resume)||[]).slice(0,5).map(r=>`${r.user}: ${r.title} ${r.sub||''} ${r.pct||0}%`).join('\n'));
+  add('New on Jellyfin',()=>((typeof WT!=='undefined'&&WT&&WT.fresh)||[]).filter(x=>!x.old).map(x=>x.title).join(', '));
+  add('House',()=>CFG.home&&CFG.home.on?hmSay():'');
+  add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
+  add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
+  add('Countdowns',()=>countdownList().slice(0,6).map(c=>`${c.name} in ${daysUntil(c.date)} days`).join(', '));
+  add('Car',()=>typeof CAR!=='undefined'&&CAR&&CAR.soc!=null?carSay():'');
+  add('Systems',()=>healthSay());
+  return L.join('\n\n').slice(0,36000)}
+let aiBusy=false;
+async function askNova(q){if(aiBusy)return;aiBusy=true;wakeScreen&&wakeScreen();
+  $('answer').innerHTML='<small>NOVA</small><p class="ai-think">Thinking<i>.</i><i>.</i><i>.</i></p>';$('answer').classList.add('on');clearTimeout(ansT);
+  const who=(PRES&&PRES.last)||'';let a='';
+  try{const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:aiContext(),who})});
+    const j=await r.json().catch(()=>({}));a=j.answer||'';if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":"Sorry, I couldn't reach my brain just now."}}
+  catch(e){a="Sorry, I couldn't reach my brain just now."}
+  aiBusy=false;reply(a);if(!(CFG.remote||{}).speak)speak(a)}
 function reply(text){
   const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;
   if(RM.showAnswers!==false){
@@ -3438,6 +3476,8 @@ function handleCommand(raw){
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
+  /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
+  if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
   if(has(/\b(morning (mode|page|briefing|rundown)|get going)\b/)){showFor('morn');return reply('Here\'s your morning.')}
   if(has(/\b(drive times?|how long to (drive|get) to|commute)\b/)){showFor('local');return reply(drvSay())}
   if(has(/\b(leafs news|headlines?|news about the leafs)\b/)){showFor('hub');return reply(HUB&&HUB.news&&HUB.news[0]?'Latest Leafs headline: '+HUB.news[0].title:'No Leafs headlines right now.')}
@@ -3479,6 +3519,7 @@ function handleCommand(raw){
   if(has(/\b(next|skip)\b/)){hideOverlays();nextPage(undefined,paused?0:undefined);return}
   if(has(/\btime\b/))return reply(`It's ${fmt(new Date())}.`);
   if(has(/\b(thanks|thank you)\b/))return reply('You\'re welcome!');
+  if(aiOn())return askNova(t);
   reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings, calendar, Jellyfin, traffic or game day.');
 }
 function remote(){
@@ -4216,10 +4257,10 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     if(!wk.length&&!st.length&&!res&&!lat)return;
     const ep=res&&/^S(\d+) · E(\d+)/.exec(res.sub||''),nm=who?who+', ':'';
     const say=[res?`${nm}continue watching ${res.title}${ep?`, you're on season ${nw(+ep[1])}, episode ${nw(+ep[2])}`:''}${res.pct>=5&&res.pct<=95?`, ${res.pct>=60?'most of the way through':res.pct>=35?'about halfway through':'just getting into it'}`:''}.`
-        :lat?`${nm}continue watching ${lat.title}${lat.type==='Series'?", there's more waiting when you're ready":''}.`:'',
+        :lat?`${nm}continue watching ${lat.title}${lat.on?`, you're on season ${nw(+lat.on.s)}, episode ${nw(+lat.on.e)}`:lat.type==='Series'?", there's more waiting when you're ready":''}.`:'',
       wk.length?`${wk.length===1?'One new movie':wk.length+' new movies'} on Jellyfin this week, including ${andJ(wk.slice(0,2).map(x=>x.title))}.`:'',
       st.length?`${st.length} ${st.length===1?'person is':'people are'} watching right now.`:''].filter(Boolean).join(' ');
-    const big=res?`Continue: ${res.title}`:lat?`Last watched: ${lat.title}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st.length} watching now`;
+    const big=res?`Continue: ${res.title}`:lat?`Continue: ${lat.title}${lat.on?` · S${lat.on.s} E${lat.on.e}`:''}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st.length} watching now`;
     return {key:'jf',tag:'JF',title:'Jellyfin',kicker:res||lat?'Jellyfin // Pick up where you left off':'Jellyfin // This week',value:res?(res.pct||0)+'%':String(wk.length),unit:res?'Watched':wk.length===1?'New movie':'New movies',big,
       gauge:res?Math.max(.05,(res.pct||0)/100):Math.min(1,wk.length/8),color:C.pink,
       lines:[res?`<b>${esc(res.title)}</b> · ${esc(res.sub||'')}`:'',wk.length?'New: '+wk.slice(0,3).map(x=>`<b>${esc(x.title)}</b>`).join(', '):'',st.length?`<b>${st.length}</b> watching right now`:''].filter(Boolean),say}});
@@ -5268,7 +5309,7 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
   try{rec.start()}catch(e){VOICE.st='err';VOICE.err=e.message}}
 setTimeout(voiceStart,4000);
 /* the mic switches off while the roundup plays (so it can't hear itself) and back on 2 seconds after */
-setInterval(()=>{const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy(),R=VOICE.rec;if(!R)return;
+setInterval(()=>{const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||(window.speechSynthesis&&speechSynthesis.speaking),R=VOICE.rec;if(!R)return;
   if(ru&&!VOICE.paused){VOICE.paused=1;VOICE.armed=0;clearTimeout(VOICE.armT);voiceUI();try{R.abort()}catch(e){}}
   else if(!ru&&VOICE.paused){if(!VOICE.pz)VOICE.pz=Date.now();if(Date.now()-VOICE.pz>2000){VOICE.paused=0;VOICE.pz=0;try{R.start()}catch(e){}}}},300);
 /* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
@@ -6045,7 +6086,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 136';
+document.getElementById('ver').textContent='build nova 138';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6207,11 +6248,11 @@ const S={
     if(!RC.song||S._song)return Promise.resolve(!!S._song);
     return new Promise(done=>{const el=new Audio();el.preload='auto';el.loop=true;
       const fail=()=>{done(false)},to=setTimeout(fail,2500);
-      el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.02,(+RC.songVol||.55));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
+      el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.01,(+RC.songVol||.08));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
         S._song={el,g,v};try{if(+RC.songStart>0&&el.duration>+RC.songStart)el.currentTime=+RC.songStart}catch(e){}el.play().then(()=>done(true)).catch(fail)}catch(e){fail()}};
       el.onerror=()=>{clearTimeout(to);fail()};el.src=RC.song})},
   /* while Nova talks the song dips, then comes back up */
-  duck(on){const m=S._song;if(!m||!A)return;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.linearRampToValueAtTime(on?m.v*.38:m.v,t+.35)},
+  duck(on){return;const m=S._song;if(!m||!A)return;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.linearRampToValueAtTime(on?m.v*.22:m.v,t+.35)},
   /* a chill synthwave loop under the whole roundup (Am - F - C - G): pads, bass, a delayed arpeggio, soft kick and hats */
   bed(on){if(!A)return;if(!on){if(S._bed){const m=S._bed;S._bed=null;const t=A.currentTime;m.g.gain.cancelScheduledValues(t);m.g.gain.setValueAtTime(Math.max(.0001,m.g.gain.value),t);m.g.gain.exponentialRampToValueAtTime(.0001,t+2.4);setTimeout(()=>clearInterval(m.iv),2500)}return}
     if(S._bed)return;const g=A.createGain(),t0=A.currentTime;const mv=Math.max(.01,+((typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.musicVol)??.35));g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(.5*mv,t0+2.5);out(g,.42);
