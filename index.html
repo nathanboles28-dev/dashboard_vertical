@@ -699,7 +699,7 @@ body.hasAlert #mini{top:calc(9.5*var(--u))}
 .wr-bar{height:calc(1.4*var(--u));border-radius:calc(1*var(--u));background:rgba(255,255,255,.1);overflow:hidden}.wr-bar i{display:block;height:100%;border-radius:calc(1*var(--u))}
 /* ===== Visual refresh: page accent colours, icons, glow and entrance animation ===== */
 #shift{--acc:#6ea8ff}#pLive{--acc:#ff5c6c}#pKgd{--acc:#21a35d;--ico:'⚔️'}#pGames{--acc:#4d8bff;--ico:'🏒'}#pJelly{--acc:#b18cff;--ico:'🍿'}#pGameday{--acc:#4d8bff;--ico:'🍁'}
-#pLocal{--acc:#2fd3c0;--ico:'🚗'}#pFc{--acc:#5db7ff;--ico:'⛅'}#pNews{--acc:#ff9f43;--ico:'📰'}#pStand{--acc:#5fd88a;--ico:'📊'}
+#pLocal{--acc:#2fd3c0;--ico:'🚗'}#pFc{--acc:#5db7ff;--ico:'⛅'}#pNews{--acc:#ff9f43;--ico:'📰'}#pTown{--acc:#ff7a5c;--ico:'🏘️'}#pStand{--acc:#5fd88a;--ico:'📊'}
 #pComing{--acc:#ffd84a;--ico:'📅'}#pHub{--acc:#4d8bff;--ico:'🏒'}#pWS{--acc:#ffd84a;--ico:'⚾'}#pWrap{--acc:#ff5c8a;--ico:'🎬'}#pPhotos{--acc:#ffb84d}
 .page::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
  background:radial-gradient(70% 40% at 8% -6%,color-mix(in srgb,var(--acc,#6ea8ff) 30%,transparent),transparent 70%),radial-gradient(60% 35% at 100% 106%,color-mix(in srgb,var(--acc,#6ea8ff) 20%,transparent),transparent 70%)}
@@ -1819,6 +1819,27 @@ html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
 #vTest{position:fixed;left:3vw;right:3vw;top:calc(9*var(--u));z-index:61;background:rgba(10,9,24,.92);border:1.5px solid #9b6bff;border-radius:calc(2*var(--u));padding:calc(1.6*var(--u)) calc(2.2*var(--u));font:500 calc(2*var(--u)) 'JetBrains Mono',monospace;color:#e8e6ff;pointer-events:none}
 #vTest i{display:block;font:600 calc(3*var(--u)) Inter,sans-serif;color:#fff;font-style:normal;margin:calc(1*var(--u)) 0}
 #vTest small{display:block;font-size:calc(1.6*var(--u));color:#a9a6cc;line-height:1.5}
+
+/* news pages (relay headlines) */
+.n3r{display:flex;gap:calc(1.8*var(--u));padding:calc(1.4*var(--u)) 0;border-top:1px solid rgba(255,255,255,.07);align-items:flex-start}.n3r:first-of-type{border-top:0}
+.n3r b{display:block;font-size:calc(2.5*var(--u));font-weight:600;line-height:1.25}.n3r small{display:block;font:500 calc(1.5*var(--u)) 'JetBrains Mono',monospace;color:var(--dim);margin-top:calc(.6*var(--u));letter-spacing:.04em;text-transform:uppercase}
+.n3i{flex:none;width:calc(7*var(--u));height:calc(7*var(--u));border-radius:calc(1.6*var(--u));display:grid;place-items:center;background:linear-gradient(135deg,#3b2bd6,#c2257a);overflow:hidden}
+.n3i img{width:72%;height:72%;object-fit:contain}.n3i span{font:700 calc(2.2*var(--u)) 'Chakra Petch',sans-serif;color:#fff}
+.n3i.t-leafs{background:linear-gradient(135deg,#0b2a6b,#2f6bd8)}.n3i.t-knights{background:linear-gradient(135deg,#0b4a2f,#22a86b)}.n3i.t-jays{background:linear-gradient(135deg,#123a8a,#3ec7ff)}
+.n3i.t-woodstock{background:linear-gradient(135deg,#7a3a12,#ff9a3c)}.n3i.t-oxford{background:linear-gradient(135deg,#5a1a4a,#ff4fa3)}.n3i.t-ingersoll{background:linear-gradient(135deg,#12405a,#3ec7ff)}.n3i.t-london{background:linear-gradient(135deg,#2a1a6a,#9b6bff)}
+.n3t{display:inline-block;font:700 calc(1.3*var(--u)) 'JetBrains Mono',monospace;letter-spacing:.14em;padding:calc(.35*var(--u)) calc(.8*var(--u));border-radius:calc(.7*var(--u));margin-bottom:calc(.6*var(--u));background:rgba(255,154,60,.18);color:#ffb878}
+.n3t.t-leafs{background:rgba(62,140,255,.2);color:#8fc0ff}.n3t.t-knights{background:rgba(63,224,160,.18);color:#6ff0bd}.n3t.t-jays{background:rgba(62,199,255,.18);color:#8fdcff}
+.n3g{display:grid;grid-template-columns:1fr 1fr;gap:calc(1.6*var(--u));margin-top:calc(1.4*var(--u))}
+.n3m{border-radius:calc(1.8*var(--u));padding:calc(1.6*var(--u)) calc(1.8*var(--u));background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));min-width:0}
+.n3m h4{font:600 calc(1.35*var(--u)) 'JetBrains Mono',monospace;letter-spacing:.18em;color:var(--dim);margin-bottom:calc(.8*var(--u));text-transform:uppercase}
+.n3x{display:flex;align-items:center;gap:calc(.9*var(--u));padding:calc(.55*var(--u)) 0;font-size:calc(2*var(--u));white-space:nowrap;overflow:hidden}
+.n3x em{margin-left:auto;font-style:normal;font:600 calc(1.9*var(--u)) 'Chakra Petch',sans-serif;flex:none}.n3x em small{font:500 calc(1.2*var(--u)) 'JetBrains Mono',monospace;color:var(--dim)}
+.n3c{font:700 calc(1.2*var(--u)) 'JetBrains Mono',monospace;letter-spacing:.1em;padding:calc(.3*var(--u)) calc(.7*var(--u));border-radius:calc(.6*var(--u));flex:none}.n3c.l{background:rgba(62,140,255,.2);color:#8fc0ff}.n3c.k{background:rgba(63,224,160,.18);color:#6ff0bd}
+.n3d{width:calc(.9*var(--u));height:calc(.9*var(--u));border-radius:50%;flex:none}
+.n3b{height:calc(.5*var(--u));border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin:calc(.2*var(--u)) 0 calc(.4*var(--u))}.n3b i{display:block;height:100%;background:linear-gradient(90deg,#ff9a3c,#ff4fa3)}
+.n3hero{position:relative;border-radius:calc(2.8*var(--u));overflow:hidden;min-height:calc(26*var(--u));display:flex;align-items:flex-end}
+.n3hbg{position:absolute;inset:0;background:linear-gradient(135deg,#7a3a12,#3b2bd6 55%,#c2257a)}.n3hbg::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(7,6,15,.9))}
+.n3htx{position:relative;padding:calc(2.6*var(--u)) calc(3*var(--u))}.n3htx b{display:block;font-size:calc(3.6*var(--u));font-weight:600;line-height:1.2}.n3htx small{display:block;font:500 calc(1.6*var(--u)) 'JetBrains Mono',monospace;color:#cfcbef;margin-top:calc(.8*var(--u));text-transform:uppercase;letter-spacing:.05em}
 </style>
 </head>
 <body>
@@ -1863,6 +1884,7 @@ html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
  <div class="card"><h2>7-day forecast</h2><div id="fDays"></div></div>
  <div class="fc-extra"><div class="card"><h2>❄️ Snow</h2><div id="fxSnow"></div></div><div class="card"><h2>🌅 Daylight</h2><div id="fxDay"></div></div></div>
 </section>
+<section id="pTown" class="page"><div class="pwrap"><div class="ptitle">Around here</div><div id="townBody"><div class="gnone">Loading local news…</div></div></div></section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">Team news</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pRadar" class="page"><div id="rdBody"></div></section>
@@ -1932,6 +1954,7 @@ const CFG={
     {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
     {type:'cams',      secs:40},
     {type:'news',      secs:40},   // team news: a featured story to read + more headlines
+    {type:'townnews',  secs:30},   // Around here: Woodstock, Oxford County, Ingersoll and London headlines
     {type:'tx',        secs:35},
     {type:'home',      secs:30},   // Home: your lights, plugs and Rokus from Homebridge (needs the nova-home helper on this Mac)
     {type:'xbox',      secs:30},   // Xbox: you, recent games, achievements, friends online (needs XBL_KEY on the relay)   // trades & signings (NHL trades, MLB trades + free agents, your teams first) - last 30 days
@@ -1965,6 +1988,10 @@ const CFG={
   goalAlert:{on:true, secs:25, horn:0.5},
   // News page: RSS feeds, newest first
   // News page: only your teams. Each visit features a different story with a bit of the article, then more headlines.
+  // Headlines through the relay (Google News): [tag, search, words the headline must have, optional months it's shown (0=Jan)]
+  newsFeed:{days:3,
+    team:[['LEAFS','"Maple Leafs"','leafs|toronto'],['KNIGHTS','"London Knights"','knights'],['JAYS','"Blue Jays"','jays',[1,9]]],
+    local:[['WOODSTOCK','Woodstock Ontario','woodstock'],['OXFORD','"Oxford County" Ontario',''],['INGERSOLL','Ingersoll Ontario','ingersoll'],['LONDON','"London, Ont" OR "London Ontario" OR "London police"','london']]},
   news:{
     teams:[
       {name:'Leafs',     tag:'LEAFS',   espn:'hockey/nhl',   team:'tor', words:['Leafs','Maple Leafs']},
@@ -2047,7 +2074,7 @@ const CFG={
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
-  roundup:{on:true, music:true, musicVol:0.16, song:'roundup.mp3', songStart:30, songVol:0.08, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
+  roundup:{on:true, music:true, musicVol:0.19, song:'roundup.mp3', songStart:30, songVol:0.1, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
     rooms:[{name:'Office', devices:['Office Light','Office Roku']},
            {name:'Living Room', devices:['Large Light','Small Lamp','Upstairs Roku']},
@@ -2616,10 +2643,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2643,6 +2670,7 @@ function nextPage(force,hold){
   if(p.type==='photos'){showPhoto();loadPhotos()}
   if(p.type==='games')renderGames();
   if(p.type==='news'){newsVisit++;renderNews()}
+  if(p.type==='townnews')renderTown();
   if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
@@ -2868,7 +2896,48 @@ setInterval(()=>{alIdx++;drawAlert()},8000);
 const ago=d=>{const m=Math.round((Date.now()-d)/60000);return isNaN(m)?'':m<60?Math.max(1,m)+'m ago':m<1440?Math.round(m/60)+'h ago':d.toLocaleDateString([],{weekday:'short'})};
 const stripHTML=h=>{const d=document.createElement('div');d.innerHTML=String(h||'').replace(/<\/(p|div|li|h\d)>/gi,'\n').replace(/<br\s*\/?>/gi,'\n');return (d.textContent||'').replace(/ /g,' ').replace(/[ \t]+/g,' ').replace(/\n\s*\n+/g,'\n\n').trim()};
 let newsVisit=0;const newsBody={};
-async function loadNews(){
+/* ===== News from the relay (Google News): your teams + around here ===== */
+let TOWN=[],REP=null,repAt=0;
+const nfSpec=L=>(L||[]).filter(x=>!x[3]||(()=>{const m=new Date().getMonth();return m>=x[3][0]&&m<=x[3][1]})()).map(x=>[x[0],x[1],x[2]||''].join('|')).join(';');
+const notOntario=/woodstock,? (n\.?y|ga|ill|vt|va|nb|new brunswick|georgia|illinois|vermont|virginia|new york)\b|london,? (england|uk)\b|\bu\.?k\.?\b/i;
+async function loadNewsFeed(){const F=CFG.newsFeed,K=SECRETS.calkey;if(!F||!CFG.relay||!K)return false;
+  const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${F.days||3}&f=${encodeURIComponent(nfSpec(L))}`,15000);const j=await r.json();if(j.error)throw new Error(j.error);return j.items||[]};
+  let ok=false;
+  try{const it=await get(F.team);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
+  if(F.local)try{TOWN=(await get(F.local)).filter(n=>!notOntario.test(n.t))}catch(e){console.warn('newsfeed local',e)}
+  if(ok&&$('pNews').classList.contains('on'))renderNews();if($('pTown').classList.contains('on'))renderTown();
+  if(Date.now()-repAt>1800000&&typeof hubOn==='function'&&hubOn()){repAt=Date.now();try{const j=await (await tfetch(`${CFG.relay}/report?key=${encodeURIComponent(K)}&team=${encodeURIComponent((CFG.hub&&CFG.hub.team)||'TOR')}`,20000)).json();if(!j.error)REP=j}catch(e){}}
+  return ok}
+const nTag=t=>`<span class="n3t t-${esc(String(t).toLowerCase())}">${esc(t)}</span>`;
+const nTile=t=>{const T=String(t).toUpperCase(),lg=T==='LEAFS'&&HUB&&HUB.logo?HUB.logo:T==='KNIGHTS'&&KH&&KH.logo?KH.logo:'';return `<div class="n3i t-${esc(T.toLowerCase())}">${lg?`<img src="${esc(lg)}" alt="" onerror="this.remove()">`:`<span>${esc(T.slice(0,2))}</span>`}</div>`};
+function newsFit(box,rowSel,min){const over=()=>box.scrollHeight>box.clientHeight+2;[...box.children].forEach(c=>c.style.flexShrink='0');for(let g=0;g<20&&over();g++){const r=box.querySelectorAll(rowSel);if(r.length>min)r[r.length-1].remove();else break}}
+function renderNews2(){const nb=$('newsBody');
+  const heads=newsItems.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag)}<div>${nTag(n.tag)}<b>${esc(n.title)}</b><small>${esc(n.src||'')}${n.src?' · ':''}${ago(n.date)}</small></div></div>`).join('');
+  const H=typeof HUB!=='undefined'?HUB:null,K=typeof KH!=='undefined'?KH:null,R=REP;
+  const chip=(t,c)=>`<span class="n3c ${c}">${t}</span>`;
+  const hot=[...((R&&R.hot)||[]).slice(0,3).map(h=>`<div class="n3x">${chip('TOR','l')}${esc(h.name)}<em>${h.g}G ${h.a}A</em></div>`),
+    ...(K&&K.leaders&&K.leaders.points?[`<div class="n3x">${chip('LDN','k')}${esc(K.leaders.points.name)}<em>${K.leaders.points.v} pts <small>season</small></em></div>`]:[])].join('');
+  const sc=x=>/^out|^ir/i.test(x)?'#ff5c6c':/day/i.test(x)?'#ffb84d':'#9c99bd';
+  const inj=[...((H&&H.injuries)||[]).slice(0,3).map(i=>`<div class="n3x"><i class="n3d" style="background:${sc(i.status)}"></i>${esc(i.name)}<em style="color:${sc(i.status)}">${esc(String(i.status).toUpperCase())}</em></div>`),
+    ...(K?[`<div class="n3x"><i class="n3d" style="background:#3fe0a0"></i>Knights<em style="color:#6ff0bd">${K.injuries&&K.injuries.length?K.injuries.length+' OUT':'NONE REPORTED'}</em></div>`]:[])].join('');
+  const mil=((R&&R.milestones)||[]).slice(0,3).map(m=>`<div class="n3x">${esc(m.name.split(' ').slice(-1)[0])} · ${esc(m.what)}<em>${m.away} away</em></div><div class="n3b"><i style="width:${Math.round(100*(m.step-m.away)/m.step)}%"></i></div>`).join('');
+  const ord=n=>n+(['th','st','nd','rd'][(n%100-20)%10]||['th','st','nd','rd'][n%100]||'th');
+  const race=[H&&H.divRank?`<div class="n3x">Leafs · ${ord(H.divRank)} ${esc(H.divName||'')}<em>${H.pts} pts</em></div>`:'',K&&K.divRank?`<div class="n3x">Knights · ${ord(K.divRank)} ${esc(K.divName||'')}<em>${K.pts} pts</em></div>`:'',
+    H&&H.streak?`<div class="n3x">Leafs streak · L10 ${esc(H.l10||'')}<em>${esc(H.streak)}</em></div>`:'',K&&K.streak?`<div class="n3x">Knights streak · L10 ${esc(K.l10||'')}<em>${esc(K.streak)}</em></div>`:''].join('');
+  const box=(t,b)=>b?`<div class="n3m"><h4>${t}</h4>${b}</div>`:'';
+  const rep=[box("🔥 Who's hot · last 5",hot),box('🩹 Injuries',inj),box('🎯 Milestones',mil),box('📈 Race &amp; streaks',race)].filter(Boolean);
+  const html=`<div class="card n3c1"><h2 class="hwx"><span>Latest · Leafs &amp; Knights</span><em>NEWEST FIRST</em></h2>${heads||'<div class="cnote">No new team stories in the last few days</div>'}</div>
+    ${rep.length?`<div class="card n3c2"><h2>Leafs &amp; Knights report</h2><div class="n3g">${rep.join('')}</div></div>`:''}`;
+  if(nb.dataset.h!==html){nb.dataset.h=html;nb.innerHTML=html}
+  nb.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';
+  newsFit(nb,'.n3r',3);newsFit(nb,'.n3m .n3x:not(:first-of-type)',4)}
+function renderTown(){const tb=$('townBody');if(!TOWN.length){tb.innerHTML='<div class="gnone">No local news right now</div>';return}
+  const [h,...rest]=TOWN;
+  const html=`<div class="n3hero"><div class="n3hbg"></div><div class="n3htx">${nTag(h.tag)}<b>${esc(h.t)}</b><small>${esc(h.src||'')} · ${ago(new Date(h.at))}</small></div></div>
+    <div class="card n3c1"><h2 class="hwx"><span>Local headlines</span><em>WOODSTOCK · OXFORD · LONDON</em></h2>${rest.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag)}<div>${nTag(n.tag)}<b>${esc(n.t)}</b><small>${esc(n.src||'')} · ${ago(new Date(n.at))}</small></div></div>`).join('')}</div>`;
+  if(tb.dataset.h!==html){tb.dataset.h=html;tb.innerHTML=html}
+  tb.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';newsFit(tb,'.n3r',2)}
+async function loadNews(){if(CFG.newsFeed&&await loadNewsFeed())return;
   const N=CFG.news||{},items=[],maxAge=(N.days||5)*864e5;
   await Promise.all((N.teams||[]).map(async T=>{try{
     if(T.espn){const j=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${T.espn}/news?team=${T.team}&limit=15`,12000)).json();
@@ -2890,6 +2959,7 @@ async function loadNews(){
 async function newsText(i){if(i.body)return i.body;if(!i.api)return i.sum;if(newsBody[i.api])return newsBody[i.api];
   try{const j=await (await tfetch(i.api,10000)).json(),t=stripHTML((((j.headlines||[])[0])||{}).story||'');if(t){newsBody[i.api]=t;return t}}catch(e){}return i.sum}
 async function renderNews(){
+  if(CFG.newsFeed&&newsItems.length&&!newsItems[0].T)return renderNews2();
   const nb=$('newsBody');
   if(!newsItems.length){nb.innerHTML='<div class="gnone">Team news unavailable right now</div>';return}
   const pool=newsItems.slice(0,6),hero=pool[newsVisit%pool.length],rest=newsItems.filter(i=>i!==hero).slice(0,5);
@@ -3056,7 +3126,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2FitTitles(){document.querySelectorAll('.page.on :is(.jf-title,.ptitle)').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
   while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
 setInterval(()=>{if(CFG.style==='nova2')n2FitTitles()},2000);
@@ -5298,6 +5368,7 @@ function voiceRun(cmd){VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voi
   cmd=(cmd||'').trim();if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
   wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
 function voiceFlash(){const E=$('vEdge');if(!E)return;E.classList.add('go');clearTimeout(E._t);E._t=setTimeout(()=>E.classList.remove('go'),1400)}
+const vFill=c=>!c||/^(hey|hi|hello|yo|um+|uh+|so|okay|ok|yeah|yes|nova|hey nova|please|and)([\s,.]+(hey|hi|um+|uh+|so|okay|ok|yeah|nova|please))*[\s,.!?]*$/i.test(c.trim());
 function voiceArm(){VOICE.armed=1;VOICE.heard='';voiceChime(true);wakeScreen&&wakeScreen();voiceUI();clearTimeout(VOICE.armT);
   VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),((CFG.voice||{}).wait||6)*1000)}
 function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -5307,10 +5378,13 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
   rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();VOICE.live=txt;VOICE.fails=0;if(VOICE.test){if(fin)vLog('heard: "'+txt+'"');voiceTestUI()}
     const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
     if(ru||VOICE.paused)continue;   // never act on its own voice
-    if(VOICE.armed){const w=txt.match(WAKE),c=w?(w[1]||'').trim():txt;VOICE.heard=c;voiceUI();if(fin){VOICE.pre=0;if(c)voiceRun(c)}continue}
+    if(VOICE.armed){const w=txt.match(WAKE),c=w?(w[1]||'').trim():txt;VOICE.heard=vFill(c)?'':c;voiceUI();
+      /* while you're talking, keep listening: the window restarts so it's 3 seconds after your last word */
+      if(!vFill(c)){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),3000)}
+      if(fin){VOICE.pre=0;if(!vFill(c))voiceRun(c)}continue}
     let m=null;for(let a=0;a<R.length&&!m;a++)m=(R[a].transcript||'').trim().match(WAKE);if(!m)continue;
-    if(fin){VOICE.fails=0;VOICE.pre=0;m[1]&&m[1].trim().length>1?(VOICE.armed||voiceChime(true),voiceRun(m[1])):(VOICE.armed?null:voiceArm())}
-    else if(!VOICE.pre&&!(m[1]||'').trim()){VOICE.pre=1;voiceArm()}   // light up as soon as "hey nova" is heard, not after the pause
+    if(fin){VOICE.fails=0;VOICE.pre=0;!vFill(m[1])?(VOICE.armed||voiceChime(true),voiceRun(m[1])):(VOICE.armed?null:voiceArm())}
+    else if(!VOICE.pre&&vFill(m[1])){VOICE.pre=1;voiceArm()}   // light up as soon as "hey nova" is heard, not after the pause
   }};
   rec.onerror=e=>{vLog('error: '+e.error);if(e.error==='no-speech'||e.error==='aborted')return;VOICE.err=e.error==='not-allowed'||e.error==='service-not-allowed'?'mic blocked: allow the microphone for Chrome':e.error==='audio-capture'?'no microphone found':e.error;VOICE.fails++};
   rec.onend=()=>{VOICE.ends.push(Date.now());VOICE.ends=VOICE.ends.filter(t=>Date.now()-t<120000);VOICE.st=VOICE.err?'err':'restart';voiceUI();vLog('stopped'+(VOICE.paused?' (paused)':''));if(VOICE.paused)return;setTimeout(()=>{try{rec.start()}catch(e){}},Math.min(30000,VOICE.fails?2000*VOICE.fails:300))};   // keeps itself running
@@ -6099,7 +6173,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 141';
+document.getElementById('ver').textContent='build nova 145';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6261,7 +6335,7 @@ const S={
     if(!RC.song||S._song)return Promise.resolve(!!S._song);
     return new Promise(done=>{const el=new Audio();el.preload='auto';el.loop=true;
       const fail=()=>{done(false)},to=setTimeout(fail,2500);
-      el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.01,(+RC.songVol||.08));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
+      el.oncanplay=()=>{clearTimeout(to);if(S._song)return;try{const src=A.createMediaElementSource(el),g=A.createGain(),v=Math.max(.01,(+RC.songVol||.1));g.gain.setValueAtTime(.0001,A.currentTime);g.gain.exponentialRampToValueAtTime(v,A.currentTime+2);src.connect(g);g.connect(M);
         S._song={el,g,v};try{if(+RC.songStart>0&&el.duration>+RC.songStart)el.currentTime=+RC.songStart}catch(e){}el.play().then(()=>done(true)).catch(fail)}catch(e){fail()}};
       el.onerror=()=>{clearTimeout(to);fail()};el.src=RC.song})},
   /* while Nova talks the song dips, then comes back up */
