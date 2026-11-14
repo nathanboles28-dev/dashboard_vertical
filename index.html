@@ -4043,10 +4043,12 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
      const vm=t.match(/\bvolume (?:to |at )?(\d{1,3})\b/);if(vm&&mc('volume|'+vm[1]))return reply(`Music volume ${vm[1]}.`);
      if(/\b(turn|crank) (it |the music )?up\b|\blouder\b/.test(t)&&mc('up|'))return reply('Turning it up.');
      if(/\b(turn) (it |the music )?down\b|\bquieter\b/.test(t)&&mc('down|'))return reply('Turning it down.');}}
-  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|needaccess|opened|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
+  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|needaccess|opened|needsignin|nojs|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
     if(mr[1]==='ok'){if(kind==='playlist'){toast('🎵 <b>Playing</b>'+esc(lab));return}return reply(`Playing ${lab}.`)}
     if(mr[1]==='notfound')return reply(kind==='playlist'?`I couldn't find a playlist called ${q} on the MacBook.`:`I couldn't find ${q} on Apple Music.`);
     if(mr[1]==='notplayed')return reply(`I opened ${q} in Music on the MacBook, but couldn't start it playing. Hit play there.`);
+    if(mr[1]==='needsignin')return reply(`To play ${lab||q}, sign in to Apple Music in Brave on the MacBook once, at music dot apple dot com. Then I can play anything.`);
+    if(mr[1]==='nojs')return reply(`Almost: in Brave on the MacBook, turn on View, Developer, Allow JavaScript from Apple Events. Then I can play ${lab||q}.`);
     if(mr[1]==='opened')return reply(`${lab||q} isn't in your library, so I opened it in Music on the MacBook. Hit play there. If you add it to your library, I can play it by voice next time.`);
     if(mr[1]==='needaccess')return reply(`I opened ${q} in Music, but the MacBook won't let me press play yet. Turn on Nova Music in Privacy and Security, under Accessibility.`);
     if(lab)console.warn('music error:',lab);return reply(`The MacBook couldn't start that.${lab?' It said: '+lab.replace(/^\d+:\d+: /,'').slice(0,90):''}`)}}
@@ -6769,7 +6771,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 178';
+document.getElementById('ver').textContent='build nova 179';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
