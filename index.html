@@ -1816,7 +1816,7 @@ html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
 #answer .ai-think i{display:inline-block;animation:aiD 1.2s infinite}#answer .ai-think i:nth-child(2){animation-delay:.2s}#answer .ai-think i:nth-child(3){animation-delay:.4s}
 @keyframes aiD{0%,60%,100%{opacity:.2}30%{opacity:1}}
 
-#vTest{position:fixed;left:3vw;right:3vw;top:calc(9*var(--u));z-index:61;background:rgba(10,9,24,.92);border:1.5px solid #9b6bff;border-radius:calc(2*var(--u));padding:calc(1.6*var(--u)) calc(2.2*var(--u));font:500 calc(2*var(--u)) 'JetBrains Mono',monospace;color:#e8e6ff;pointer-events:none}
+#vTest{position:fixed;left:3vw;right:3vw;top:calc(9*var(--u));z-index:2147483000;background:rgba(10,9,24,.92);border:1.5px solid #9b6bff;border-radius:calc(2*var(--u));padding:calc(1.6*var(--u)) calc(2.2*var(--u));font:500 calc(2*var(--u)) 'JetBrains Mono',monospace;color:#e8e6ff;pointer-events:none}
 #vTest i{display:block;font:600 calc(3*var(--u)) Inter,sans-serif;color:#fff;font-style:normal;margin:calc(1*var(--u)) 0}
 #vTest small{display:block;font-size:calc(1.6*var(--u));color:#a9a6cc;line-height:1.5}
 
@@ -3393,9 +3393,11 @@ async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=C
     MV.fallback=(apple.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||apple.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||{}).name||'';
     MV.voice=want||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice}
   catch(e){MV.ok=false}return MV.ok}
-async function macSay(text,rate){if(!await mvCheck())return false;window._macSpeaking=Date.now();
-  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();return !!j.ok}
-  catch(e){MV.ok=null;return false}finally{window._macSpeaking=0}}
+async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
+  const t0=Date.now();
+  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();
+    if(typeof vLog==='function')vLog(`said ${((Date.now()-t0)/1000).toFixed(1)}s ${j.engine||''}${j.code!=null&&j.code!==0?' code '+j.code:''}${j.err?' err '+j.err:''}: "${String(text).slice(0,28)}…"`);return !!j.ok}
+  catch(e){if(typeof vLog==='function')vLog('Mac voice failed: '+e.message);MV.ok=null;return false}finally{window._macSpeaking=0}}
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
 window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
 setTimeout(()=>mvCheck(true),3000);setInterval(()=>mvCheck(true),300000);
@@ -3551,7 +3553,9 @@ function teamIn(t){
   for(const [re,name] of map)if(new RegExp('\\b('+re+')\\b').test(t))return name;
   return '';
 }
-function handleCommand(raw){
+let NOVA_MAIN=!(navigator.locks&&navigator.locks.request);
+if(navigator.locks&&navigator.locks.request)navigator.locks.request('nova-main',()=>{NOVA_MAIN=true;console.info('this window runs commands and speech');return new Promise(()=>{})});
+function handleCommand(raw){if(!NOVA_MAIN)return;
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
   if(!t){if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
@@ -5418,7 +5422,7 @@ setTimeout(heartbeat,90000);setInterval(heartbeat,5*60000);
    "Hey Nova" + a command runs it straight away ("hey nova, red alert"). "Hey Nova" on its own: chime, then it listens
    for a few seconds; say a command, or say nothing and you get the roundup. While the roundup talks it only listens for "stop". */
 const VOICE={st:'off',err:'',heard:'',at:0,armed:0,armT:0,rec:null,fails:0,log:[],test:0,ends:[]};
-function vLog(m){VOICE.log.push(new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'})+' '+m);VOICE.log=VOICE.log.slice(-8);if(VOICE.test)voiceTestUI()}
+function vLog(m){VOICE.log.push(new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit',second:'2-digit'})+' '+m);VOICE.log=VOICE.log.slice(-12);if(VOICE.test)voiceTestUI()}
 function voiceTestUI(){let el=$('vTest');if(!VOICE.test||Date.now()>VOICE.test){if(el)el.remove();VOICE.test=0;return}if(!el){el=document.createElement('div');el.id='vTest';document.body.appendChild(el)}
   el.innerHTML=`<b>🎙️ Voice test</b> · mic ${VOICE.st}${VOICE.paused?' (paused)':''} · restarts last min: ${VOICE.ends.filter(t=>Date.now()-t<60000).length}<br><i>${esc(VOICE.live||'…')}</i><small>${VOICE.log.map(esc).join('<br>')}</small>`}
 /* said quickly, "hey nova" often comes back as "hey nova", "heynova", "hanover", "a nova", "hey noah", "innova"... all count */
@@ -6237,7 +6241,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 154';
+document.getElementById('ver').textContent='build nova 156';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6324,9 +6328,9 @@ const CSS=`
 #ru .side pre{margin:0;animation:ruUp 14s linear infinite}@keyframes ruUp{to{transform:translateY(-50%)}}
 #ru .bars{position:absolute;top:calc(36*var(--s));height:calc(8*var(--s));width:calc(14*var(--s));display:flex;align-items:flex-end;gap:2px;opacity:0;transition:opacity 1s}#ru.f2 .bars{opacity:.8}
 #ru .bars.l{left:calc(7*var(--s))}#ru .bars.r{right:calc(7*var(--s))}#ru .bars i{flex:1;background:linear-gradient(#ff7ab6,#9b5cff);transition:height .3s}
-#ru .wave{position:absolute;left:calc(14*var(--s));right:calc(14*var(--s));bottom:calc(8.5*var(--s));height:calc(7*var(--s));display:flex;align-items:center;gap:calc(.35*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .wave{opacity:1}
+#ru .wave{position:absolute;left:calc(14*var(--s));right:calc(14*var(--s));bottom:calc(11*var(--s));height:calc(7*var(--s));display:flex;align-items:center;gap:calc(.35*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .wave{opacity:1}
 #ru .wave i{flex:1;height:8%;border-radius:9px;background:linear-gradient(180deg,#ffb35c,#ff3d8b 50%,#9b5cff);transition:height .09s}
-#ru .chips{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(3*var(--s));display:flex;justify-content:center;gap:calc(1*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .chips{opacity:1}
+#ru .chips{position:absolute;left:calc(5*var(--s));right:calc(5*var(--s));bottom:calc(6*var(--s));display:flex;justify-content:center;gap:calc(1*var(--s));opacity:0;transition:opacity .8s}#ru.f3 .chips{opacity:1}
 #ru .chips span{font-family:'JetBrains Mono',monospace;font-size:calc(1.45*var(--s));letter-spacing:.18em;padding:calc(.5*var(--s)) calc(1.1*var(--s));border:1px solid rgba(120,200,255,.25);color:rgba(160,220,255,.5);transition:all .4s}
 #ru .chips span.on{color:#fff;border-color:var(--c);background:color-mix(in srgb,var(--c) 30%,transparent);box-shadow:0 0 calc(1.5*var(--s)) color-mix(in srgb,var(--c) 60%,transparent)}
 #ru .chips span.done{color:color-mix(in srgb,var(--c) 75%,#fff);border-color:color-mix(in srgb,var(--c) 45%,transparent)}
@@ -6490,9 +6494,8 @@ function say(text,voice,rate){if(text)S.duck(true);return new Promise(res0=>{con
   setTimeout(()=>{const u=new SpeechSynthesisUtterance(text);window._ruUtt=u;if(voice){u.voice=voice;u.lang=voice.lang}u.rate=rate||1;u.pitch=1;
     u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=soft;u.onerror=e=>{console.warn('roundup voice',e&&e.error);soft()};speechSynthesis.speak(u)},120)};
   if(window.novaMacSayOK&&window.novaMacSayOK()){wavePulse=1;const pul=setInterval(()=>{wavePulse=Math.random()>.35?1:.55},160);
-    window.novaMacSay(text,rate).then(ok=>{clearInterval(pul);if(ok)fin();else chrome()})}
-  else chrome();
-  setTimeout(fin,max)})}
+    window.novaMacSay(text,rate).then(ok=>{clearInterval(pul);if(ok)fin();else chrome()});setTimeout(fin,words*1200+30000)}
+  else{chrome();setTimeout(fin,max)}})}
 
 /* ---------------- play ---------------- */
 let busy=false,stopFn=null;
