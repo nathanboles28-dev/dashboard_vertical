@@ -1840,6 +1840,16 @@ html.nv2 #xbBody{bottom:calc(6.2*var(--u));gap:calc(1.3*var(--u))}
 .n3hero{position:relative;border-radius:calc(2.8*var(--u));overflow:hidden;min-height:calc(26*var(--u));display:flex;align-items:flex-end}
 .n3hbg{position:absolute;inset:0;background:linear-gradient(135deg,#7a3a12,#3b2bd6 55%,#c2257a)}.n3hbg::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 20%,rgba(7,6,15,.9))}
 .n3htx{position:relative;padding:calc(2.6*var(--u)) calc(3*var(--u))}.n3htx b{display:block;font-size:calc(3.6*var(--u));font-weight:600;line-height:1.2}.n3htx small{display:block;font:500 calc(1.6*var(--u)) 'JetBrains Mono',monospace;color:#cfcbef;margin-top:calc(.8*var(--u));text-transform:uppercase;letter-spacing:.05em}
+
+.n3i.ph{width:calc(15*var(--u));height:calc(9.6*var(--u));position:relative;background:#1a1830}
+.n3i.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.n3i.ph span{opacity:0}
+.n3r p{font-size:calc(1.8*var(--u));line-height:1.4;color:#bdbad8;margin-top:calc(.5*var(--u));display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.n3hero.img{min-height:calc(42*var(--u))}.n3himg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.n3hero.img .n3hbg{background:linear-gradient(180deg,rgba(7,6,15,.05) 20%,rgba(7,6,15,.6) 55%,rgba(7,6,15,.95))}.n3hero.img .n3hbg::after{display:none}
+.n3htx p{font-size:calc(2.1*var(--u));line-height:1.45;color:#dcdaf2;margin-top:calc(.8*var(--u));display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+/* page titles a bit smaller, lined up with the clock */
+html.nv2 :is(.jf-title,.ptitle){font-size:calc(4.3*var(--u))!important}
+html.nv2 #mini{transition:opacity 1.2s,top .3s}
 </style>
 </head>
 <body>
@@ -1989,7 +1999,7 @@ const CFG={
   // News page: RSS feeds, newest first
   // News page: only your teams. Each visit features a different story with a bit of the article, then more headlines.
   // Headlines through the relay (Google News): [tag, search, words the headline must have, optional months it's shown (0=Jan)]
-  newsFeed:{days:3,
+  newsFeed:{days:3, localDays:5, rich:true,
     team:[['LEAFS','"Maple Leafs"','leafs|toronto'],['KNIGHTS','"London Knights"','knights'],['JAYS','"Blue Jays"','jays',[1,9]]],
     local:[['WOODSTOCK','Woodstock Ontario','woodstock'],['OXFORD','"Oxford County" Ontario',''],['INGERSOLL','Ingersoll Ontario','ingersoll'],['LONDON','"London, Ont" OR "London Ontario" OR "London police"','london']]},
   news:{
@@ -2102,9 +2112,9 @@ const CFG={
   // Traffic cams page: near = [lat, lon] to look around, road = only cameras on that road. The closest 511 camera is used
   // (each card gets a different camera). You can still add a YouTube cam: {name:'...', yt:['c:CHANNEL_ID']}
   cams:{on:true, title:'Traffic cams', list:[
-    {name:'401 at 403', near:[43.11809,-80.70662], road:'401', match:'401 403', view:'south'},
-    {name:'QEW at Guelph Line', near:[43.3550,-79.8040], road:'qew', match:'qew guelph'},
-    {name:'401 at Veterans Memorial', near:[42.9423,-81.1243], road:'401', match:'401 veterans'}
+    {name:'401 at 403 · Woodstock', near:[43.11809,-80.70662], road:'401', match:'401 403', view:'south'},
+    {name:'QEW at Guelph Line · Burlington', near:[43.3550,-79.8040], road:'qew', match:'qew guelph'},
+    {name:'401 at Veterans Memorial · London', near:[42.9423,-81.1243], road:'401', match:'401 veterans'}
   ]},
 
   // Animated weather on the background (snow, rain, storms). amount: 0.5 = lighter, 1.5 = heavier
@@ -2658,7 +2668,7 @@ function goalAlert(key,team,mine){
   nextPage(liveOn()?'live':'games',secs);
 }
 /* during one of your teams' live games: more time on the Live page, less on the rest */
-function pageSecs(p){const LC=CFG.live||{};if(p.type==='ws'&&typeof wsLive==='function'&&wsLive())return (CFG.ws&&CFG.ws.liveSecs)||60;if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
+function pageSecs(p){const LC=CFG.live||{};if(p.type==='ws'&&typeof wsLive==='function'&&wsLive())return (CFG.ws&&CFG.ws.liveSecs)||60;if(typeof liveOn==='function'&&liveOn()){if(p.type==='live')return LC.secs||60;return p.type==='maps'?Math.min(p.secs||15,30):Math.min(p.secs||15,LC.otherSecs||10)}return p.secs||15}
 function nextPage(force,hold){
   const list=(CFG.pages&&CFG.pages.length)?CFG.pages:[{type:'dashboard',secs:60}];
   let p,stay=false;
@@ -2902,18 +2912,18 @@ let TOWN=[],REP=null,repAt=0;
 const nfSpec=L=>(L||[]).filter(x=>!x[3]||(()=>{const m=new Date().getMonth();return m>=x[3][0]&&m<=x[3][1]})()).map(x=>[x[0],x[1],x[2]||''].join('|')).join(';');
 const notOntario=/woodstock,? (n\.?y|ga|ill|vt|va|nb|new brunswick|georgia|illinois|vermont|virginia|new york)\b|london,? (england|uk)\b|\bu\.?k\.?\b/i;
 async function loadNewsFeed(){const F=CFG.newsFeed,K=SECRETS.calkey;if(!F||!CFG.relay||!K)return false;
-  const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${F.days||3}&f=${encodeURIComponent(nfSpec(L))}`,15000);const j=await r.json();if(j.error)throw new Error(j.error);(window.NFD=window.NFD||{})[L===F.team?'team':'local']=j.dbg||null;return j.items||[]};
+  const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${L===F.local?(F.localDays||5):(F.days||3)}${F.rich?'&rich=1':''}&f=${encodeURIComponent(nfSpec(L))}`,20000);const j=await r.json();if(j.error)throw new Error(j.error);(window.NFD=window.NFD||{})[L===F.team?'team':'local']=j.dbg||null;return j.items||[]};
   let ok=false;
-  try{const it=await get(F.team);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
+  try{const it=await get(F.team);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:n.d||'',img:n.img||''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
   if(F.local)try{TOWN=(await get(F.local)).filter(n=>!notOntario.test(n.t))}catch(e){console.warn('newsfeed local',e)}
   if(ok&&$('pNews').classList.contains('on'))renderNews();if($('pTown').classList.contains('on'))renderTown();
   if(Date.now()-repAt>1800000&&typeof hubOn==='function'&&hubOn()){repAt=Date.now();try{const j=await (await tfetch(`${CFG.relay}/report?key=${encodeURIComponent(K)}&team=${encodeURIComponent((CFG.hub&&CFG.hub.team)||'TOR')}`,20000)).json();if(!j.error)REP=j}catch(e){}}
   return ok}
 const nTag=t=>`<span class="n3t t-${esc(String(t).toLowerCase())}">${esc(t)}</span>`;
-const nTile=t=>{const T=String(t).toUpperCase(),lg=T==='LEAFS'&&HUB&&HUB.logo?HUB.logo:T==='KNIGHTS'&&KH&&KH.logo?KH.logo:'';return `<div class="n3i t-${esc(T.toLowerCase())}">${lg?`<img src="${esc(lg)}" alt="" onerror="this.remove()">`:`<span>${esc(T.slice(0,2))}</span>`}</div>`};
+const nTile=(t,img)=>{if(img)return `<div class="n3i ph"><img src="${esc(img)}" alt="" loading="lazy" onerror="this.parentNode.classList.remove('ph');this.remove()"><span>${esc(String(t).slice(0,2))}</span></div>`;const T=String(t).toUpperCase(),lg=T==='LEAFS'&&HUB&&HUB.logo?HUB.logo:T==='KNIGHTS'&&KH&&KH.logo?KH.logo:'';return `<div class="n3i t-${esc(T.toLowerCase())}">${lg?`<img src="${esc(lg)}" alt="" onerror="this.remove()">`:`<span>${esc(T.slice(0,2))}</span>`}</div>`};
 function newsFit(box,rowSel,min){const over=()=>box.scrollHeight>box.clientHeight+2;[...box.children].forEach(c=>c.style.flexShrink='0');for(let g=0;g<20&&over();g++){const r=box.querySelectorAll(rowSel);if(r.length>min)r[r.length-1].remove();else break}}
 function renderNews2(){const nb=$('newsBody');
-  const heads=newsItems.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag)}<div>${nTag(n.tag)}<b>${esc(n.title)}</b><small>${esc(n.src||'')}${n.src?' · ':''}${ago(n.date)}</small></div></div>`).join('');
+  const heads=newsItems.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag,n.img)}<div>${nTag(n.tag)}<b>${esc(n.title)}</b>${n.sum?`<p>${esc(n.sum)}</p>`:''}<small>${esc(n.src||'')}${n.src?' · ':''}${ago(n.date)}</small></div></div>`).join('');
   const H=typeof HUB!=='undefined'?HUB:null,K=typeof KH!=='undefined'?KH:null,R=REP;
   const chip=(t,c)=>`<span class="n3c ${c}">${t}</span>`;
   const hot=[...((R&&R.hot)||[]).slice(0,3).map(h=>`<div class="n3x">${chip('TOR','l')}${esc(h.name)}<em>${h.g}G ${h.a}A</em></div>`),
@@ -2933,9 +2943,9 @@ function renderNews2(){const nb=$('newsBody');
   nb.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';
   newsFit(nb,'.n3r',3);newsFit(nb,'.n3m .n3x:not(:first-of-type)',4)}
 function renderTown(){const tb=$('townBody');if(!TOWN.length){tb.innerHTML='<div class="gnone">No local news right now</div>';return}
-  const [h,...rest]=TOWN;
-  const html=`<div class="n3hero"><div class="n3hbg"></div><div class="n3htx">${nTag(h.tag)}<b>${esc(h.t)}</b><small>${esc(h.src||'')} · ${ago(new Date(h.at))}</small></div></div>
-    <div class="card n3c1"><h2 class="hwx"><span>Local headlines</span><em>WOODSTOCK · OXFORD · LONDON</em></h2>${rest.slice(0,10).map(n=>`<div class="n3r">${nTile(n.tag)}<div>${nTag(n.tag)}<b>${esc(n.t)}</b><small>${esc(n.src||'')} · ${ago(new Date(n.at))}</small></div></div>`).join('')}</div>`;
+  const hi=Math.max(0,TOWN.slice(0,4).findIndex(n=>n.img)),h=TOWN[hi],rest=TOWN.filter((_,i)=>i!==hi);
+  const html=`<div class="n3hero${h.img?' img':''}">${h.img?`<img class="n3himg" src="${esc(h.img)}" alt="" onerror="this.remove()">`:''}<div class="n3hbg"></div><div class="n3htx">${nTag(h.tag)}<b>${esc(h.t)}</b>${h.d?`<p>${esc(h.d)}</p>`:''}<small>${esc(h.src||'')} · ${ago(new Date(h.at))}</small></div></div>
+    <div class="card n3c1"><h2 class="hwx"><span>Local headlines</span><em>WOODSTOCK · OXFORD · INGERSOLL · LONDON</em></h2>${rest.slice(0,12).map(n=>`<div class="n3r">${nTile(n.tag,n.img)}<div>${nTag(n.tag)}<b>${esc(n.t)}</b>${n.d?`<p>${esc(n.d)}</p>`:''}<small>${esc(n.src||'')} · ${ago(new Date(n.at))}</small></div></div>`).join('')}</div>`;
   if(tb.dataset.h!==html){tb.dataset.h=html;tb.innerHTML=html}
   tb.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';newsFit(tb,'.n3r',2)}
 async function loadNews(){if(CFG.newsFeed){if(await loadNewsFeed())return;clearTimeout(window._nfT);window._nfT=setTimeout(loadNews,120000)}
@@ -3129,7 +3139,9 @@ function monthHTML(){
 }
 let comSig='';
 const PG_NAMES={townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
-function n2FitTitles(){document.querySelectorAll('.page.on :is(.jf-title,.ptitle)').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
+function n2AlignClock(){const m=$('mini'),t=document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
+  const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
+function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle)').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
   while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
 setInterval(()=>{if(CFG.style==='nova2')n2FitTitles()},2000);
 function pageName(p){return p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
@@ -6225,7 +6237,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 153';
+document.getElementById('ver').textContent='build nova 154';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
