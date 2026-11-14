@@ -1818,6 +1818,24 @@ body.cooking #answer{z-index:9}body.cooking #mini{z-index:9;opacity:.85}
 #cook .ck-say{font-size:calc(3.2*var(--u));color:#c9cfe8;line-height:1.45;border-left:3px solid #ffb27a;padding-left:calc(1.8*var(--u))}#cook .ck-say b{display:block;font-size:calc(2.1*var(--u));letter-spacing:.14em;color:#ffb27a;text-transform:uppercase}
 #cook .ck-wait{font-size:calc(3.6*var(--u));color:#c9cfe8;padding:calc(6*var(--u)) 0}#cook .ck-wait i{animation:ckDot 1.2s infinite both}#cook .ck-wait i:nth-child(2){animation-delay:.2s}#cook .ck-wait i:nth-child(3){animation-delay:.4s}
 @keyframes ckDot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+#pTrip{--acc:#7fb2ff;--ico:'✈️'}
+.tp-wrap{position:absolute;left:4%;right:4%;top:calc(12.5*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u))}
+.tp-wrap .rd-stage{background:#0b0f16}.tp-tiles{position:absolute;left:0;top:0;transform-origin:0 0;filter:brightness(.9) saturate(.7)}.tp-tiles img{position:absolute;width:256px;height:256px;max-width:none}.tp-tiles img.ref{opacity:.9}
+#tpCan{position:absolute;inset:0;width:100%;height:100%}
+.tp-info{padding:calc(2.6*var(--u)) calc(3*var(--u))}
+.tp-k{font-size:calc(2.2*var(--u));letter-spacing:.12em;text-transform:uppercase;color:#7fb2ff;font-weight:700}
+.tp-big{font-size:calc(6*var(--u));font-weight:700;margin:calc(.6*var(--u)) 0 calc(1.6*var(--u))}
+.tp-bar{position:relative;height:calc(1*var(--u));border-radius:99px;background:rgba(255,255,255,.1)}.tp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#5dcaa5,#7fb2ff)}
+.tp-bar b{position:absolute;top:50%;transform:translate(-50%,-50%) rotate(45deg);font-size:calc(3*var(--u));color:#fff;text-shadow:0 0 12px #7fb2ff}
+.tp-ap{display:flex;justify-content:space-between;font-size:calc(2*var(--u));color:#8d96bd;margin-top:calc(.8*var(--u));font-weight:700;letter-spacing:.08em}
+.tp-cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:calc(2*var(--u));margin-top:calc(2*var(--u))}
+.tp-cells span{display:block;font-size:calc(1.9*var(--u));color:#8d96bd;letter-spacing:.06em;text-transform:uppercase}.tp-cells b{font-size:calc(3.4*var(--u));font-weight:600}
+.tp-note{font-size:calc(2.3*var(--u));color:#9aa3c7;margin-top:calc(1.4*var(--u))}
+.tp-up{position:absolute;left:4%;right:4%;top:calc(14*var(--u));display:grid;gap:calc(2.4*var(--u))}
+.tp-leg{display:flex;align-items:center;gap:calc(3*var(--u));padding:calc(3*var(--u))}
+.tp-day{display:flex;flex-direction:column;align-items:center;min-width:calc(10*var(--u))}.tp-day b{font-size:calc(2.6*var(--u));text-transform:uppercase;letter-spacing:.1em;color:#7fb2ff}.tp-day span{font-size:calc(4.4*var(--u));font-weight:700}
+.tp-rt{flex:1;min-width:0}.tp-rt b{display:block;font-size:calc(4.4*var(--u))}.tp-rt b i{font-style:normal;color:#7fb2ff}.tp-rt span{font-size:calc(2.5*var(--u));color:#9aa3c7}
+.tp-in{text-align:center}.tp-in b{display:block;font-size:calc(5.4*var(--u));font-weight:300}.tp-in span{font-size:calc(2.2*var(--u));color:#9aa3c7;text-transform:uppercase;letter-spacing:.1em}
 #vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
 #vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(.45*var(--u));
   background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
@@ -1927,6 +1945,7 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">Team news</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pRadar" class="page"><div id="rdBody"></div></section>
+<section id="pTrip" class="page"><div id="tpBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
 <section id="pRLoop" class="page"><div id="rlBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
@@ -1983,7 +2002,8 @@ const CFG={
   pages:[
     // your day
     {type:'dashboard', secs:30},
-    {type:'np',        secs:25},   // Now playing: only while Apple Music is playing on the Macbook
+    {type:'np',        secs:25},
+    {type:'trip',      secs:30},   // family flights: the week before (countdown) and live while they fly (set in your relay)   // Now playing: only while Apple Music is playing on the Macbook
     {type:'forecast',  secs:20},
     {type:'coming',    secs:25},
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
@@ -2127,6 +2147,9 @@ const CFG={
   local:{on:true, drives:[], cams:3, maxEvents:2, roadKm:40, nearKm:12, hwyKm:25, closureKm:20},
   // Plane radar page: radiusKm = how far out it looks, cards = how many flights listed under the radar
   planes:{on:true, radiusKm:40, cards:4},
+  // Family flights to follow (the week before + live while they fly). Set in your relay's private settings, e.g.
+  // trips:[{who:'Mom & Dad', say:'Mom and Dad', flights:[{no:'AC123', from:'YYZ', to:'MCO', date:'2026-12-01', dep:'09:50'}]}]
+  trips:[],
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
   commute:{bufferMin:10},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
@@ -2662,10 +2685,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar'};
+const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='trip'||tripShow())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2702,6 +2725,7 @@ function nextPage(force,hold){
   if(p.type==='khub'){window._khubNews=(window._khubNews||0)+1;hubSigs.khub='';renderKHub();if(Date.now()-khAt>600000)loadKHub()}
   if(p.type==='week')renderWeek();
   if(p.type==='radar'){renderRadar();loadRadar()}
+  if(p.type==='trip')renderTrip();
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   if(p.type==='dashboard')renderSpot();
   if(p.type==='rloop'||p.type==='maps')renderRLoop();
@@ -3154,7 +3178,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={trip:'Flight',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
@@ -3508,6 +3532,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Music control',()=>'Apple Music plays on the MacBook. To play a playlist add [[playlist:Name]]; for playback add [[music:pause]], [[music:play]], [[music:next]] or [[music:previous]] at the end of your answer.');
   add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
   add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
+  add('Family flights',()=>tripOn()?tripFlights().filter(f=>tripPhase(f)!=='done').map(f=>`${f.who}: ${f.no} ${f.A[2]} to ${f.B[2]}, departs ${new Date(f.dep).toLocaleString()}, lands ${new Date(f.arr).toLocaleString()} (${tripPhase(f)}). ${tripSay(f)}`).join('\n'):'');
   add('Kitchen (what they have)',()=>KIT.list.join(', '));
   add('Cooking right now',()=>COOK.on&&COOK.r?`${COOK.r.name}. Ingredients: ${COOK.r.ing.map(x=>x.qty+' '+x.item).join(', ')}. Steps: ${COOK.r.steps.map((x,i)=>(i+1)+'. '+x.text).join(' ')}${COOK.step>=0?` They're on step ${COOK.step+1}.`:''}`:'');
   add('Countdowns',()=>countdownList().slice(0,6).map(c=>`${c.name} in ${daysUntil(c.date)} days`).join(', '));
@@ -3581,6 +3606,131 @@ function teamIn(t){
 }
 let NOVA_MAIN=!(navigator.locks&&navigator.locks.request);
 if(navigator.locks&&navigator.locks.request)navigator.locks.request('nova-main',()=>{NOVA_MAIN=true;console.info('this window runs commands and speech');return new Promise(()=>{})});
+/* ================= Trips: follow family flights. Countdown before, a live map (their plane + the traffic around it) while they fly,
+   and Nova says when they take off, are 20 minutes out, and land. Flights come from your relay's private settings (CFG.trips). ================= */
+const TRIP_AP={YYZ:[43.6777,-79.6248,'Toronto','America/Toronto'],YTZ:[43.6275,-79.3962,'Toronto Island','America/Toronto'],YHM:[43.1736,-79.935,'Hamilton','America/Toronto'],YKF:[43.4608,-80.3786,'Waterloo','America/Toronto'],
+  YXU:[43.0356,-81.1539,'London, Ontario','America/Toronto'],YOW:[45.3225,-75.6692,'Ottawa','America/Toronto'],YUL:[45.4706,-73.7408,'Montréal','America/Toronto'],YVR:[49.1939,-123.1844,'Vancouver','America/Vancouver'],
+  YYC:[51.1139,-114.0203,'Calgary','America/Edmonton'],YEG:[53.3097,-113.58,'Edmonton','America/Edmonton'],YHZ:[44.8808,-63.5086,'Halifax','America/Halifax'],YWG:[49.91,-97.2399,'Winnipeg','America/Winnipeg'],
+  CUN:[21.0365,-86.8771,'Cancún','America/Cancun'],CZM:[20.5224,-86.9256,'Cozumel','America/Cancun'],PUJ:[18.5674,-68.3634,'Punta Cana','America/Santo_Domingo'],MBJ:[18.5037,-77.9134,'Montego Bay','America/Jamaica'],
+  SJD:[23.1518,-109.7215,'Los Cabos','America/Mazatlan'],PVR:[20.68,-105.2542,'Puerto Vallarta','America/Mexico_City'],VRA:[23.0344,-81.4353,'Varadero','America/Havana'],HOG:[20.7856,-76.315,'Holguín','America/Havana'],
+  AUA:[12.5014,-70.0152,'Aruba','America/Aruba'],MCO:[28.4294,-81.309,'Orlando','America/New_York'],FLL:[26.0726,-80.1527,'Fort Lauderdale','America/New_York'],MIA:[25.7932,-80.2906,'Miami','America/New_York'],
+  TPA:[27.9755,-82.5332,'Tampa','America/New_York'],PBI:[26.6832,-80.0956,'West Palm Beach','America/New_York'],RSW:[26.5362,-81.7552,'Fort Myers','America/New_York'],MYR:[33.6797,-78.9283,'Myrtle Beach','America/New_York'],
+  LAS:[36.084,-115.1537,'Las Vegas','America/Los_Angeles'],PHX:[33.4343,-112.0116,'Phoenix','America/Phoenix'],LAX:[33.9416,-118.4085,'Los Angeles','America/Los_Angeles'],JFK:[40.6413,-73.7781,'New York','America/New_York'],
+  BOS:[42.3656,-71.0096,'Boston','America/New_York'],ORD:[41.9742,-87.9073,'Chicago','America/Chicago']};
+const TRIP_AL={PD:'POE',AC:'ACA',RV:'ROU',QK:'JZA',WS:'WJA',WR:'WEN',F8:'FLE',WG:'SWG',TS:'TSC',AA:'AAL',DL:'DAL',UA:'UAL',B6:'JBU',NK:'NKS',F9:'FFT',WN:'SWA',AS:'ASA',AM:'AMX',Y4:'VOI',BA:'BAW'};
+const TRIP=(()=>{let s={};try{s=JSON.parse(localStorage.getItem('nova-trip')||'{}')}catch(e){}return {live:s.live||{},said:s.said||[],aero:{},noAero:false,last:0,aeroAt:{},view:null,viewAt:0,raf:0}})();
+const tripSave=()=>{try{localStorage.setItem('nova-trip',JSON.stringify({live:TRIP.live,said:TRIP.said.slice(-60)}))}catch(e){}};
+const tripOn=()=>Array.isArray(CFG.trips)&&CFG.trips.length>0&&!!CFG.relay&&!!SECRETS.calkey;
+const gcKm=(a1,o1,a2,o2)=>{const t=Math.PI/180,dA=(a2-a1)*t,dO=(o2-o1)*t,h=Math.sin(dA/2)**2+Math.cos(a1*t)*Math.cos(a2*t)*Math.sin(dO/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+const tripT=d=>new Date(d).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const tripDur=ms=>{const m=Math.max(0,Math.round(ms/60000)),h=Math.floor(m/60),r=m%60;return h?`${h} h ${r} m`:`${r} min`};
+const tripDurSay=ms=>{const m=Math.max(1,Math.round(ms/60000)),h=Math.floor(m/60),r=m%60;return [h?`${h} hour${h>1?'s':''}`:'',r?`${r} minute${r>1?'s':''}`:''].filter(Boolean).join(' and ')};
+/* a local clock time at an airport -> the real moment */
+function tzDate(ymd,hm,tz){const [y,mo,d]=ymd.split('-').map(Number),[h,mi]=String(hm).split(':').map(Number),want=Date.UTC(y,mo-1,d,h,mi||0);let t=want;
+  for(let i=0;i<3;i++){const p=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(t)),g=k=>+(p.find(x=>x.type===k)||{}).value;
+    t+=want-Date.UTC(g('year'),g('month')-1,g('day'),g('hour'),g('minute'))}return new Date(t)}
+function tripFlights(){const out=[];(CFG.trips||[]).forEach(T=>(T.flights||[]).forEach(f=>{const no=String(f.no||'').toUpperCase().replace(/\s+/g,''),A=TRIP_AP[String(f.from||'').toUpperCase()],B=TRIP_AP[String(f.to||'').toUpperCase()];
+    if(!A||!B||!/^\d{4}-\d{2}-\d{2}$/.test(f.date||'')||!/^\d{1,2}:\d{2}$/.test(f.dep||''))return;const key=no+'|'+f.date,km=gcKm(A[0],A[1],B[0],B[1]);
+    let dep=tzDate(f.date,f.dep,A[3]),arr=f.arr?tzDate(f.date,f.arr,B[3]):new Date(dep.getTime()+(km/790+.45)*36e5);if(arr<dep)arr=new Date(arr.getTime()+864e5);
+    const leg=((TRIP.aero[key]||{}).legs||[])[0],dt=x=>x&&(x.act||x.est||x.sched);let guess=!f.arr;
+    if(leg){if(dt(leg.dep))dep=new Date(dt(leg.dep));if(dt(leg.arr)){arr=new Date(dt(leg.arr));guess=false}}
+    out.push({key,no,cs:String(f.cs||((TRIP_AL[no.slice(0,2)]||'')+no.slice(2))).toUpperCase(),who:T.who||'Family',say:T.say||T.who||'They',from:f.from.toUpperCase(),to:f.to.toUpperCase(),A,B,dep:+dep,arr:+arr,sched:+tzDate(f.date,f.dep,A[3]),guess,km,leg})}));
+  return out.sort((a,b)=>a.dep-b.dep)}
+function tripPhase(f,now=Date.now()){const L=TRIP.live[f.key]||{};
+  if(L.landed)return now-L.landed<45*60e3?'landed':'done';if(L.air)return now-(L.t||0)<3*36e5?'air':'done';
+  if(now<f.dep-3*36e5)return 'soon';if(now<f.arr+2*36e5)return 'gate';return 'done'}
+const tripActive=()=>tripOn()?tripFlights().find(f=>/^(gate|air|landed)$/.test(tripPhase(f))):null;
+const tripNext=()=>tripOn()?tripFlights().filter(f=>tripPhase(f)==='soon'&&f.dep-Date.now()<7*864e5):[];
+const tripShow=()=>!!(tripActive()||tripNext().length);
+function tripName(cs){if(!tripOn()||!cs)return '';const f=tripFlights().find(x=>x.cs===String(cs).trim().toUpperCase()&&tripPhase(x)!=='soon'&&tripPhase(x)!=='done');return f?f.who:''}
+function tripEvent(f,k){const id=f.key+'|'+k;if(TRIP.said.includes(id))return;TRIP.said.push(id);tripSave();const L=TRIP.live[f.key]||{},city=f.B[2],from=f.A[2];
+  const msg=k==='off'?`${f.say} just took off from ${from}. They should land in ${city} around ${tripT(L.eta||f.arr)}.`:k==='near'?`${f.say}'s flight lands in ${city} in about 20 minutes.`:`${f.say} just landed in ${city}.`;
+  toast(`✈️ <b>${esc(f.who)}</b>${esc(msg)}`);reply(msg);if(!(CFG.remote||{}).speak)speak(msg);if(k!=='near')showFor('trip')}
+async function tripPoll(force){if(!tripOn())return;const now=Date.now(),vis=$('pTrip')&&$('pTrip').classList.contains('on');if(!force&&!vis&&now-TRIP.last<60000)return;TRIP.last=now;
+  for(const f of tripFlights()){const ph=tripPhase(f);if(!/^(gate|air|landed)$/.test(ph)||now<f.dep-75*60e3)continue;
+    /* gate times, delays and baggage belt when your relay has the AeroDataBox key (optional) */
+    if(!TRIP.noAero&&now-(TRIP.aeroAt[f.key]||0)>20*60e3){TRIP.aeroAt[f.key]=now;const ymd=f.key.split('|')[1];
+      tfetch(relayBase()+`/flight?key=${encodeURIComponent(SECRETS.calkey)}&no=${f.no}&date=${ymd}`,15000).then(r=>r.json()).then(j=>{if(j.error){if(/not set up/i.test(j.error))TRIP.noAero=true;return}TRIP.aero[f.key]=j}).catch(()=>{})}
+    if(ph==='landed')continue;
+    try{const j=await (await tfetch(relayBase()+`/track?key=${encodeURIComponent(SECRETS.calkey)}&cs=${f.cs}`,12000)).json();const L=TRIP.live[f.key]=TRIP.live[f.key]||{trail:[]};L.chk=now;
+      if(!j.found||!j.me){if(L.air&&L.rem!=null&&L.rem<80&&now-(L.t||0)>5*60e3){L.landed=now;L.air=false;tripSave();tripEvent(f,'down')}continue}
+      const m=j.me,dA=gcKm(f.A[0],f.A[1],m.lat,m.lon),dB=gcKm(m.lat,m.lon,f.B[0],f.B[1]);
+      if(dA+dB>f.km*1.35+200)continue;   /* same flight number on another route/day: not theirs */
+      L.me=m;L.t=now;L.traffic=j.traffic||[];L.rem=dB;L.flown=dA;
+      if(!m.ground&&(m.alt||0)>300){if(!L.air&&dA>3){L.air=true;L.took=dA>40&&m.kt>80?Math.max(f.dep-30*60e3,now-dA/(m.kt*1.852)*36e5-6*60e3):now}
+        const lt=L.trail[L.trail.length-1];if(!lt||gcKm(lt[0],lt[1],m.lat,m.lon)>2)L.trail.push([+m.lat.toFixed(4),+m.lon.toFixed(4)]);if(L.trail.length>700)L.trail.splice(0,L.trail.length-700);
+        L.eta=m.kt>80?now+dB/(m.kt*1.852)*36e5+(dB<60?2:7)*60e3:L.eta;
+        if(L.air)tripEvent(f,'off');if(L.air&&L.eta&&L.eta-now<22*60e3&&dB<350)tripEvent(f,'near');
+        if(L.air&&(m.alt||0)<400&&dB<12){L.landed=now;L.air=false;tripEvent(f,'down')}}
+      else if(L.air&&dB<30){L.landed=now;L.air=false;tripEvent(f,'down')}
+      tripSave()}catch(e){console.warn('trip',e)}}
+  if(vis)tripInfo()}
+setInterval(()=>{if(tripOn())tripPoll()},10000);
+function tripSay(f){f=f||tripActive()||tripNext()[0];if(!f)return "There aren't any family flights coming up.";const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),d=new Date(f.dep);
+  if(ph==='air')return `${f.say} are in the air, about ${(Math.round((L.rem||0)/10)*10).toLocaleString()} kilometres from ${f.B[2]}. They land in about ${tripDurSay((L.eta||f.arr)-now)}, around ${tripT(L.eta||f.arr)}.`;
+  if(ph==='landed')return `${f.say} landed in ${f.B[2]} at ${tripT(L.landed)}.`;
+  if(ph==='gate')return now<f.dep?`${f.say}'s flight to ${f.B[2]} leaves ${f.A[2]} at ${tripT(f.dep)}${f.dep-f.sched>10*60e3?', a bit delayed':''}.`:`${f.say}'s flight was due out at ${tripT(f.dep)}. I haven't seen it take off yet.`;
+  const k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
+  return `${f.say} fly to ${f.B[2]} ${k===0?'today':k===1?'tomorrow':'on '+d.toLocaleDateString([],{weekday:'long'})} at ${tripT(f.dep)}.`}
+/* ---- the page ---- */
+function renderTrip(){const b=$('tpBody');if(!b)return;const f=tripActive();cancelAnimationFrame(TRIP.raf);
+  if(!f){const N=tripNext(),who=(N[0]||{}).who||'Family',L=tripFlights().filter(x=>x.who===who&&tripPhase(x)==='soon');
+    b.innerHTML=`<div class="jf-title">${esc(who)}'s trip</div><div class="tp-up">${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
+      return `<div class="jf-glass tp-leg"><div class="tp-day"><b>${d.toLocaleDateString([],{weekday:'short'})}</b><span>${d.toLocaleDateString([],{month:'short',day:'numeric'})}</span></div>
+        <div class="tp-rt"><b>${esc(x.A[2])} <i>→</i> ${esc(x.B[2])}</b><span>${esc(x.no.slice(0,2)+' '+x.no.slice(2))} · departs ${tripT(x.dep)} · lands ${x.guess?'about ':''}${tripT(x.arr)}</span></div>
+        <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>`}).join('')}</div>`;return}
+  b.innerHTML=`<div class="jf-title">${esc(f.who)}'s flight</div><div class="tp-wrap"><div class="jf-glass rd-card"><div class="rd-stage" id="tpStage"><div class="tp-tiles" id="tpTiles"></div><canvas id="tpCan"></canvas>
+    <div class="rd-hud tr"><span class="rd-dot"></span>LIVE</div></div></div><div class="jf-glass tp-info" id="tpInfo"></div></div>`;
+  TRIP.view=null;requestAnimationFrame(()=>{tripInfo();tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPoll(true)}
+function tripInfo(){const el=$('tpInfo'),f=tripActive();if(!el||!f)return;const ph=tripPhase(f),L=TRIP.live[f.key]||{},m=L.me||{},now=Date.now(),leg=f.leg||{};
+  const big=ph==='air'?`Lands in ${tripDur((L.eta||f.arr)-now)}`:ph==='landed'?`Landed at ${tripT(L.landed)}`:now<f.dep?`Departs ${tripT(f.dep)}`:'Waiting for takeoff';
+  const pct=ph==='landed'?100:ph==='air'&&L.flown!=null?Math.round(100*L.flown/(L.flown+L.rem)):0;
+  const cell=(k,v)=>`<div><span>${k}</span><b>${v}</b></div>`,dl=leg.dep||{},al=leg.arr||{};
+  const cells=ph==='air'?[cell('Took off',L.took?tripT(L.took):'–'),cell('Altitude',m.alt!=null?Number(Math.round(m.alt/100)*100).toLocaleString()+' ft':'–'),cell('Speed',m.kt!=null?Math.round(m.kt*1.852)+' km/h':'–'),cell('Lands',tripT(L.eta||f.arr))]
+    :ph==='landed'?[cell('Flight time',L.took?tripDur(L.landed-L.took):'–'),cell('Local time',new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit',timeZone:f.B[3]})),cell('Baggage',al.belt||'–')]
+    :[cell('Scheduled',tripT(f.sched)),cell('Gate',dl.gate||'–'),cell('Lands',(f.guess?'~':'')+tripT(f.arr))];
+  el.innerHTML=`<div class="tp-k">${esc(f.no.slice(0,2)+' '+f.no.slice(2))} · ${esc(f.A[2])} → ${esc(f.B[2])}</div><div class="tp-big">${big}</div>
+    <div class="tp-bar"><i style="width:${pct}%"></i><b style="left:${pct}%">✈</b></div><div class="tp-ap"><span>${f.from}</span><span>${f.to}</span></div>
+    <div class="tp-cells">${cells.join('')}</div><div class="tp-note">${ph==='air'&&L.rem!=null?`${Math.round(L.rem).toLocaleString()} km to go`:ph==='gate'&&now>f.dep?'Not airborne yet. It shows up here as soon as it takes off':''}</div>`}
+/* map: fit their plane plus where it's going (both airports before takeoff), redone every minute */
+function tripMap(){const st=$('tpStage'),el=$('tpTiles'),f=tripActive();if(!st||!el||!f)return;const W=st.clientWidth,H=st.clientHeight;if(!W||!H)return;
+  const L=TRIP.live[f.key]||{},m=L.me,ph=tripPhase(f);let pts=[[f.A[0],f.A[1]],[f.B[0],f.B[1]]];
+  if(ph==='air'&&m){pts=[[m.lat,m.lon],[f.B[0],f.B[1]]];if((L.flown||0)<250)pts.push([f.A[0],f.A[1]]);if((L.rem||0)<120)pts=[[m.lat,m.lon],[f.B[0],f.B[1]]]}
+  if(ph==='landed')pts=[[f.B[0],f.B[1]]];
+  const wp0=(la,lo)=>{const s=Math.sin(la*Math.PI/180);return [(lo+180)/360*256,(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*256]};
+  const P=pts.map(p=>wp0(p[0],p[1])),x0=Math.min(...P.map(p=>p[0])),x1=Math.max(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1])),y1=Math.max(...P.map(p=>p[1]));
+  const zf=Math.max(3,Math.min(ph==='landed'?10:9.5,Math.log2(Math.min(W*.7/Math.max(x1-x0,1e-6),H*.7/Math.max(y1-y0,1e-6))))),z=Math.floor(zf),k=2**(zf-z),n=2**z;
+  const cx=(x0+x1)/2*n,cy=(y0+y1)/2*n,Wz=W/k,Hz=H/k,ox=cx-Wz/2,oy=cy-Hz/2;let h='',r='';
+  el.style.width=Wz+'px';el.style.height=Hz+'px';el.style.transform=`scale(${k})`;
+  for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+Wz)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+Hz)/256);ty++){if(ty<0||ty>=n)continue;const X=((tx%n)+n)%n,s=`left:${(tx*256-ox).toFixed(1)}px;top:${(ty*256-oy).toFixed(1)}px`;
+    h+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${ty}/${X}" style="${s}" alt="" onerror="this.remove()">`;
+    r+=`<img class="ref" src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/${z}/${ty}/${X}" style="${s}" alt="" onerror="this.remove()">`}
+  el.innerHTML=h+r;TRIP.view={z,k,ox,oy,W,H};TRIP.viewAt=Date.now();
+  const c=$('tpCan'),d=devicePixelRatio||1;c.width=W*d;c.height=H*d;TRIP.ctx=c.getContext('2d');TRIP.ctx.setTransform(d,0,0,d,0,0)}
+const tripPx=(la,lo)=>{const V=TRIP.view,n=256*2**V.z,s=Math.sin(la*Math.PI/180);return [((lo+180)/360*n-V.ox)*V.k,((.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n-V.oy)*V.k]};
+const tripDR=(p,t0,now)=>{const dt=Math.min(45,(now-t0)/1000),v=(p.kt||0)*1.852/3600*dt,h=(p.trk||0)*Math.PI/180,la=p.lat+v*Math.cos(h)/111.2;return [la,p.lon+v*Math.sin(h)/(111.2*Math.cos(la*Math.PI/180))]};
+function tripPlane(c,x,y,trk,sc,col,glow){c.save();c.translate(x,y);c.rotate((trk||0)*Math.PI/180);c.scale(sc,sc);c.fillStyle=col;if(glow){c.shadowColor=glow;c.shadowBlur=18}c.beginPath();
+  c.moveTo(0,-11);c.lineTo(2,-4);c.lineTo(10,1);c.lineTo(10,3);c.lineTo(2,1);c.lineTo(1.5,7);c.lineTo(4,9);c.lineTo(4,10.5);c.lineTo(0,9.5);c.lineTo(-4,10.5);c.lineTo(-4,9);c.lineTo(-1.5,7);c.lineTo(-2,1);c.lineTo(-10,3);c.lineTo(-10,1);c.lineTo(-2,-4);c.closePath();c.fill();c.restore()}
+function tripLoop(t){const pg=$('pTrip');if(!pg||!pg.classList.contains('on')||!TRIP.view||!TRIP.ctx){TRIP.raf=0;return}TRIP.raf=requestAnimationFrame(tripLoop);
+  if(t-(TRIP.lt||0)<50)return;TRIP.lt=t;const f=tripActive();if(!f)return;const c=TRIP.ctx,V=TRIP.view,now=Date.now(),L=TRIP.live[f.key]||{},ph=tripPhase(f);
+  if(now-TRIP.viewAt>60000){tripMap();return}
+  c.clearRect(0,0,V.W,V.H);
+  /* planned route (great circle), dotted */
+  c.save();c.setLineDash([6,8]);c.strokeStyle='rgba(160,190,255,.45)';c.lineWidth=2;c.beginPath();for(let i=0;i<=48;i++){const u=i/48,la=f.A[0]+(f.B[0]-f.A[0])*u,lo=f.A[1]+(f.B[1]-f.A[1])*u,[x,y]=tripPx(la,lo);i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.restore();
+  /* traffic around them */
+  const age=L.t?now-L.t:0;(L.traffic||[]).forEach(p=>{if(p.alt===0)return;const [la,lo]=tripDR(p,L.t||now,now),[x,y]=tripPx(la,lo);if(x<-20||y<-20||x>V.W+20||y>V.H+20)return;
+    tripPlane(c,x,y,p.trk,.95,'rgba(170,185,215,.55)')});
+  /* where they've been */
+  const me=L.me&&ph==='air'?tripDR(L.me,L.t||now,now):null;
+  if(L.trail&&L.trail.length){c.save();c.strokeStyle='#7fb2ff';c.lineWidth=4;c.shadowColor='#7fb2ff';c.shadowBlur=10;c.beginPath();{const [x,y]=tripPx(f.A[0],f.A[1]);c.moveTo(x,y)}L.trail.forEach(([la,lo])=>{const [x,y]=tripPx(la,lo);c.lineTo(x,y)});if(me){const [x,y]=tripPx(me[0],me[1]);c.lineTo(x,y)}c.stroke();c.restore()}
+  /* airports */
+  [[f.A,f.from,'#5dcaa5'],[f.B,f.to,'#ffb27a']].forEach(([a,code,col])=>{const [x,y]=tripPx(a[0],a[1]);c.fillStyle=col;c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(x,y,7,0,Math.PI*2);c.fill();c.stroke();
+    c.font='700 17px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText(code,x,y+27);c.shadowBlur=0});
+  /* them */
+  if(me){const [x,y]=tripPx(me[0],me[1]),pulse=.5+.5*Math.sin(now/400);c.save();c.strokeStyle=`rgba(127,178,255,${.25+.35*pulse})`;c.lineWidth=3;c.beginPath();c.arc(x,y,24+pulse*8,0,Math.PI*2);c.stroke();c.restore();
+    tripPlane(c,x,y,L.me.trk,2.1,'#ffffff','#7fb2ff');c.save();c.font='800 19px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=6;
+    c.fillText(f.who,x+30,y-6);c.font='600 15px -apple-system,Helvetica,Arial';c.fillStyle='#a9c8ff';c.fillText(f.no.slice(0,2)+' '+f.no.slice(2)+(age>90000?' · signal '+Math.round(age/60000)+' min old':''),x+30,y+14);c.restore()}}
+addEventListener('resize',()=>{if($('pTrip')&&$('pTrip').classList.contains('on'))renderTrip()});
 /* ================= Cooking: ideas from what's in the kitchen, recipes, grocery list, step by step =================
    "dinner ideas" / "what can I make with chicken and rice" / "how do I make fajitas" / "the second one" / "start cooking" /
    "next" / "go back" / "set a timer" / "read the ingredients" / "done cooking". Kitchen: "we're out of rice", "I bought chicken". */
@@ -3700,6 +3850,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   const has=re=>re.test(t);
   {const r=cookCmd(t);if(r===true)return;if(r){if(COOK.on)return cookSay(r);return reply(r)}
    if(COOK.on&&(!/^\s*(hey |ok |okay |hi )?nova\b/i.test(String(raw||''))||!/^(what|whats|what's|how|hows|how's|why|when|where|which|who|can|could|should|is|are|do|does|will|would|tell me)\b/.test(t)))cookClose()}
+  if(tripOn()&&/\b(flights?|fly|flying|plane|land|landed|landing|take ?off|took off|trip|in the air)\b/.test(t)){const words=[...new Set((CFG.trips||[]).flatMap(T=>String((T.who||'')+' '+(T.say||'')).toLowerCase().split(/[^a-z]+/)).filter(w=>w.length>2&&w!=='and'))];
+    if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0];if(f){if(tripShow())showFor('trip');return reply(tripSay(f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
   /* Apple Music on the MacBook: playlists and play/pause/skip (the Nova Music helper there picks these up) */
   {const mc=c=>{const T=SECRETS.topic;if(!T)return false;nbPub(`${T}-mcmd`,c).catch(()=>{});return true};
@@ -4560,6 +4712,11 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   sg(()=>{const L=countdownList().filter(c=>daysUntil(c.date)>=0).slice(0,3);if(!L.length)return;const d0=daysUntil(L[0].date),ds=d=>d===0?'today':d===1?'tomorrow':`in ${d} days`;
     return {key:'cd',tag:'SOON',title:'Countdown',kicker:'Countdowns',value:String(d0),unit:d0===1?'Day':'Days',big:`${L[0].emoji||''} ${L[0].name} ${d0===0?'is today!':ds(d0)}`,gauge:Math.max(.03,1-d0/100),color:C.gold,
       lines:L.slice(1).map(c=>`${c.emoji||'⭐'} <b>${esc(c.name)}</b> · ${ds(daysUntil(c.date))}`),say:`${L[0].name} is ${ds(d0)}.${L[1]?` ${L[1].name} is ${ds(daysUntil(L[1].date))}.`:''}`}});
+  /* family flight: in the next 3 days, or happening now */
+  sg(()=>{if(!tripOn())return;const f=tripActive()||tripNext().find(x=>x.dep-Date.now()<3*864e5);if(!f)return;const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),k=Math.max(0,Math.round((new Date(f.dep).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5));
+    return {key:'trip',tag:'TRIP',title:'Flight',kicker:f.who+"'s trip",value:ph==='air'?String(Math.max(1,Math.round(((L.eta||f.arr)-now)/60000))):String(k),unit:ph==='air'?'Min to land':ph==='landed'?'Landed':k===1?'Day':'Days',
+      big:`${f.A[2]} → ${f.B[2]}`,gauge:ph==='air'&&L.flown!=null?L.flown/(L.flown+L.rem):ph==='landed'?1:Math.max(.05,1-k/7),color:'#7fb2ff',
+      lines:[`<b>${esc(f.no.slice(0,2)+' '+f.no.slice(2))}</b> · departs ${tripT(f.dep)}`,`Lands ${f.guess&&ph!=='air'?'about ':''}<b>${tripT(L.eta||f.arr)}</b>`],say:tripSay(f)}});
   /* 11. systems */
   sg(()=>{const L=healthList(),bad=L.filter(x=>!x.ok),ok=L.length-bad.length;const net=TS&&TS.machines&&Object.values(TS.machines).find(m=>m.speeds&&m.speeds.length);const sp=net&&net.speeds[net.speeds.length-1];
     return {key:'sys',tag:'SYS',title:'Systems',kicker:'Systems check',value:`${ok}/${L.length}`,unit:bad.length?'Need a look':'Online',big:bad.length?`${bad.length} need${bad.length===1?'s':''} a look`:'All systems nominal',gauge:L.length?ok/L.length:1,color:bad.length?C.pink:'#7ee0a8',
@@ -6394,7 +6551,7 @@ function rdLoop(t){
     c.moveTo(0,-11);c.lineTo(2,-4);c.lineTo(10,1);c.lineTo(10,3);c.lineTo(2,1);c.lineTo(1.5,7);c.lineTo(4,9);c.lineTo(4,10.5);c.lineTo(0,9.5);c.lineTo(-4,10.5);c.lineTo(-4,9);c.lineTo(-1.5,7);c.lineTo(-2,1);c.lineTo(-10,3);c.lineTo(-10,1);c.lineTo(-2,-4);c.closePath();c.fill();
     c.restore();
     c.save();c.globalAlpha=fade*(.75+hit*.25);c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=4;
-    c.fillText(o.p.cs||o.p.reg||'',px+15,py-4);c.font='600 13px -apple-system,Helvetica,Arial';c.fillStyle=col;
+    {const nm=tripName(o.p.cs);c.fillText((nm?nm+' · ':'')+(o.p.cs||o.p.reg||''),px+15,py-4)}c.font='600 13px -apple-system,Helvetica,Arial';c.fillStyle=col;
     c.fillText([o.p.alt!=null?Math.round(o.p.alt/100)*100>=18000?'FL'+Math.round(o.p.alt/100):Number(o.p.alt).toLocaleString()+' ft':'',o.p.to&&o.p.to.code?'→ '+o.p.to.code:''].filter(Boolean).join(' '),px+15,py+13);c.restore()});
   const cn=$('rdCount');if(cn&&cn.textContent!==String(n))cn.textContent=n;
 }
@@ -6414,7 +6571,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 170';
+document.getElementById('ver').textContent='build nova 171';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
