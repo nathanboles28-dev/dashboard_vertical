@@ -3549,7 +3549,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('House',()=>CFG.home&&CFG.home.on?hmSay():'');
   add('Devices you can control',()=>CFG.home&&CFG.home.on&&HM.devs.length?HM.devs.map(d=>`${d.name} (${hmKind(d)}${d.reach?'':', unreachable'}): ${d.on?'on'+(d.bri!=null?' '+d.bri+'%':''):'off'}`).join('\n')+
     `\nScenes: ${(CFG.home.scenes||[]).map(s=>s.name).join(', ')||'none'}\nTO CONTROL THEM: when asked to change a device, add tags at the very end of your answer, one per change, exactly like [[on:Device Name]] [[off:Device Name]] [[bri:Device Name:40]] [[scene:Scene Name]]. Use the exact names above. Say briefly what you did.`:'');
-  add('Music control',()=>'Apple Music plays on the MacBook. To play a playlist add [[playlist:Name]]; for playback add [[music:pause]], [[music:play]], [[music:next]] or [[music:previous]] at the end of your answer.');
+  add('Music control',()=>'Apple Music plays on the MacBook, and you can play ANY song, artist or album (their library first, then all of Apple Music). To play a song add [[song:Song Artist]], an album [[album:Album Artist]], an artist shuffled [[shuffle:Artist]], a playlist [[playlist:Name]]; for playback [[music:pause]], [[music:play]], [[music:next]] or [[music:previous]]. Put the tag at the end of your answer.');
   add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
   add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
   add('Sky',()=>skyOn()?skySay():'');
@@ -3569,9 +3569,10 @@ async function askNova(q){if(aiBusy)return;aiBusy=true;nsCount('asks');wakeScree
     const j=await r.json().catch(()=>({}));a=j.answer||'';if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":/credit|balance|billing/i.test(j.error||'')?"I'm out of AI credits. Top up in the Anthropic console and I'll be back.":"Sorry, I couldn't reach my brain just now."}}
   catch(e){a="Sorry, I couldn't reach my brain just now."}
   /* run any house actions Claude asked for, and keep the tags out of what's said */
-  try{const acts=[...a.matchAll(/\[\[(on|off|bri|scene|playlist|music):([^\]:]+)(?::(\d{1,3}))?\]\]/gi)];
+  try{const acts=[...a.matchAll(/\[\[(on|off|bri|scene|playlist|music|song|album|shuffle):([^\]:]+)(?::(\d{1,3}))?\]\]/gi)];
     if(acts.length)acts.forEach(([,k,n,v])=>{k=k.toLowerCase();n=n.trim();
       if(k==='scene'){const i=(CFG.home.scenes||[]).findIndex(s=>s.name.toLowerCase()===n.toLowerCase());if(i>=0)hmScene(i)}
+      else if(k==='song'||k==='album'||k==='shuffle'){if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,k+'|'+n.replace(/[|]/g,' ').slice(0,80)).catch(()=>{})}
       else if(k==='playlist'||k==='music'){if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,k==='playlist'?'playlist|'+n.replace(/[^a-z0-9 '&-]/gi,''):n.toLowerCase()+'|').catch(()=>{})}
       else{const d=HM.devs.find(x=>x.name.toLowerCase()===n.toLowerCase());if(d)hmSet(d.name,k==='bri'?{on:true,bri:Math.max(1,Math.min(100,+v||50))}:{on:k==='on'})}});
     a=a.replace(/\s*\[\[[^\]]*\]\]/g,'').trim()}catch(e){}
@@ -4042,11 +4043,12 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
      const vm=t.match(/\bvolume (?:to |at )?(\d{1,3})\b/);if(vm&&mc('volume|'+vm[1]))return reply(`Music volume ${vm[1]}.`);
      if(/\b(turn|crank) (it |the music )?up\b|\blouder\b/.test(t)&&mc('up|'))return reply('Turning it up.');
      if(/\b(turn) (it |the music )?down\b|\bquieter\b/.test(t)&&mc('down|'))return reply('Turning it down.');}}
-  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
+  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|needaccess|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
     if(mr[1]==='ok'){if(kind==='playlist'){toast('🎵 <b>Playing</b>'+esc(lab));return}return reply(`Playing ${lab}.`)}
     if(mr[1]==='notfound')return reply(kind==='playlist'?`I couldn't find a playlist called ${q} on the MacBook.`:`I couldn't find ${q} on Apple Music.`);
     if(mr[1]==='notplayed')return reply(`I opened ${q} in Music on the MacBook, but couldn't start it playing. Hit play there.`);
-    return reply("The MacBook couldn't start that.")}}
+    if(mr[1]==='needaccess')return reply(`I opened ${q} in Music, but the MacBook won't let me press play yet. Turn on Nova Music in Privacy and Security, under Accessibility.`);
+    if(lab)console.warn('music error:',lab);return reply(`The MacBook couldn't start that.${lab?' It said: '+lab.replace(/^\d+:\d+: /,'').slice(0,90):''}`)}}
   if(CFG.home&&CFG.home.on){
     if(has(/\b(smart home|my devices|devices|my lights|the lights)\b/)&&!/\b(on|off)\b/.test(t)){showFor('home');return reply(hmSay())}
     const sc=(CFG.home.scenes||[]).findIndex(s=>new RegExp('\\b'+s.name.toLowerCase()+'\\b').test(t));
@@ -5943,7 +5945,7 @@ function voiceRun(cmd){const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clear
   if(fol&&COOK.offer&&/^(no|nope|nah)\b/i.test(cmd)){COOK.offer=null;if(COOK.on){cookSay("No problem. Say start cooking when you're ready.",false);return}}
   if(fol){if(!cmd||/^(no|nope|nah|that'?s (it|all|good)|never ?mind|thanks|thank you|cheers|goodbye|bye|stop|cancel|all good|i'?m good)\b/i.test(cmd)){VOICE.convo=null;if(cmd)voiceChime(false);return}
     VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();
-    return (COOK.on||COOK.offer||/^(show|turn|switch|dim|set|open|play|pause|skip|next|start|stop|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
+    return (COOK.on||COOK.offer||/^(?:(?:can|could|would|will) you |please )?(show|turn|switch|dim|set|open|play|put on|throw on|shuffle|pause|skip|next|start|stop|resume|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
   if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
   VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
 function voiceFlash(){const E=$('vEdge');if(!E)return;E.classList.add('go');clearTimeout(E._t);E._t=setTimeout(()=>E.classList.remove('go'),1400)}
@@ -6766,7 +6768,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 176';
+document.getElementById('ver').textContent='build nova 177';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
