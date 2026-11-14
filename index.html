@@ -2073,7 +2073,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
-  macVoice:{on:true, voice:'auto', rate:165},   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
+  macVoice:{on:true, voice:'auto', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
   roundup:{on:true, music:true, musicVol:0.19, song:'roundup.mp3', songStart:30, songVol:0.1, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
@@ -2412,7 +2412,7 @@ async function sports(){
       if(side){const mine=(r.L.fav||[]).includes(side==='A'?g.A:g.H);goalAlert(key,side==='A'?(g.fA||g.nA):(g.fH||g.nH),mine);if(mine)celebrate(r.L,g,side)}}
     prevScore[key]=sc;
   }));
-  fav.sort((a,b)=>b.f-a.f);favGames=fav;renderLive();
+  fav.sort((a,b)=>b.f-a.f);favGames=fav;window.LGRAW=res;renderLive();
   const rank={in:0,pre:1,post:2};
   lgData=res.map(({L,games,failed,msg})=>{
     let list=games.slice();
@@ -3377,10 +3377,12 @@ async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=C
   if(!force&&MV.ok!==null&&Date.now()-MV.at<300000)return MV.ok;MV.at=Date.now();
   try{const j=await (await tfetch(H+'/voices',4000)).json();const vs=(j.voices||[]).filter(v=>/^en/i.test(v.lang)),ca=v=>/CA|US/i.test(v.lang)?1:0;
     const want=C.voice&&C.voice!=='auto'?vs.find(v=>v.name.toLowerCase()===String(C.voice).toLowerCase()):null;
-    MV.voice=want||vs.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||vs.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||null;MV.ok=!!MV.voice}
+    const apple=vs.filter(v=>!/^kokoro:/.test(v.name)),ko=vs.filter(v=>/^kokoro:/.test(v.name)),kw='kokoro:'+(C.kokoro||'af_heart');
+    MV.fallback=(apple.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||apple.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||{}).name||'';
+    MV.voice=want||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice}
   catch(e){MV.ok=false}return MV.ok}
 async function macSay(text,rate){if(!await mvCheck())return false;window._macSpeaking=Date.now();
-  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();return !!j.ok}
+  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();return !!j.ok}
   catch(e){MV.ok=null;return false}finally{window._macSpeaking=0}}
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
 window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
@@ -3586,7 +3588,7 @@ function handleCommand(raw){
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
-  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
+  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
   if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
   /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
   if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
@@ -4333,7 +4335,19 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   const recent=L0=>{if(!L0)return false;const d=Date.parse(L0.date||L0.start||'');if(isNaN(d))return false;
     /* dates without a time are the game day: count it from 10 PM that night */
     const end=/T\d/.test(String(L0.date||L0.start))?d+3*3600e3:new Date(new Date(d).toISOString().slice(0,10)+'T22:00:00').getTime();return Date.now()-end<20*3600e3};
-  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;const L00=X.last,n0=(X.next||[])[0],L0=recent(L00)?L00:null;if(!L0&&!n0)return;const L=L0&&{...L0,opp:tn(X,L0.opp)},nx=n0&&{...n0,opp:tn(X,n0.opp)};if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
+  /* tonight's game from the live scoreboard: in progress, or finished before the team page catches up */
+  const sbFor=ab=>{if(!ab)return null;ab=String(ab).toUpperCase();for(const r of (window.LGRAW||[]))for(const g of (r.games||[])){if(g.A===ab||g.H===ab){const d=g.date instanceof Date?g.date:new Date(g.date);
+      if(Math.abs(Date.now()-d)<14*3600e3&&(g.state==='in'||g.state==='post'))return {g,us:g.A===ab?'A':'H'}}}return null};
+  const perSay=d=>{d=String(d||'');if(/int/i.test(d))return 'at intermission';if(/\bSO\b/i.test(d))return 'in a shootout';if(/\bOT\b/i.test(d))return 'in overtime';const m=d.match(/\b([1-5])(st|nd|rd|th)\b/i);return m?'in the '+['first','second','third','fourth','fifth'][+m[1]-1]:''};
+  const team=(key,tag,name,X,color)=>sg(()=>{if(!X)return;
+    const SB=sbFor(X.team||key),G=SB&&SB.g,oppAb=G?(SB.us==='A'?G.H:G.A):'',oppNm=G?((SB.us==='A'?(G.fH||G.nH):(G.fA||G.nA))||tn(X,oppAb)||oppAb):'';
+    if(G&&G.state==='in'){const us=+(SB.us==='A'?G.sA:G.sH)||0,them=+(SB.us==='A'?G.sH:G.sA)||0,d=us-them,pr=perSay(G.det);
+      return {key,tag,title:name,kicker:name+' // live',value:`${us}-${them}`,unit:G.det||'Live',big:`${name} ${us} · ${oppNm} ${them}`,gauge:Math.max(.05,Math.min(.95,.5+d*.15)),color,lines:[`<b>Live</b> · ${esc(G.det||'')}`],
+        say:d===0?`The ${name} and the ${oppNm} are tied at ${nw(us)}${pr?', '+pr:''}.`:`The ${name} are ${d>0?'up':'down'} ${nw(Math.max(us,them))} to ${nw(Math.min(us,them))} ${d>0?'on':'to'} the ${oppNm}${pr?', '+pr:''}.`}}
+    let L00=X.last;if(G&&G.state==='post'){const us=+(SB.us==='A'?G.sA:G.sH)||0,them=+(SB.us==='A'?G.sH:G.sA)||0,ld=L00&&Date.parse(L00.date||L00.start||'');
+      if(!ld||Date.now()-ld>12*3600e3)L00={res:us>them?'W':'L',us,them,opp:oppNm||oppAb,home:SB.us==='H',date:new Date().toISOString(),ot:/OT|SO/i.test(G.det||''),so:/SO/i.test(G.det||'')}}
+    /* never "they play tonight at 7" once that game has started */
+    const n0=(X.next||[]).find(n=>!n.start||Date.parse(n.start)>Date.now()-(G?0:15*60000)&&!(G&&Math.abs(Date.parse(n.start)-(G.date instanceof Date?G.date:new Date(G.date)))<6*3600e3)),L0=recent(L00)?L00:null;if(!L0&&!n0)return;const L=L0&&{...L0,opp:tn(X,L0.opp)},nx=n0&&{...n0,opp:tn(X,n0.opp)};if(segs.some(s=>s.key==='live')&&nx&&nx.live)return;
     const res=L?(L.res==='W'?'W':'L'):'',sc=L?`${Math.max(L.us,L.them)}–${Math.min(L.us,L.them)}`:'';
     if(Q){if(!nx)return;const d=new Date(nx.start);return {key,tag,title:name,kicker:name,value:nx.home?'VS':'AT',unit:nx.opp,big:`${name} ${dayS(d)} ${nx.home?'vs':'at'} ${nx.opp}`,gauge:.5,color,lines:[],say:`The ${name} play ${dayS(d)} ${nx.home?'against':'at'} ${nx.opp}, ${fmt(d)}.`}}
     let say='';if(L)say=`The ${name} ${L.res==='W'?'beat':'lost to'} the ${L.opp} ${Math.max(L.us,L.them)} to ${Math.min(L.us,L.them)}${L.ot?(L.so?' in a shootout':' in overtime'):''}.`;
@@ -4371,11 +4385,11 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     const say=[res?`${nm}continue watching ${res.title}${ep?`, you're on season ${nw(+ep[1])}, episode ${nw(+ep[2])}`:''}${res.pct>=5&&res.pct<=95?`, ${res.pct>=60?'most of the way through':res.pct>=35?'about halfway through':'just getting into it'}`:''}.`
         :lat?`${nm}continue watching ${lat.title}${lat.on?`, you're on season ${nw(+lat.on.s)}, episode ${nw(+lat.on.e)}`:lat.type==='Series'?", there's more waiting when you're ready":''}.`:'',
       wk.length?`${wk.length===1?'One new movie':wk.length+' new movies'} on Jellyfin this week, including ${andJ(wk.slice(0,2).map(x=>x.title))}.`:'',
-      st.length?`${st.length} ${st.length===1?'person is':'people are'} watching right now.`:''].filter(Boolean).join(' ');
-    const big=res?`Continue: ${res.title}`:lat?`Continue: ${lat.title}${lat.on?` · S${lat.on.s} E${lat.on.e}`:''}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st.length} watching now`;
+      st.length?andJ(st.map(x=>`${x.user||'Someone'} is ${x.paused?'paused on':'watching'} ${x.type==='Episode'&&x.series?x.series:x.title}`)).replace(/^./,c=>c.toUpperCase())+' right now.':''].filter(Boolean).join(' ');
+    const big=res?`Continue: ${res.title}`:lat?`Continue: ${lat.title}${lat.on?` · S${lat.on.s} E${lat.on.e}`:''}`:wk.length?`${wk[0].title}${wk.length>1?' + '+(wk.length-1)+' more':''}`:`${st[0].user||'Someone'} · ${st[0].type==='Episode'&&st[0].series?st[0].series:st[0].title}`;
     return {key:'jf',tag:'JF',title:'Jellyfin',kicker:res||lat?'Jellyfin // Pick up where you left off':'Jellyfin // This week',value:res?(res.pct||0)+'%':String(wk.length),unit:res?'Watched':wk.length===1?'New movie':'New movies',big,
       gauge:res?Math.max(.05,(res.pct||0)/100):Math.min(1,wk.length/8),color:C.pink,
-      lines:[res?`<b>${esc(res.title)}</b> · ${esc(res.sub||'')}`:'',wk.length?'New: '+wk.slice(0,3).map(x=>`<b>${esc(x.title)}</b>`).join(', '):'',st.length?`<b>${st.length}</b> watching right now`:''].filter(Boolean),say}});
+      lines:[res?`<b>${esc(res.title)}</b> · ${esc(res.sub||'')}`:'',wk.length?'New: '+wk.slice(0,3).map(x=>`<b>${esc(x.title)}</b>`).join(', '):'',st.length?st.map(x=>`<b>${esc(x.user||'Someone')}</b> · ${esc(x.type==='Episode'&&x.series?x.series:x.title)}`).join('<br>'):''].filter(Boolean),say}});
   /* 10. countdowns */
   sg(()=>{const L=countdownList().filter(c=>daysUntil(c.date)>=0).slice(0,3);if(!L.length)return;const d0=daysUntil(L[0].date),ds=d=>d===0?'today':d===1?'tomorrow':`in ${d} days`;
     return {key:'cd',tag:'SOON',title:'Countdown',kicker:'Countdowns',value:String(d0),unit:d0===1?'Day':'Days',big:`${L[0].emoji||''} ${L[0].name} ${d0===0?'is today!':ds(d0)}`,gauge:Math.max(.03,1-d0/100),color:C.gold,
@@ -6211,7 +6225,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 151';
+document.getElementById('ver').textContent='build nova 153';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
