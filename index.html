@@ -2069,7 +2069,7 @@ const CFG={
   extras:{aqua:{on:false, holdMins:30}, car:{on:false, holdSecs:120}},   // on:true to bring them back (and re-add the remote buttons)
   car:{name:'Car'},
   // Spotlight card on the home page: on this day, did you know, picture of the day and trivia (answer shows after answerSecs)
-  spotlight:{on:true, secs:25, answerSecs:12, trivia:[21,9,22,17,11]},
+  spotlight:{on:true, secs:25, answerSecs:12, only:'trivia', trivia:[21,9,22,17,11]},
   ticker:{on:true, speed:70},
   watch:{on:true, users:[], library:'Movies'},
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
@@ -6011,7 +6011,7 @@ async function loadSpotlight(){
   /* trivia, a fresh batch every hour: sports, general knowledge, geography, science, movies */
   if(Date.now()-SP.tAt>3600e3||!SP.tq.length){
     try{const cats=(CFG.spotlight&&CFG.spotlight.trivia)||[21,9,22,17,11];const c=cats[Math.floor(Math.random()*cats.length)];
-      const j=await (await tfetch(`https://opentdb.com/api.php?amount=8&type=multiple&category=${c}`,12000)).json();
+      const j=await (await tfetch(`https://opentdb.com/api.php?amount=20&type=multiple&category=${c}`,12000)).json();
       SP.tq=(j.results||[]).map(q=>{const a=[...q.incorrect_answers,q.correct_answer].map(spDecode).sort(()=>Math.random()-.5);return {k:'trivia',tag:`❓ Trivia · ${spDecode(q.category).replace(/^Entertainment: /,'').replace(/^Science & /,'')}`,text:spDecode(q.question),opts:a,ans:spDecode(q.correct_answer)}});SP.tAt=Date.now();
     }catch(e){SP.tAt=Date.now()-3000e3}
   }
@@ -6024,6 +6024,8 @@ async function loadSpotlight(){
 }
 function spNext(){
   const pool=[];const tq=SP.tq.slice();let ti=0;
+  /* trivia only (the history facts come back only if trivia can't load) */
+  if((CFG.spotlight||{}).only==='trivia'&&tq.length){SP.idx=(SP.idx+1)%tq.length;return tq[SP.idx]}
   /* every other card is a trivia question when we have them */
   SP.items.forEach((x,i)=>{pool.push(x);if(i%2===1&&tq[ti])pool.push(tq[ti++])});
   if(!pool.length&&tq.length)pool.push(...tq);
@@ -6408,7 +6410,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 167';
+document.getElementById('ver').textContent='build nova 168';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
