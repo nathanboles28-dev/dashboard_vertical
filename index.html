@@ -2004,9 +2004,9 @@ const CFG={
     // your day
     {type:'dashboard', secs:30},
     {type:'np',        secs:25},
-    {type:'trip',      secs:30},   // family flights: the week before (countdown) and live while they fly (set in your relay)   // Now playing: only while Apple Music is playing on the Macbook
     {type:'forecast',  secs:20},
     {type:'coming',    secs:25},
+    {type:'trip',      secs:30},   // family flights: the week before (countdown) and live while they fly (set in your relay)   // Now playing: only while Apple Music is playing on the Macbook
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
     {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
@@ -6594,7 +6594,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 173';
+document.getElementById('ver').textContent='build nova 174';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
