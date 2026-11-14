@@ -2001,7 +2001,7 @@ const CFG={
   // Headlines through the relay (Google News): [tag, search, words the headline must have, optional months it's shown (0=Jan)]
   newsFeed:{days:3, localDays:5, rich:true,
     team:[['LEAFS','"Maple Leafs"','leafs|toronto'],['KNIGHTS','"London Knights"','knights'],['JAYS','"Blue Jays"','jays',[1,9]]],
-    local:[['WOODSTOCK','Woodstock Ontario','woodstock'],['OXFORD','"Oxford County" Ontario',''],['INGERSOLL','Ingersoll Ontario','ingersoll'],['LONDON','"London, Ont" OR "London Ontario" OR "London police"','london']]},
+    local:[['WOODSTOCK','Woodstock Ontario','woodstock'],['WOODSTOCK','"Sentinel-Review" OR "Woodstock Police Service" OR "Oxford OPP"',''],['OXFORD','"Oxford County" Ontario',''],['INGERSOLL','Ingersoll Ontario','ingersoll'],['LONDON','"London, Ont" OR "London Ontario" OR "London police"','london']]},
   news:{
     teams:[
       {name:'Leafs',     tag:'LEAFS',   espn:'hockey/nhl',   team:'tor', words:['Leafs','Maple Leafs']},
@@ -2915,11 +2915,19 @@ const notOntario=/woodstock,? (n\.?y|ga|ill|vt|va|nb|new brunswick|georgia|illin
 const ukLondon=/\b(metropolitan police|met police|scotland yard|british|britain|england|u\.?k\.?|westminster|sadiq khan|nhs|heathrow|gatwick|tube|premier league|chelsea|arsenal|tottenham|west ham|downing street|buckingham|thames valley|scotland|wales|bbc)\b/i;
 const londonOnt=n=>{const x=`${n.t} ${n.d||''}`,src=String(n.src||'');if(ukLondon.test(x))return false;
   return /free press|ctv|cbc|cfpl|global news|blackburn|london ontario|lfpress|gazette|londoner|insidelondon|970|980/i.test(src)||/\b(ontario|ont\.|western university|western mustangs|fanshawe|middlesex|richmond st|dundas st|wellington rd|oxford st|masonville|white oaks|byron|lambeth|knights)\b/i.test(x)};
+/* never on the dash: anything about India, stock-ticker pieces, and "watch the game live" stream spam */
+const newsBlock=/\b(india|indian|mumbai|delhi|bengaluru|bangalore|kolkata|chennai|hyderabad|nse|bse|sensex|nifty|rupees?|crore|lakh)\b|₹|\bRs\.? ?\d|\(nse:|\(bse:|dividend|record date|stock price|shares (rise|fall|jump)|earnings call/i;
+const newsSpam=/\b(live ?streams?|stream(ing)? free|watch (it )?(live|online|free)|how to watch|on ?demand|tv channel|nfhs network|varsity|reddit streams?|crackstreams|buffstreams)\b|[\u{1D400}-\u{1D7FF}]|\[s\s*t\s*r\s*e\s*a\s*m|(\b\w\s){5,}/iu;
+const newsOK=n=>{const x=`${n.t||n.title||''} ${n.d||n.sum||''}`;return !newsBlock.test(x)&&!newsSpam.test(x)};
+/* local stories must clearly be Woodstock / Oxford County / Ingersoll / London, Ontario (not Woodstock, NY or Ingersoll Rand) */
+const ontCue=/\b(ontario|ont\.|oxford county|tillsonburg|norwich|zorra|tavistock|thamesford|embro|beachville|innerkip|highway 40[13]|hwy\.? 40[13]|southwestern ontario|western university|fanshawe|stratford|st\. thomas|brantford|kitchener|woodstock police service|ontario provincial police|opp|middlesex|elgin county|perth county|thames valley district|tvdsb|london knights)\b/i;
+const ontSrc=/sentinel|ingersoll times|oxford review|heart ?fm|104\.7|myfm|oxford county|tillsonburg|free press|lfpress|ctv|cbc|global news|cfpl|980|blackburn|london ontario|beacon herald|norfolk|strathroy|the londoner|insidelondon|county ?live|snapd|bounce|1069/i;
+const localOK=n=>{const x=`${n.t} ${n.d||''}`;if(!newsOK(n))return false;if(n.tag==='LONDON')return londonOnt(n);return ontSrc.test(String(n.src||''))||ontCue.test(x)};
 async function loadNewsFeed(){const F=CFG.newsFeed,K=SECRETS.calkey;if(!F||!CFG.relay||!K)return false;
   const get=async L=>{const r=await tfetch(`${CFG.relay}/newsfeed?key=${encodeURIComponent(K)}&days=${L===F.local?(F.localDays||5):(F.days||3)}${F.rich?'&rich=1':''}&f=${encodeURIComponent(nfSpec(L))}`,20000);const j=await r.json();if(j.error)throw new Error(j.error);(window.NFD=window.NFD||{})[L===F.team?'team':'local']=j.dbg||null;return j.items||[]};
   let ok=false;
-  try{const it=await get(F.team);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:n.d||'',img:n.img||''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
-  if(F.local)try{TOWN=(await get(F.local)).filter(n=>!notOntario.test(n.t)&&!(n.tag==='LONDON'&&!londonOnt(n)))}catch(e){console.warn('newsfeed local',e)}
+  try{const it=(await get(F.team)).filter(newsOK);if(it.length){newsItems=it.map(n=>({title:n.t,tag:n.tag,src:n.src,date:new Date(n.at),sum:n.d||'',img:n.img||''}));ok=true}}catch(e){console.warn('newsfeed team',e)}
+  if(F.local)try{TOWN=(await get(F.local)).filter(n=>!notOntario.test(n.t)&&localOK(n))}catch(e){console.warn('newsfeed local',e)}
   if(ok&&$('pNews').classList.contains('on'))renderNews();if($('pTown').classList.contains('on'))renderTown();
   if(Date.now()-repAt>1800000&&typeof hubOn==='function'&&hubOn()){repAt=Date.now();try{const j=await (await tfetch(`${CFG.relay}/report?key=${encodeURIComponent(K)}&team=${encodeURIComponent((CFG.hub&&CFG.hub.team)||'TOR')}`,20000)).json();if(!j.error)REP=j}catch(e){}}
   return ok}
@@ -3474,7 +3482,7 @@ setInterval(()=>{const n=$('night'),h=new Date().getHours();if(n.classList.conta
 const aiOn=()=>!!((CFG.ai||{}).on!==false&&CFG.relay&&SECRETS.calkey);
 function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f():f;if(v&&String(v).trim())L.push(`## ${k}\n${String(v).replace(/<[^>]+>/g,'').trim()}`)}catch(e){}};
   const D=n=>n.toLocaleString([],{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-  add('Conversation so far (answer follow-ups in context)',()=>VOICE.convo&&Date.now()-VOICE.convo.at<180000?VOICE.convo.turns.map(x=>`Nathan: ${x.q}\nNova: ${x.a}`).join('\n'):'');
+  add('Conversation so far (answer follow-ups in context)',()=>VOICE.convo&&Date.now()-VOICE.convo.at<180000?VOICE.convo.turns.map(x=>`${(CFG.roundup||{}).name||"You"}: ${x.q}\nNova: ${x.a}`).join('\n'):'');
   add('Weather now',()=>wxSay());add('Weather tomorrow',()=>wxSay(true));
   add('Hourly (next 12 h)',()=>{const H=WXD&&WXD.hr;if(!H||!H.time)return '';const i0=H.time.findIndex(t=>Date.parse(t)>=Date.now()-36e5);return H.time.slice(i0,i0+12).map((t,i)=>`${new Date(t).getHours()}:00 ${Math.round(H.temperature_2m[i0+i])}° ${(WXT[H.weather_code[i0+i]]||'').toLowerCase()} ${H.precipitation_probability?H.precipitation_probability[i0+i]+'% precip':''}`).join('; ')});
   add('7-day',()=>{const d=WXD&&WXD.dl;if(!d)return '';return d.time.slice(0,7).map((t,i)=>`${new Date(t+'T12:00').toLocaleDateString([],{weekday:'short'})} ${Math.round(d.temperature_2m_max[i])}/${Math.round(d.temperature_2m_min[i])} ${(WXT[d.weather_code[i]]||'').toLowerCase()} ${(d.precipitation_probability_max||[])[i]||0}%`).join('; ')});
@@ -6279,7 +6287,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 161';
+document.getElementById('ver').textContent='build nova 162';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
