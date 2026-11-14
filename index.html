@@ -321,7 +321,7 @@ body.aqua #pglow{display:none}
 .cev{display:grid;grid-template-columns:calc(17*var(--u)) minmax(0,1fr);gap:calc(2*var(--u));align-items:baseline;padding:calc(1.5*var(--u)) 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .cev:last-child{border:0}
 .cev span{font-size:calc(2.5*var(--u));color:var(--dim);font-variant-numeric:tabular-nums}
-.cev b{font-size:calc(3*var(--u));font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cev b{font-size:calc(2.4*var(--u));font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cev small{display:block;font-size:calc(2.1*var(--u));color:var(--dim);margin-top:calc(.3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cday{font-size:calc(2*var(--u));font-weight:600;letter-spacing:.06em;color:var(--dim);text-transform:uppercase;margin:calc(2*var(--u)) 0 calc(.4*var(--u))}
 .cday:first-of-type{margin-top:0}
@@ -1735,7 +1735,7 @@ html.nv2 .n2tl .cev::before{content:'';position:absolute;left:calc(1.15*var(--u)
 html.nv2 .n2tl .cev::after{content:'';position:absolute;left:calc(.5*var(--u));top:50%;width:calc(1.5*var(--u));height:calc(1.5*var(--u));margin-top:calc(-.75*var(--u));border-radius:50%;background:#07060f;border:3px solid var(--ec,#3ec7ff);box-shadow:0 0 calc(1.3*var(--u)) var(--ec,#3ec7ff)}
 html.nv2 .n2tl .cev.tdy{--ec:#ff9a3c}html.nv2 .n2tl .cev.tdy>span{color:#ffb878}
 html.nv2 .n2tl .cev>span{font-size:calc(2.3*var(--u));color:#9c99bd}
-html.nv2 .n2tl .cev b{font-size:calc(3*var(--u));font-weight:600}
+html.nv2 .n2tl .cev b{font-size:calc(2.4*var(--u));font-weight:600}
 html.nv2 .n2tag{font:600 calc(1.4*var(--u)) var(--mono);letter-spacing:.12em;padding:calc(.5*var(--u)) calc(1.1*var(--u));border-radius:calc(.8*var(--u));background:rgba(255,154,60,.16);color:#ffb878;white-space:nowrap;text-transform:uppercase}
 html.nv2 .n2tag.lv{background:rgba(255,59,48,.75);color:#fff}
 html.nv2 .mgrid{font-family:var(--head)}
@@ -1831,7 +1831,8 @@ body.cooking #answer{z-index:9}body.cooking #mini{z-index:9;opacity:.85}
 .tp-cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:calc(2*var(--u));margin-top:calc(2*var(--u))}
 .tp-cells span{display:block;font-size:calc(1.9*var(--u));color:#8d96bd;letter-spacing:.06em;text-transform:uppercase}.tp-cells b{font-size:calc(3.4*var(--u));font-weight:600}
 .tp-note{font-size:calc(2.3*var(--u));color:#9aa3c7;margin-top:calc(1.4*var(--u))}
-.tp-up{position:absolute;left:4%;right:4%;top:calc(14*var(--u));display:grid;gap:calc(2.4*var(--u))}
+.tp-up{display:grid;gap:calc(2*var(--u))}
+.tp-drive{padding:calc(1.8*var(--u)) calc(3*var(--u));font-size:calc(2.6*var(--u));color:#c9cfe8;margin-top:calc(-.8*var(--u))}.tp-drive b{color:#fff}
 .tp-leg{display:flex;align-items:center;gap:calc(3*var(--u));padding:calc(3*var(--u))}
 .tp-day{display:flex;flex-direction:column;align-items:center;min-width:calc(10*var(--u))}.tp-day b{font-size:calc(2.6*var(--u));text-transform:uppercase;letter-spacing:.1em;color:#7fb2ff}.tp-day span{font-size:calc(4.4*var(--u));font-weight:700}
 .tp-rt{flex:1;min-width:0}.tp-rt b{display:block;font-size:calc(4.4*var(--u))}.tp-rt b i{font-style:normal;color:#7fb2ff}.tp-rt span{font-size:calc(2.5*var(--u));color:#9aa3c7}
@@ -3639,6 +3640,8 @@ function tripFlights(){const out=[];(CFG.trips||[]).forEach(T=>(T.flights||[]).f
 function tripPhase(f,now=Date.now()){const L=TRIP.live[f.key]||{};
   if(L.landed)return now-L.landed<45*60e3?'landed':'done';if(L.air)return now-(L.t||0)<3*36e5?'air':'done';
   if(now<f.dep-3*36e5)return 'soon';if(now<f.arr+2*36e5)return 'gate';return 'done'}
+/* "Airport Drive" (or anything with airport/Pearson) on your calendar the morning of a flight */
+function tripDrive(f){try{const d=new Date(f.dep).toDateString();return (calEvents||[]).find(e=>e.start&&e.start.toDateString()===d&&e.start<new Date(f.dep)&&/airport|pearson|\byyz\b|drop.?off/i.test((e.title||'')+' '+(e.loc||'')))||null}catch(e){return null}}
 const tripActive=()=>tripOn()?tripFlights().find(f=>/^(gate|air|landed)$/.test(tripPhase(f))):null;
 const tripNext=()=>tripOn()?tripFlights().filter(f=>tripPhase(f)==='soon'&&f.dep-Date.now()<7*864e5):[];
 const tripShow=()=>!!(tripActive()||tripNext().length);
@@ -3671,16 +3674,35 @@ function tripSay(f){f=f||tripActive()||tripNext()[0];if(!f)return "There aren't 
   if(ph==='landed')return `${f.say} landed in ${f.B[2]} at ${tripT(L.landed)}.`;
   if(ph==='gate')return now<f.dep?`${f.say}'s flight to ${f.B[2]} leaves ${f.A[2]} at ${tripT(f.dep)}${f.dep-f.sched>10*60e3?', a bit delayed':''}.`:`${f.say}'s flight was due out at ${tripT(f.dep)}. I haven't seen it take off yet.`;
   const k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
-  return `${f.say} fly to ${f.B[2]} ${k===0?'today':k===1?'tomorrow':'on '+d.toLocaleDateString([],{weekday:'long'})} at ${tripT(f.dep)}.`}
+  const dv=tripDrive(f);return `${f.say} fly to ${f.B[2]} ${k===0?'today':k===1?'tomorrow':'on '+d.toLocaleDateString([],{weekday:'long'})} at ${tripT(f.dep)}.${dv?` You're driving them, so leave at ${tripT(dv.start)}.`:''}`}
 /* ---- the page ---- */
+/* what the map shows: their flight (live) / today's same flight number (preview) / the planes around their departure airport */
+function tripScene(){const f=tripActive();
+  if(f){const L=TRIP.live[f.key]||{},ph=tripPhase(f),m=L.me&&ph==='air'?L.me:null;let fit=[[f.A[0],f.A[1]],[f.B[0],f.B[1]]];
+    if(m){fit=[[m.lat,m.lon],[f.B[0],f.B[1]]];if((L.flown||0)<250)fit.push([f.A[0],f.A[1]])}if(ph==='landed')fit=[[f.B[0]+.5,f.B[1]+.6],[f.B[0]-.5,f.B[1]-.6]];
+    return {kind:'live',f,me:m,t:L.t,trail:L.trail||[],traffic:L.traffic||[],tt:L.t,fit,label:f.who,sub:f.no.slice(0,2)+' '+f.no.slice(2),hud:'LIVE'}}
+  const n=tripNext()[0];if(!n)return null;const R=tripRegion(n);
+  return {kind:'region',f:n,me:null,traffic:(TRIP.area||{}).traffic||[],tt:(TRIP.area||{}).t,fit:R.fit,aps:R.aps,hud:'LIVE · AROUND HOME'}}
+/* home plus the airports within ~170 km of it (London, Waterloo, Hamilton, Pearson...) */
+function tripRegion(n){const H=[CFG.lat,CFG.lon],aps=Object.entries(TRIP_AP).filter(([k,a])=>gcKm(H[0],H[1],a[0],a[1])<170&&!(k==='YTZ'&&n.from!=='YTZ')).map(([k,a])=>[k,a]);
+  if(!aps.some(([k])=>k===n.from)&&gcKm(H[0],H[1],n.A[0],n.A[1])<300)aps.push([n.from,n.A]);
+  const pts=[H,...aps.map(([k,a])=>[a[0],a[1]])],la0=Math.min(...pts.map(p=>p[0])),la1=Math.max(...pts.map(p=>p[0])),lo0=Math.min(...pts.map(p=>p[1])),lo1=Math.max(...pts.map(p=>p[1]));
+  const c=[(la0+la1)/2,(lo0+lo1)/2],rad=Math.max(25,...pts.map(p=>gcKm(c[0],c[1],p[0],p[1])))*1.15;
+  return {aps,fit:[[la1+.06,lo0-.08],[la0-.06,lo1+.08]],c,nm:Math.min(150,Math.round(rad/1.852))}}
+/* the planes around home while the trip page is up (before their flight) */
+async function tripPreviewPoll(){const n=tripNext()[0];if(!n||tripActive())return;const R=tripRegion(n);
+  try{const j=await (await tfetch(relayBase()+`/area?key=${encodeURIComponent(SECRETS.calkey)}&lat=${R.c[0].toFixed(3)}&lon=${R.c[1].toFixed(3)}&nm=${R.nm}`,15000)).json();if(j.traffic)TRIP.area={traffic:j.traffic,t:Date.now()}}catch(e){}}
+setInterval(()=>{if($('pTrip')&&$('pTrip').classList.contains('on')&&!tripActive())tripPreviewPoll()},15000);
 function renderTrip(){const b=$('tpBody');if(!b)return;const f=tripActive();cancelAnimationFrame(TRIP.raf);
+  const stage=`<div class="jf-glass rd-card"><div class="rd-stage" id="tpStage"><div class="tp-tiles" id="tpTiles"></div><canvas id="tpCan"></canvas><div class="rd-hud tr"><span class="rd-dot"></span><span id="tpHud">LIVE</span></div>${tripActive()?'':'<div class="rd-key"><span><i style="background:#ffd84a"></i>&lt;10k ft</span><span><i style="background:#5ff0b0"></i>10–25k</span><span><i style="background:#8fd3ff"></i>25k+</span></div>'}</div></div>`;
   if(!f){const N=tripNext(),who=(N[0]||{}).who||'Family',L=tripFlights().filter(x=>x.who===who&&tripPhase(x)==='soon');
-    b.innerHTML=`<div class="jf-title">${esc(who)}'s trip</div><div class="tp-up">${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
+    b.innerHTML=`<div class="jf-title">${esc(who)}'s trip</div><div class="tp-wrap"><div class="tp-up">${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
       return `<div class="jf-glass tp-leg"><div class="tp-day"><b>${d.toLocaleDateString([],{weekday:'short'})}</b><span>${d.toLocaleDateString([],{month:'short',day:'numeric'})}</span></div>
         <div class="tp-rt"><b>${esc(x.A[2])} <i>→</i> ${esc(x.B[2])}</b><span>${esc(x.no.slice(0,2)+' '+x.no.slice(2))} · departs ${tripT(x.dep)} · lands ${x.guess?'about ':''}${tripT(x.arr)}</span></div>
-        <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>`}).join('')}</div>`;return}
-  b.innerHTML=`<div class="jf-title">${esc(f.who)}'s flight</div><div class="tp-wrap"><div class="jf-glass rd-card"><div class="rd-stage" id="tpStage"><div class="tp-tiles" id="tpTiles"></div><canvas id="tpCan"></canvas>
-    <div class="rd-hud tr"><span class="rd-dot"></span>LIVE</div></div></div><div class="jf-glass tp-info" id="tpInfo"></div></div>`;
+        <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>${(()=>{const e=tripDrive(x);if(!e)return '';const r=e.loc&&typeof rtGet==='function'?rtGet(e.loc):null;if(e.loc&&!r&&typeof routeTo==='function')routeTo(e.loc);
+          return `<div class="jf-glass tp-drive">🚗 <b>You're driving them</b> · leave at <b>${tripT(e.start)}</b>${r&&r.min!=null?` · ${driveTxt(r.min)} to ${esc(x.A[2])} right now`:''}</div>`})()}`}).join('')}</div>${stage}</div>`;
+    TRIP.view=null;requestAnimationFrame(()=>{tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPreviewPoll();return}
+  b.innerHTML=`<div class="jf-title">${esc(f.who)}'s flight</div><div class="tp-wrap">${stage}<div class="jf-glass tp-info" id="tpInfo"></div></div>`;
   TRIP.view=null;requestAnimationFrame(()=>{tripInfo();tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPoll(true)}
 function tripInfo(){const el=$('tpInfo'),f=tripActive();if(!el||!f)return;const ph=tripPhase(f),L=TRIP.live[f.key]||{},m=L.me||{},now=Date.now(),leg=f.leg||{};
   const big=ph==='air'?`Lands in ${tripDur((L.eta||f.arr)-now)}`:ph==='landed'?`Landed at ${tripT(L.landed)}`:now<f.dep?`Departs ${tripT(f.dep)}`:'Waiting for takeoff';
@@ -3692,44 +3714,45 @@ function tripInfo(){const el=$('tpInfo'),f=tripActive();if(!el||!f)return;const 
   el.innerHTML=`<div class="tp-k">${esc(f.no.slice(0,2)+' '+f.no.slice(2))} · ${esc(f.A[2])} → ${esc(f.B[2])}</div><div class="tp-big">${big}</div>
     <div class="tp-bar"><i style="width:${pct}%"></i><b style="left:${pct}%">✈</b></div><div class="tp-ap"><span>${f.from}</span><span>${f.to}</span></div>
     <div class="tp-cells">${cells.join('')}</div><div class="tp-note">${ph==='air'&&L.rem!=null?`${Math.round(L.rem).toLocaleString()} km to go`:ph==='gate'&&now>f.dep?'Not airborne yet. It shows up here as soon as it takes off':''}</div>`}
-/* map: fit their plane plus where it's going (both airports before takeoff), redone every minute */
-function tripMap(){const st=$('tpStage'),el=$('tpTiles'),f=tripActive();if(!st||!el||!f)return;const W=st.clientWidth,H=st.clientHeight;if(!W||!H)return;
-  const L=TRIP.live[f.key]||{},m=L.me,ph=tripPhase(f);let pts=[[f.A[0],f.A[1]],[f.B[0],f.B[1]]];
-  if(ph==='air'&&m){pts=[[m.lat,m.lon],[f.B[0],f.B[1]]];if((L.flown||0)<250)pts.push([f.A[0],f.A[1]]);if((L.rem||0)<120)pts=[[m.lat,m.lon],[f.B[0],f.B[1]]]}
-  if(ph==='landed')pts=[[f.B[0],f.B[1]]];
+/* map: fit the scene, redone every minute (or when the scene changes) */
+function tripMap(){const st=$('tpStage'),el=$('tpTiles'),S=tripScene();if(!st||!el||!S)return;const W=st.clientWidth,H=st.clientHeight;if(!W||!H)return;
   const wp0=(la,lo)=>{const s=Math.sin(la*Math.PI/180);return [(lo+180)/360*256,(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*256]};
-  const P=pts.map(p=>wp0(p[0],p[1])),x0=Math.min(...P.map(p=>p[0])),x1=Math.max(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1])),y1=Math.max(...P.map(p=>p[1]));
-  const zf=Math.max(3,Math.min(ph==='landed'?10:9.5,Math.log2(Math.min(W*.7/Math.max(x1-x0,1e-6),H*.7/Math.max(y1-y0,1e-6))))),z=Math.floor(zf),k=2**(zf-z),n=2**z;
+  const P=S.fit.map(p=>wp0(p[0],p[1])),x0=Math.min(...P.map(p=>p[0])),x1=Math.max(...P.map(p=>p[0])),y0=Math.min(...P.map(p=>p[1])),y1=Math.max(...P.map(p=>p[1]));
+  const zf=Math.max(3,Math.min(10,Math.log2(Math.min(W*(S.kind==='region'?.9:.72)/Math.max(x1-x0,1e-6),H*.72/Math.max(y1-y0,1e-6))))),z=Math.floor(zf),k=2**(zf-z),n=2**z;
   const cx=(x0+x1)/2*n,cy=(y0+y1)/2*n,Wz=W/k,Hz=H/k,ox=cx-Wz/2,oy=cy-Hz/2;let h='',r='';
   el.style.width=Wz+'px';el.style.height=Hz+'px';el.style.transform=`scale(${k})`;
   for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+Wz)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+Hz)/256);ty++){if(ty<0||ty>=n)continue;const X=((tx%n)+n)%n,s=`left:${(tx*256-ox).toFixed(1)}px;top:${(ty*256-oy).toFixed(1)}px`;
     h+=`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/${z}/${ty}/${X}" style="${s}" alt="" onerror="this.remove()">`;
     r+=`<img class="ref" src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/${z}/${ty}/${X}" style="${s}" alt="" onerror="this.remove()">`}
-  el.innerHTML=h+r;TRIP.view={z,k,ox,oy,W,H};TRIP.viewAt=Date.now();
+  el.innerHTML=h+r;TRIP.view={z,k,ox,oy,W,H,kind:S.kind};TRIP.viewAt=Date.now();const hd=$('tpHud');if(hd)hd.textContent=S.hud;
   const c=$('tpCan'),d=devicePixelRatio||1;c.width=W*d;c.height=H*d;TRIP.ctx=c.getContext('2d');TRIP.ctx.setTransform(d,0,0,d,0,0)}
 const tripPx=(la,lo)=>{const V=TRIP.view,n=256*2**V.z,s=Math.sin(la*Math.PI/180);return [((lo+180)/360*n-V.ox)*V.k,((.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n-V.oy)*V.k]};
 const tripDR=(p,t0,now)=>{const dt=Math.min(45,(now-t0)/1000),v=(p.kt||0)*1.852/3600*dt,h=(p.trk||0)*Math.PI/180,la=p.lat+v*Math.cos(h)/111.2;return [la,p.lon+v*Math.sin(h)/(111.2*Math.cos(la*Math.PI/180))]};
 function tripPlane(c,x,y,trk,sc,col,glow){c.save();c.translate(x,y);c.rotate((trk||0)*Math.PI/180);c.scale(sc,sc);c.fillStyle=col;if(glow){c.shadowColor=glow;c.shadowBlur=18}c.beginPath();
   c.moveTo(0,-11);c.lineTo(2,-4);c.lineTo(10,1);c.lineTo(10,3);c.lineTo(2,1);c.lineTo(1.5,7);c.lineTo(4,9);c.lineTo(4,10.5);c.lineTo(0,9.5);c.lineTo(-4,10.5);c.lineTo(-4,9);c.lineTo(-1.5,7);c.lineTo(-2,1);c.lineTo(-10,3);c.lineTo(-10,1);c.lineTo(-2,-4);c.closePath();c.fill();c.restore()}
 function tripLoop(t){const pg=$('pTrip');if(!pg||!pg.classList.contains('on')||!TRIP.view||!TRIP.ctx){TRIP.raf=0;return}TRIP.raf=requestAnimationFrame(tripLoop);
-  if(t-(TRIP.lt||0)<50)return;TRIP.lt=t;const f=tripActive();if(!f)return;const c=TRIP.ctx,V=TRIP.view,now=Date.now(),L=TRIP.live[f.key]||{},ph=tripPhase(f);
-  if(now-TRIP.viewAt>60000){tripMap();return}
+  if(t-(TRIP.lt||0)<50)return;TRIP.lt=t;const S=tripScene();if(!S)return;const f=S.f,c=TRIP.ctx,V=TRIP.view,now=Date.now();
+  if(now-TRIP.viewAt>60000||V.kind!==S.kind){tripMap();return}
   c.clearRect(0,0,V.W,V.H);
   /* planned route (great circle), dotted */
-  c.save();c.setLineDash([6,8]);c.strokeStyle='rgba(160,190,255,.45)';c.lineWidth=2;c.beginPath();for(let i=0;i<=48;i++){const u=i/48,la=f.A[0]+(f.B[0]-f.A[0])*u,lo=f.A[1]+(f.B[1]-f.A[1])*u,[x,y]=tripPx(la,lo);i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.restore();
-  /* traffic around them */
-  const age=L.t?now-L.t:0;(L.traffic||[]).forEach(p=>{if(p.alt===0)return;const [la,lo]=tripDR(p,L.t||now,now),[x,y]=tripPx(la,lo);if(x<-20||y<-20||x>V.W+20||y>V.H+20)return;
-    tripPlane(c,x,y,p.trk,.95,'rgba(170,185,215,.55)')});
-  /* where they've been */
-  const me=L.me&&ph==='air'?tripDR(L.me,L.t||now,now):null;
-  if(L.trail&&L.trail.length){c.save();c.strokeStyle='#7fb2ff';c.lineWidth=4;c.shadowColor='#7fb2ff';c.shadowBlur=10;c.beginPath();{const [x,y]=tripPx(f.A[0],f.A[1]);c.moveTo(x,y)}L.trail.forEach(([la,lo])=>{const [x,y]=tripPx(la,lo);c.lineTo(x,y)});if(me){const [x,y]=tripPx(me[0],me[1]);c.lineTo(x,y)}c.stroke();c.restore()}
+  if(S.kind!=='region'){c.save();c.setLineDash([6,8]);c.strokeStyle='rgba(160,190,255,.45)';c.lineWidth=2;c.beginPath();for(let i=0;i<=48;i++){const u=i/48,la=f.A[0]+(f.B[0]-f.A[0])*u,lo=f.A[1]+(f.B[1]-f.A[1])*u,[x,y]=tripPx(la,lo);i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();c.restore()}
+  /* other traffic */
+  (S.traffic||[]).forEach(p=>{if(p.alt===0)return;const [la,lo]=tripDR(p,S.tt||now,now),[x,y]=tripPx(la,lo);if(x<-20||y<-20||x>V.W+20||y>V.H+20)return;
+    tripPlane(c,x,y,p.trk,S.kind==='region'?1.25:.95,S.kind==='region'?rdAltCol(p.alt):'rgba(170,185,215,.55)');
+    if(S.kind==='region'&&p.cs){c.save();c.font='600 12px -apple-system,Helvetica,Arial';c.fillStyle='rgba(230,240,255,.8)';c.textAlign='left';c.shadowColor='#000';c.shadowBlur=3;c.fillText(p.cs+(p.to?' → '+p.to:''),x+11,y-6);c.restore()}});
+  /* the highlighted plane's trail */
+  const me=S.me?tripDR(S.me,S.t||now,now):null;
+  if(S.trail&&S.trail.length&&S.kind!=='region'){c.save();c.strokeStyle='#7fb2ff';c.lineWidth=4;c.shadowColor='#7fb2ff';c.shadowBlur=10;c.beginPath();{const [x,y]=tripPx(f.A[0],f.A[1]);c.moveTo(x,y)}S.trail.forEach(([la,lo])=>{const [x,y]=tripPx(la,lo);c.lineTo(x,y)});if(me){const [x,y]=tripPx(me[0],me[1]);c.lineTo(x,y)}c.stroke();c.restore()}
   /* airports */
-  [[f.A,f.from,'#5dcaa5'],[f.B,f.to,'#ffb27a']].forEach(([a,code,col])=>{const [x,y]=tripPx(a[0],a[1]);c.fillStyle=col;c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(x,y,7,0,Math.PI*2);c.fill();c.stroke();
+  if(S.kind==='region'){(S.aps||[]).forEach(([code,a])=>{const [x,y]=tripPx(a[0],a[1]);c.fillStyle=code===f.from?'#5dcaa5':'rgba(93,202,165,.75)';c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(x,y,code===f.from?9:6,0,Math.PI*2);c.fill();c.stroke();
+      c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText(code+' · '+a[2].replace(/, Ontario$/,''),x,y+26);c.shadowBlur=0});
+    const [hx,hy]=tripPx(CFG.lat,CFG.lon);c.fillStyle='#6ea8ff';c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(hx,hy,7,0,Math.PI*2);c.fill();c.stroke();c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText('Home',hx,hy+25);c.shadowBlur=0}
+  else [[f.A,f.from,'#5dcaa5'],[f.B,f.to,'#ffb27a']].forEach(([a,code,col])=>{const [x,y]=tripPx(a[0],a[1]);if(x<-40||y<-40||x>V.W+40||y>V.H+40)return;c.fillStyle=col;c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(x,y,7,0,Math.PI*2);c.fill();c.stroke();
     c.font='700 17px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText(code,x,y+27);c.shadowBlur=0});
-  /* them */
+  /* the plane they're on (or today's same flight) */
   if(me){const [x,y]=tripPx(me[0],me[1]),pulse=.5+.5*Math.sin(now/400);c.save();c.strokeStyle=`rgba(127,178,255,${.25+.35*pulse})`;c.lineWidth=3;c.beginPath();c.arc(x,y,24+pulse*8,0,Math.PI*2);c.stroke();c.restore();
-    tripPlane(c,x,y,L.me.trk,2.1,'#ffffff','#7fb2ff');c.save();c.font='800 19px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=6;
-    c.fillText(f.who,x+30,y-6);c.font='600 15px -apple-system,Helvetica,Arial';c.fillStyle='#a9c8ff';c.fillText(f.no.slice(0,2)+' '+f.no.slice(2)+(age>90000?' · signal '+Math.round(age/60000)+' min old':''),x+30,y+14);c.restore()}}
+    tripPlane(c,x,y,S.me.trk,2.1,'#ffffff','#7fb2ff');c.save();c.font='800 19px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=6;
+    c.fillText(S.label,x+30,y-6);c.font='600 15px -apple-system,Helvetica,Arial';c.fillStyle='#a9c8ff';const age=S.t?now-S.t:0;c.fillText(S.sub+(age>90000?' · signal '+Math.round(age/60000)+' min old':''),x+30,y+14);c.restore()}}
 addEventListener('resize',()=>{if($('pTrip')&&$('pTrip').classList.contains('on'))renderTrip()});
 /* ================= Cooking: ideas from what's in the kitchen, recipes, grocery list, step by step =================
    "dinner ideas" / "what can I make with chicken and rice" / "how do I make fajitas" / "the second one" / "start cooking" /
@@ -6571,7 +6594,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 171';
+document.getElementById('ver').textContent='build nova 173';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
