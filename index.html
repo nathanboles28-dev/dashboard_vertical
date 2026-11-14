@@ -1837,6 +1837,20 @@ body.cooking #answer{z-index:9}body.cooking #mini{z-index:9;opacity:.85}
 .tp-day{display:flex;flex-direction:column;align-items:center;min-width:calc(10*var(--u))}.tp-day b{font-size:calc(2.6*var(--u));text-transform:uppercase;letter-spacing:.1em;color:#7fb2ff}.tp-day span{font-size:calc(4.4*var(--u));font-weight:700}
 .tp-rt{flex:1;min-width:0}.tp-rt b{display:block;font-size:calc(4.4*var(--u))}.tp-rt b i{font-style:normal;color:#7fb2ff}.tp-rt span{font-size:calc(2.5*var(--u));color:#9aa3c7}
 .tp-in{text-align:center}.tp-in b{display:block;font-size:calc(5.4*var(--u));font-weight:300}.tp-in span{font-size:calc(2.2*var(--u));color:#9aa3c7;text-transform:uppercase;letter-spacing:.1em}
+.tp-stay{padding:calc(2.4*var(--u)) calc(3*var(--u));background:linear-gradient(135deg,rgba(40,140,150,.28),rgba(255,255,255,.04))!important}
+.tp-stay .tp-k{color:#5dcaa5}.tp-stay .tp-sd,.tp-sky .tp-sd{font-size:calc(2.5*var(--u));color:#9aa3c7;margin-top:calc(.6*var(--u))}.tp-sw{display:flex;align-items:center;gap:calc(2*var(--u));margin-top:calc(.6*var(--u))}.tp-sw i{width:calc(7*var(--u));height:calc(7*var(--u));display:grid;place-items:center}.tp-sw i svg{width:100%;height:100%}
+.tp-sw b{font-size:calc(7*var(--u));font-weight:300;line-height:1}.tp-sw span{font-size:calc(2.8*var(--u));color:#c9cfe8}
+.tp-sf{display:flex;gap:calc(3*var(--u));margin-top:calc(1.2*var(--u));font-size:calc(2.5*var(--u));color:#c9cfe8}.tp-sf span{display:flex;align-items:center;gap:calc(.6*var(--u))}.tp-sf i{width:calc(3*var(--u));height:calc(3*var(--u));display:inline-grid}.tp-sf i svg{width:100%;height:100%}
+.tp-sky{padding:calc(2*var(--u)) calc(3*var(--u));font-size:calc(2.5*var(--u));color:#c9cfe8}.tp-sky b{font-size:calc(4*var(--u));color:#fff}.tp-sky .tp-k{color:#b9a6ff}.tp-sky.aur{background:linear-gradient(135deg,rgba(40,200,140,.2),rgba(255,255,255,.04))!important}.tp-sky.aur .tp-k{color:#5ff0b0}
+.sp-pk{margin-left:auto;font-style:normal;font-size:calc(1.6*var(--u));font-weight:700;letter-spacing:.04em;padding:calc(.2*var(--u)) calc(.9*var(--u));border-radius:99px;background:rgba(255,178,122,.25);color:#ffd2b0}
+.sp-sb{display:flex;gap:calc(2.4*var(--u));justify-content:flex-end;font-size:calc(1.7*var(--u));color:#9aa3c7;margin-top:calc(.6*var(--u))}.sp-sb b{color:#fff}
+#pNWrap{--acc:#ff8fd0;--ico:'🎁'}
+.nw-wrap{position:absolute;left:4%;right:4%;top:calc(13*var(--u));display:flex;flex-direction:column;gap:calc(2.4*var(--u))}
+.nw-k{font-size:calc(2.6*var(--u));letter-spacing:.16em;text-transform:uppercase;color:#ff8fd0;font-weight:700}
+.nw-g{display:grid;grid-template-columns:1fr 1fr;gap:calc(2.4*var(--u))}
+.nw-t{padding:calc(3.6*var(--u)) calc(3*var(--u));display:flex;flex-direction:column;gap:calc(.8*var(--u))}.nw-t b{font-size:calc(8*var(--u));font-weight:300;line-height:1}.nw-t span{font-size:calc(2.6*var(--u));color:#c9cfe8}
+.nw-t.gold{background:linear-gradient(135deg,rgba(255,200,90,.25),rgba(255,255,255,.04))!important}.nw-t.gold b{font-weight:600;font-size:calc(6.4*var(--u))}
+.nw-q{padding:calc(3*var(--u));display:flex;flex-direction:column;gap:calc(.6*var(--u))}.nw-q span{font-size:calc(2*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#9aa3c7}.nw-q b{font-size:calc(4*var(--u))}.nw-q small{font-size:calc(2.4*var(--u));color:#9aa3c7}
 #vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
 #vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(.45*var(--u));
   background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
@@ -1947,6 +1961,7 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pRadar" class="page"><div id="rdBody"></div></section>
 <section id="pTrip" class="page"><div id="tpBody"></div></section>
+<section id="pNWrap" class="page"><div id="nwBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
 <section id="pRLoop" class="page"><div id="rlBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
@@ -2007,6 +2022,7 @@ const CFG={
     {type:'forecast',  secs:20},
     {type:'coming',    secs:25},
     {type:'trip',      secs:30},   // family flights: the week before (countdown) and live while they fly (set in your relay)   // Now playing: only while Apple Music is playing on the Macbook
+    {type:'nwrap',     secs:25},   // Nova Wrapped: the 1st to 3rd of each month (trivia champ, recipes, questions, flights)
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
     {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
@@ -2151,6 +2167,8 @@ const CFG={
   // Family flights to follow (the week before + live while they fly). Set in your relay's private settings, e.g.
   // trips:[{who:'Mom & Dad', say:'Mom and Dad', flights:[{no:'AC123', from:'YYZ', to:'MCO', date:'2026-12-01', dep:'09:50'}]}]
   trips:[],
+  // Sky alerts: visible space station passes + northern lights (kp = storm strength needed, 6 suits southern Ontario)
+  sky:{on:true, kp:6},
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
   commute:{bufferMin:10},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
@@ -2686,10 +2704,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip'};
+const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='trip'||tripShow())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2727,6 +2745,7 @@ function nextPage(force,hold){
   if(p.type==='week')renderWeek();
   if(p.type==='radar'){renderRadar();loadRadar()}
   if(p.type==='trip')renderTrip();
+  if(p.type==='nwrap')renderNWrap();
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   if(p.type==='dashboard')renderSpot();
   if(p.type==='rloop'||p.type==='maps')renderRLoop();
@@ -3179,13 +3198,13 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={trip:'Flight',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
   while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
 setInterval(()=>{if(CFG.style==='nova2')n2FitTitles()},2000);
-function pageName(p){return p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
+function pageName(p){return p.type==='trip'?(tripShow()?'Flight':'Planes'):p.type==='local'?'Around '+(CFG.city||'town'):PG_NAMES[p.type]||p.type}
 function renderComing(){
   const now=new Date(),t0=dayStart(now),t1=new Date(t0.getTime()+864e5);
   const tm=e=>e.allDay?'All day':fmt(e.start);
@@ -3533,6 +3552,8 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Music control',()=>'Apple Music plays on the MacBook. To play a playlist add [[playlist:Name]]; for playback add [[music:pause]], [[music:play]], [[music:next]] or [[music:previous]] at the end of your answer.');
   add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
   add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
+  add('Sky',()=>skyOn()?skySay():'');
+  add('Trivia this month',()=>tvBoard());
   add('Family flights',()=>tripOn()?tripFlights().filter(f=>tripPhase(f)!=='done').map(f=>`${f.who}: ${f.no} ${f.A[2]} to ${f.B[2]}, departs ${new Date(f.dep).toLocaleString()}, lands ${new Date(f.arr).toLocaleString()} (${tripPhase(f)}). ${tripSay(f)}`).join('\n'):'');
   add('Kitchen (what they have)',()=>KIT.list.join(', '));
   add('Cooking right now',()=>COOK.on&&COOK.r?`${COOK.r.name}. Ingredients: ${COOK.r.ing.map(x=>x.qty+' '+x.item).join(', ')}. Steps: ${COOK.r.steps.map((x,i)=>(i+1)+'. '+x.text).join(' ')}${COOK.step>=0?` They're on step ${COOK.step+1}.`:''}`:'');
@@ -3541,7 +3562,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Systems',()=>healthSay());
   return L.join('\n\n').slice(0,36000)}
 let aiBusy=false;
-async function askNova(q){if(aiBusy)return;aiBusy=true;wakeScreen&&wakeScreen();
+async function askNova(q){if(aiBusy)return;aiBusy=true;nsCount('asks');wakeScreen&&wakeScreen();
   $('answer').innerHTML='<small>NOVA</small><p class="ai-think">Thinking<i>.</i><i>.</i><i>.</i></p>';$('answer').classList.add('on');clearTimeout(ansT);
   const who=(PRES&&PRES.last)||'';let a='';
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:aiContext(),who}),signal:ac.signal}).finally(()=>clearTimeout(to));
@@ -3644,9 +3665,30 @@ function tripPhase(f,now=Date.now()){const L=TRIP.live[f.key]||{};
 function tripDrive(f){try{const d=new Date(f.dep).toDateString();return (calEvents||[]).find(e=>e.start&&e.start.toDateString()===d&&e.start<new Date(f.dep)&&/airport|pearson|\byyz\b|drop.?off/i.test((e.title||'')+' '+(e.loc||'')))||null}catch(e){return null}}
 const tripActive=()=>tripOn()?tripFlights().find(f=>/^(gate|air|landed)$/.test(tripPhase(f))):null;
 const tripNext=()=>tripOn()?tripFlights().filter(f=>tripPhase(f)==='soon'&&f.dep-Date.now()<7*864e5):[];
-const tripShow=()=>!!(tripActive()||tripNext().length);
+const tripShow=()=>!!(tripActive()||tripNext().length||tripAway());
+const tripPgOn=()=>!!(CFG.relay&&SECRETS.calkey&&(CFG.planes||{}).on!==false);
+/* while they're away: the place they're staying (from your relay's private settings: trips[].stay) */
+function tripAway(){if(!tripOn())return null;for(const T of CFG.trips||[]){if(!T.stay)continue;const who=T.who||'Family',F=tripFlights().filter(f=>f.who===who);
+    for(let i=0;i<F.length-1;i++)if(tripPhase(F[i])==='done'&&tripPhase(F[i+1])==='soon'&&Date.now()>F[i].arr)return {T,stay:T.stay,who,say:T.say||who,out:F[i],next:F[i+1]}}return null}
+const STAY={at:0,d:null,sea:null,key:''};
+const hm12=s=>{const m=String(s||'').match(/T?(\d{1,2}):(\d{2})/);if(!m)return '';const h=+m[1];return `${h%12||12}:${m[2]} ${h<12?'AM':'PM'}`};
+async function stayLoad(s){const k=s.lat+','+s.lon;if(STAY.key===k&&Date.now()-STAY.at<20*60e3)return;STAY.key=k;STAY.at=Date.now();
+  try{STAY.d=await (await tfetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lon}&current=temperature_2m,apparent_temperature,weather_code,is_day&daily=weather_code,temperature_2m_max,sunset&forecast_days=4&timezone=auto`,12000)).json()}catch(e){}
+  try{const m=await (await tfetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${s.lat}&longitude=${s.lon}&current=sea_surface_temperature`,12000)).json();STAY.sea=m.current?m.current.sea_surface_temperature:null}catch(e){}
+  const el=$('tpStay'),A=tripAway();if(el&&A)el.outerHTML=stayCard(A)}
+function stayCard(A){const s=A.stay,D=STAY.d,c=D&&D.current,dl=D&&D.daily,tz=s.tz||'America/Cancun';stayLoad(s);
+  const day=x=>Date.parse(new Date(x).toLocaleDateString('en-CA',{timeZone:tz})+'T12:00:00Z'),n=Math.max(1,Math.round((day(Date.now())-day(A.out.arr))/864e5)+1),N=Math.max(n,Math.round((day(A.next.dep)-day(A.out.arr))/864e5)+1);
+  const there=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit',timeZone:tz}),head=`<div class="tp-k">In ${esc(s.name)} · day ${n} of ${N}</div>`;
+  if(!c)return `<div class="jf-glass tp-stay" id="tpStay">${head}<div class="tp-sd">${there} there</div></div>`;
+  const [ic,tx]=wx(c.weather_code,c.is_day===0),ss=dl&&dl.sunset?hm12(dl.sunset[0]):'';
+  return `<div class="jf-glass tp-stay" id="tpStay">${head}<div class="tp-sw"><i>${ic}</i><b>${Math.round(c.temperature_2m)}°</b><span>feels ${Math.round(c.apparent_temperature)}° · ${esc(tx)}</span></div>
+    <div class="tp-sd">${there} there${STAY.sea!=null?` · sea ${Math.round(STAY.sea)}°`:''}${ss?` · sunset ${ss}`:''}</div>
+    <div class="tp-sf">${[1,2,3].filter(i=>dl.time&&dl.time[i]).map(i=>`<span>${new Date(dl.time[i]+'T12:00').toLocaleDateString([],{weekday:'short'})} <i>${wx(dl.weather_code[i])[0]}</i> ${Math.round(dl.temperature_2m_max[i])}°</span>`).join('')}</div></div>`}
+function staySay(A){const c=STAY.d&&STAY.d.current,d=new Date(A.next.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
+  return `${A.say} are in ${A.stay.name}.${c?` It's ${Math.round(c.temperature_2m)} degrees and ${(WXT[c.weather_code]||'nice').toLowerCase()} there.`:''} They fly home ${k===0?'today':k===1?'tomorrow':'on '+d.toLocaleDateString([],{weekday:'long'})} at ${tripT(A.next.dep)}.`}
+
 function tripName(cs){if(!tripOn()||!cs)return '';const f=tripFlights().find(x=>x.cs===String(cs).trim().toUpperCase()&&tripPhase(x)!=='soon'&&tripPhase(x)!=='done');return f?f.who:''}
-function tripEvent(f,k){const id=f.key+'|'+k;if(TRIP.said.includes(id))return;TRIP.said.push(id);tripSave();const L=TRIP.live[f.key]||{},city=f.B[2],from=f.A[2];
+function tripEvent(f,k){const id=f.key+'|'+k;if(TRIP.said.includes(id))return;TRIP.said.push(id);if(k==='down')nsCount('flights');tripSave();const L=TRIP.live[f.key]||{},city=f.B[2],from=f.A[2];
   const msg=k==='off'?`${f.say} just took off from ${from}. They should land in ${city} around ${tripT(L.eta||f.arr)}.`:k==='near'?`${f.say}'s flight lands in ${city} in about 20 minutes.`:`${f.say} just landed in ${city}.`;
   toast(`✈️ <b>${esc(f.who)}</b>${esc(msg)}`);reply(msg);if(!(CFG.remote||{}).speak)speak(msg);if(k!=='near')showFor('trip')}
 async function tripPoll(force){if(!tripOn())return;const now=Date.now(),vis=$('pTrip')&&$('pTrip').classList.contains('on');if(!force&&!vis&&now-TRIP.last<60000)return;TRIP.last=now;
@@ -3669,7 +3711,7 @@ async function tripPoll(force){if(!tripOn())return;const now=Date.now(),vis=$('p
       tripSave()}catch(e){console.warn('trip',e)}}
   if(vis)tripInfo()}
 setInterval(()=>{if(tripOn())tripPoll()},10000);
-function tripSay(f){f=f||tripActive()||tripNext()[0];if(!f)return "There aren't any family flights coming up.";const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),d=new Date(f.dep);
+function tripSay(f){if(!f&&!tripActive()){const A=tripAway();if(A)return staySay(A)}f=f||tripActive()||tripNext()[0];if(!f)return "There aren't any family flights coming up.";const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),d=new Date(f.dep);
   if(ph==='air')return `${f.say} are in the air, about ${(Math.round((L.rem||0)/10)*10).toLocaleString()} kilometres from ${f.B[2]}. They land in about ${tripDurSay((L.eta||f.arr)-now)}, around ${tripT(L.eta||f.arr)}.`;
   if(ph==='landed')return `${f.say} landed in ${f.B[2]} at ${tripT(L.landed)}.`;
   if(ph==='gate')return now<f.dep?`${f.say}'s flight to ${f.B[2]} leaves ${f.A[2]} at ${tripT(f.dep)}${f.dep-f.sched>10*60e3?', a bit delayed':''}.`:`${f.say}'s flight was due out at ${tripT(f.dep)}. I haven't seen it take off yet.`;
@@ -3681,26 +3723,26 @@ function tripScene(){const f=tripActive();
   if(f){const L=TRIP.live[f.key]||{},ph=tripPhase(f),m=L.me&&ph==='air'?L.me:null;let fit=[[f.A[0],f.A[1]],[f.B[0],f.B[1]]];
     if(m){fit=[[m.lat,m.lon],[f.B[0],f.B[1]]];if((L.flown||0)<250)fit.push([f.A[0],f.A[1]])}if(ph==='landed')fit=[[f.B[0]+.5,f.B[1]+.6],[f.B[0]-.5,f.B[1]-.6]];
     return {kind:'live',f,me:m,t:L.t,trail:L.trail||[],traffic:L.traffic||[],tt:L.t,fit,label:f.who,sub:f.no.slice(0,2)+' '+f.no.slice(2),hud:'LIVE'}}
-  const n=tripNext()[0];if(!n)return null;const R=tripRegion(n);
+  const n=tripNext()[0]||null;const R=tripRegion(n);
   return {kind:'region',f:n,me:null,traffic:(TRIP.area||{}).traffic||[],tt:(TRIP.area||{}).t,fit:R.fit,aps:R.aps,hud:'LIVE · AROUND HOME'}}
 /* home plus the airports within ~170 km of it (London, Waterloo, Hamilton, Pearson...) */
-function tripRegion(n){const H=[CFG.lat,CFG.lon],aps=Object.entries(TRIP_AP).filter(([k,a])=>gcKm(H[0],H[1],a[0],a[1])<170&&!(k==='YTZ'&&n.from!=='YTZ')).map(([k,a])=>[k,a]);
-  if(!aps.some(([k])=>k===n.from)&&gcKm(H[0],H[1],n.A[0],n.A[1])<300)aps.push([n.from,n.A]);
+function tripRegion(n){const H=[CFG.lat,CFG.lon],aps=Object.entries(TRIP_AP).filter(([k,a])=>gcKm(H[0],H[1],a[0],a[1])<170&&!(k==='YTZ'&&(!n||n.from!=='YTZ'))).map(([k,a])=>[k,a]);
+  if(n&&!aps.some(([k])=>k===n.from)&&gcKm(H[0],H[1],n.A[0],n.A[1])<300)aps.push([n.from,n.A]);
   const pts=[H,...aps.map(([k,a])=>[a[0],a[1]])],la0=Math.min(...pts.map(p=>p[0])),la1=Math.max(...pts.map(p=>p[0])),lo0=Math.min(...pts.map(p=>p[1])),lo1=Math.max(...pts.map(p=>p[1]));
   const c=[(la0+la1)/2,(lo0+lo1)/2],rad=Math.max(25,...pts.map(p=>gcKm(c[0],c[1],p[0],p[1])))*1.15;
   return {aps,fit:[[la1+.06,lo0-.08],[la0-.06,lo1+.08]],c,nm:Math.min(150,Math.round(rad/1.852))}}
 /* the planes around home while the trip page is up (before their flight) */
-async function tripPreviewPoll(){const n=tripNext()[0];if(!n||tripActive())return;const R=tripRegion(n);
+async function tripPreviewPoll(){if(tripActive())return;const n=tripNext()[0]||null;const R=tripRegion(n);
   try{const j=await (await tfetch(relayBase()+`/area?key=${encodeURIComponent(SECRETS.calkey)}&lat=${R.c[0].toFixed(3)}&lon=${R.c[1].toFixed(3)}&nm=${R.nm}`,15000)).json();if(j.traffic)TRIP.area={traffic:j.traffic,t:Date.now()}}catch(e){}}
 setInterval(()=>{if($('pTrip')&&$('pTrip').classList.contains('on')&&!tripActive())tripPreviewPoll()},15000);
 function renderTrip(){const b=$('tpBody');if(!b)return;const f=tripActive();cancelAnimationFrame(TRIP.raf);
   const stage=`<div class="jf-glass rd-card"><div class="rd-stage" id="tpStage"><div class="tp-tiles" id="tpTiles"></div><canvas id="tpCan"></canvas><div class="rd-hud tr"><span class="rd-dot"></span><span id="tpHud">LIVE</span></div>${tripActive()?'':'<div class="rd-key"><span><i style="background:#ffd84a"></i>&lt;10k ft</span><span><i style="background:#5ff0b0"></i>10–25k</span><span><i style="background:#8fd3ff"></i>25k+</span></div>'}</div></div>`;
-  if(!f){const N=tripNext(),who=(N[0]||{}).who||'Family',L=tripFlights().filter(x=>x.who===who&&tripPhase(x)==='soon');
-    b.innerHTML=`<div class="jf-title">${esc(who)}'s trip</div><div class="tp-wrap"><div class="tp-up">${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
+  if(!f){const A=tripAway(),N=tripNext(),who=A?A.who:(N[0]||{}).who||'',L=who?tripFlights().filter(x=>x.who===who&&tripPhase(x)==='soon'):[];
+    b.innerHTML=`<div class="jf-title">${who?esc(who)+"'s trip":'Planes around home'}</div><div class="tp-wrap"><div class="tp-up">${A?stayCard(A):''}${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
       return `<div class="jf-glass tp-leg"><div class="tp-day"><b>${d.toLocaleDateString([],{weekday:'short'})}</b><span>${d.toLocaleDateString([],{month:'short',day:'numeric'})}</span></div>
         <div class="tp-rt"><b>${esc(x.A[2])} <i>→</i> ${esc(x.B[2])}</b><span>${esc(x.no.slice(0,2)+' '+x.no.slice(2))} · departs ${tripT(x.dep)} · lands ${x.guess?'about ':''}${tripT(x.arr)}</span></div>
         <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>${(()=>{const e=tripDrive(x);if(!e)return '';const r=e.loc&&typeof rtGet==='function'?rtGet(e.loc):null;if(e.loc&&!r&&typeof routeTo==='function')routeTo(e.loc);
-          return `<div class="jf-glass tp-drive">🚗 <b>You're driving them</b> · leave at <b>${tripT(e.start)}</b>${r&&r.min!=null?` · ${driveTxt(r.min)} to ${esc(x.A[2])} right now`:''}</div>`})()}`}).join('')}</div>${stage}</div>`;
+          return `<div class="jf-glass tp-drive">🚗 <b>You're driving them</b> · leave at <b>${tripT(e.start)}</b>${r&&r.min!=null?` · ${driveTxt(r.min)} to ${esc(x.A[2])} right now`:''}</div>`})()}`}).join('')}${skyCard()}</div>${stage}</div>`;
     TRIP.view=null;requestAnimationFrame(()=>{tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPreviewPoll();return}
   b.innerHTML=`<div class="jf-title">${esc(f.who)}'s flight</div><div class="tp-wrap">${stage}<div class="jf-glass tp-info" id="tpInfo"></div></div>`;
   TRIP.view=null;requestAnimationFrame(()=>{tripInfo();tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPoll(true)}
@@ -3739,12 +3781,13 @@ function tripLoop(t){const pg=$('pTrip');if(!pg||!pg.classList.contains('on')||!
   /* other traffic */
   (S.traffic||[]).forEach(p=>{if(p.alt===0)return;const [la,lo]=tripDR(p,S.tt||now,now),[x,y]=tripPx(la,lo);if(x<-20||y<-20||x>V.W+20||y>V.H+20)return;
     tripPlane(c,x,y,p.trk,S.kind==='region'?1.25:.95,S.kind==='region'?rdAltCol(p.alt):'rgba(170,185,215,.55)');
+    if(S.kind==='region'&&TRIP.hl&&now<TRIP.hl.until&&p.cs===TRIP.hl.cs){const pu=.5+.5*Math.sin(now/300);c.save();c.strokeStyle=`rgba(255,255,255,${.4+.4*pu})`;c.lineWidth=3;c.beginPath();c.arc(x,y,22+pu*8,0,Math.PI*2);c.stroke();c.restore()}
     if(S.kind==='region'&&p.cs){c.save();c.font='600 12px -apple-system,Helvetica,Arial';c.fillStyle='rgba(230,240,255,.8)';c.textAlign='left';c.shadowColor='#000';c.shadowBlur=3;c.fillText(p.cs+(p.to?' → '+p.to:''),x+11,y-6);c.restore()}});
   /* the highlighted plane's trail */
   const me=S.me?tripDR(S.me,S.t||now,now):null;
   if(S.trail&&S.trail.length&&S.kind!=='region'){c.save();c.strokeStyle='#7fb2ff';c.lineWidth=4;c.shadowColor='#7fb2ff';c.shadowBlur=10;c.beginPath();{const [x,y]=tripPx(f.A[0],f.A[1]);c.moveTo(x,y)}S.trail.forEach(([la,lo])=>{const [x,y]=tripPx(la,lo);c.lineTo(x,y)});if(me){const [x,y]=tripPx(me[0],me[1]);c.lineTo(x,y)}c.stroke();c.restore()}
   /* airports */
-  if(S.kind==='region'){(S.aps||[]).forEach(([code,a])=>{const [x,y]=tripPx(a[0],a[1]);c.fillStyle=code===f.from?'#5dcaa5':'rgba(93,202,165,.75)';c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(x,y,code===f.from?9:6,0,Math.PI*2);c.fill();c.stroke();
+  if(S.kind==='region'){(S.aps||[]).forEach(([code,a])=>{const [x,y]=tripPx(a[0],a[1]);c.fillStyle=f&&code===f.from?'#5dcaa5':'rgba(93,202,165,.75)';c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.arc(x,y,f&&code===f.from?9:6,0,Math.PI*2);c.fill();c.stroke();
       c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText(code+' · '+a[2].replace(/, Ontario$/,''),x,y+26);c.shadowBlur=0});
     const [hx,hy]=tripPx(CFG.lat,CFG.lon);c.fillStyle='#6ea8ff';c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(hx,hy,7,0,Math.PI*2);c.fill();c.stroke();c.font='700 15px -apple-system,Helvetica,Arial';c.textAlign='center';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=5;c.fillText('Home',hx,hy+25);c.shadowBlur=0}
   else [[f.A,f.from,'#5dcaa5'],[f.B,f.to,'#ffb27a']].forEach(([a,code,col])=>{const [x,y]=tripPx(a[0],a[1]);if(x<-40||y<-40||x>V.W+40||y>V.H+40)return;c.fillStyle=col;c.strokeStyle='#fff';c.lineWidth=2.5;c.beginPath();c.arc(x,y,7,0,Math.PI*2);c.fill();c.stroke();
@@ -3754,6 +3797,106 @@ function tripLoop(t){const pg=$('pTrip');if(!pg||!pg.classList.contains('on')||!
     tripPlane(c,x,y,S.me.trk,2.1,'#ffffff','#7fb2ff');c.save();c.font='800 19px -apple-system,Helvetica,Arial';c.textAlign='left';c.fillStyle='#fff';c.shadowColor='#000';c.shadowBlur=6;
     c.fillText(S.label,x+30,y-6);c.font='600 15px -apple-system,Helvetica,Arial';c.fillStyle='#a9c8ff';const age=S.t?now-S.t:0;c.fillText(S.sub+(age>90000?' · signal '+Math.round(age/60000)+' min old':''),x+30,y+14);c.restore()}}
 addEventListener('resize',()=>{if($('pTrip')&&$('pTrip').classList.contains('on'))renderTrip()});
+/* ================= Sky: space station passes you can actually see, and northern lights chances (free data through your relay) ================= */
+const SKY={tle:null,kp:[],at:0,passes:[],aur:null,cloud:null,said:(()=>{try{return JSON.parse(localStorage.getItem('nova-sky-said')||'[]')}catch(e){return[]}})()};
+const skyOn=()=>!!(CFG.relay&&SECRETS.calkey&&(CFG.sky||{}).on!==false&&CFG.lat);
+const skySaid=id=>{SKY.said.push(id);SKY.said=SKY.said.slice(-40);try{localStorage.setItem('nova-sky-said',JSON.stringify(SKY.said))}catch(e){}};
+function sunEcl(t){const n=t/864e5+2440587.5-2451545,L=(280.46+.9856474*n)%360,g=(357.528+.9856003*n)*Math.PI/180,lam=(L+1.915*Math.sin(g)+.02*Math.sin(2*g))*Math.PI/180,eps=(23.439-4e-7*n)*Math.PI/180;return {n,lam,eps}}
+function sunVec(d){const {lam,eps}=sunEcl(+d);return [Math.cos(lam),Math.cos(eps)*Math.sin(lam),Math.sin(eps)*Math.sin(lam)]}
+function sunAlt(lat,lon,d){const {n,lam,eps}=sunEcl(+d),ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam)),dec=Math.asin(Math.sin(eps)*Math.sin(lam)),gmst=((280.46061837+360.98564736629*n)%360+360)%360,ha=(gmst+lon)*Math.PI/180-ra,la=lat*Math.PI/180;
+  return Math.asin(Math.sin(la)*Math.sin(dec)+Math.cos(la)*Math.cos(dec)*Math.cos(ha))*180/Math.PI}
+let satLib=null;function satJS(){if(window.satellite)return Promise.resolve(window.satellite);if(satLib)return satLib;
+  satLib=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js';s.onload=()=>res(window.satellite);s.onerror=()=>{satLib=null;rej(new Error('satellite.js'))};document.head.appendChild(s)});return satLib}
+const compass=a=>['north','northeast','east','southeast','south','southwest','west','northwest'][Math.round((((a%360)+360)%360)/45)%8];
+const skyCloud=t=>{const c=(SKY.cloud||[]).find(([x])=>Math.abs(x-t)<=1800e3);return c?c[1]:null};
+function skyWhen(t){const d=new Date(t),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5),h=d.getHours();return k===0?(h>=17?'tonight':'today'):k===1?(h<5?'tonight':'tomorrow'):d.toLocaleDateString([],{weekday:'long'})}
+async function skyLoad(){if(!skyOn())return;SKY.at=Date.now();
+  try{const j=await (await tfetch(relayBase()+'/sky?key='+encodeURIComponent(SECRETS.calkey),15000)).json();if(j.tle)SKY.tle=j.tle;if(Array.isArray(j.kp))SKY.kp=j.kp}catch(e){}
+  try{const j=await (await tfetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.lat}&longitude=${CFG.lon}&hourly=cloud_cover&forecast_days=2&timezone=GMT`,12000)).json();SKY.cloud=(j.hourly.time||[]).map((t,i)=>[Date.parse(t+':00Z'),j.hourly.cloud_cover[i]])}catch(e){}
+  try{await skyPasses()}catch(e){console.warn('space station',e)}skyAurora()}
+/* walk the next 36 hours: the station has to be up (>10°), lit by the sun, and your sky dark */
+async function skyPasses(){if(!SKY.tle)return;const S=await satJS(),rec=S.twoline2satrec(SKY.tle[0],SKY.tle[1]),gd={longitude:S.degreesToRadians(CFG.lon),latitude:S.degreesToRadians(CFG.lat),height:.3};
+  const out=[],t0=Date.now();let cur=null;
+  for(let t=t0;t<t0+36*36e5;t+=20e3){const d=new Date(t),pv=S.propagate(rec,d);if(!pv||!pv.position)continue;const la=S.ecfToLookAngles(gd,S.eciToEcf(pv.position,S.gstime(d))),el=la.elevation*180/Math.PI;
+    if(el>10){const r=pv.position,sv=sunVec(d),dot=r.x*sv[0]+r.y*sv[1]+r.z*sv[2],perp=Math.sqrt(Math.max(0,r.x*r.x+r.y*r.y+r.z*r.z-dot*dot)),lit=dot>0||perp>6371,vis=lit&&sunAlt(CFG.lat,CFG.lon,d)<-6,az=la.azimuth*180/Math.PI;
+      if(!cur)cur={vs:0,ve:0,max:0};if(vis){if(!cur.vs){cur.vs=t;cur.azS=az}cur.ve=t;cur.azE=az;if(el>cur.max){cur.max=el;cur.azM=az}}}
+    else if(cur){if(cur.vs&&cur.ve-cur.vs>=60e3&&cur.max>=25)out.push(cur);cur=null}}
+  SKY.passes=out}
+/* southern Ontario usually needs Kp 6+ (a moderate storm), at night, without heavy cloud */
+function skyAurora(){const now=Date.now(),need=(CFG.sky||{}).kp||6;let best=null;
+  (SKY.kp||[]).forEach(([t,kp])=>{if(kp<need||t<now-3*36e5||t>now+24*36e5)return;for(let h=0;h<3;h++){const tt=t+h*36e5;if(tt<now-36e5||sunAlt(CFG.lat,CFG.lon,new Date(tt))>-12)continue;const cc=skyCloud(tt);if(cc!=null&&cc>60)continue;
+    if(!best||kp>best.kp||(kp===best.kp&&tt<best.t))best={t:Math.max(tt,now),kp,cc}}});SKY.aur=best}
+const skyStorm=kp=>kp>=9?'extreme':kp>=8?'severe':kp>=7?'strong':kp>=6?'moderate':'minor';
+const skyNext=(hrs=20)=>SKY.passes.find(x=>x.ve>Date.now()&&x.vs-Date.now()<hrs*36e5);
+function skyPassSay(p){const mins=Math.max(1,Math.round((p.ve-p.vs)/60e3));return `The space station flies over ${skyWhen(p.vs)} at ${tripT(p.vs)}, for about ${mins} minute${mins>1?'s':''}. It rises in the ${compass(p.azS)}${p.max>=70?' and passes almost overhead':''}, and sets in the ${compass(p.azE)}.`}
+function skyCard(){if(!skyOn())return '';const p=skyNext(),a=SKY.aur;let h='';
+  if(p){const mins=Math.max(1,Math.round((p.ve-p.vs)/60e3)),br=p.max>=60?'very bright':p.max>=40?'bright':'easy to spot';
+    h+=`<div class="jf-glass tp-sky"><div class="tp-k">🛰 Space station ${skyWhen(p.vs)}</div><div><b>${tripT(p.vs)}</b> <span>· ${mins} minute${mins>1?'s':''} · ${br}</span></div>
+      <div class="tp-sd">Rises in the ${compass(p.azS)}${p.max>=70?', passes almost overhead':`, climbs to ${Math.round(p.max)}° in the ${compass(p.azM)}`}, sets in the ${compass(p.azE)}</div></div>`}
+  if(a)h+=`<div class="jf-glass tp-sky aur"><div class="tp-k">🌌 Northern lights possible</div><div><b>${skyWhen(a.t)==='tonight'?'Tonight':skyWhen(a.t).replace(/^./,c=>c.toUpperCase())} after ${tripT(a.t)}</b></div>
+      <div class="tp-sd">${skyStorm(a.kp).replace(/^./,c=>c.toUpperCase())} geomagnetic storm${a.cc!=null?(a.cc<30?' · clear skies':' · some cloud'):''} · look north, away from town lights</div></div>`;
+  return h}
+function skySay(){const p=skyNext(36),a=SKY.aur;return [p?skyPassSay(p):"There's no visible space station pass in the next day or so.",a?`And northern lights are possible ${skyWhen(a.t)} after ${tripT(a.t)}.`:''].filter(Boolean).join(' ')}
+/* heads-ups: 10 minutes before a pass, and once in the evening when the northern lights odds are real */
+setInterval(()=>{if(!skyOn())return;const now=Date.now(),h=new Date().getHours();if(now-SKY.at>3*36e5)skyLoad();
+  if($('night')&&$('night').classList.contains('on'))return;
+  const p=SKY.passes.find(x=>x.vs>now&&x.vs-now<11*60e3);if(p&&h>=6&&h<23){const id='iss'+Math.round(p.vs/6e4);if(!SKY.said.includes(id)){skySaid(id);
+    const msg=`Heads up: the space station flies over in ${Math.max(1,Math.round((p.vs-now)/6e4))} minutes. Look to the ${compass(p.azS)} at ${tripT(p.vs)}.`;toast('🛰 <b>Space station</b>'+esc(msg));reply(msg);if(!(CFG.remote||{}).speak)speak(msg)}}
+  const a=SKY.aur;if(a&&h>=17&&h<23&&a.t-now<4*36e5){const id='aur'+new Date(a.t).toDateString();if(!SKY.said.includes(id)){skySaid(id);
+    const msg=`Northern lights alert: there's a chance of seeing them tonight after ${tripT(a.t)}. Look north, away from town lights.`;toast('🌌 <b>Northern lights</b>'+esc(msg));reply(msg);if(!(CFG.remote||{}).speak)speak(msg)}}},60000);
+setTimeout(skyLoad,20000);
+/* ================= "What's that plane?": the closest, lowest plane is the one you're hearing ================= */
+async function whatPlane(){if(!CFG.relay||!SECRETS.calkey)return reply("I can't see the planes from this screen.");
+  try{const d=await (await tfetch(relayBase()+'/planes?'+locQ()+'&r=30',15000)).json(),P=(d.planes||[]).filter(p=>p.alt!=null&&p.alt>0);
+    if(!P.length)return reply("I don't see any planes close by right now.");
+    const p=P.slice().sort((a,b)=>(a.dist+a.alt/2000)-(b.dist+b.alt/2000))[0],air=/^[A-Z]{3}\d/.test(p.cs||''),num=String(p.cs||'').replace(/^[A-Z]{3}/,'');
+    const who=air&&p.airline?`${p.airline} ${num}`:p.cs?p.cs:'a private plane';
+    const ty=p.desc?String(p.desc).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase()).replace(/\bA-(\d{3})/,'A$1'):'';
+    const route=p.from&&p.to&&p.from.city&&p.to.city?` from ${p.from.city} to ${p.to.city}`:'';
+    let land='';const ap=p.to&&TRIP_AP[p.to.code];
+    if(ap&&p.vs<-300&&p.kt>60){const br=(p.brg||0)*Math.PI/180,pla=CFG.lat+p.dist*Math.cos(br)/111.2,plo=CFG.lon+p.dist*Math.sin(br)/(111.2*Math.cos(CFG.lat*Math.PI/180)),km=gcKm(pla,plo,ap[0],ap[1]);
+      if(km<160)land=` It's coming down into ${ap[2].replace(/, Ontario$/,'')}, landing in about ${Math.max(2,Math.round(km/(p.kt*1.852)*60+4))} minutes.`}
+    const say=`That's ${who}${ty?(/^[aeiou]/i.test(ty)?', an ':', a ')+ty:''}${route}. It's ${p.dist} kilometres away at ${Number(Math.round(p.alt/100)*100).toLocaleString()} feet${p.vs<-500?' and descending':p.vs>500?' and climbing':''}.${land}`;
+    TRIP.hl={cs:p.cs,until:Date.now()+90e3};if(tripPgOn()&&!tripActive())showFor('trip');reply(say)}
+  catch(e){reply("Sorry, I couldn't check the planes just now.")}}
+function planesSay(){const A=TRIP.area;if(A&&A.traffic&&Date.now()-A.t<10*60e3){const n=A.traffic.length;return `${n} plane${n===1?'':'s'} in the air around home right now. Ask me "what's that plane" when you hear one.`}return radarSay()}
+/* ================= Trivia you play together + Nova Wrapped (monthly stats, kept on this screen) ================= */
+const NS=(()=>{try{return JSON.parse(localStorage.getItem('nova-stats')||'{}')}catch(e){return {}}})();
+const nsMonth=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+function nsM(k){const m=k||nsMonth();NS[m]=NS[m]||{cmds:0,asks:0,recipes:0,flights:0,q:{},trivia:{}};return NS[m]}
+function nsSave(){try{const ks=Object.keys(NS).sort();while(ks.length>14)delete NS[ks.shift()];localStorage.setItem('nova-stats',JSON.stringify(NS))}catch(e){}}
+function nsCount(kind,q){const M=nsM();if(kind)M[kind]=(M[kind]||0)+1;
+  if(q){q=String(q).toLowerCase().replace(/[^a-z0-9' ]/g,'').replace(/\s+/g,' ').trim();if(q&&q.length<70&&q.split(' ').length>1){M.q[q]=(M.q[q]||0)+1;const e=Object.entries(M.q);if(e.length>200)e.sort((a,b)=>a[1]-b[1]).slice(0,60).forEach(([k])=>delete M.q[k])}}nsSave()}
+const tvPlayers=()=>[(CFG.roundup||{}).name,...((CFG.roundup||{}).people||[])].filter(Boolean);
+function tvWho(w){w=String(w).toLowerCase();return tvPlayers().find(p=>{const a=p.toLowerCase(),b=a.replace(/(.)\1+/g,'$1');return w===a||w===b||w.replace(/(.)\1+/g,'$1')===b||(b==='nathan'&&w==='nate')})}
+/* "Nova, Erinn B" / "Nathan says C" / "Erinn, Canadiens" while a trivia card is up */
+function tvPick(t){const it=SP.cur;if(!it||it.k!=='trivia'||SP.done)return null;
+  const m=t.match(/^([a-z]+)(?:'s| says| picks| thinks| goes| is| with| answers| chooses| guesses)?[\s,]+(.+)$/);if(!m)return null;const who=tvWho(m[1]);if(!who)return null;
+  const a=m[2].replace(/^(answer|option|letter|it'?s|its)\s+/,'').trim();let i=[/^(a|ay|eh|hey|hay|aye)$/,/^(b|be|bee|bea|bi)$/,/^(c|see|sea|si|cee)$/,/^(d|dee|de)$/].findIndex(r=>r.test(a));
+  if(i<0){const n=s=>String(s).toLowerCase().replace(/[^a-z0-9 ]/g,'').trim();i=it.opts.findIndex(o=>n(o)===n(a)||(n(a).length>3&&n(o).includes(n(a))))}
+  if(i<0)return null;SP.picks[who]=i;tvDraw();toast(`❓ <b>${esc(who)}</b>${'ABCD'[i]}`);return true}
+function tvDraw(){const el=$('spot');if(!el||!SP.cur||SP.cur.k!=='trivia')return;const P=SP.picks||{};
+  el.querySelectorAll('.sp-opts>div').forEach((d,i)=>{let e=d.querySelector('.sp-pk');const who=Object.keys(P).filter(n=>P[n]===i);if(!who.length){if(e)e.remove();return}if(!e){e=document.createElement('em');e.className='sp-pk';d.appendChild(e)}e.textContent=who.join(' · ')});
+  const sb=el.querySelector('.sp-sb');if(sb)sb.innerHTML=tvBoardHTML()}
+function tvBoardHTML(){const T=nsM().trivia,P=tvPlayers();return P.length>1?P.map(p=>`<span>${esc(p)} <b>${T[p]||0}</b></span>`).join(''):''}
+function tvBoard(){const T=nsM().trivia,e=tvPlayers().map(p=>[p,T[p]||0]);if(e.length<2||!e.some(x=>x[1]))return '';e.sort((a,b)=>b[1]-a[1]);return e[0][1]===e[1][1]?`It's tied at ${e[0][1]}.`:`${e[0][0]} leads ${e[0][1]} to ${e[1][1]} this month.`}
+function tvReveal(it){if(!it||SP.cur!==it||SP.done)return;SP.done=true;const P=SP.picks||{},names=Object.keys(P);if(!names.length)return;
+  const ok=names.filter(n=>it.opts[P[n]]===it.ans),M=nsM();ok.forEach(n=>M.trivia[n]=(M.trivia[n]||0)+1);nsSave();
+  const msg=ok.length&&ok.length===names.length?(ok.length>1?'You both got it!':`${ok[0]} got it!`):ok.length?`${cookAnd(ok)} got it.`:`Nope, it was ${it.ans}.`;tvDraw();reply(`${msg} ${tvBoard()}`.trim())}
+/* the Wrapped page: shows the 1st to the 3rd of each month, for the month before */
+let nwForce=0;
+const nwPrev=()=>{const d=new Date();return nsMonth(new Date(d.getFullYear(),d.getMonth()-1,15))};
+const nwHas=k=>{const M=NS[k];return !!(M&&(M.cmds+M.asks+M.recipes+M.flights+Object.values(M.trivia||{}).reduce((a,b)=>a+b,0))>0)};
+const nwShow=()=>Date.now()<nwForce||(new Date().getDate()<=3&&nwHas(nwPrev()));
+function renderNWrap(){const b=$('nwBody');if(!b)return;const k=Date.now()<nwForce?nsMonth():nwPrev(),M=NS[k]||nsM(k),mon=new Date(k+'-15T12:00').toLocaleDateString([],{month:'long'});
+  const T=Object.entries(M.trivia||{}).sort((a,b)=>b[1]-a[1]),top=Object.entries(M.q||{}).sort((a,b)=>b[1]-a[1])[0];
+  const tile=(big,small,cls)=>`<div class="jf-glass nw-t ${cls||''}"><b>${big}</b><span>${small}</span></div>`;
+  b.innerHTML=`<div class="jf-title">Nova Wrapped</div><div class="nw-wrap"><div class="nw-k">${esc(mon)}${Date.now()<nwForce?' so far':''}</div><div class="nw-g">
+    ${tile(T.length?esc(T[0][0]):'–',T.length?`trivia champ${T[1]?`, ${T[0][1]} to ${T[1][1]}`:`, ${T[0][1]} right`}`:'no trivia played','gold')}
+    ${tile(M.recipes||0,'recipe'+(M.recipes===1?'':'s')+' cooked')}${tile(M.cmds||0,'times you asked Nova')}${tile(M.flights||0,'flight'+(M.flights===1?'':'s')+' tracked')}</div>
+    ${top?`<div class="jf-glass nw-q"><span>Most asked</span><b>“${esc(top[0])}”</b><small>${top[1]} time${top[1]===1?'':'s'}</small></div>`:''}</div>`}
+function nwSay(){const k=Date.now()<nwForce?nsMonth():nwPrev(),M=NS[k]||nsM(k),T=Object.entries(M.trivia||{}).sort((a,b)=>b[1]-a[1]);
+  return `${T.length?`${T[0][0]} is the trivia champ${T[1]?`, ${T[0][1]} to ${T[1][1]}`:''}. `:''}You asked me ${M.cmds||0} things, cooked ${M.recipes||0} recipe${M.recipes===1?'':'s'}, and tracked ${M.flights||0} flight${M.flights===1?'':'s'}.`}
 /* ================= Cooking: ideas from what's in the kitchen, recipes, grocery list, step by step =================
    "dinner ideas" / "what can I make with chicken and rice" / "how do I make fajitas" / "the second one" / "start cooking" /
    "next" / "go back" / "set a timer" / "read the ingredients" / "done cooking". Kitchen: "we're out of rice", "I bought chicken". */
@@ -3781,7 +3924,7 @@ async function cookIdeas(q,more){if(!aiOn())return reply("Cooking help needs Ask
   if(!j.ideas||!j.ideas.length){cookClose();return reply(j.say||"Sorry, I couldn't come up with ideas just now.")}
   COOK.ideas=j.ideas.slice(0,3);COOK.stage='ideas';cookSay(`${j.say||'Here are a few ideas.'} Which one sounds good?`)}
 async function cookRecipe(dish){if(!aiOn())return reply("Cooking help needs Ask Nova set up.");if(COOK.busy)return;
-  COOK.busy=true;cookOpen('recipe');COOK.r=null;COOK.step=-1;COOK.offer=null;COOK.said=`Pulling up ${dish}…`;cookDraw();
+  COOK.busy=true;cookOpen('recipe');COOK.r=null;COOK.counted=false;COOK.step=-1;COOK.offer=null;COOK.said=`Pulling up ${dish}…`;cookDraw();
   const tk=COOK.tok,j=await cookCall({mode:'recipe',have:KIT.list,dish});if(tk!==COOK.tok||!COOK.on)return;COOK.busy=false;
   if(!j.steps||!j.steps.length){if(!COOK.ideas.length)cookClose();else{COOK.stage='ideas';cookDraw()}return reply(j.say||"Sorry, I couldn't get that recipe just now.")}
   COOK.r={name:j.name||dish,mins:+j.mins||0,serves:+j.serves||2,ing:(j.ingredients||[]).map(x=>({item:String(x.item||''),qty:String(x.qty||''),have:!!x.have})),steps:j.steps.map(s=>({text:String(s.text||s),timer:+s.timer||0}))};
@@ -3790,7 +3933,7 @@ async function cookRecipe(dish){if(!aiOn())return reply("Cooking help needs Ask 
   else cookSay(`${j.say||COOK.r.name+', nice.'} You've got everything. Say start cooking when you're ready.`)}
 function cookAddList(o){const add=o.items.filter(x=>!TK.list.some(y=>kitSame(y.t.toLowerCase(),x.toLowerCase())));add.forEach(x=>TK.list.push({t:x,for:o.for}));tkSave();COOK.offer=null;
   return add.length?`Added ${cookAnd(add)} to the grocery list.`:'Those are already on the grocery list.'}
-function cookStep(i,again){const R=COOK.r;if(!R)return;const n=R.steps.length;
+function cookStep(i,again){const R=COOK.r;if(!R)return;const n=R.steps.length;if(i>=n-1&&!COOK.counted){COOK.counted=true;nsCount('recipes')}
   if(i>=n){COOK.step=n;COOK.stage='steps';return cookSay("That's the last step. Enjoy! Say done cooking to close this.")}
   COOK.step=Math.max(0,i);COOK.stage='steps';const s=R.steps[COOK.step];
   cookSay(`${again?'':COOK.step===n-1?'Last step. ':'Step '+(COOK.step+1)+'. '}${s.text}${s.timer?` Say set a timer for ${s.timer} minutes.`:''}`)}
@@ -3871,15 +4014,26 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
   toast(`<b>Nova</b>${esc(t)}`);
   const has=re=>re.test(t);
+  if(tvPick(t))return;
+  if(/^\s*(hey |ok |okay |hi )?nova\b/i.test(String(raw||'')))nsCount('cmds',t);
   {const r=cookCmd(t);if(r===true)return;if(r){if(COOK.on)return cookSay(r);return reply(r)}
    if(COOK.on&&(!/^\s*(hey |ok |okay |hi )?nova\b/i.test(String(raw||''))||!/^(what|whats|what's|how|hows|how's|why|when|where|which|who|can|could|should|is|are|do|does|will|would|tell me)\b/.test(t)))cookClose()}
-  if(tripOn()&&/\b(flights?|fly|flying|plane|land|landed|landing|take ?off|took off|trip|in the air)\b/.test(t)){const words=[...new Set((CFG.trips||[]).flatMap(T=>String((T.who||'')+' '+(T.say||'')).toLowerCase().split(/[^a-z]+/)).filter(w=>w.length>2&&w!=='and'))];
-    if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0];if(f){if(tripShow())showFor('trip');return reply(tripSay(f))}return reply("I don't have any flights for them coming up.")}}
+  if(tripOn()&&/\b(flights?|fly|flying|plane|land|landed|landing|take ?off|took off|trip|in the air|where are|how are|weather (in|for|down)|doing)\b/.test(t)){const words=[...new Set((CFG.trips||[]).flatMap(T=>String((T.who||'')+' '+(T.say||'')).toLowerCase().split(/[^a-z]+/)).filter(w=>w.length>2&&w!=='and'))];
+    if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0],A=tripAway();if(f||A){if(tripShow())showFor('trip');return reply(tripSay(A&&!tripActive()?null:f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
   /* Apple Music on the MacBook: playlists and play/pause/skip (the Nova Music helper there picks these up) */
   {const mc=c=>{const T=SECRETS.topic;if(!T)return false;nbPub(`${T}-mcmd`,c).catch(()=>{});return true};
    const pl=t.match(/^(?:can you |could you |please )?(?:play|start|put on|shuffle|throw on)(?: up)? (?:my |the |some )?(.+?) playlist(?: on apple music| on music| please)?$/)||t.match(/^(?:play|start|put on) (?:the |my )?playlist (.+?)(?: on apple music)?$/);
    if(pl){const nm=pl[1].replace(/[^a-z0-9 '&-]/gi,'').trim();if(nm&&mc('playlist|'+nm))return reply(`Starting your ${nm} playlist.`)}
+   /* songs, artists and albums: your library first, then anything on Apple Music */
+   {const bad=/\b(playlist|game|movie|show|episode|roundup|round up|trivia|video|youtube|jellyfin|highlights?)\b|^(some )?(music|something|it|that|again|the music)$/,
+      clean=x=>x.replace(/\s+(on apple music|on music|on the macbook|on the mac|please|for me)$/,'').replace(/^(some|the song|the track|a song called|the song called|songs by|music by)\s+/,'').trim(),
+      ask=(k,q)=>{q=clean(q);if(!q||q.length>80||!mc(k+'|'+q))return false;toast('🎵 <b>Looking for</b>'+esc(q));return true};let sm;
+    if(/^(?:can you |could you |please )?shuffle (?:my |the )?(?:whole )?(library|everything|all my music|my music|music|all)$/.test(t)&&mc('shuffle|*'))return reply('Shuffling your library.');
+    if((sm=t.match(/^(?:can you |could you |please )?shuffle (?:some |songs by |music by )?(.+)$/))&&!bad.test(sm[1])&&ask('shuffle',sm[1]))return;
+    if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:the )?album (.+)$/)||t.match(/^(?:can you |could you |please )?(?:play|put on|throw on) (?:the )?(.+?) album$/))&&!bad.test(sm[1])&&ask('album',sm[1]))return;
+    if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:some )?(?:songs|music|stuff|tunes) by (.+)$/))&&!bad.test(sm[1])&&ask('artist',sm[1]))return;
+    if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|blast)(?: me)? (.+)$/))&&!bad.test(sm[1])&&!/^(the )?(next|previous|last)( song| track)?$/.test(sm[1])&&ask('song',sm[1]))return}
    if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^(next|skip)( it| this)?$/.test(t)){
      if(/\b(pause|stop)\b/.test(t)&&mc('pause|'))return reply('Music paused.');
      if(/\b(next|skip)\b/.test(t)&&mc('next|'))return reply('Skipping.');
@@ -3888,7 +4042,11 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
      const vm=t.match(/\bvolume (?:to |at )?(\d{1,3})\b/);if(vm&&mc('volume|'+vm[1]))return reply(`Music volume ${vm[1]}.`);
      if(/\b(turn|crank) (it |the music )?up\b|\blouder\b/.test(t)&&mc('up|'))return reply('Turning it up.');
      if(/\b(turn) (it |the music )?down\b|\bquieter\b/.test(t)&&mc('down|'))return reply('Turning it down.');}}
-  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|error)\s*([^|]*)\|?(.*)$/i);if(mr){if(mr[1]==='ok'){toast('🎵 <b>Playing</b>'+esc(mr[2].trim()));return}return reply(mr[1]==='notfound'?`I couldn't find a playlist called ${mr[3]||mr[2]} on the MacBook.`:"The MacBook couldn't start that.")}}
+  {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
+    if(mr[1]==='ok'){if(kind==='playlist'){toast('🎵 <b>Playing</b>'+esc(lab));return}return reply(`Playing ${lab}.`)}
+    if(mr[1]==='notfound')return reply(kind==='playlist'?`I couldn't find a playlist called ${q} on the MacBook.`:`I couldn't find ${q} on Apple Music.`);
+    if(mr[1]==='notplayed')return reply(`I opened ${q} in Music on the MacBook, but couldn't start it playing. Hit play there.`);
+    return reply("The MacBook couldn't start that.")}}
   if(CFG.home&&CFG.home.on){
     if(has(/\b(smart home|my devices|devices|my lights|the lights)\b/)&&!/\b(on|off)\b/.test(t)){showFor('home');return reply(hmSay())}
     const sc=(CFG.home.scenes||[]).findIndex(s=>new RegExp('\\b'+s.name.toLowerCase()+'\\b').test(t));
@@ -3915,7 +4073,13 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(xOn('car')&&has(/\b(car|the ev|car battery|charging)\b/)){showFor('car');return reply(carSay())}
   if(has(/\b(weather maps?|maps)\b/)){showFor('maps');return reply(rlSay())}
   if(has(/\b(radar loop|rain (radar|loop|map)|snow (radar|map)|precip\w*|is it (going to )?(rain|snow)\w* nearby)\b/)){showFor('rloop');return reply(rlSay())}
-  if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(rdOn())showFor('radar');return reply(radarSay())}
+  if(has(/\bwhat('?s| is) (that|this) (plane|jet|aircraft|flight|airplane)\b|\bwhat plane is (that|this)\b|\bwhat'?s flying (over|overhead|above)\b|\bwhich plane is (that|this|overhead)\b|\bwhose plane\b/)){whatPlane();return}
+  if(has(/\b(space station|iss)\b/)){if(!SKY.tle)skyLoad();return reply(skyNext(36)?skyPassSay(skyNext(36)):"There's no visible space station pass in the next day or so.")}
+  if(has(/\b(northern lights|aurora)\b/)){return reply(SKY.aur?`Northern lights are possible ${skyWhen(SKY.aur.t)} after ${tripT(SKY.aur.t)}. It's a ${skyStorm(SKY.aur.kp)} geomagnetic storm, so look north, away from town lights.`:"No real chance of northern lights around here in the next day.")}
+  if(has(/\b(the sky|sky tonight|anything in the sky|stargazing)\b/)){return reply(skySay())}
+  if(has(/\bnova wrapped\b|\b(monthly recap|month recap|our stats|monthly stats)\b/)){nwForce=Date.now()+5*60e3;showFor('nwrap');return reply(nwSay())}
+  if(has(/\btrivia (score|scores|standings|leader)\b|\bwho'?s winning trivia\b/)){return reply(tvBoard()||'No trivia points yet this month.')}
+  if(has(/\b(planes?|flights?|airplanes?|aircraft|radar)\b/)){if(tripPgOn())showFor('trip');return reply(planesSay())}
   if(has(/\b(satellite|clouds?|storm track)\b/)){showFor('sat');return reply('Here\'s the live satellite view of the Great Lakes.')}
   if(has(/\b(cams?|webcams?|cameras?|traffic cams?)\b/)){showFor('cams');return reply('Here are the traffic cams.')}
   if(has(/\b(xbox|gamerscore|achievements?)\b/)){showFor('xbox');return reply(XB&&XB.tag?`${XB.tag}: ${(XB.score||0).toLocaleString()} Gamerscore`:'Xbox isn\'t set up yet')}
@@ -4735,8 +4899,14 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
   sg(()=>{const L=countdownList().filter(c=>daysUntil(c.date)>=0).slice(0,3);if(!L.length)return;const d0=daysUntil(L[0].date),ds=d=>d===0?'today':d===1?'tomorrow':`in ${d} days`;
     return {key:'cd',tag:'SOON',title:'Countdown',kicker:'Countdowns',value:String(d0),unit:d0===1?'Day':'Days',big:`${L[0].emoji||''} ${L[0].name} ${d0===0?'is today!':ds(d0)}`,gauge:Math.max(.03,1-d0/100),color:C.gold,
       lines:L.slice(1).map(c=>`${c.emoji||'⭐'} <b>${esc(c.name)}</b> · ${ds(daysUntil(c.date))}`),say:`${L[0].name} is ${ds(d0)}.${L[1]?` ${L[1].name} is ${ds(daysUntil(L[1].date))}.`:''}`}});
+  /* the sky tonight: a visible space station pass or a northern lights chance */
+  sg(()=>{if(!skyOn())return;const p=skyNext(14),a=SKY.aur;if(!p&&!a)return;
+    return {key:'sky',tag:'SKY',title:'Sky',kicker:'The sky '+(p?skyWhen(p.vs):skyWhen(a.t)),value:p?tripT(p.vs).replace(/ [AP]M$/,''):'Kp'+a.kp,unit:p?'Station':'Aurora',big:p?`Look ${compass(p.azS)}`:'Look north',gauge:p?Math.min(1,p.max/90):Math.min(1,a.kp/9),color:'#9b8bff',
+      lines:[p?`🛰 Space station <b>${tripT(p.vs)}</b>`:'',a?`🌌 Northern lights possible after <b>${tripT(a.t)}</b>`:''].filter(Boolean),say:skySay()}});
   /* family flight: in the next 3 days, or happening now */
-  sg(()=>{if(!tripOn())return;const f=tripActive()||tripNext().find(x=>x.dep-Date.now()<3*864e5);if(!f)return;const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),k=Math.max(0,Math.round((new Date(f.dep).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5));
+  sg(()=>{if(!tripOn())return;const f=tripActive()||tripNext().find(x=>x.dep-Date.now()<3*864e5),A=tripAway();if(!f&&A){const c=STAY.d&&STAY.d.current;
+    return {key:'trip',tag:'TRIP',title:'Trip',kicker:A.who+"'s trip",value:c?String(Math.round(c.temperature_2m)):'–',unit:'° there',big:A.stay.name,gauge:.6,color:'#7fb2ff',lines:[`Home <b>${new Date(A.next.dep).toLocaleDateString([],{weekday:'long'})}</b> · ${tripT(A.next.dep)}`],say:staySay(A)}}
+    if(!f)return;const ph=tripPhase(f),L=TRIP.live[f.key]||{},now=Date.now(),k=Math.max(0,Math.round((new Date(f.dep).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5));
     return {key:'trip',tag:'TRIP',title:'Flight',kicker:f.who+"'s trip",value:ph==='air'?String(Math.max(1,Math.round(((L.eta||f.arr)-now)/60000))):String(k),unit:ph==='air'?'Min to land':ph==='landed'?'Landed':k===1?'Day':'Days',
       big:`${f.A[2]} → ${f.B[2]}`,gauge:ph==='air'&&L.flown!=null?L.flown/(L.flown+L.rem):ph==='landed'?1:Math.max(.05,1-k/7),color:'#7fb2ff',
       lines:[`<b>${esc(f.no.slice(0,2)+' '+f.no.slice(2))}</b> · departs ${tripT(f.dep)}`,`Lands ${f.guess&&ph!=='air'?'about ':''}<b>${tripT(L.eta||f.arr)}</b>`],say:tripSay(f)}});
@@ -6224,22 +6394,23 @@ function spFit(el){const tx=el.querySelector('.sp-txt'),inn=el.querySelector('.s
     if(over()){tx.style.display='';tx.style.webkitLineClamp=''}};
   go();const im=el.querySelector('.sp-img img:not(.sp-bg)');if(im&&!im.complete)im.addEventListener('load',go,{once:true})}
 function renderSpot(midVisit){
-  const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();
+  const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();if(SP.cur&&!SP.done)tvReveal(SP.cur);
   const left=((window._pgEnd||Infinity)-Date.now())/1000,need=((CFG.spotlight&&CFG.spotlight.answerSecs)||12)+4;
   let it=spNext();
   /* not enough time left to reveal a trivia answer: skip to the next non-trivia card */
   for(let g=0;g<4&&it&&it.k==='trivia'&&left<need;g++)it=spNext();
   if(!it){el.innerHTML='<div class="sp-wait">✨ Loading something interesting…</div>';return}
+  SP.cur=it;SP.picks={};SP.done=false;
   const big=it.img?String(it.img).replace(/\/(\d+)px-/,(m,n)=>+n<640?'/640px-':m):'';
   const img=it.img?`<div class="sp-img"><img class="sp-bg" src="${esc(big)}" alt=""><img src="${esc(big)}" alt="" onerror="if(this.src!=='${esc(it.img)}'){this.src='${esc(it.img)}';this.previousElementSibling.src='${esc(it.img)}'}else this.parentNode.remove()"></div>`:'';
   let body='';
-  if(it.k==='trivia')body=`<div class="sp-q">${esc(it.text)}</div><div class="sp-opts">${it.opts.map((o,i)=>`<div data-a="${o===it.ans?1:0}"><i>${'ABCD'[i]}</i>${esc(o)}</div>`).join('')}</div><div class="sp-timer"><i></i></div>`;
+  if(it.k==='trivia')body=`<div class="sp-q">${esc(it.text)}</div><div class="sp-opts">${it.opts.map((o,i)=>`<div data-a="${o===it.ans?1:0}"><i>${'ABCD'[i]}</i>${esc(o)}</div>`).join('')}</div><div class="sp-timer"><i></i></div>${tvPlayers().length>1?`<div class="sp-sb">${tvBoardHTML()}</div>`:''}`;
   else body=`${it.title?`<b class="sp-t">${esc(it.title)}</b>`:''}<div class="sp-txt">${esc(it.text)}</div>${it.k==='otd'&&it.ago>0?`<div class="sp-ago">${it.ago} year${it.ago===1?'':'s'} ago today</div>`:''}${it.k==='born'&&it.age>0?`<div class="sp-ago">${it.age} years ago today</div>`:''}`;
   el.className='card sp-'+it.k+(it.img||it.k==='trivia'?'':' sp-noimg');
   el.innerHTML=`<div class="sp-in"><div class="sp-tag">${esc(it.tag)}</div>${it.k==='trivia'?'':img}${body}</div>`;
   spFit(el);
-  if(it.k==='trivia'){const secs=Math.max(5,Math.min((CFG.spotlight&&CFG.spotlight.answerSecs)||12,left-4));const t=el.querySelector('.sp-timer i');if(t)t.style.animationDuration=secs+'s';
-    SP.reveal=setTimeout(()=>{el.querySelectorAll('.sp-opts>div').forEach(d=>d.classList.add(d.dataset.a==='1'?'right':'wrong'));el.classList.add('revealed')},secs*1000)}
+  if(it.k==='trivia'){const secs=Math.max(5,Math.min((CFG.spotlight&&CFG.spotlight.answerSecs)||(tvPlayers().length>1?16:12),left-4));const t=el.querySelector('.sp-timer i');if(t)t.style.animationDuration=secs+'s';
+    SP.reveal=setTimeout(()=>{el.querySelectorAll('.sp-opts>div').forEach(d=>d.classList.add(d.dataset.a==='1'?'right':'wrong'));el.classList.add('revealed');tvReveal(it)},secs*1000)}
 }
 /* a new card each time home comes round, and every ~25 s while it's showing */
 /* while home stays up (e.g. held from the remote), swap cards every ~25 s, but only if there's time left to read the next one */
@@ -6250,8 +6421,9 @@ setInterval(loadSpotlight,30*60000);
 
 /* ================= Live ticker along the bottom: scores, team news, weather, roads, birthdays ================= */
 let ntSig='',ntNext=null;
-function ntItems(){
+function ntItems(){const SKYT=[];try{const p=skyNext(12);if(p)SKYT.push(`<span class="nt-k a">🛰 SPACE STATION</span> <b>${tripT(p.vs)}</b> ${skyWhen(p.vs)} · look ${compass(p.azS)}`);if(SKY.aur)SKYT.push(`<span class="nt-k a">🌌 NORTHERN LIGHTS</span> possible ${skyWhen(SKY.aur.t)} after <b>${tripT(SKY.aur.t)}</b>`)}catch(e){}
   const out=[],tag=(t,c)=>`<span class="nt-k ${c||''}">${esc(t)}</span>`;
+  out.push(...SKYT);
   try{const bd=backupDue();if(bd!=null)out.push(`${tag('💾 BACKUP','a')} <b>${esc(TC().backup)}</b> last backed up ${bd} days ago · tap Backed up on the remote when done`)}catch(e){}
   try{const R=CFG.recycling||{},k=recycleIn(),h=new Date().getHours();if(k===1&&h>=(R.eveningFrom??16))out.push(`${tag('♻️ TOMORROW','k')} <b>Recycling day</b> · put it out tonight or by 7 AM`);else if(k===0&&h<12)out.push(`${tag('♻️ TODAY','k')} <b>Recycling day</b>`)}catch(e){}
   /* your teams first: live, today, last result */
@@ -6594,7 +6766,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 174';
+document.getElementById('ver').textContent='build nova 176';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
