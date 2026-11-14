@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>Nova Remote</title>
+<script>
+/* ===== SETTINGS =====
+   The private channel name (topic) is NOT stored here, so it isn't visible on GitHub.
+   Open this page once on each phone/computer with #topic=YOURTOPIC on the end of the address; it's remembered after that. */
+const NOVA={
+  wake:['nova','novah','noba','nava','novo','no va'],  // what counts as "Nova" (speech-to-text often hears these)
+  speak:false,                                  // also read Nova's answers out loud on THIS device (answers always show on the dashboard)
+  voice:['Samantha','Ava','Allison','Karen','Google US English','Google UK English Female'],  // first one found is used
+  lang:'en-CA'
+};
+</script>
+<style>
+:root{--ink:#f5f5f7;--dim:rgba(235,235,245,.6);--edge:rgba(255,255,255,.13);--glass:rgba(255,255,255,.08);--accent:#6ea8ff;--live:#ff5c6c}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#000;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(120% 70% at 50% 0%,#1c2230 0%,#0a0b0f 55%,#000 100%) fixed;padding:max(22px,env(safe-area-inset-top)) 18px max(26px,env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;align-items:center;justify-content:space-between}
+h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.pill{font-size:13px;font-weight:600;padding:6px 12px;border-radius:20px;background:var(--glass);border:1px solid var(--edge);color:var(--dim);display:flex;align-items:center;gap:7px}
+.pill i{width:8px;height:8px;border-radius:50%;background:#777}
+.pill.ok i{background:#34c759}.pill.bad i{background:var(--live)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.05));border:1px solid var(--edge);border-radius:22px;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 10px 30px rgba(0,0,0,.35);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.mic{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 20px 22px;text-align:center}
+#micBtn{width:112px;height:112px;border-radius:50%;border:1px solid var(--edge);background:rgba(255,255,255,.08);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .3s,box-shadow .3s}
+#micBtn:active{transform:scale(.96)}
+#micBtn svg{width:44px;height:44px}
+#micBtn.on{background:rgba(110,168,255,.22);border-color:rgba(110,168,255,.6)}
+#micBtn.armed{background:rgba(110,168,255,.45);box-shadow:0 0 0 10px rgba(110,168,255,.15),0 0 40px rgba(110,168,255,.5);animation:breathe 1.2s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 0 18px rgba(110,168,255,.08),0 0 60px rgba(110,168,255,.6)}}
+#micState{font-size:17px;font-weight:600}
+#heard{font-size:15px;color:var(--dim);min-height:20px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.say{padding:16px 18px;display:none;position:relative}
+.sayx{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:1px solid var(--edge);background:rgba(255,255,255,.08);color:var(--ink);font:inherit;font-size:15px;line-height:1}
+.say small{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.say p{font-size:17px;line-height:1.4}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid button,.row button{font:inherit;color:var(--ink);background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.05));border:1px solid var(--edge);border-radius:18px;
+ padding:16px 6px 13px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .12s,background .2s}
+.grid button:active,.row button:active{transform:scale(.96);background:rgba(255,255,255,.18)}
+.grid button span{font-size:26px;line-height:1}.grid button b{font-size:14px;font-weight:600}
+.sec{margin:6px 4px -2px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.grid.extras button{background:linear-gradient(180deg,rgba(90,180,255,.18),rgba(90,180,255,.06));border-color:rgba(120,190,255,.35)}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.row button{padding:13px 4px;font-size:14px;font-weight:600}
+.tip{font-size:13px;color:var(--dim);line-height:1.5;text-align:center;padding:0 6px}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-size:15px}
+.sw{width:50px;height:30px;border-radius:15px;background:rgba(255,255,255,.18);position:relative;cursor:pointer;transition:background .2s;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw.on{background:#34c759}
+.grid button.wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;padding:14px 6px}
+.grid button.wide span{font-size:22px}.sw.on::after{transform:translateX(20px)}
+.hm{padding:16px;display:none;flex-direction:column;gap:14px}
+.hm-hero{display:flex;align-items:center;gap:14px}
+.hm-orb{width:58px;height:58px;border-radius:50%;flex:none;border:0;background:radial-gradient(circle at 40% 35%,#fff 0,var(--lc,#555) 40%,rgba(0,0,0,.2) 75%);box-shadow:0 0 26px var(--lc,transparent);cursor:pointer}
+.hm-orb.off{background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.25),rgba(255,255,255,.06) 60%);box-shadow:inset 0 0 0 1px var(--edge)}
+.hm-hero b{display:block;font-size:19px}.hm-hero small{font-size:14px;color:var(--dim)}
+.hm input[type=range]{width:100%;accent-color:var(--lc,#ffc46b);height:28px}
+.hm-sw{display:flex;justify-content:space-between}.hm-sw button{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:var(--c);cursor:pointer}
+.hm-sc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.hm-sc button{font:inherit;color:var(--ink);font-size:12px;font-weight:600;padding:10px 2px 8px;border-radius:14px;border:1px solid var(--edge);background:rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;gap:4px}.hm-sc button span{font-size:22px}
+.hm-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hm-g button{font:inherit;color:var(--ink);text-align:left;padding:11px 11px 10px;border-radius:16px;border:1px solid var(--edge);background:rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px;min-height:84px;cursor:pointer;transition:background .25s}
+.hm-g button i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.18)}.hm-g button b{font-size:13px;line-height:1.2}.hm-g button small{font-size:12px;color:var(--dim)}
+.hm-g button.on{background:linear-gradient(150deg,color-mix(in srgb,var(--lc) 35%,transparent),rgba(255,255,255,.05));border-color:color-mix(in srgb,var(--lc) 60%,transparent)}
+.hm-g button.on i{background:var(--lc);box-shadow:0 0 10px var(--lc)}.hm-g button.on small{color:var(--ink)}
+.hm-g button:active,.hm-sc button:active{transform:scale(.96)}
+.tk{padding:16px;display:flex;flex-direction:column;gap:12px}
+.tk-ring{display:none;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(255,196,107,.18);border:1px solid rgba(255,196,107,.55);font-weight:600}
+.tk-ring button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:8px 16px;background:#ffc46b;color:#1a1300}
+.tk-q{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.tk-q button,.tk-row button,.tk-add button{font:inherit;color:var(--ink);font-size:14px;font-weight:600;padding:10px 4px;border-radius:12px;border:1px solid var(--edge);background:rgba(255,255,255,.07)}
+.tk-h{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.tk-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid var(--edge)}.tk-row:first-of-type{border-top:0}
+.tk-row b{font-variant-numeric:tabular-nums;font-size:17px}.tk-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tk-row small{color:var(--dim)}
+.tk-row button{padding:6px 10px;font-size:13px}.tk-row input{width:22px;height:22px;accent-color:#7ee0a8}
+.tk-add{display:flex;gap:8px}.tk-add input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--edge);border-radius:12px;padding:10px 12px}.tk-add button{padding:10px 14px}
+.tk-empty{color:var(--dim);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Nova</h1><div class="pill" id="conn"><i></i><span>Connecting…</span></div></header>
+
+  <div class="card mic">
+    <button id="micBtn" aria-label="Turn voice on or off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <div id="micState">Tap to turn on voice</div>
+    <div id="heard">Say “Nova, show me the weather”</div>
+  </div>
+
+  <div class="tk-add ask"><input id="askIn" placeholder="Ask Nova or type a command…" enterkeyhint="send" autocomplete="off"><button id="askB">Send</button></div>
+  <div class="card say" id="sayCard"><button class="sayx" id="sayX" aria-label="Close">✕</button><small>Nova</small><p id="sayText"></p></div>
+
+  <div class="sec" id="hmSec" style="display:none">Home</div>
+  <div class="card hm" id="hmCard"></div>
+  <div class="sec">Timers &amp; list</div>
+  <div class="card tk" id="tkCard">
+    <div class="tk-ring" id="tkRing"><span id="tkRingT"></span><button id="tkDone">Done</button></div>
+    <div class="tk-q"><button data-tm="60000">1 min</button><button data-tm="300000">5 min</button><button data-tm="600000">10 min</button><button data-tm="900000">15 min</button></div>
+    <div id="tkTm"></div><div id="tkRm"></div>
+    <div class="tk-h">Shopping list</div><div id="tkLs"></div>
+    <div class="tk-add"><input id="tkIn" placeholder="Add to the list (milk, eggs…)" enterkeyhint="done"><button id="tkAddB">Add</button></div>
+  </div>
+  <div class="sec">Your day</div>
+  <div class="grid">
+    <button data-c="roundup"><span>🚀</span><b>Roundup</b></button>
+    <button data-c="hud"><span>🛰️</span><b>Command center</b></button>
+    <button data-c="normal mode"><span>↩️</span><b>Normal pages</b></button>
+    <button data-c="home"><span>🏠</span><b>Home</b></button>
+    <button data-c="my devices"><span>💡</span><b>Devices</b></button>
+    <button data-c="weather"><span>⛅</span><b>Weather</b></button>
+    <button data-c="weather maps"><span>🗺️</span><b>Weather maps</b></button>
+    <button data-c="calendar"><span>📅</span><b>Calendar</b></button>
+    <button data-c="countdown"><span>⏳</span><b>Countdowns</b></button>
+    <button data-c="week ahead"><span>🗓️</span><b>Week ahead</b></button>
+    <button data-c="morning mode"><span>☀️</span><b>Morning</b></button>
+  </div>
+  <div class="sec">Sports</div>
+  <div class="grid">
+    <button data-c="leafs hub"><span>🍁</span><b>Leafs</b></button>
+    <button data-c="knights"><span>💚</span><b>Knights</b></button>
+    <button data-c="standings"><span>📊</span><b>Standings</b></button>
+    <button data-c="trades"><span>🔁</span><b>Trades</b></button>
+    <button data-c="what's the score"><span>🔴</span><b>Live game</b></button>
+    <button data-c="game day"><span>🏒</span><b>Game day</b></button>
+    <button data-c="news"><span>📰</span><b>Team news</b></button>
+  </div>
+  <div class="sec">Around town</div>
+  <div class="grid">
+    <button data-c="traffic"><span>🚦</span><b>Traffic</b></button>
+    <button data-c="cams"><span>📹</span><b>Traffic cams</b></button>
+    <button data-c="planes"><span>✈️</span><b>Planes</b></button>
+  </div>
+  <div class="sec">Media</div>
+  <div class="grid">
+    <button data-c="jellyfin"><span>🍿</span><b>Jellyfin</b></button>
+    <button data-c="wrapped"><span>🎬</span><b>Wrapped</b></button>
+    <button data-c="what should we watch"><span>🎞️</span><b>Watch next</b></button>
+    <button data-c="photos"><span>🖼️</span><b>Photos</b></button>
+  </div>
+  <div class="sec">Screen</div>
+  <div class="grid">
+    <button data-c="status"><span>🩺</span><b>Status</b></button>
+    <button data-c="goodnight"><span>🌙</span><b>Goodnight</b></button>
+    <button data-c="wake up"><span>☀️</span><b>Wake</b></button>
+    <button data-c="backed up"><span>💾</span><b>Backed up</b></button>
+  </div>
+  <div class="row">
+    <button data-c="back">‹ Back</button>
+    <button data-c="next">Next ›</button>
+    <button data-c="pause">Pause</button>
+    <button data-c="resume">Resume</button>
+  </div>
+
+  <div class="card toggle"><span>Read answers out loud</span><div class="sw" id="speakSw"></div></div>
+  <div class="card" id="alertCh" style="display:none;flex-direction:column;align-items:flex-start;gap:.5em"><span style="opacity:.7;font-size:.85em">Phone alerts channel (subscribe to this in the ntfy app)</span><b id="alertName" style="font-size:1.15em;word-break:break-all;user-select:all"></b><button id="alertCopy" style="font:inherit;padding:.5em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Copy</button></div>
+  <p class="tip">Keep this page open in its own window. Say “Nova” and then what you want, or say “Nova”, wait for the glow, then ask.</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('topic');
+  if(v){localStorage.setItem('nova-topic',v.trim());history.replaceState(null,'',location.pathname+location.search)}
+  return localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
+/* no channel saved yet (e.g. a phone home-screen icon keeps its own storage): let it be typed in once */
+function askTopic(){const h=$('heard');h.innerHTML='<button id="setTopic" style="font:inherit;padding:.6em 1em;border-radius:12px;border:0;background:#4d8bff;color:#fff">Tap to enter your Nova channel name</button>';
+  $('setTopic').onclick=()=>{const v=(prompt('Nova channel name (the topic)')||'').trim().replace(/^.*#topic=/,'');if(v){try{localStorage.setItem('nova-topic',v)}catch(e){}location.reload()}}}
+/* type to Nova: questions, commands, "voice test"... */
+{const go=()=>{const v=$('askIn').value.trim();if(!v)return;send(v);$('askIn').value='';$('askIn').blur()};$('askB').onclick=go;$('askIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();go()}})}
+/* show the phone-alerts channel name so it can be copied into the ntfy app */
+if(T){const n=T+'-alert';$('alertName').textContent=n;$('alertCh').style.display='flex';
+  $('alertCopy').onclick=()=>{const done=()=>{$('alertCopy').textContent='Copied ✓'};
+    (navigator.clipboard?navigator.clipboard.writeText(n).then(done):Promise.reject()).catch(()=>{const r=document.createRange();r.selectNodeContents($('alertName'));const sl=getSelection();sl.removeAllRanges();sl.addRange(r);document.execCommand('copy');done()})}}
+/* where the message bus lives (your Cloudflare nova-bus); open once with #bus=https://... to change it */
+const BUS_URL=(()=>{const d='';   // set once with #bus=… on the address (kept on this phone only)
+try{const v=new URLSearchParams(location.hash.slice(1)).get('bus');if(v)localStorage.setItem('nova-bus',v);return localStorage.getItem('nova-bus')||d}catch(e){return d}})();
+const nbBase=()=>BUS_URL.replace(/\/$/,'');
+/* ---------- message bus: your own Cloudflare "nova-bus" (no daily limit); falls back to ntfy.sh if it isn't set up yet ---------- */
+const NB={ok:null,wait:null};
+function nbCheck(){if(NB.ok!==null)return Promise.resolve(NB.ok);if(NB.wait)return NB.wait;const b=nbBase();if(!b){NB.ok=false;return Promise.resolve(false)}
+  const ac=new AbortController();setTimeout(()=>ac.abort(),8000);
+  NB.wait=fetch(b+'/bus/ping',{signal:ac.signal,cache:'no-store'}).then(r=>r.json()).then(j=>NB.ok=!!(j&&j.ok)).catch(()=>NB.ok=false).finally(()=>{NB.wait=null});return NB.wait}
+function nbPub(topic,body){return nbCheck().then(ok=>fetch(ok?`${nbBase()}/bus/${topic}`:`https://ntfy.sh/${topic}`,{method:'POST',body}))}
+/* subscribe: onMsg gets ntfy-shaped messages {event,time,message}; since = '' | 'latest' | '3h' */
+function nbSub(topic,since,onMsg,onState){nbCheck().then(ok=>{
+  if(!ok){if(!window.EventSource)return;const es=new EventSource(`https://ntfy.sh/${topic}/sse${since?'?since='+since:''}`);
+    es.onopen=()=>onState&&onState(true);es.onerror=()=>onState&&onState(es.readyState===1);es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}onMsg(d)};return}
+  let ws,back=2000,pinger,last=0,rt;
+  const go=()=>{try{ws=new WebSocket(nbBase().replace(/^http/,'ws')+`/bus/${topic}/ws`+(last?'?since='+last:since?'?since='+since:''))}catch(e){rt=setTimeout(go,back);return}
+    ws.onopen=()=>{back=2000;onState&&onState(true);clearInterval(pinger);pinger=setInterval(()=>{try{ws.send('ping')}catch(e){}},30000)};
+    ws.onmessage=e=>{if(e.data==='pong')return;let d;try{d=JSON.parse(e.data)}catch(x){return}if(d.event==='message'&&d.time)last=Math.max(last,d.time);onMsg(d)};
+    ws.onclose=()=>{clearInterval(pinger);onState&&onState(false);clearTimeout(rt);rt=setTimeout(go,back);back=Math.min(30000,Math.round(back*1.6))};
+    ws.onerror=()=>{try{ws.close()}catch(e){}}};
+  go();
+  /* phones pause pages in the background: reconnect straight away when it comes back */
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ws&&ws.readyState===3){clearTimeout(rt);back=2000;go()}});
+})}
+
+/* ---------- send a command to the dashboard ---------- */
+function send(text){
+  if(!T){setConn(false,'Not set up');askTopic();return}
+  $('heard').textContent='“'+text+'”';
+  nbPub(T,text).then(r=>{if(!r.ok)throw r.status;setConn(true)}).catch(e=>setConn(false,e===429?'Message limit reached':'Can\'t reach the dashboard'));
+}
+document.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{unlockSpeech();send(b.dataset.c)}));
+$('sayX').addEventListener('click',()=>{clearTimeout(window._sayT);$('sayCard').style.display='none';if(window.speechSynthesis)speechSynthesis.cancel()});
+function setConn(ok,msg){$('conn').className='pill '+(ok?'ok':'bad');$('conn').querySelector('span').textContent=msg||(ok?'Connected':'Offline')}
+
+/* ---------- answers from the dashboard ---------- */
+let speakOn=NOVA.speak;try{const v=localStorage.getItem('nova-speak-v2');if(v!==null)speakOn=v==='1'}catch(e){}
+$('speakSw').classList.toggle('on',speakOn);
+$('speakSw').onclick=()=>{speakOn=!speakOn;$('speakSw').classList.toggle('on',speakOn);try{localStorage.setItem('nova-speak-v2',speakOn?'1':'0')}catch(e){}};
+function listen(){
+  if(!T){setConn(false,'Not set up');askTopic();return}
+  nbSub(T+'-reply','',d=>{if(d.event&&d.event!=='message')return;
+    if(d.time&&Date.now()/1000-d.time>30)return;
+    $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)},
+    ok=>setConn(ok,ok?'':'Reconnecting…'));
+}
+listen();
+
+/* ---------- Home: your lights, plugs and Rokus (state comes from the dashboard) ---------- */
+let HM=null,hmHold=0;
+function hmCmd(o){if(!T)return;nbPub(T,JSON.stringify({hm:o})).catch(()=>setConn(false,'Can\'t reach the dashboard'))}
+function hmEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function hmRender(){if(!HM||!HM.devices||!HM.devices.length)return;$('hmSec').style.display='';const c=$('hmCard');c.style.display='flex';
+  const h=HM.devices.find(d=>d.n===HM.hero),on=h&&h.on&&h.r!==false;
+  const sw=[['#ffcf7a',{ct:400}],['#fff3e0',{ct:250}],['#6c4dff',{color:'#6c4dff'}],['#2f8cff',{color:'#2f8cff'}],['#ff4d6d',{color:'#ff4d6d'}],['#3ddc84',{color:'#3ddc84'}]];
+  c.innerHTML=(h?`<div class="hm-hero" style="--lc:${h.c}"><button class="hm-orb ${on?'':'off'}" data-t="${hmEsc(h.n)}"></button><div><b>${hmEsc(h.n)}</b><small>${on?'On'+(h.b!=null?' · '+h.b+'%':''):'Off'} · tap the bulb</small></div></div>
+    <input type="range" min="1" max="100" value="${h.b||100}" id="hmBri" style="--lc:${h.c}">
+    <div class="hm-sw">${sw.map((x,i)=>`<button data-sw="${i}" style="--c:${x[0]}" aria-label="colour"></button>`).join('')}</div>`:'')+
+    `<div class="hm-sc">${(HM.scenes||[]).map(s=>`<button data-sc="${hmEsc(s.n)}"><span>${s.i||'✨'}</span>${hmEsc(s.n)}</button>`).join('')}</div>
+    <div class="hm-g">${HM.devices.filter(d=>d.n!==HM.hero).map(d=>`<button class="${d.on&&d.r!==false?'on':''}" style="--lc:${d.c}" data-t="${hmEsc(d.n)}"><i></i><b>${hmEsc(d.n)}</b><small>${d.r===false?'Not responding':d.on?'On'+(d.b!=null?' · '+d.b+'%':''):'Off'}</small></button>`).join('')}</div>`;
+  c.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const d=HM.devices.find(x=>x.n===b.dataset.t);if(!d)return;d.on=!d.on;hmHold=Date.now();hmRender();hmCmd({n:d.n,v:{on:d.on}})});
+  c.querySelectorAll('[data-sc]').forEach(b=>b.onclick=()=>hmCmd({scene:b.dataset.sc}));
+  c.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>{hmHold=Date.now();if(h){h.on=true;h.c=sw[+b.dataset.sw][0];hmRender()}hmCmd({n:HM.hero,v:sw[+b.dataset.sw][1]})});
+  const r=$('hmBri');if(r){r.oninput=()=>{hmHold=Date.now()};r.onchange=()=>{hmHold=Date.now();if(h){h.on=true;h.b=+r.value}hmCmd({n:HM.hero,v:{bri:+r.value}});hmRender()}}}
+function hmListen(){if(!T)return;
+  nbSub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}},ok=>{if(ok)hmCmd({ping:1})})}
+hmListen();
+
+/* ---------- Timers, reminders, list (state comes from the dashboard) ---------- */
+let TKS=null;
+function tkSend(o){if(!T)return;nbPub(T,JSON.stringify({tk:o})).catch(()=>setConn(false,'Can\'t reach the dashboard'))}
+const tkC=ms=>{const s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
+function tkRender(){const S=TKS||{timers:[],rems:[],list:[],ring:[]};
+  $('tkRing').style.display=S.ring&&S.ring.length?'flex':'none';$('tkRingT').textContent=(S.ring||[])[0]||'';
+  $('tkTm').innerHTML=S.timers.length?S.timers.map(x=>`<div class="tk-row"><span>⏱ ${hmEsc(x.name||'Timer')}</span><b data-end="${x.end}">${tkC(x.end-Date.now())}</b><button data-cx="${x.id}">✕</button></div>`).join(''):'';
+  $('tkRm').innerHTML=S.rems.length?`<div class="tk-h">Reminders</div>`+S.rems.map(r=>`<div class="tk-row"><span>🔔 ${hmEsc(r.text)}</span><small>${new Date(r.at).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}</small><button data-ur="${r.id}">✕</button></div>`).join(''):'';
+  $('tkLs').innerHTML=S.list.length?S.list.map(x=>`<label class="tk-row"><input type="checkbox" data-del="${hmEsc(x.t)}"><span>${hmEsc(x.t)}</span></label>`).join(''):'<div class="tk-empty">Empty. Add below, or say "add milk to the list".</div>';
+  document.querySelectorAll('[data-cx]').forEach(b=>b.onclick=()=>{tkSend({cancel:+b.dataset.cx});TKS.timers=TKS.timers.filter(x=>x.id!==+b.dataset.cx);tkRender()});
+  document.querySelectorAll('[data-ur]').forEach(b=>b.onclick=()=>{tkSend({unrem:+b.dataset.ur});TKS.rems=TKS.rems.filter(x=>x.id!==+b.dataset.ur);tkRender()});
+  document.querySelectorAll('[data-del]').forEach(c=>c.onchange=()=>{setTimeout(()=>{tkSend({del:c.dataset.del});TKS.list=TKS.list.filter(x=>x.t!==c.dataset.del);tkRender()},400)})}
+document.querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>tkSend({timer:+b.dataset.tm}));
+$('tkDone').onclick=()=>{tkSend({dismiss:1});if(TKS){TKS.ring=[];tkRender()}};
+const tkAdd=()=>{const v=$('tkIn').value.trim();if(!v)return;tkSend({add:v});if(TKS){v.split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>TKS.list.push({t:x}));tkRender()}$('tkIn').value=''};
+$('tkAddB').onclick=tkAdd;$('tkIn').onkeydown=e=>{if(e.key==='Enter')tkAdd()};
+setInterval(()=>document.querySelectorAll('#tkTm [data-end]').forEach(b=>b.textContent=tkC(+b.dataset.end-Date.now())),1000);
+function tkListen(){if(!T)return;
+  nbSub(T+'-tasks','latest',d=>{if(d.event&&d.event!=='message')return;try{TKS=JSON.parse(d.message);tkRender()}catch(x){}},ok=>{if(ok)tkSend({ping:1})})}
+tkRender();tkListen();
+
+/* ---------- speaking ---------- */
+let voice=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();for(const n of NOVA.voice){const v=vs.find(x=>x.name.startsWith(n));if(v){voice=v;return}}voice=vs.find(v=>/^en/i.test(v.lang))||null}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+let speaking=false;
+function unlockSpeech(){try{if(!window._su){window._su=1;const u=new SpeechSynthesisUtterance('');speechSynthesis.speak(u)}}catch(e){}}
+function say(text){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);if(voice)u.voice=voice;u.rate=1.02;u.pitch=1;
+  speaking=true;pauseRec();
+  u.onend=u.onerror=()=>{speaking=false;setTimeout(resumeRec,300)};
+  speechSynthesis.speak(u);
+}
+
+/* ---------- listening for "Nova" ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,micOn=false,armedUntil=0,recRunning=false;
+const wakeRe=new RegExp('\\b('+NOVA.wake.map(w=>w.replace(/ /g,'\\s+')).join('|')+')\\b[,.!?\\s]*','i');
+function chime(){try{const a=window._ac||(window._ac=new (window.AudioContext||window.webkitAudioContext)()),t=a.currentTime,g=a.createGain();g.connect(a.destination);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.45);
+  [880,1320].forEach((f,i)=>{const o=a.createOscillator();o.type='sine';o.frequency.value=f;o.connect(g);o.start(t+i*.09);o.stop(t+.5)})}catch(e){}}
+function ui(){
+  const armed=Date.now()<armedUntil;
+  $('micBtn').className=micOn?(armed?'armed':'on'):'';
+  $('micState').textContent=!SR?'Voice needs Chrome':!micOn?'Tap to turn on voice':armed?'Listening…':'Say “Nova”';
+}
+setInterval(ui,300);
+function build(){
+  rec=new SR();rec.continuous=true;rec.interimResults=true;rec.lang=NOVA.lang;rec.maxAlternatives=1;
+  rec.onstart=()=>{recRunning=true};
+  rec.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const r=e.results[i],txt=r[0].transcript.trim();
+      if(!r.isFinal){if(wakeRe.test(txt)||Date.now()<armedUntil)$('heard').textContent=txt;continue}
+      const m=txt.match(wakeRe);
+      if(m){const after=txt.slice(m.index+m[0].length).trim();
+        if(after.length>1){armedUntil=0;send(after)}else{armedUntil=Date.now()+7000;chime();$('heard').textContent='…'}}
+      else if(Date.now()<armedUntil&&txt.length>1){armedUntil=0;send(txt)}
+    }
+  };
+  rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){micOn=false;$('heard').textContent='Microphone blocked. Allow it in the address bar, then tap again.'}};
+  rec.onend=()=>{recRunning=false;if(micOn&&!speaking)setTimeout(startRec,250)};
+}
+function startRec(){if(!SR||!micOn||recRunning||speaking)return;if(!rec)build();try{rec.start()}catch(e){}}
+function pauseRec(){if(rec&&recRunning)try{rec.abort()}catch(e){}}
+function resumeRec(){if(micOn)startRec()}
+$('micBtn').onclick=()=>{
+  unlockSpeech();
+  if(!SR){$('heard').textContent='Voice works in Chrome on a computer. Buttons still work here.';return}
+  micOn=!micOn;try{localStorage.setItem('nova-mic',micOn?'1':'0')}catch(e){}
+  if(micOn){startRec();$('heard').textContent='Say “Nova, show me the weather”'}else{armedUntil=0;pauseRec()}
+  ui();
+};
+/* turn voice back on automatically if it was on last time */
+try{if(SR&&localStorage.getItem('nova-mic')==='1'){micOn=true;startRec()}}catch(e){}
+/* Chrome sometimes stops listening silently; nudge it */
+setInterval(()=>{if(micOn&&!recRunning&&!speaking)startRec()},5000);
+ui();
+</script>
+</body>
+</html>
