@@ -2125,7 +2125,7 @@ const CFG={
   commute:{bufferMin:10},
   // The ntfy topic is NOT stored here any more: each screen remembers it (open once with #topic=YOURTOPIC).
   remote:{holdSecs:60, showAnswers:true, speak:true,
-    voice:['Matilda (Premium)','Matilda (Enhanced)','Matilda','Samantha']}   // first voice found on this Mac is used
+    voice:['Matilda (Premium)','Matilda (Enhanced)']}   // first voice found on this Mac is used; otherwise the most natural English voice installed
 };
 /* ================================ */
 const $=id=>document.getElementById(id);
@@ -3364,7 +3364,10 @@ let novaVoice=null,soundReady=false;
 function pickNovaVoice(){
   if(!('speechSynthesis' in window))return;const vs=speechSynthesis.getVoices();if(!vs.length)return;
   novaVoice=null;for(const n of ((CFG.remote&&CFG.remote.voice)||[])){novaVoice=vs.find(x=>x.name===n)||vs.find(x=>x.name.startsWith(n));if(novaVoice)break}
-  novaVoice=novaVoice||vs.find(x=>x.default&&/^en/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang))||null;
+  /* nothing from the list? the most natural English voice on this Mac: Premium, then Enhanced, then Google's, then the default */
+  const en=vs.filter(x=>/^en/i.test(x.lang)),ca=x=>/en[-_](CA|US)/i.test(x.lang)?1:0;
+  novaVoice=novaVoice||en.filter(x=>/premium/i.test(x.name)).sort((a,b)=>ca(b)-ca(a))[0]||en.filter(x=>/enhanced/i.test(x.name)).sort((a,b)=>ca(b)-ca(a))[0]
+    ||en.find(x=>/^Google (US|UK) English/i.test(x.name))||en.find(x=>/^(Samantha|Karen|Daniel|Moira)$/i.test(x.name))||vs.find(x=>x.default&&/^en/i.test(x.lang))||en[0]||null;
 }
 if('speechSynthesis' in window){pickNovaVoice();speechSynthesis.onvoiceschanged=pickNovaVoice}
 function speak(text,fallback){
@@ -3567,6 +3570,7 @@ function handleCommand(raw){
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
+  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(`I'm using ${novaVoice?novaVoice.name:'the default voice'}. Natural voices on this Mac: ${vs.filter(x=>/premium|enhanced/i.test(x.name)).map(x=>x.name).join(', ')||'none yet'}.`)}
   if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
   /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
   if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
@@ -6191,7 +6195,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 148';
+document.getElementById('ver').textContent='build nova 149';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6440,7 +6444,7 @@ function say(text,voice,rate){if(text)S.duck(true);return new Promise(res0=>{con
   const fin=()=>{if(done)return;done=true;wavePulse=0;res()},soft=()=>{const left=est-(Date.now()-t0);if(left>300){wavePulse=.5;setTimeout(fin,left)}else fin()};
   if(!('speechSynthesis' in window)){soft();return}
   try{speechSynthesis.cancel()}catch(e){}
-  setTimeout(()=>{const u=new SpeechSynthesisUtterance(text);window._ruUtt=u;if(voice){u.voice=voice;u.lang=voice.lang}u.rate=rate||1;u.pitch=.95;
+  setTimeout(()=>{const u=new SpeechSynthesisUtterance(text);window._ruUtt=u;if(voice){u.voice=voice;u.lang=voice.lang}u.rate=rate||1;u.pitch=1;
     u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=soft;u.onerror=e=>{console.warn('roundup voice',e&&e.error);soft()};speechSynthesis.speak(u)},120);
   setTimeout(fin,max)})}
 
