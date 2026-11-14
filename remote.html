@@ -83,6 +83,7 @@ h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
 .tk-row button{padding:6px 10px;font-size:13px}.tk-row input{width:22px;height:22px;accent-color:#7ee0a8}
 .tk-add{display:flex;gap:8px}.tk-add input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--edge);border-radius:12px;padding:10px 12px}.tk-add button{padding:10px 14px}
 .tk-empty{color:var(--dim);font-size:14px}
+.tk-for{font-style:normal;font-size:.72em;color:#ffb27a;margin-left:.35em}
 </style>
 </head>
 <body>
@@ -254,7 +255,7 @@ function tkRender(){const S=TKS||{timers:[],rems:[],list:[],ring:[]};
   $('tkRing').style.display=S.ring&&S.ring.length?'flex':'none';$('tkRingT').textContent=(S.ring||[])[0]||'';
   $('tkTm').innerHTML=S.timers.length?S.timers.map(x=>`<div class="tk-row"><span>⏱ ${hmEsc(x.name||'Timer')}</span><b data-end="${x.end}">${tkC(x.end-Date.now())}</b><button data-cx="${x.id}">✕</button></div>`).join(''):'';
   $('tkRm').innerHTML=S.rems.length?`<div class="tk-h">Reminders</div>`+S.rems.map(r=>`<div class="tk-row"><span>🔔 ${hmEsc(r.text)}</span><small>${new Date(r.at).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}</small><button data-ur="${r.id}">✕</button></div>`).join(''):'';
-  $('tkLs').innerHTML=S.list.length?S.list.map(x=>`<label class="tk-row"><input type="checkbox" data-del="${hmEsc(x.t)}"><span>${hmEsc(x.t)}</span></label>`).join(''):'<div class="tk-empty">Empty. Add below, or say "add milk to the list".</div>';
+  $('tkLs').innerHTML=S.list.length?S.list.map(x=>`<label class="tk-row"><input type="checkbox" data-del="${hmEsc(x.t)}"><span>${hmEsc(x.t)}${x.for?` <em class="tk-for">${hmEsc(x.for)}</em>`:''}</span></label>`).join(''):'<div class="tk-empty">Empty. Add below, or say "add milk to the list".</div>';
   document.querySelectorAll('[data-cx]').forEach(b=>b.onclick=()=>{tkSend({cancel:+b.dataset.cx});TKS.timers=TKS.timers.filter(x=>x.id!==+b.dataset.cx);tkRender()});
   document.querySelectorAll('[data-ur]').forEach(b=>b.onclick=()=>{tkSend({unrem:+b.dataset.ur});TKS.rems=TKS.rems.filter(x=>x.id!==+b.dataset.ur);tkRender()});
   document.querySelectorAll('[data-del]').forEach(c=>c.onchange=()=>{setTimeout(()=>{tkSend({del:c.dataset.del});TKS.list=TKS.list.filter(x=>x.t!==c.dataset.del);tkRender()},400)})}

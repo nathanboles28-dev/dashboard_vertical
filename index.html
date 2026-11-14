@@ -1789,6 +1789,33 @@ html.nv2 .wz-tag small{font-family:var(--mono);letter-spacing:.06em}
 
 /* Siri-style glow around the whole screen while Nova is listening */
 @property --va{syntax:'<angle>';initial-value:0deg;inherits:false}
+/* cooking screen */
+#cook{position:fixed;inset:0;z-index:8;display:none;background:radial-gradient(120% 70% at 80% 0%,rgba(255,140,60,.16),transparent 60%),linear-gradient(180deg,#0b1020,#0a0d1a);color:#e8ecff;font-family:inherit}
+#cook.on{display:block;animation:ckIn .5s ease both}@keyframes ckIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+body.cooking #answer{display:none}
+#cook .ck-in{height:100%;display:flex;flex-direction:column;gap:calc(2.2*var(--u));padding:calc(5*var(--u)) calc(4.5*var(--u)) calc(9*var(--u))}
+#cook .ck-top{display:flex;justify-content:space-between;align-items:flex-start;gap:calc(2*var(--u))}
+#cook .ck-k{font-size:calc(2.3*var(--u));letter-spacing:.16em;text-transform:uppercase;color:#ffb27a;font-weight:700}
+#cook h2{margin:calc(.8*var(--u)) 0 0;font-size:calc(6.4*var(--u));line-height:1.1;font-weight:700}
+#cook .ck-clk{font-size:calc(3.8*var(--u));font-weight:600;color:#9aa3c7;white-space:nowrap}
+#cook .ck-ideas{display:grid;gap:calc(2.4*var(--u));margin-top:calc(2*var(--u))}
+#cook .ck-idea{display:flex;gap:calc(2.4*var(--u));align-items:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,178,122,.18);border-radius:calc(2*var(--u));padding:calc(3.2*var(--u))}
+#cook .ck-idea>b{font-size:calc(6.4*var(--u));color:#ffb27a;line-height:1;min-width:calc(4*var(--u))}
+#cook .ck-idea h3{margin:0;font-size:calc(5*var(--u))}#cook .ck-idea p{margin:calc(.6*var(--u)) 0;font-size:calc(3.3*var(--u));color:#c9cfe8}#cook .ck-idea small{font-size:calc(2.7*var(--u));line-height:1.4;display:block;color:#8d96bd}
+#cook .ck-kit{font-size:calc(3*var(--u));color:#9aa3c7;line-height:1.5}#cook .ck-kit span,#cook .ck-ing span,#cook .ck-cur span{display:block;font-size:calc(2.2*var(--u));letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:calc(.8*var(--u));color:#5dcaa5}
+#cook .ck-ing{display:grid;grid-template-columns:1fr 1fr;gap:calc(2.4*var(--u));font-size:calc(3.3*var(--u));line-height:1.55}
+#cook .ck-need{background:rgba(255,154,90,.08);border:1px solid rgba(255,154,90,.35);border-radius:calc(1.6*var(--u));padding:calc(1.8*var(--u))}#cook .ck-need span{color:#ff9a5a}#cook .ck-need div{color:#ffd2b0}
+#cook .ck-need i{font-style:normal;font-size:.75em;color:#5dcaa5;margin-left:.4em}#cook .ck-have{padding:calc(1.8*var(--u)) 0;color:#c9cfe8}#cook .ck-ing em{font-style:normal;color:#9aa3c7}
+#cook .ck-list{display:grid;gap:calc(1.5*var(--u));font-size:calc(3.2*var(--u));line-height:1.45;color:#aab2d6;min-height:0;overflow:hidden}
+#cook .ck-list div{display:flex;gap:calc(1.4*var(--u))}#cook .ck-list b{color:#ffb27a;min-width:calc(2.4*var(--u))}#cook .ck-list .dn{opacity:.35}#cook .ck-list .on{color:#fff}
+#cook .ck-steps{display:flex;flex-direction:column;gap:calc(2.4*var(--u));min-height:0}
+#cook .ck-cur{background:rgba(255,140,60,.1);border:2px solid #ff9a5a;border-radius:calc(2*var(--u));padding:calc(3*var(--u))}#cook .ck-cur span{color:#ffb27a}
+#cook .ck-cur p{margin:0;font-size:calc(5.8*var(--u));line-height:1.35;font-weight:600}#cook .ck-cur small{display:block;margin-top:calc(1.6*var(--u));font-size:calc(3*var(--u));color:#ffd2b0}
+#cook .ck-steps+.ck-ing{font-size:calc(2.8*var(--u))}
+#cook .ck-hint{margin-top:auto;font-size:calc(2.7*var(--u));color:#7b84a8}
+#cook .ck-say{font-size:calc(3.2*var(--u));color:#c9cfe8;line-height:1.45;border-left:3px solid #ffb27a;padding-left:calc(1.8*var(--u))}#cook .ck-say b{display:block;font-size:calc(2.1*var(--u));letter-spacing:.14em;color:#ffb27a;text-transform:uppercase}
+#cook .ck-wait{font-size:calc(3.6*var(--u));color:#c9cfe8;padding:calc(6*var(--u)) 0}#cook .ck-wait i{animation:ckDot 1.2s infinite both}#cook .ck-wait i:nth-child(2){animation-delay:.2s}#cook .ck-wait i:nth-child(3){animation-delay:.4s}
+@keyframes ckDot{0%,80%,100%{opacity:.2}40%{opacity:1}}
 #vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
 #vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(.45*var(--u));
   background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
@@ -3479,6 +3506,8 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Music control',()=>'Apple Music plays on the MacBook. To play a playlist add [[playlist:Name]]; for playback add [[music:pause]], [[music:play]], [[music:next]] or [[music:previous]] at the end of your answer.');
   add('Drive times',()=>drvSay());add('Roads around town',()=>locSay());
   add('Timers, reminders, list',()=>{const n=Date.now();return [...TK.timers.filter(t=>t.end>n).map(t=>`timer ${t.name||''} ${Math.round((t.end-n)/60000)} min left`),...TK.rems.filter(r=>r.at>n).map(r=>`reminder ${D(new Date(r.at))}: ${r.text}`),...(TK.list||[]).map(x=>'list: '+x.t)].join('\n')});
+  add('Kitchen (what they have)',()=>KIT.list.join(', '));
+  add('Cooking right now',()=>COOK.on&&COOK.r?`${COOK.r.name}. Ingredients: ${COOK.r.ing.map(x=>x.qty+' '+x.item).join(', ')}. Steps: ${COOK.r.steps.map((x,i)=>(i+1)+'. '+x.text).join(' ')}${COOK.step>=0?` They're on step ${COOK.step+1}.`:''}`:'');
   add('Countdowns',()=>countdownList().slice(0,6).map(c=>`${c.name} in ${daysUntil(c.date)} days`).join(', '));
   add('Car',()=>typeof CAR!=='undefined'&&CAR&&CAR.soc!=null?carSay():'');
   add('Systems',()=>healthSay());
@@ -3550,6 +3579,114 @@ function teamIn(t){
 }
 let NOVA_MAIN=!(navigator.locks&&navigator.locks.request);
 if(navigator.locks&&navigator.locks.request)navigator.locks.request('nova-main',()=>{NOVA_MAIN=true;console.info('this window runs commands and speech');return new Promise(()=>{})});
+/* ================= Cooking: ideas from what's in the kitchen, recipes, grocery list, step by step =================
+   "dinner ideas" / "what can I make with chicken and rice" / "how do I make fajitas" / "the second one" / "start cooking" /
+   "next" / "go back" / "set a timer" / "read the ingredients" / "done cooking". Kitchen: "we're out of rice", "I bought chicken". */
+const KIT={list:(()=>{try{return JSON.parse(localStorage.getItem('nova-kitchen'))||[]}catch(e){return[]}})()};
+const kitSave=()=>{try{localStorage.setItem('nova-kitchen',JSON.stringify(KIT.list))}catch(e){}};
+const kitNorm=x=>String(x||'').toLowerCase().replace(/\b(in the|in my|in our) (fridge|freezer|pantry|kitchen|cupboard)\b.*$/,'').replace(/^(some|a|an|the|a few|a bit of|lots of|a lot of|leftover|fresh|frozen|a bag of|a can of|a box of)\s+/,'').replace(/[^a-z0-9 '-]/g,'').trim();
+const kitSplit=s=>String(s).split(/,|\band\b|\bplus\b|&/).map(kitNorm).filter(x=>x&&x.length<30);
+const kitSame=(a,b)=>{a=a.replace(/(es|s)$/,'');b=b.replace(/(es|s)$/,'');return a===b||(a.length>3&&b.includes(a))||(b.length>3&&a.includes(b))};
+function kitAdd(items){const n=KIT.list.length;items.forEach(x=>{if(!KIT.list.some(y=>kitSame(y,x)))KIT.list.push(x)});kitSave();return KIT.list.length-n}
+function kitDel(items){const n=KIT.list.length;KIT.list=KIT.list.filter(y=>!items.some(x=>kitSame(y,x)));kitSave();return n-KIT.list.length}
+const cookAnd=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const COOK={on:false,stage:'',ideas:[],r:null,step:-1,offer:null,busy:false,said:'',at:0,q:''};
+const NUMW={one:1,first:1,'1st':1,two:2,second:2,'2nd':2,to:2,too:2,three:3,third:3,'3rd':3,four:4,fourth:4,five:5,fifth:5,six:6,sixth:6,seven:7,seventh:7,eight:8,eighth:8,last:-1};
+const cookNum=t=>{const m=t.match(/\b(\d{1,2})\b/);if(m)return +m[1];for(const w of t.split(/\s+/))if(NUMW[w]&&!(/^(to|too)$/.test(w)&&!/^(number|step) /.test(t)))return NUMW[w];return 0};
+function cookSay(text,follow){COOK.said=text;COOK.at=Date.now();cookDraw();reply(text);if(!(CFG.remote||{}).speak)speak(text);
+  if(follow!==false&&(CFG.voice||{}).converse!==false&&Date.now()-(VOICE.lastVoiceAt||0)<90000)VOICE.followNext=1}
+async function cookCall(body){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),40000);
+  try{const r=await fetch(`${CFG.relay}/cook?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),signal:ac.signal});
+    const j=await r.json().catch(()=>({}));if(j.error)console.warn('cook',j.error);return j}catch(e){return {error:String(e)}}finally{clearTimeout(to)}}
+function cookOpen(stage){COOK.on=true;COOK.stage=stage;COOK.at=Date.now();document.body.classList.add('cooking');cookDraw()}
+function cookClose(){COOK.on=false;COOK.stage='';COOK.offer=null;COOK.r=null;COOK.step=-1;document.body.classList.remove('cooking');const el=$('cook');if(el)el.classList.remove('on')}
+async function cookIdeas(q,more){if(!aiOn())return reply("Cooking help needs Ask Nova set up.");if(COOK.busy)return;
+  const avoid=more?COOK.ideas.map(x=>x.name):[];COOK.busy=true;COOK.q=q;cookOpen('ideas');COOK.ideas=more?COOK.ideas:[];COOK.said='Thinking up some ideas…';cookDraw();
+  const j=await cookCall({mode:'ideas',have:KIT.list,q,avoid});COOK.busy=false;
+  if(!j.ideas||!j.ideas.length){cookClose();return reply(j.say||"Sorry, I couldn't come up with ideas just now.")}
+  COOK.ideas=j.ideas.slice(0,3);COOK.stage='ideas';cookSay(`${j.say||'Here are a few ideas.'} Which one sounds good?`)}
+async function cookRecipe(dish){if(!aiOn())return reply("Cooking help needs Ask Nova set up.");if(COOK.busy)return;
+  COOK.busy=true;cookOpen('recipe');COOK.r=null;COOK.step=-1;COOK.offer=null;COOK.said=`Pulling up ${dish}…`;cookDraw();
+  const j=await cookCall({mode:'recipe',have:KIT.list,dish});COOK.busy=false;
+  if(!j.steps||!j.steps.length){if(!COOK.ideas.length)cookClose();else{COOK.stage='ideas';cookDraw()}return reply(j.say||"Sorry, I couldn't get that recipe just now.")}
+  COOK.r={name:j.name||dish,mins:+j.mins||0,serves:+j.serves||2,ing:(j.ingredients||[]).map(x=>({item:String(x.item||''),qty:String(x.qty||''),have:!!x.have})),steps:j.steps.map(s=>({text:String(s.text||s),timer:+s.timer||0}))};
+  const need=COOK.r.ing.filter(x=>!x.have).map(x=>x.item);COOK.stage='recipe';
+  if(need.length){COOK.offer={items:need,for:COOK.r.name};cookSay(`${j.say||COOK.r.name+', nice.'} You'll need ${cookAnd(need)}. Want me to add ${need.length===1?'that':'those'} to the grocery list?`)}
+  else cookSay(`${j.say||COOK.r.name+', nice.'} You've got everything. Say start cooking when you're ready.`)}
+function cookAddList(o){const add=o.items.filter(x=>!TK.list.some(y=>kitSame(y.t.toLowerCase(),x.toLowerCase())));add.forEach(x=>TK.list.push({t:x,for:o.for}));tkSave();COOK.offer=null;
+  return add.length?`Added ${cookAnd(add)} to the grocery list.`:'Those are already on the grocery list.'}
+function cookStep(i,again){const R=COOK.r;if(!R)return;const n=R.steps.length;
+  if(i>=n){COOK.step=n;COOK.stage='steps';return cookSay("That's the last step. Enjoy! Say done cooking to close this.")}
+  COOK.step=Math.max(0,i);COOK.stage='steps';const s=R.steps[COOK.step];
+  cookSay(`${again?'':COOK.step===n-1?'Last step. ':'Step '+(COOK.step+1)+'. '}${s.text}${s.timer?` Say set a timer for ${s.timer} minutes.`:''}`)}
+function cookCmd(t){const C=COOK;let m;
+  /* start: ideas */
+  if(/\b(dinner|supper|lunch|breakfast|meal|recipe|food|cooking) ideas?\b|\bideas for (dinner|supper|lunch|breakfast)\b|^what (can|should|could) (i|we) (make|cook|eat)\b|^what (should|can) (i|we) have for (dinner|supper|lunch|breakfast)\b|^what'?s for (dinner|supper|lunch)\b|^(i'?m|we'?re) (so |really )?(hungry|starving)\b/.test(t)){
+    const w=t.match(/\bwith (.+)$/);if(w)kitAdd(kitSplit(w[1]));cookIdeas(t);return true}
+  /* kitchen list, any time */
+  if((m=t.match(/^(?:we'?re|we are|i'?m|i am) (?:all |completely )?out of (.+)$/)||t.match(/^(?:we|i) (?:ran|run|are|just ran) out of (.+)$/)||t.match(/^(?:we |i )?used up (?:the |all the )?(.+)$/)||t.match(/^(?:remove|take) (.+?) (?:from|out of|off) (?:the |my )?kitchen(?: list)?$/))){
+    const it=kitSplit(m[1]);if(!it.length)return null;kitDel(it);C.offer={items:it,for:''};return `Got it, no more ${cookAnd(it)}. Want ${it.length===1?'it':'them'} on the grocery list?`}
+  if((m=t.match(/^(?:i|we)(?:'ve| have)? (?:just )?(?:bought|picked up|grabbed|got more) (.+)$/)||t.match(/^add (.+?) to (?:the |my )?kitchen(?: list)?$/))){
+    const it=kitSplit(m[1]);if(!it.length)return null;kitAdd(it);const gone=TK.list.filter(y=>it.some(x=>kitSame(y.t.toLowerCase(),x)));if(gone.length){TK.list=TK.list.filter(y=>!gone.includes(y));tkSave()}
+    return `Added ${cookAnd(it)} to the kitchen.${gone.length?' And crossed '+(gone.length===1?'it':'them')+' off the grocery list.':''}`}
+  if(/^(?:i|we)(?:'ve| have)? (?:got|have) (?:a question|to |no |an idea|time|enough|a minute|plans)/.test(t))m=null;
+  else if((m=t.match(/^(?:i|we)(?:'ve| have)? (?:got|have) (?:some |a |an )?(.+)$/))&&(C.on||/\b(fridge|freezer|pantry|kitchen|cupboard)\b/.test(t))){
+    const it=kitSplit(m[1]);if(!it.length)return null;kitAdd(it);if(C.on&&C.stage==='ideas'){cookIdeas(C.q||'dinner ideas');return true}return `Okay, added ${cookAnd(it)} to the kitchen.`}
+  if(/\b(what'?s|what is|what do (i|we) have) in (the |my |our )?(kitchen|fridge|pantry|freezer)\b|^(the )?kitchen list$|^what do (i|we) have to (eat|cook)$/.test(t))
+    return KIT.list.length?`In the kitchen: ${cookAnd(KIT.list)}.`:"The kitchen list is empty. Tell me what you've got, like: we've got chicken, rice and broccoli in the fridge.";
+  if(/^(clear|empty|reset) (the |my )?kitchen( list)?$/.test(t)){KIT.list=[];kitSave();return 'Kitchen list cleared.'}
+  /* a recipe by name: "how do I make fajitas", "recipe for butter chicken" */
+  const named=t.match(/^(?:how (?:do|can|would|should) (?:i|we|you) (?:make|cook)|(?:give me |find me |get me |show me |pull up )?(?:a |the )?recipe for|(?:i|we) (?:want|wanna|would like) to (?:make|cook)|let'?s (?:make|cook)|can (?:i|we) make) (?:a |an |some |the |me )?(.+)$/);
+  /* yes / no to "add to the grocery list?" */
+  if(C.offer&&/^(yes|yeah|yep|yup|sure|ok|okay|please|do it|add (them|those|it|that)|go ahead|sounds good|for sure|definitely)\b/.test(t)){const o=C.offer,r=cookAddList(o);
+    return C.on&&C.r&&o.for?`${r} Say start cooking when you're ready.`:r}
+  if(C.offer&&/^(no|nope|nah|don'?t|skip|no thanks|not now)\b/.test(t)){C.offer=null;return C.on&&C.r?"No problem. Say start cooking when you're ready.":'Okay.'}
+  if(!C.on){if(named){cookRecipe(named[1]);return true}return null}
+  /* ---- the cooking screen is up ---- */
+  if(tkRing.length&&/^(done|stop|ok|okay|dismiss|got it|snooze)\b/.test(t))return null;
+  if(/^(done cooking|(close|exit|hide) (the )?(recipe|kitchen|cooking|cook)|stop cooking|(i'?m|we'?re|all) done( cooking)?|finished( cooking)?|close|exit|cancel|never ?mind)$/.test(t)){cookClose();return C.stage==='steps'?'Enjoy your meal!':'Okay, closed.'}
+  if(C.stage==='ideas'){
+    if(/\b(something else|more ideas|other ideas|different (ones|ideas)|none of (those|them|these)|anything else)\b/.test(t)){cookIdeas(C.q||'dinner ideas',true);return true}
+    const pick=named?named[1]:t.replace(/^(let'?s|lets|i'?ll|we'?ll|i want|we want|i'?ll have|go with|do|try|make|have|the|number|option)\s+/g,'').replace(/^(let'?s|do|go with|the|number|option)\s+/g,'');
+    let k=cookNum(t);if(k===-1)k=C.ideas.length;let idea=k>=1&&k<=C.ideas.length?C.ideas[k-1]:null;
+    if(!idea){const words=pick.split(/\s+/).filter(w=>w.length>3&&!/^(sounds|good|that|this|those|these|with|make|cook|have|want|please|one)$/.test(w));
+      idea=C.ideas.find(x=>words.some(w=>x.name.toLowerCase().includes(w.replace(/s$/,''))))}
+    if(idea){cookRecipe(idea.name);return true}
+    if(named){cookRecipe(named[1]);return true}
+    return null}
+  if(named){cookRecipe(named[1]);return true}
+  if(!C.r)return null;
+  if(/\b(ingredients|what do (i|we) need|what goes in( it)?|shopping|what'?s in it)\b/.test(t))return `For ${C.r.name}: ${cookAnd(C.r.ing.map(x=>(x.qty?x.qty+' ':'')+x.item))}.`;
+  if(/^(start|begin|go$|let'?s (go|start|do (it|this)|cook)|start cooking|first step|from the (top|start|beginning)|start over|restart)\b/.test(t)){cookStep(0);return true}
+  if(/^(next|next step|done|ok next|okay next|what'?s next|then what|and then|got it|continue|keep going|onwards?|okay|ok|finished that|that'?s done)\b/.test(t)){cookStep(C.step+1);return true}
+  if(/^(back|go back|previous|previous step|last step|step back|back one)\b/.test(t)){cookStep(C.step-1);return true}
+  if(/^(repeat|say that again|again|what was that|repeat (that|the step)|one more time|pardon|sorry what|huh)\b/.test(t)){if(C.step<0)return C.said;cookStep(C.step,true);return true}
+  if((m=t.match(/\bstep (\w+)\b/))){const k=cookNum(m[1])||cookNum(t);if(k){cookStep(k===-1?C.r.steps.length-1:k-1);return true}}
+  if(/\btimer\b/.test(t)&&!tkDur(t)&&!/\b(cancel|stop|delete|how long|left)\b/.test(t)){const s=C.r.steps[Math.max(0,C.step)];
+    if(s&&s.timer){TK.timers.push({id:Date.now(),name:`step ${Math.max(0,C.step)+1}`,end:Date.now()+s.timer*60e3,dur:s.timer*60e3});tkSave();return `${s.timer} minute timer started.`}return 'How long? Say set a timer for 10 minutes.'}
+  return null}
+function cookDraw(){let el=$('cook');if(!el){el=document.createElement('div');el.id='cook';document.body.appendChild(el)}
+  el.classList.toggle('on',COOK.on);if(!COOK.on)return;const C=COOK,R=C.r,clock=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  let head='',body='';
+  if(C.stage==='ideas'){head=`<div class="ck-k">Cooking // ideas</div>`;
+    body=C.ideas.length?`<div class="ck-ideas">${C.ideas.map((x,i)=>{const u=(x.uses||[]).length,nd=(x.need||[]).length;return `<div class="ck-idea"><b>${i+1}</b><div><h3>${esc(x.name)}</h3><p>${esc(x.blurb||'')}</p>
+      <small>${x.mins?esc(x.mins)+' min':''}${u+nd?` · you have ${u} of ${u+nd}`:''}${nd?` · need ${esc(cookAnd(x.need.slice(0,4)))}`:''}</small></div></div>`}).join('')}</div>
+      <div class="ck-hint">Say "the first one", a dish name, or "something else"</div>`:`<div class="ck-wait">Thinking up some ideas<i>.</i><i>.</i><i>.</i></div>`;
+    body+=`<div class="ck-kit"><span>Your kitchen</span>${KIT.list.length?esc(KIT.list.join(', ')):'Tell me what you\'ve got: "we have chicken, rice and broccoli"'}</div>`}
+  else if(!R){head=`<div class="ck-k">Cooking</div>`;body=`<div class="ck-wait">${esc(C.said||'Getting the recipe')}<i>.</i><i>.</i><i>.</i></div>`}
+  else{const have=R.ing.filter(x=>x.have),need=R.ing.filter(x=>!x.have),q=x=>`${x.qty?`<em>${esc(x.qty)}</em> `:''}${esc(x.item)}`;
+    head=`<div class="ck-k">Cooking // ${R.mins?R.mins+' min · ':''}serves ${R.serves}</div><h2>${esc(R.name)}</h2>`;
+    const ing=`<div class="ck-ing">${need.length?`<div class="ck-need"><span>You need</span>${need.map(x=>`<div>${q(x)}${TK.list.some(y=>kitSame(y.t.toLowerCase(),x.item.toLowerCase()))?' <i>on list</i>':''}</div>`).join('')}</div>`:''}
+      <div class="ck-have"><span>${need.length?'You have':'You have everything'}</span>${have.map(x=>`<div>✓ ${q(x)}</div>`).join('')}</div></div>`;
+    if(C.stage==='steps'&&C.step>=0){const n=R.steps.length,i=Math.min(C.step,n-1),s=R.steps[i],fin=C.step>=n;
+      body=`<div class="ck-steps"><div class="ck-cur"><span>${fin?'All done':`Step ${i+1} of ${n}`}</span><p>${fin?'Enjoy!':esc(s.text)}</p>${!fin&&s.timer?`<small>⏱ Say "set a timer" for ${s.timer} min</small>`:''}</div>
+        <div class="ck-list">${R.steps.map((x,k)=>`<div class="${k<i||fin?'dn':k===i?'on':''}"><b>${k+1}</b>${esc(x.text)}</div>`).join('')}</div></div>${ing}
+        <div class="ck-hint">"Next" · "go back" · "repeat" · "set a timer" · "read the ingredients" · "done cooking"</div>`}
+    else body=`${ing}<div class="ck-list ck-pre">${R.steps.map((x,k)=>`<div><b>${k+1}</b>${esc(x.text)}</div>`).join('')}</div>
+      <div class="ck-hint">${C.offer?'"Yes" to add what you need to the grocery list · ':''}"Start cooking" for step by step</div>`}
+  el.innerHTML=`<div class="ck-in"><div class="ck-top"><div>${head}</div><div class="ck-clk">${clock}</div></div>${body}${C.said?`<div class="ck-say"><b>Nova</b>${esc(C.said)}</div>`:''}</div>`;
+  if(typeof tkMini==='function')try{tkMini()}catch(e){}}
+setInterval(()=>{if(COOK.on){if(Date.now()-COOK.at>2*3600e3)cookClose();else{const c=document.querySelector('#cook .ck-clk');if(c)c.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}}},30000);
 function handleCommand(raw){if(!NOVA_MAIN)return;
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
@@ -3559,6 +3696,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
   toast(`<b>Nova</b>${esc(t)}`);
   const has=re=>re.test(t);
+  {const r=cookCmd(t);if(r===true)return;if(r){if(COOK.on)return cookSay(r);return reply(r)}}
   {const r=tkCmd(t);if(r)return reply(r)}
   /* Apple Music on the MacBook: playlists and play/pause/skip (the Nova Music helper there picks these up) */
   {const mc=c=>{const T=SECRETS.topic;if(!T)return false;nbPub(`${T}-mcmd`,c).catch(()=>{});return true};
@@ -4424,12 +4562,16 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     return {key:'sys',tag:'SYS',title:'Systems',kicker:'Systems check',value:`${ok}/${L.length}`,unit:bad.length?'Need a look':'Online',big:bad.length?`${bad.length} need${bad.length===1?'s':''} a look`:'All systems nominal',gauge:L.length?ok/L.length:1,color:bad.length?C.pink:'#7ee0a8',
       lines:[...(sp?[`Internet <b>${Math.round(sp[1])} Mbps</b> down · <b>${Math.round(sp[2])}</b> up`]:[]),...(bad.length?bad.slice(0,3).map(x=>`<b>${esc(x.name)}</b> · ${esc(x.why||'problem')}`):['Relay, weather, calendar, scores, remote: <b>all good</b>'])],
       say:bad.length?`Heads up: ${andJ(bad.slice(0,3).map(x=>x.name.replace(/\s*\(.*\)/,'')))} ${bad.length===1?'needs':'need'} a look.`:`All systems nominal.${sp?` Internet is running at ${nw(sp[1])} megabits.`:''}`}});
-  /* 12. the closer: something from this day in history */
-  sg(()=>{const all=(SP.items||[]).filter(x=>x.k==='otd'&&x.ago>0),nice=all.filter(x=>!spGrim.test(x.text||'')),pool=nice.length?nice:all;if(!pool.length)return;
-    /* a different one each time: skip the last few it told you */
-    let used=[];try{used=JSON.parse(localStorage.getItem('nova-ru-otd')||'[]')}catch(e){}const key=x=>String(x.text).slice(0,40),fresh=pool.filter(x=>!used.includes(key(x))),pick=(fresh.length?fresh:pool);
-    const it=pick[Math.floor(Math.random()*pick.length)];try{localStorage.setItem('nova-ru-otd',JSON.stringify([key(it),...used.filter(u=>u!==key(it))].slice(0,12)))}catch(e){}const yr=n.getFullYear()-it.ago,txt=cut(String(it.text).replace(/\s*\(.*?\)\s*/g,' ').trim(),28);
-    return {key:'otd',tag:'HIST',title:'On this day',kicker:'On this day // '+yr,value:String(yr),unit:it.ago+' years ago',big:`${yr}`,gauge:Math.min(1,it.ago/150),color:C.purple,lines:[esc(txt)],say:`And on this day in ${yr}: ${txt.replace(/…$/,'')}.`}});
+  /* 12. the closer: a trivia question (Nova reads it, gives you 5 seconds, then the answer) */
+  sg(()=>{const pool=(SP.tq||[]).filter(q=>q.opts&&q.opts.length===4&&q.text.length<=150&&q.opts.every(o=>o.length<=40));if(!pool.length)return;
+    let used=[];try{used=JSON.parse(localStorage.getItem('nova-ru-tq')||'[]')}catch(e){}const key=q=>String(q.text).slice(0,40),fresh=pool.filter(q=>!used.includes(key(q))),pick=fresh.length?fresh:pool;
+    const q=pick[Math.floor(Math.random()*pick.length)];try{localStorage.setItem('nova-ru-tq',JSON.stringify([key(q),...used.filter(u=>u!==key(q))].slice(0,60)))}catch(e){}
+    SP.tq=SP.tq.filter(x=>x!==q);const idx=q.opts.indexOf(q.ans),cat=String(q.tag||'').replace(/^.*Trivia · /,'').trim();
+    const sayQ=String(q.text).replace(/\s+/g,' ').trim(),tail=/\?$/.test(sayQ)?'':'.';
+    return {key:'trv',tag:'QUIZ',title:'Trivia',kicker:'Trivia time'+(cat?' // '+cat:''),value:'5',unit:'Seconds',big:esc(sayQ),gauge:1,color:C.purple,
+      lines:q.opts.map((o,i)=>`<b>${'ABCD'[i]}</b>&nbsp; ${esc(o)}`),
+      say:`Trivia time. ${sayQ}${tail} Is it ${q.opts.slice(0,3).join(', ')}, or ${q.opts[3]}?`,
+      quiz:{idx,wait:5,say:`The answer is ${q.ans}.`}}});
   }
   /* game day: the whole HUD in team colours, and it ends with the chant */
   const L1=typeof gdToday==='function'&&gdToday(),K1=typeof kgdToday==='function'&&kgdToday();
@@ -5444,9 +5586,10 @@ function voiceChime(up){try{const A=new (window.AudioContext||window.webkitAudio
 function voiceRun(cmd){const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
   cmd=(cmd||'').trim();
   /* a follow-up in a conversation: silence or "thanks" just ends it */
+  if(fol&&COOK.offer&&/^(no|nope|nah)\b/i.test(cmd)){COOK.offer=null;if(COOK.on){cookSay("No problem. Say start cooking when you're ready.",false);return}}
   if(fol){if(!cmd||/^(no|nope|nah|that'?s (it|all|good)|never ?mind|thanks|thank you|cheers|goodbye|bye|stop|cancel|all good|i'?m good)\b/i.test(cmd)){VOICE.convo=null;if(cmd)voiceChime(false);return}
     VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();
-    return /^(show|turn|switch|dim|set|open|play|pause|skip|next|start|stop|red alert|self destruct|round ?up)\b/i.test(cmd)?handleCommand('nova '+cmd):askNova(cmd)}
+    return (COOK.on||COOK.offer||/^(show|turn|switch|dim|set|open|play|pause|skip|next|start|stop|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
   if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
   VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
 function voiceFlash(){const E=$('vEdge');if(!E)return;E.classList.add('go');clearTimeout(E._t);E._t=setTimeout(()=>E.classList.remove('go'),1400)}
@@ -6265,7 +6408,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 165';
+document.getElementById('ver').textContent='build nova 167';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6345,7 +6488,7 @@ const CSS=`
 #ru .cb{font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:calc(5.2*var(--s));line-height:1.1;margin-top:calc(.9*var(--s));color:#fff;text-shadow:0 0 calc(2*var(--s)) color-mix(in srgb,var(--c,#3ee8ff) 60%,transparent)}
 #ru .cl{margin-top:calc(1.4*var(--s));display:grid;gap:calc(.6*var(--s))}
 #ru .cl div{font-size:calc(2.9*var(--s));font-weight:600;color:rgba(225,240,255,.9);letter-spacing:.03em;opacity:0;transform:translateX(calc(-2*var(--s)));transition:all .45s}
-#ru .cl div.on{opacity:1;transform:none}#ru .cl.many div{font-size:calc(2.45*var(--s))}#ru .cl.many{gap:calc(.35*var(--s))}#ru .cl div b{color:var(--c,#3ee8ff);font-weight:700}
+#ru .cl div.on{opacity:1;transform:none}#ru .card.qz .cb{font-size:calc(3.3*var(--s));line-height:1.25}#ru .cl div.qy{color:#7ee0a8;text-shadow:0 0 calc(1.2*var(--s)) #3fd47f}#ru .cl div.qy b{color:#7ee0a8}#ru .cl div.qn{opacity:.28}#ru .cl.many div{font-size:calc(2.45*var(--s))}#ru .cl.many{gap:calc(.35*var(--s))}#ru .cl div b{color:var(--c,#3ee8ff);font-weight:700}
 #ru .side{position:absolute;top:calc(40*var(--s));height:calc(80*var(--s));width:calc(5.4*var(--s));overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:calc(1.15*var(--s));line-height:1.5;color:rgba(120,220,255,.4);opacity:0;transition:opacity 1s;
   -webkit-mask:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
 #ru.f2 .side{opacity:1}#ru .side.l{left:calc(.8*var(--s))}#ru .side.r{right:calc(.8*var(--s));text-align:right;color:rgba(255,122,182,.4)}
@@ -6594,10 +6737,15 @@ async function play(D){
       $('#ruCoreF').style.opacity='.95';shock(s.color,6);S.blip(660+si*90,.09,.22);
       countTo($('#ruCV'),s.value,900);decode($('#ruCU'),String(s.unit||'').toUpperCase(),500);decode($('#ruCT'),String(s.title||s.tag).toUpperCase(),500);
       $('.ck').textContent='';$('.cb').textContent='';$('.cl').innerHTML=(s.lines||[]).map(l=>`<div>${l}</div>`).join('');$('.cl').classList.toggle('many',(s.lines||[]).length>3);
-      card.classList.add('on');S.chatter(6);decode($('.ck'),'◆ '+(s.kicker||s.title||''),450);await decode($('.cb'),s.big||'',650);
+      card.classList.toggle('qz',!!s.quiz);card.classList.add('on');S.chatter(6);decode($('.ck'),'◆ '+(s.kicker||s.title||''),450);await decode($('.cb'),s.big||'',650);
       const sp=say(s.say,V,RATE);
       for(const d of card.querySelectorAll('.cl div')){await sleep(260);d.classList.add('on');S.tick(3000,.025)}
-      await sp;await sleep(350);R.classList.remove('alarming');
+      await sp;
+      /* trivia: a few seconds to think, then the answer lights up */
+      if(s.quiz&&alive){for(let c=s.quiz.wait||5;c>=1&&alive;c--){$('#ruCV').textContent=String(c);S.tick(1400+(5-c)*120,.05);await sleep(1000)}
+        card.querySelectorAll('.cl div').forEach((d,i)=>d.classList.add(i===s.quiz.idx?'qy':'qn'));$('#ruCV').textContent='✓';decode($('#ruCU'),'ANSWER',400);S.chime();shock('#7ee0a8',6);
+        await say(s.quiz.say,V,RATE)}
+      await sleep(350);R.classList.remove('alarming');
     }
     /* --- outro --- */
     if(alive){$('.card').classList.remove('on');$('#ruBye').textContent='';R.querySelectorAll('.node.on,.chips .on').forEach(n=>{n.classList.remove('on');n.classList.add('done')});
