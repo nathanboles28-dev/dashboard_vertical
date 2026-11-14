@@ -3387,12 +3387,14 @@ if('speechSynthesis' in window){pickNovaVoice();speechSynthesis.onvoiceschanged=
 const MV={ok:null,voice:null,at:0};
 async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=CFG.macVoice||{};if(!H||C.on===false){MV.ok=false;return false}
   if(!force&&MV.ok!==null&&Date.now()-MV.at<300000)return MV.ok;MV.at=Date.now();
-  try{const j=await (await tfetch(H+'/voices',4000)).json();const vs=(j.voices||[]).filter(v=>/^en/i.test(v.lang)),ca=v=>/CA|US/i.test(v.lang)?1:0;
+  try{const r=await tfetch(H+'/voices',8000);if(!r.ok){MV.err='helper said '+r.status+(r.status===404?' (voice part not added yet)':'');MV.ok=false;return false}
+    const j=await r.json();const vs=(j.voices||[]).filter(v=>/^en/i.test(v.lang)),ca=v=>/CA|US/i.test(v.lang)?1:0;MV.n=vs.length;
     const want=C.voice&&C.voice!=='auto'?vs.find(v=>v.name.toLowerCase()===String(C.voice).toLowerCase()):null;
     const apple=vs.filter(v=>!/^kokoro:/.test(v.name)),ko=vs.filter(v=>/^kokoro:/.test(v.name)),kw='kokoro:'+(C.kokoro||'af_heart');
     MV.fallback=(apple.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||apple.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||{}).name||'';
-    MV.voice=want||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice}
-  catch(e){MV.ok=false}return MV.ok}
+    MV.voice=want||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice;
+    MV.err=MV.ok?'':`the helper lists ${vs.length} English voices but no Premium, Enhanced or Kokoro one`}
+  catch(e){MV.ok=false;MV.err="can't reach the home helper ("+e.message+')'}return MV.ok}
 async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   const t0=Date.now();
   try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();
@@ -3604,7 +3606,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
-  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
+  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){mvCheck(true).then(()=>reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}. Mac voice problem: ${MV.err||'unknown'}.`));return}
+  if(false){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
   if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
   /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
   if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
@@ -6241,7 +6244,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 156';
+document.getElementById('ver').textContent='build nova 157';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
