@@ -2073,6 +2073,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
+  macVoice:{on:true, voice:'auto', rate:185},   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
   voice:{on:true, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
   roundup:{on:true, music:true, musicVol:0.19, song:'roundup.mp3', songStart:30, songVol:0.1, name:'Nathan', people:['Erinn'], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's Erinn")
   home:{on:true, helper:'http://127.0.0.1:8582', hero:'Office Light', badge:false,
@@ -3370,7 +3371,22 @@ function pickNovaVoice(){
     ||en.find(x=>/^Google (US|UK) English/i.test(x.name))||en.find(x=>/^(Samantha|Karen|Daniel|Moira)$/i.test(x.name))||vs.find(x=>x.default&&/^en/i.test(x.lang))||en[0]||null;
 }
 if('speechSynthesis' in window){pickNovaVoice();speechSynthesis.onvoiceschanged=pickNovaVoice}
-function speak(text,fallback){
+/* ===== Mac voices through the home helper (Chrome can't use Premium/Enhanced voices itself) ===== */
+const MV={ok:null,voice:null,at:0};
+async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=CFG.macVoice||{};if(!H||C.on===false){MV.ok=false;return false}
+  if(!force&&MV.ok!==null&&Date.now()-MV.at<300000)return MV.ok;MV.at=Date.now();
+  try{const j=await (await tfetch(H+'/voices',4000)).json();const vs=(j.voices||[]).filter(v=>/^en/i.test(v.lang)),ca=v=>/CA|US/i.test(v.lang)?1:0;
+    const want=C.voice&&C.voice!=='auto'?vs.find(v=>v.name.toLowerCase()===String(C.voice).toLowerCase()):null;
+    MV.voice=want||vs.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||vs.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||null;MV.ok=!!MV.voice}
+  catch(e){MV.ok=false}return MV.ok}
+async function macSay(text,rate){if(!await mvCheck())return false;window._macSpeaking=Date.now();
+  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();return !!j.ok}
+  catch(e){MV.ok=null;return false}finally{window._macSpeaking=0}}
+function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
+window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
+setTimeout(()=>mvCheck(true),3000);setInterval(()=>mvCheck(true),300000);
+function speak(text,fallback,noMac){
+  if(!noMac&&MV.ok===true){macSay(text).then(ok=>{if(!ok)speak(text,fallback,true)});return}
   if(!('speechSynthesis' in window))return;
   if(!novaVoice)pickNovaVoice();
   const go=()=>{
@@ -3570,7 +3586,7 @@ function handleCommand(raw){
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
-  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(`I'm using ${novaVoice?novaVoice.name:'the default voice'}. Natural voices on this Mac: ${vs.filter(x=>/premium|enhanced/i.test(x.name)).map(x=>x.name).join(', ')||'none yet'}.`)}
+  if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
   if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
   /* a real question (not "show the weather") goes to Claude, with everything the dashboard knows */
   if(aiOn()&&/^(what|whats|what's|who|whos|who's|how|hows|how's|do|does|did|should|shall|is|are|was|were|will|would|can|could|tell me|why|when|where|which|summari[sz]e|explain|give me|any|recommend|suggest)\b/.test(t)&&!/^(show|open|go to|switch to|play|pause)\b/.test(t))return askNova(t);
@@ -5415,7 +5431,7 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
    The first copy takes the lock; any other copy waits quietly until that one closes. */
 setTimeout(()=>{if(navigator.locks&&navigator.locks.request){vLog('waiting for the mic…');navigator.locks.request('nova-voice',()=>{vLog('this window has the mic');voiceStart();return new Promise(()=>{})})}else voiceStart()},4000);
 /* the mic switches off while the roundup plays (so it can't hear itself) and back on 2 seconds after */
-setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking);
+setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking)||!!window._macSpeaking;
   /* Chrome's speech queue can get stuck "speaking" forever: after 45 s, clear it so the mic comes back */
   if(spk){VOICE.spk=VOICE.spk||Date.now();if(Date.now()-VOICE.spk>45000&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())){try{speechSynthesis.cancel()}catch(e){}vLog('cleared stuck speech');spk=false;VOICE.spk=0}}else VOICE.spk=0;
   const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||spk,R=VOICE.rec;if(VOICE.test)voiceTestUI();if(!R)return;
@@ -6195,7 +6211,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 149';
+document.getElementById('ver').textContent='build nova 150';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -6442,10 +6458,14 @@ function say(text,voice,rate){if(text)S.duck(true);return new Promise(res0=>{con
   /* if the browser blocks speech (no sound permission yet), keep the same pacing so the visuals still play out properly */
   const words=text.split(/\s+/).length,est=words*400+900,max=words*520+3500,t0=Date.now();let done=false;
   const fin=()=>{if(done)return;done=true;wavePulse=0;res()},soft=()=>{const left=est-(Date.now()-t0);if(left>300){wavePulse=.5;setTimeout(fin,left)}else fin()};
-  if(!('speechSynthesis' in window)){soft();return}
+  /* the Mac's own Premium voice when the helper has one; Chrome's voice otherwise */
+  const chrome=()=>{if(!('speechSynthesis' in window)){soft();return}
   try{speechSynthesis.cancel()}catch(e){}
   setTimeout(()=>{const u=new SpeechSynthesisUtterance(text);window._ruUtt=u;if(voice){u.voice=voice;u.lang=voice.lang}u.rate=rate||1;u.pitch=1;
-    u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=soft;u.onerror=e=>{console.warn('roundup voice',e&&e.error);soft()};speechSynthesis.speak(u)},120);
+    u.onboundary=()=>{wavePulse=1};u.onstart=()=>{wavePulse=1};u.onend=soft;u.onerror=e=>{console.warn('roundup voice',e&&e.error);soft()};speechSynthesis.speak(u)},120)};
+  if(window.novaMacSayOK&&window.novaMacSayOK()){wavePulse=1;const pul=setInterval(()=>{wavePulse=Math.random()>.35?1:.55},160);
+    window.novaMacSay(text,rate).then(ok=>{clearInterval(pul);if(ok)fin();else chrome()})}
+  else chrome();
   setTimeout(fin,max)})}
 
 /* ---------------- play ---------------- */
@@ -6606,7 +6626,7 @@ function hud(getData){if(hudOn)return;hudOn=true;
   paint();tick();const t1=setInterval(tick,1000),t2=setInterval(paint,30000);
   hudStop=()=>{clearInterval(t1);clearInterval(t2);stopNet();R.classList.add('bye');setTimeout(()=>R.remove(),1400);hudOn=false;hudSig=''}}
 function hudOff(){if(hudStop){hudStop();hudStop=null}}
-window.NovaRoundup={play,hud,hudOff,hudOn:()=>hudOn,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}},busy:()=>busy,C};
+window.NovaRoundup={play,hud,hudOff,hudOn:()=>hudOn,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}try{window.novaMacHush&&window.novaMacHush()}catch(e){}},busy:()=>busy,C};
 })();
 
 </script>
