@@ -1267,6 +1267,7 @@ body.hasTicker #hmBadge{bottom:auto;left:auto;top:calc(1.2*var(--u));right:4vw}
 #xbBody{position:absolute;left:5%;right:5%;top:calc(11*var(--u));bottom:calc(4*var(--u));display:flex;flex-direction:column;gap:calc(1.8*var(--u));overflow:hidden}
 body.npBar #xbBody{bottom:calc(2*var(--u))}
 #xbBody>*{flex-shrink:0}
+.xb-note{font-size:calc(2.2*var(--u));color:#ffcf8f;padding:0 calc(1*var(--u))}
 .xb-hero{display:flex;gap:calc(2.4*var(--u));align-items:center;padding:calc(2.4*var(--u))!important}
 .xb-pic{width:calc(12*var(--u));height:calc(12*var(--u));border-radius:50%;background:#107c10 center/cover;border:calc(.45*var(--u)) solid #52d273;flex:0 0 auto}
 .xb-hero h1{font-size:calc(4.4*var(--u));font-weight:700;line-height:1.1}
@@ -5604,7 +5605,9 @@ function renderXb(){const b=$('xbBody');if(!XB){b.innerHTML='<div class="jf-wait
   /* Game Pass: one strip, new games first, then the ones leaving soon */
   const gpl=[...(XB.gpNew||[]).slice(0,4).map(g=>({...g,k:'new'})),...(XB.gpLeaving||[]).slice(0,3).map(g=>({...g,k:'out'}))];
   const gp=gpl.length?`<div class="jf-glass xb-gpc"><div class="xb-h">GAME PASS <span>✨ new · ⏳ leaving soon</span></div><div class="xb-gps">${gpl.map(g=>`<div class="xb-gp ${g.k}"><i style="background-image:url('${esc(g.img)}')"><em>${g.k==='new'?'NEW':'LEAVING'}</em></i><small>${esc(xbN(g.name))}</small></div>`).join('')}</div></div>`:'';
-  const html=hero+stats+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
+  const eN={account:'profile',player:'game history',presence:'online status',friends:'friends',achievements:'achievements'},eL=Object.entries(XB.errs||{}).map(([k,v])=>`${eN[k]||k}: ${v}`);
+  const note=eL.length?`<div class="xb-note">⚠️ Xbox didn't answer for ${esc(eL.join(' · '))}${XB.stale?' (showing the last saved info)':''}. It retries every few minutes.</div>`:'';
+  const html=hero+stats+note+(games?`<div><div class="xb-h">RECENTLY PLAYED</div><div class="xb-games">${games}</div></div>`:'')+
     (ach?`<div class="jf-glass xb-ach"><div class="xb-h">LATEST ACHIEVEMENTS</div>${ach}</div>`:'')+
     (fr?`<div class="jf-glass xb-fr"><div class="xb-h">FRIENDS ONLINE</div><div class="xb-frs">${fr}</div></div>`:'')+
     `<div class="xb-two">${ms}${hrs}</div>`+gp;
@@ -6835,7 +6838,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 180';
+document.getElementById('ver').textContent='build nova 181';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
