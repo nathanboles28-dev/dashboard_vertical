@@ -2984,7 +2984,7 @@ let TOWN=[],REP=null,repAt=0;
 const nfSpec=L=>(L||[]).filter(x=>!x[3]||(()=>{const m=new Date().getMonth();return m>=x[3][0]&&m<=x[3][1]})()).map(x=>[x[0],x[1],x[2]||''].join('|')).join(';');
 const nfRx=k=>{const v=((CFG.newsFeed||{}).rules||{})[k];try{return v?new RegExp(v,'i'):null}catch(e){return null}};
 const newsBlock=/\b(india|indian|mumbai|delhi|bengaluru|bangalore|kolkata|chennai|hyderabad|nse|bse|sensex|nifty|rupees?|crore|lakh)\b|₹|\bRs\.? ?\d|\(nse:|\(bse:|dividend|record date|stock price|shares (rise|fall|jump)|earnings call/i;
-const newsSpam=/\b(live ?streams?|stream(ing)? free|watch (it )?(live|online|free)|how to watch|on ?demand|tv channel|nfhs network|varsity|reddit streams?|crackstreams|buffstreams)\b|[\u{1D400}-\u{1D7FF}]|\[s\s*t\s*r\s*e\s*a\s*m|(\b\w\s){5,}/iu;
+const newsSpam=/\b(live ?streams?|stream(ing)? free|watch (it )?(live|online|free)|how to watch|on ?demand|tv channel|nfhs network|varsity|reddit streams?|crackstreams|buffstreams|live score updates?|play[- ]by[- ]play|live free|live\.tv|free (nhl|ohl|hockey|game)|game ons?|full game replay)\b|\(watch\)|^\W*\+\+|\bwatch\b.{0,40}\blive\b|\blive\b.{0,40}\bwatch\b|[\u{1D400}-\u{1D7FF}]|\[s\s*t\s*r\s*e\s*a\s*m|(\b\w\s){5,}/iu;
 const newsOK=n=>{const x=`${n.t||n.title||''} ${n.d||n.sum||''}`;return !newsBlock.test(x)&&!newsSpam.test(x)};
 /* local stories must match your area (rules in your private settings): not somewhere else with the same name */
 const localOK=n=>{if(!newsOK(n))return false;const R=(CFG.newsFeed||{}).rules||{},x=`${n.t} ${n.d||''}`,src=String(n.src||''),rx=v=>{try{return v?new RegExp(v,'i'):null}catch(e){return null}};
@@ -5550,7 +5550,11 @@ const xbAgo=d=>{if(!d)return '';const m=(Date.now()-new Date(d))/60000;if(m<60)r
 const xbImg=(u,w)=>{if(!u)return '';u=String(u).replace(/^http:/,'https:').replace(/^https:\/\/images-eds\.xboxlive\.com/,'https://images-eds-ssl.xboxlive.com');   /* friends' pictures come on a non-https address */
   return w&&/images-eds/.test(u)&&!/[?&]w=/.test(u)?u+(u.includes('?')?'&':'?')+`w=${w}&h=${w}`:u};
 async function loadXb(){const C=XBC();if(C.on===false||!CFG.relay||!SECRETS.calkey)return;xbAt=Date.now();
-  try{const j=await (await tfetch(relayBase()+'/xbox?key='+encodeURIComponent(SECRETS.calkey),20000)).json();if(j.error||!j.tag){if(j.error&&!/not set up/.test(j.error))console.warn('xbox',j.error);return}
+  try{const j=await (await tfetch(relayBase()+'/xbox?key='+encodeURIComponent(SECRETS.calkey),20000)).json();
+    if(j.error||!j.tag){if(j.error&&!/not set up/.test(j.error))console.warn('xbox',j.error);if(/not set up/.test(j.error||''))return;
+      if(!XB)try{XB=JSON.parse(localStorage.getItem('nova-xb')||'null')}catch(e){}if(XB){XB.stale=true;XB.errs=Object.assign({},j.errs||{},j.errs&&Object.keys(j.errs).length?{}:{account:'no answer'})}
+      if(XB&&$('pXbox').classList.contains('on'))renderXb();return}
+    try{localStorage.setItem('nova-xb',JSON.stringify(j))}catch(e){}
     const was=XB&&XB.playing?XB.playing.name:'',now=j.playing?j.playing.name:'';
     /* remember when this game started, for "for 1 h 12 min" */
     try{let s=JSON.parse(localStorage.getItem('nova-xb-start')||'null');if(!now)s=null;else if(!s||s.name!==now)s={name:now,at:Date.now()};localStorage.setItem('nova-xb-start',JSON.stringify(s))}catch(e){}
@@ -6838,7 +6842,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 181';
+document.getElementById('ver').textContent='build nova 182';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
