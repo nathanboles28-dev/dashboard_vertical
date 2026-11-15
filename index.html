@@ -1851,6 +1851,20 @@ body.cooking #answer{z-index:9}body.cooking #mini{z-index:9;opacity:.85}
 .nw-t{padding:calc(3.6*var(--u)) calc(3*var(--u));display:flex;flex-direction:column;gap:calc(.8*var(--u))}.nw-t b{font-size:calc(8*var(--u));font-weight:300;line-height:1}.nw-t span{font-size:calc(2.6*var(--u));color:#c9cfe8}
 .nw-t.gold{background:linear-gradient(135deg,rgba(255,200,90,.25),rgba(255,255,255,.04))!important}.nw-t.gold b{font-weight:600;font-size:calc(6.4*var(--u))}
 .nw-q{padding:calc(3*var(--u));display:flex;flex-direction:column;gap:calc(.6*var(--u))}.nw-q span{font-size:calc(2*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#9aa3c7}.nw-q b{font-size:calc(4*var(--u))}.nw-q small{font-size:calc(2.4*var(--u));color:#9aa3c7}
+#pRadio{--acc:#5ff0b0;--ico:'📻'}
+.rg-wrap{position:absolute;left:4%;right:4%;top:calc(13*var(--u));bottom:calc(7.5*var(--u));display:flex;flex-direction:column;gap:calc(2.4*var(--u))}
+.rg-st{display:flex;align-items:center;gap:calc(2.4*var(--u));padding:calc(2.6*var(--u)) calc(3*var(--u));background:linear-gradient(135deg,rgba(40,200,140,.22),rgba(255,255,255,.04))!important}
+.rg-ic{width:calc(9*var(--u));height:calc(9*var(--u));border-radius:calc(1.6*var(--u));background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:calc(5*var(--u))}
+.rg-sx{flex:1;min-width:0;display:flex;flex-direction:column}.rg-sx span{font-size:calc(1.9*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#5ff0b0;font-weight:700}.rg-sx b{font-size:calc(4.2*var(--u))}.rg-sx small{font-size:calc(2.4*var(--u));color:#9aa3c7}
+.rg-st .np-eq{transform:scale(1.6);transform-origin:right center}
+.rg-board{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:calc(4*var(--u)) calc(3*var(--u));text-align:center}
+.rg-tm{display:flex;flex-direction:column;align-items:center;gap:calc(.8*var(--u))}.rg-tm img{width:calc(15*var(--u));height:calc(15*var(--u));object-fit:contain;filter:drop-shadow(0 0 calc(1.4*var(--u)) rgba(0,0,0,.5))}
+.rg-tm b{font-size:calc(3.4*var(--u))}.rg-sc{font-size:calc(11*var(--u));font-weight:300;line-height:1}.rg-tm.me .rg-sc{color:#5ff0b0;text-shadow:0 0 calc(2*var(--u)) rgba(95,240,176,.5)}
+.rg-mid{display:flex;flex-direction:column;align-items:center;gap:calc(.6*var(--u));min-width:calc(18*var(--u))}.rg-mid small{font-size:calc(2.2*var(--u));color:#9aa3c7}
+.rg-live{font-size:calc(2.4*var(--u));letter-spacing:.14em;color:#ff8f8f;font-weight:700}.rg-clk{font-size:calc(5.6*var(--u));font-weight:400}.rg-pre,.rg-fin{font-size:calc(2.4*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#9aa3c7;font-weight:700}.rg-fin{font-size:calc(3.4*var(--u));color:#fff}
+.rg-plays{padding:calc(2.6*var(--u)) calc(3*var(--u));display:flex;flex-direction:column;gap:calc(1.4*var(--u))}.rg-k{font-size:calc(2*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#9aa3c7;font-weight:700}
+.rg-p{display:flex;align-items:center;gap:calc(1.6*var(--u));font-size:calc(2.8*var(--u));color:#c9cfe8}.rg-p i{font-style:normal}.rg-p span{flex:1;min-width:0}.rg-p em{font-style:normal;font-size:calc(2.3*var(--u));color:#8d96bd;white-space:nowrap}.rg-p.goal b{color:#fff}
+.rg-note{font-size:calc(2.3*var(--u));color:#8d96bd}
 #vEdge{position:fixed;inset:0;z-index:59;pointer-events:none;opacity:0;transition:opacity .45s}
 #vEdge::before,#vEdge::after{content:'';position:absolute;inset:0;padding:calc(.45*var(--u));
   background:conic-gradient(from var(--va),#ff9a3c,#ff4fa3,#9b6bff,#3ec7ff,#3fe0a0,#ffd23c,#ff9a3c);
@@ -1960,6 +1974,7 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">Team news</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
 <section id="pRadar" class="page"><div id="rdBody"></div></section>
+<section id="pRadio" class="page"><div id="rgBody"></div></section>
 <section id="pTrip" class="page"><div id="tpBody"></div></section>
 <section id="pNWrap" class="page"><div id="nwBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
@@ -2018,6 +2033,7 @@ const CFG={
   pages:[
     // your day
     {type:'dashboard', secs:30},
+    {type:'radio',     secs:35},   // your team's game on the radio (Apple Music station on the MacBook): only while it's playing
     {type:'np',        secs:25},
     {type:'forecast',  secs:20},
     {type:'coming',    secs:25},
@@ -2167,6 +2183,8 @@ const CFG={
   // Family flights to follow (the week before + live while they fly). Set in your relay's private settings, e.g.
   // trips:[{who:'Mom & Dad', say:'Mom and Dad', flights:[{no:'AC123', from:'YYZ', to:'MCO', date:'2026-12-01', dep:'09:50'}]}]
   trips:[],
+  // A team's game on the radio: when this Apple Music station plays during their game, it gets its own page (set in your relay)
+  radio:{on:false, match:'', title:'', station:'', team:''},
   // Sky alerts: visible space station passes + northern lights (kp = storm strength needed, 6 suits southern Ontario)
   sky:{on:true, kp:6},
   // Drive times for calendar events with a location: bufferMin = extra minutes added to "leave by"
@@ -2704,10 +2722,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',nwrap:'pNWrap'};
+const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -2745,6 +2763,7 @@ function nextPage(force,hold){
   if(p.type==='week')renderWeek();
   if(p.type==='radar'){renderRadar();loadRadar()}
   if(p.type==='trip')renderTrip();
+  if(p.type==='radio'){renderRadio();rgSummary()}
   if(p.type==='nwrap')renderNWrap();
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   if(p.type==='dashboard')renderSpot();
@@ -3198,7 +3217,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
@@ -3542,6 +3561,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Starting goalies / pregame news',()=>{if(typeof PG==='undefined'||!PG||!PG.d)return '';const g=PG.d.goalies;return [g?`Goalies: us ${g.us&&g.us.name||'?'} (${g.us&&g.us.status||''}), them ${g.them&&g.them.name||'?'} (${g.them&&g.them.status||''})`:'',...(PG.d.news||[]).slice(0,5).map(n=>'News: '+n.t)].filter(Boolean).join('\n')});
   add('Scores today',()=>[...(stNHL||[]),...(stOHL||[])].slice(0,20).map(g=>typeof g==='string'?g:[g.away||g.a,g.home||g.h,g.status||g.st||''].filter(Boolean).join(' ')).join('; '));
   add('Team news headlines',()=>(newsItems||[]).slice(0,8).map(n=>n.title).join('\n'));
+  add('Radio game',()=>radioOn()&&RG.g?`Listening to ${rgCfg().title} (${rgCfg().station}). ${RG.g.line} · ${RG.g.det}`:'');
   add('Now playing',()=>NP&&NP.state==='playing'?`${NP.title} by ${NP.artist}${NP.album?' ('+NP.album+')':''}`:'Nothing playing');
   add('Jellyfin',()=>jfSay());
   add('Continue watching',()=>((typeof WT!=='undefined'&&WT&&WT.resume)||[]).slice(0,5).map(r=>`${r.user}: ${r.title} ${r.sub||''} ${r.pct||0}%`).join('\n'));
@@ -3629,6 +3649,50 @@ function teamIn(t){
 }
 let NOVA_MAIN=!(navigator.locks&&navigator.locks.request);
 if(navigator.locks&&navigator.locks.request)navigator.locks.request('nova-main',()=>{NOVA_MAIN=true;console.info('this window runs commands and speech');return new Promise(()=>{})});
+/* ================= Radio game: when the team's game is on the radio on the MacBook (Apple Music station), it gets its own page,
+   and Now Playing says the broadcast's name instead of the station's. Set in your relay: radio:{on, match, title, station, team}. ================= */
+const RG={g:null,at:0,sum:null,sumAt:0,endAt:0,was:false};
+const rgCfg=()=>CFG.radio||{};
+function rgListening(s){const C=rgCfg();if(!C.on||!C.match||!s||s.state!=='playing'||s.src==='youtube')return false;try{return new RegExp(C.match,'i').test([s.title,s.artist,s.album].join(' '))}catch(e){return false}}
+function rgWindow(){const g=RG.g;if(!g)return false;const now=Date.now(),st=+new Date(g.date);
+  return g.state==='in'||(g.state==='pre'&&st-now<45*60e3&&st-now>-3*36e5)||(g.state==='post'&&RG.endAt&&now-RG.endAt<20*60e3)}
+const rgTeam=()=>String(rgCfg().team||'LDN').toUpperCase();
+function rgLogo(){const g=RG.g,T=rgTeam();return g?(g.A===T?g.lA:g.lH):''}
+function rgView(s){if(!s||!rgListening(s)||!rgWindow())return s;const C=rgCfg();
+  return {...s,title:C.title||'Game on the radio',artist:C.station||s.title,album:'',dur:0,radio:true}}
+const radioOn=()=>{const s=typeof npState==='function'?npState():null;return !!(s&&s.radio)};
+async function rgLoad(force){const C=rgCfg();if(!C.on)return;const L=(CFG.leagues||[]).find(x=>x.type==='hockeytech'&&x.code==='ohl');if(!L)return;
+  const raw=NP&&/^(playing)$/.test(NP.state)?NP:null;if(!force&&!rgListening(raw))return;
+  if(!force&&Date.now()-RG.at<25000)return;RG.at=Date.now();
+  try{const T=rgTeam(),gs=await hockeytechGames(L,1,true,1),g=gs.filter(x=>x.A===T||x.H===T).sort((a,b)=>Math.abs(a.date-Date.now())-Math.abs(b.date-Date.now()))[0]||null;
+    if(g&&g.state==='post'&&RG.g&&RG.g.id===g.id&&RG.g.state!=='post')RG.endAt=Date.now();RG.g=g}catch(e){console.warn('radio game',e)}
+  const on=radioOn();if(on!==!!RG.shown){RG.shown=on;const ns=npState();if(ns){npArt(ns).then(()=>npPaint());renderNPMini();if($('pNP').classList.contains('on'))renderNP()}}
+  if(on&&!RG.was){RG.was=true;if(!paused&&window._curPage!=='live')nextPage('radio',45)}else if(!on)RG.was=false;
+  if(on)rgSummary();if($('pRadio')&&$('pRadio').classList.contains('on'))renderRadio()}
+async function rgSummary(){const g=RG.g,L=(CFG.leagues||[]).find(x=>x.type==='hockeytech'&&x.code==='ohl');if(!g||!L||g.state==='pre'||Date.now()-RG.sumAt<40000)return;RG.sumAt=Date.now();
+  for(const key of L.keys||[]){try{const j=await jsonpObj(`https://lscluster.hockeytech.com/feed/index.php?feed=statviewfeed&view=gameSummary&game_id=${g.id}&key=${key}&site_id=2&client_code=${L.code}&lang=en&league_id=`,12000);if(j&&j.periods){RG.sum=j;break}}catch(e){}}
+  if($('pRadio')&&$('pRadio').classList.contains('on'))renderRadio()}
+setInterval(()=>rgLoad(),15000);
+function rgPlays(){const j=RG.sum;if(!j||!j.periods)return [];const out=[],sec=t=>{const m=String(t||'').match(/(\d+):(\d+)/);return m?+m[1]*60+ +m[2]:0};
+  j.periods.forEach((pe,pi)=>{const pn=(pe.info&&(pe.info.shortName||pe.info.longName))||'';
+    (pe.goals||[]).forEach(x=>{const sb=x.scoredBy||{},pp=x.properties||{};out.push({k:'goal',o:pi*1e4+sec(x.time),team:(x.team&&x.team.abbreviation)||'',txt:`${sb.firstName?sb.firstName[0]+'. ':''}${sb.lastName||''}${pp.isPowerPlay==='1'?' · power play':pp.isShortHanded==='1'?' · shorthanded':pp.isEmptyNet==='1'?' · empty net':''}`,per:pn,t:x.time||''})});
+    (pe.penalties||[]).forEach(x=>{const tb=x.takenBy||{};out.push({k:'pen',o:pi*1e4+sec(x.time),team:(x.againstTeam&&x.againstTeam.abbreviation)||'',txt:`${tb.lastName||''}${x.description?' · '+String(x.description).toLowerCase():''}${x.minutes?' ('+x.minutes+' min)':''}`,per:pn,t:x.time||''})})});
+  return out.sort((a,b)=>b.o-a.o).slice(0,7)}
+function rgShots(){const j=RG.sum;if(!j)return null;const t=j.totalShots||j.shotsOnGoal||null;if(t&&(t.home!=null||t.visitor!=null))return {h:+t.home||0,a:+(t.visitor!=null?t.visitor:t.visiting)||0};
+  let h=0,a=0,ok=false;(j.periods||[]).forEach(pe=>{const s=pe.stats||{};if(s.homeShots!=null||s.visitingShots!=null){ok=true;h+=+s.homeShots||0;a+=+s.visitingShots||0}});return ok?{h,a}:null}
+function renderRadio(){const b=$('rgBody');if(!b)return;const C=rgCfg(),g=RG.g,s=npState(),T=rgTeam();
+  const st=s&&s.radio?`<div class="jf-glass rg-st"><div class="rg-ic">📻</div><div class="rg-sx"><span>Live on the ${esc((s.dev||'MacBook'))}</span><b>${esc(C.title||'Game on the radio')}</b><small>${esc(C.station||'')}</small></div>${npEq}</div>`:'';
+  if(!g){b.innerHTML=`<div class="jf-title">On the radio</div><div class="rg-wrap">${st}</div>`;return}
+  const us=g.A===T?'A':'H',side=k=>({n:g['f'+k],l:g['l'+k],s:g['s'+k],me:k===us}),A=side('A'),H=side('H'),sh=rgShots();
+  const mid=g.state==='pre'?`<div class="rg-pre">Puck drop</div><b class="rg-clk">${new Date(g.date).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}</b>`
+    :g.state==='post'?`<div class="rg-fin">Final</div>`:`<div class="rg-live">● ${esc((g.live&&g.live.per)||'')}</div><b class="rg-clk">${esc((g.live&&g.live.text||'').replace((g.live&&g.live.per)||'','').trim()||'')}</b>`;
+  const team=x=>`<div class="rg-tm${x.me?' me':''}">${x.l?`<img src="${esc(x.l)}" alt="" onerror="this.remove()">`:''}<b>${esc(x.n||'')}</b>${g.state!=='pre'?`<div class="rg-sc">${esc(x.s??'0')}</div>`:''}</div>`;
+  const plays=rgPlays();
+  b.innerHTML=`<div class="jf-title">${esc(C.title||'On the radio')}</div><div class="rg-wrap">${st}
+    <div class="jf-glass rg-board">${team(A)}<div class="rg-mid">${mid}${sh&&g.state!=='pre'?`<small>Shots ${sh.a}–${sh.h}</small>`:''}</div>${team(H)}</div>
+    ${plays.length?`<div class="jf-glass rg-plays"><div class="rg-k">Latest</div>${plays.map(p=>`<div class="rg-p ${p.k}"><i>${p.k==='goal'?'🚨':'⏱'}</i><span><b>${p.k==='goal'?'Goal':'Penalty'}</b> · ${esc(p.team)} · ${esc(p.txt)}</span><em>${esc(p.per)} ${esc(p.t)}</em></div>`).join('')}</div>`
+      :`<div class="rg-note">${g.state==='pre'?'Plays show up here once the puck drops.':'No goals or penalties yet.'}</div>`}
+    <div class="rg-note">The radio runs a little behind, so the score may change before you hear it.</div></div>`}
 /* ================= Trips: follow family flights. Countdown before, a live map (their plane + the traffic around it) while they fly,
    and Nova says when they take off, are 20 minutes out, and land. Flights come from your relay's private settings (CFG.trips). ================= */
 const TRIP_AP={YYZ:[43.6777,-79.6248,'Toronto','America/Toronto'],YTZ:[43.6275,-79.3962,'Toronto Island','America/Toronto'],YHM:[43.1736,-79.935,'Hamilton','America/Toronto'],YKF:[43.4608,-80.3786,'Waterloo','America/Toronto'],
@@ -5395,16 +5459,16 @@ function npState(){if(NPC().on===false||!NP||!/^(playing|paused)$/.test(NP.state
   const pos=NP.state==='playing'?(NP.pos||0)+(now-(NP.at||now)):(NP.pos||0);
   if(NP.state==='playing'&&NP.dur&&pos>NP.dur+30)return null;   /* the song ended and nothing came after (Mac asleep, Music closed) */
   if(NP.state==='paused'&&now-(NP.at||0)>600)return null;         /* paused for 10 minutes: tuck it away */
-  return {...NP,cur:Math.max(0,NP.dur?Math.min(pos,NP.dur):pos)}}
+  return rgView({...NP,cur:Math.max(0,NP.dur?Math.min(pos,NP.dur):pos)})}
 const npOn=()=>{const s=npState();return !!s&&s.state==='playing'};
 const npT=x=>{x=Math.max(0,Math.round(x||0));return Math.floor(x/60)+':'+String(x%60).padStart(2,'0')};
 /* album art from Apple's public catalogue, plus two colours from it for the backgrounds */
 /* songs: cover from Apple's catalogue · YouTube videos (src:'youtube'): the video's own thumbnail */
-const npKey=s=>s.src==='youtube'?'yt|'+(s.vid||s.title):(s.artist||'')+'|'+(s.album||s.title||'');
+const npKey=s=>s.radio?'radio|'+(s.title||''):s.src==='youtube'?'yt|'+(s.vid||s.title):(s.artist||'')+'|'+(s.album||s.title||'');
 const npYT=s=>!!s&&s.src==='youtube';
 async function npArt(s){const k=npKey(s);if(npArtCache[k]!==undefined)return npArtCache[k];npArtCache[k]=null;
   const q=async(term,ent)=>{const j=await jsonpObj('https://itunes.apple.com/search?country=CA&limit=1&entity='+ent+'&term='+encodeURIComponent(term),8000);const r=(j.results||[])[0];return r&&r.artworkUrl100?r.artworkUrl100.replace(/\d+x\d+bb/,'600x600bb'):null};
-  let u=null;if(npYT(s))u=s.vid?`https://i.ytimg.com/vi/${encodeURIComponent(s.vid)}/hqdefault.jpg`:null;
+  let u=null;if(s.radio)u=rgLogo()||null;else if(npYT(s))u=s.vid?`https://i.ytimg.com/vi/${encodeURIComponent(s.vid)}/hqdefault.jpg`:null;
   else try{if(s.album)u=await q(s.artist+' '+s.album,'album');if(!u)u=await q(s.artist+' '+s.title,'song')}catch(e){}
   const out={url:u,pal:null};
   if(u)try{out.pal=await new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=6;const x=c.getContext('2d');x.drawImage(im,0,0,6,6);
@@ -5433,7 +5497,7 @@ function renderNPMini(){if(window._mnXb&&xbPl()){xbMini();return}const s=npState
   $('npMini').innerHTML=`<div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
   $('npCard').className='card'+(s.state==='paused'?' paused':'');
   $('npCard').innerHTML=`<div class="k">${yt?'▶️':'🎵'} ${s.state==='paused'?'PAUSED':yt?'NOW WATCHING':'NOW PLAYING'}</div><div class="row"><div class="ca${yt?' yt':''}"></div><div style="min-width:0"><b>${esc(s.title||'')}</b><small>${esc(s.artist||(yt?'YouTube':''))}</small></div></div>
-    ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>on ${esc(s.dev||'Macbook')}</span><span>${npT(s.dur)}</span></div>`:`<div class="np-tm"><span>on ${esc(s.dev||'Macbook')} · YouTube</span></div>`}`;
+    ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>on ${esc(s.dev||'Macbook')}</span><span>${npT(s.dur)}</span></div>`:`<div class="np-tm"><span>on ${esc(s.dev||'Macbook')}${yt?' · YouTube':s.radio?' · radio':''}</span></div>`}`;
   npPaint();npTick()}
 function npTick(){const s=npState();if(!s)return;const pc=s.dur?Math.min(100,s.cur/s.dur*100):0;
   document.querySelectorAll('.np-fill').forEach(e=>e.style.width=pc.toFixed(2)+'%');document.querySelectorAll('.np-cur').forEach(e=>e.textContent=npT(s.cur))}
@@ -5463,8 +5527,8 @@ function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)ret
       if(!Q||window._curPage!=='np')return;   /* something else (remote, goal, alert) took over meanwhile */
       if(Q.prev==='morn'||!Q.prev){nextPage();return}
       nextPage(Q.prev,Q.left)},secs*1000)}}
-function npUpdate(j,fresh){const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;
-  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)setTimeout(npPeek,300)}}
+function npUpdate(j,fresh){const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
+  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
   else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
   npApply();}
@@ -6771,7 +6835,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 179';
+document.getElementById('ver').textContent='build nova 180';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
