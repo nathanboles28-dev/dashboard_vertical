@@ -4622,9 +4622,12 @@ function nmRecall(t){if(!/^(where('?s| is| are| did (i|we) (put|leave))|what('?s
 const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:18,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
 const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
+/* the studio's "Next break" line when a break is due: what it's waiting for */
+function fmWhy(){if(FM.fail&&Date.now()-FM.fail<15*60000)return 'couldn\'t write the last one, trying next song';
+  const g=FMC().minGap*60000-(Date.now()-FM.last);if(FM.last&&g>60000)return 'in about '+Math.ceil(g/60000)+' min';if(fmBusy())return 'when Nova\'s free';return 'after this song'}
 function fmQuiet(){const q=FMC().quiet;if(!q||q.length<2)return false;if(Date.now()<+NM.get('fmwake',0))return false;const h=new Date().getHours();return q[0]>q[1]?(h>=q[0]||h<q[1]):(h>=q[0]&&h<q[1])}
 /* never talk over a conversation, a pop-up, the roundup, cooking, the game on the radio or a YouTube video */
-function fmBusy(j){j=j||NP||{};return !!((typeof VOICE!=='undefined'&&VOICE.armed)||(typeof ORB!=='undefined'&&ORB.st)||(typeof REM_UP!=='undefined'&&REM_UP)||(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||(typeof COOK!=='undefined'&&COOK.on)||(typeof aiBusy!=='undefined'&&aiBusy)||j.src==='youtube'||j.radio||(typeof rgListening==='function'&&rgListening(j)))}
+function fmBusy(j){j=j||NP||{};return !!((typeof VOICE!=='undefined'&&VOICE.armed)||(typeof orbLive==='function'&&orbLive())||(typeof REM_UP!=='undefined'&&REM_UP)||(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||(typeof COOK!=='undefined'&&COOK.on)||(typeof aiBusy!=='undefined'&&aiBusy)||j.src==='youtube'||j.radio||(typeof rgListening==='function'&&rgListening(j)))}
 /* a new song started on the Mac */
 function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgListening==='function'&&rgListening(j)))return;
   /* a new listening session (nothing played for 30+ min): Nova FM switches itself back on, even if it was turned off last time */
@@ -4674,7 +4677,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
     const j=await r.json().catch(()=>({}));words=String(j.capped?'':j.answer||'')}catch(e){}
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
-  FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
+  FM.busy=false;FM.fail=words?0:Date.now();try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;(FM.saidK||[]).forEach(fmMarkSaid);if(FM.onSay)try{FM.onSay()}catch(e){}FM.onSay=null;if(FM.reqSaid){FM.req=null;FM.reqSaid=0}if(FM.dedSaid){FM.dedic=null;FM.dedSaid=0}if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};FM.queuedMode=mode;FM.pend=mode==='next'?Date.now():0;
@@ -4754,7 +4757,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
       ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}<div class="fm-eq${s.state==='paused'?' paused':''}">${Array.from({length:30},(_,i)=>`<i style="--d:${(.45+((i*37)%23)/45).toFixed(2)}s;animation-delay:-${((i*17)%10)/10}s"></i>`).join('')}</div></div></div>
     ${(s.next&&s.next.length)||s.shuf||s.from?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>${s.shuf?'⤮':'♪'}</i><div><b>${s.shuf?'Shuffling':'Playing from'}</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
     <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dsk in"></div>
-      <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':FM.pend&&Date.now()-FM.pend<15*60000?'ready, on air when this song ends':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
+      <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':FM.pend&&Date.now()-FM.pend<15*60000?'ready, on air when this song ends':left<=0?fmWhy():'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
     ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
     </div>`}
 /* the full-screen "on air" view */
@@ -4770,7 +4773,7 @@ function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedNews)return {k:'new
   return {k:'dj',lab:'Nova is on the mic',c:'#ff6a2b'}}
 function fmOnAir(on){let el=$('fmOn');
   if(!on){if(el)el.classList.remove('on');cancelAnimationFrame(FM.raf);FM.raf=0;return}
-  if(typeof orbOK==='function'&&ORB.st)return;   /* talking to Nova wins */
+  if(typeof orbLive==='function'&&ORB.st){if(orbLive())return;orbHide()}   /* talking to Nova wins (a stuck orb doesn't) */
   if(!el){el=document.createElement('div');el.id='fmOn';document.body.appendChild(el)}
   const w=FM.airWords||'',K=fmKind(w);el.style.setProperty('--fa',K.c);el.dataset.k=K.k;
   el.innerHTML=`<div class="fo-hd"><div class="fm-logo">${FM_LOGO}<div><b>${fmName()}</b></div></div><span class="fm-air on"><i></i>ON AIR</span></div>
@@ -4838,7 +4841,7 @@ function renderWorld(){const b=$('worldBody');if(!b)return;const L=WORLD.items||
 const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
 function handleCommand(raw){if(!NOVA_MAIN)return;
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
-  {const fs=String(raw||'').match(/^fmstate (on|off)\b/);if(fs){fmAirUI(fs[1]==='on');return}}
+  {const fs=String(raw||'').match(/^fmstate (on|off)\b(?: (\S+))?/);if(fs){if(fs[1]==='on'&&fs[2]&&!FM.air)try{const w=decodeURIComponent(escape(atob(fs[2]))).trim();if(w)FM.queued={words:w,at:Date.now()}}catch(e){}fmAirUI(fs[1]==='on');return}}
   /* Goodnight on the remote ends the late-night Nova FM override */
   if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
@@ -4873,7 +4876,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:the )?album (.+)$/)||t.match(/^(?:can you |could you |please )?(?:play|put on|throw on) (?:the )?(.+?) album$/))&&!bad.test(sm[1])&&ask('album',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:some )?(?:songs|music|stuff|tunes) by (.+)$/))&&!bad.test(sm[1])&&ask('artist',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|blast)(?: me)? (.+)$/))&&!bad.test(sm[1])&&!/^(the )?(next|previous|last)( song| track)?$/.test(sm[1])&&ask('song',sm[1]))return}
-   if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^(next|skip)( it| this)?$/.test(t)){
+   if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^skip( it| this| this one| this song)?$/.test(t)){
      if(/\b(pause|stop)\b/.test(t)&&mc('pause|'))return reply('Music paused.');
      if(/\b(next|skip)\b/.test(t)&&mc('next|'))return reply('Skipping.');
      if(/\b(previous|last|go back|back one)\b/.test(t)&&mc('previous|'))return reply('Going back one.');
@@ -6811,7 +6814,10 @@ function voiceArm(follow){VOICE.armed=1;VOICE.follow=follow?1:0;VOICE.heard='';v
 const vFillF=c=>!c||/^(um+|uh+|hmm+|hey nova|nova)[\s,.!?]*$/i.test(c.trim());
 /* ================= Nova's orb (new style only): listening / thinking / speaking, plus the little one on pop-ups =================
    A sphere of dots on a plain canvas (no 3D library), drawn ~30 times a second only while it's on screen. */
-const ORB={st:'',until:0,raf:0,el:null,cv:null,t0:performance.now(),lvl:0,an:null,mic:null,wait:0,txt:'',q:''};
+/* is the orb really in use? (not a leftover "listening" after the mic was switched off, and not stuck for 90 s) */
+function orbLive(){if(!ORB.st)return false;if(ORB.st==='listen'&&!(typeof VOICE!=='undefined'&&VOICE.armed))return false;
+  return !!(ORB.until&&Date.now()<ORB.until)||Date.now()-(ORB.at||0)<90000}
+const ORB={st:'',at:0,ls:0,until:0,raf:0,el:null,cv:null,t0:performance.now(),lvl:0,an:null,mic:null,wait:0,txt:'',q:''};
 const ORB_P=(()=>{const N=640,P=[];for(let i=0;i<N;i++){const y=1-2*(i+.5)/N,r=Math.sqrt(1-y*y),a=i*2.399963;P.push([Math.cos(a)*r,y,Math.sin(a)*r])}return P})();
 const orbOK=()=>document.documentElement.classList.contains('nvx')&&!(typeof COOK!=='undefined'&&COOK.on)&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
 function orbDraw(c,W,H,st,t,lvl,R0,cy){
@@ -6838,6 +6844,7 @@ function orbEl(){if(ORB.el)return ORB.el;const e=document.createElement('div');e
   document.body.appendChild(e);ORB.el=e;ORB.cv=e.querySelector('canvas');return e}
 function orbLoop(){ORB.raf=0;if(!ORB.st)return;const now=performance.now();
   if(ORB.until&&Date.now()>ORB.until)return orbHide();
+  if(!orbLive())return orbHide();
   /* you asked for a page: get out of the way so you can see it */
   if(ORB.st==='think'&&ORB.pg&&((document.querySelector('.page.on')||{}).id||'')!==ORB.pg)return orbHide();
   /* the level: your real mic while listening, a made-up rhythm while she talks */
@@ -6850,7 +6857,7 @@ function orbLoop(){ORB.raf=0;if(!ORB.st)return;const now=performance.now();
 async function orbMic(){if(ORB.an||ORB._micTry)return;ORB._micTry=1;try{const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
   const A=new (window.AudioContext||window.webkitAudioContext)(),src=A.createMediaStreamSource(s),an=A.createAnalyser();an.fftSize=512;src.connect(an);ORB.an=an;ORB.mic=s}catch(e){}}
 function orbSet(st,o){o=o||{};if(!orbOK()){if(ORB.st)orbHide();return}
-  const e=orbEl();ORB.st=st;ORB.until=o.secs?Date.now()+o.secs*1000:0;
+  const e=orbEl();ORB.st=st;ORB.at=Date.now();ORB.ls=0;ORB.until=o.secs?Date.now()+o.secs*1000:0;
   const lab={listen:'● Listening',think:'Thinking…',speak:'Speaking',alert:'Heads up'}[st]||'';
   e.querySelector('.no-st').textContent=lab;e.querySelector('.no-st').className='no-st '+st;
   if(o.q!=null)ORB.q=o.q;if(o.a!=null)ORB.txt=o.a;
@@ -6868,7 +6875,7 @@ function orbMini(cv){if(!cv||!document.documentElement.classList.contains('nvx')
 /* hooks into the voice: listening when the wake word lands, thinking once you've finished, speaking with the reply */
 (()=>{
   const _arm=voiceArm;voiceArm=function(f){const r=_arm.apply(this,arguments);ORB.q='';ORB.txt='';orbSet('listen');return r};
-  const _ui=voiceUI;voiceUI=function(){const r=_ui.apply(this,arguments);if(ORB.st==='listen'&&VOICE.armed){ORB.q=VOICE.heard||'';const e=ORB.el;if(e){e.querySelector('.no-k').textContent=ORB.q?'You said':'Go ahead…';e.querySelector('.no-q').textContent=ORB.q?'“'+nmCap(ORB.q)+'”':''}}return r};
+  const _ui=voiceUI;voiceUI=function(){const r=_ui.apply(this,arguments);if(ORB.st==='listen'&&!VOICE.armed)setTimeout(()=>{if(ORB.st==='listen'&&!VOICE.armed)orbHide()},1600);if(ORB.st==='listen'&&VOICE.armed){ORB.q=VOICE.heard||'';const e=ORB.el;if(e){e.querySelector('.no-k').textContent=ORB.q?'You said':'Go ahead…';e.querySelector('.no-q').textContent=ORB.q?'“'+nmCap(ORB.q)+'”':''}}return r};
   const _run=voiceRun;voiceRun=function(cmd){const c=(cmd||'').trim();
     const bye=!c||vFill(c)||/^(nothing|never ?mind|cancel|no|nope|nah|thanks|thank you|that'?s (it|all))\b/i.test(c);ORB.pg=(document.querySelector('.page.on')||{}).id||'';if(bye){if(ORB.st)orbHide()}else orbSet('think',{q:c,a:'',secs:3})
     return _run.apply(this,arguments)};
@@ -7691,7 +7698,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 186';
+document.getElementById('ver').textContent='build nova 187';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
