@@ -2199,7 +2199,7 @@ html.fmAir #fmAir{display:flex}
 #fmAir i{width:.9vw;height:.9vw;border-radius:50%;background:#171716;animation:fmBlink 1.2s ease-in-out infinite}
 @keyframes fmBlink{50%{opacity:.25}}
 /* ===== Nova FM: studio page + on-air screen ===== */
-#npBody.fmS-on>*:not(.fmS){display:none!important}
+#npBody.fmS-on>*:not(.fmS):not(.fm-ban){display:none!important}
 .fmS{position:absolute;left:5vw;right:5vw;top:calc(12.5*var(--u,1.14vw));bottom:calc(8.5*var(--u,1.14vw));display:flex;flex-direction:column;gap:2.2vw;font-family:'NovaSans','Inter',sans-serif;color:#e6e2d9;z-index:2}
 .fm-logo{display:flex;align-items:center;gap:2vw}
 .fm-logo svg{width:7.6vw;height:7.6vw;flex:none}
@@ -2306,6 +2306,35 @@ html.nv2.nvx #npCard:not(.paused) b{color:var(--xink)!important;opacity:1!import
 .wn-s{display:inline-block;font:600 calc(1.25*var(--u)) 'NovaSans','Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e5484d;margin-left:calc(.4*var(--u))}
 .n3hero.wn-brk{box-shadow:inset 0 0 0 2px #e5484d}
 .wn-r b{display:block}
+/* studio motion: rotating desk, live equalizer, needle glow, live dot */
+.fm-dsk{min-height:13vw}
+.fm-dsk.in{animation:fmIn .6s ease both}
+@keyframes fmIn{from{opacity:0;transform:translateY(.8vw)}to{opacity:1;transform:none}}
+.fm-hls{display:flex;flex-direction:column;gap:1.2vw}
+.fm-hl{display:flex;align-items:baseline;gap:1vw;padding:.4vw 0;border-top:1.5px solid #2c2b28}
+.fm-hl:first-child{border-top:0}
+.fm-hl b{font-weight:500;font-size:2.35vw;line-height:1.3;color:#e6e2d9;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fm-hl .wn-t,.fm-hl .wn-b{flex:none;font-size:1.3vw}
+.fm-dd{display:inline-flex;gap:.7vw;align-items:center;margin-right:1.6vw;vertical-align:middle}
+.fm-dd i{width:.8vw;height:.8vw;border-radius:50%;background:#3a3935}
+.fm-dd i.on{background:#ff6a2b;width:2.2vw;border-radius:1vw}
+.fm-nx{align-items:center}
+.fm-nx>span:nth-child(2){margin-right:auto}
+.fm-eq{display:flex;align-items:flex-end;gap:.45vw;height:4.2vw;margin-top:1.8vw}
+.fm-eq i{flex:1;background:rgba(230,226,217,.55);border-radius:.2vw .2vw 0 0;height:30%;animation:fmEq var(--d) ease-in-out infinite alternate}
+.fm-eq i:nth-child(5n+3){background:#ff6a2b}
+.fm-eq.paused i{animation-play-state:paused;opacity:.35}
+@keyframes fmEq{0%{height:12%}50%{height:85%}100%{height:38%}}
+.fm-dial u{animation:fmNeedle 2.4s ease-in-out infinite}
+@keyframes fmNeedle{50%{box-shadow:0 0 3.4vw rgba(255,106,43,.95)}}
+.fm-live{display:inline-block;width:1vw;height:1vw;border-radius:50%;background:#e5484d;margin-right:1vw;vertical-align:.1em;animation:fmBlink 1.4s ease-in-out infinite}
+.fm-dsk .fm-dt b{white-space:normal;font-size:2.8vw;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* Nova FM banner: curved light sweeps across the top, fading into the page */
+.fm-ban{position:fixed;left:0;right:0;top:0;height:48vw;z-index:1;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent);mask-image:linear-gradient(180deg,#000 45%,transparent)}
+.fm-ban svg{width:100%;height:100%;display:block}
+.fmS{top:calc(5.2*var(--u,1.14vw))!important}
+.fm-hd{padding-right:30vw}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4661,21 +4690,39 @@ function fmDesk(){const tile=(k,big,sub)=>`<div class="fm-dt"><small>${k}</small
   gm('Leafs',typeof HUB!=='undefined'?HUB:null);gm('Knights',typeof KH!=='undefined'?KH:null);
   if(!out.length)out.push(tile('Nova FM','On air soon','between songs'));
   return out.join('')}
+/* the desk rotates: now (weather + teams) -> headlines -> coming up */
+function fmDeskPages(){const P=[{k:'Now',h:`<div class="fm-dg">${fmDesk()}</div>`}];
+  try{const W=(WORLD.items||[]),ca=W.find(x=>x.reg==='CAN'),us=W.find(x=>x.reg==='US'),lo=(typeof TOWN!=='undefined'&&TOWN[0])||null,R=[];
+    if(WORLD.major)R.push(`<div class="fm-hl brk"><span class="wn-b">● Breaking</span><b>${esc(WORLD.major.t)}</b></div>`);
+    [ca,us].filter(x=>x&&(!WORLD.major||x.id!==WORLD.major.id)).forEach(x=>R.push(`<div class="fm-hl">${wnTag(x.reg)}<b>${esc(x.t)}</b></div>`));
+    if(lo)R.push(`<div class="fm-hl"><span class="wn-t">Local</span><b>${esc(lo.t)}</b></div>`);
+    if(R.length)P.push({k:'Headlines',h:`<div class="fm-hls">${R.slice(0,3).join('')}</div>`})}catch(e){}
+  try{const now=Date.now(),E=(calEvents||[]).filter(e=>e.end>now&&e.start-now<7*864e5).sort((a,b)=>a.start-b.start).slice(0,3),T=[];
+    const when=d=>{const n=daysUntil(d);return (n===0?'Today':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short'}))};
+    E.forEach(e=>T.push(`<div class="fm-dt"><small>${when(e.start)}${e.allDay?'':' · '+fmt(e.start)}</small><b>${esc(e.title)}</b></div>`));
+    const f=(typeof tripNext==='function'?tripNext():[])[0];if(f){const d=new Date(f.dep),n=daysUntil(d);T.unshift(`<div class="fm-dt"><small>Mom &amp; Dad · ${esc(f.no||'')}</small><b>${n<=0?'Today':n===1?'Tomorrow':n+' days'}</b><span>${esc(f.from||'')} → ${esc(f.to||'')}</span></div>`)}
+    if(T.length)P.push({k:'Coming up',h:`<div class="fm-dg">${T.slice(0,3).join('')}</div>`})}catch(e){}
+  return P}
+function fmDeskTick(adv){const box=document.querySelector('.fm-desk .fm-dsk');if(!box)return;const P=fmDeskPages();if(adv)FM.deskI=((FM.deskI||0)+1)%P.length;const i=(FM.deskI||0)%P.length,p=P[i];
+  const tg=document.querySelector('.fm-desk .fm-tag');if(tg)tg.innerHTML=`On the desk · ${p.k}`;
+  const dots=document.querySelector('.fm-desk .fm-dd');if(dots)dots.innerHTML=P.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('');
+  if(box.dataset.h!==p.h){box.classList.remove('in');void box.offsetWidth;box.innerHTML=p.h;box.dataset.h=p.h;box.classList.add('in')}}
+setInterval(()=>fmDeskTick(true),8000);
 const fmStudioOn=s=>!!(FM.on&&s&&!npYT(s)&&!s.radio&&!(typeof rgListening==='function'&&rgListening(s)));
 function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,3),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
   const left=Math.max(0,(FM.target||fmTarget())-FM.count),test=NM.get('fmtest',false);
   let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
   b.className='fmS-on';
-  b.innerHTML=`<div class="fmS">
+  b.innerHTML=`<div class="fm-ban"><svg viewBox="0 0 1080 520" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3836"/><stop offset=".55" stop-color="#232220"/><stop offset="1" stop-color="#141413"/></linearGradient><radialGradient id="fmgl" cx=".18" cy=".1" r=".7"><stop offset="0" stop-color="rgba(255,255,255,.10)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><rect width="1080" height="520" fill="url(#fmbg)"/><rect width="1080" height="520" fill="url(#fmgl)"/><g fill="none" stroke-linecap="round"><path d="M-120 330 Q 420 520 1220 40" stroke="rgba(255,255,255,.10)" stroke-width="2"/><path d="M-120 380 Q 480 560 1220 110" stroke="rgba(255,255,255,.07)" stroke-width="1.5"/><path d="M-120 420 Q 520 600 1220 190" stroke="rgba(255,106,43,.45)" stroke-width="2.5"/><path d="M-120 460 Q 560 640 1220 260" stroke="rgba(255,255,255,.05)" stroke-width="1.5"/><path d="M-160 250 Q 380 470 1240 -60" stroke="rgba(255,255,255,.06)" stroke-width="40"/></g></svg></div><div class="fmS">
     <div class="fm-hd"><div class="fm-logo">${FM_LOGO}<div><b>${fmName()}</b><small>Woodstock · audience of one</small></div></div></div>
     <div class="fm-dial">${dial}<u></u><span>NOVA</span></div>
-    <div class="fm-sub"><span>Your library · Apple Music</span><span class="fm-air${FM.air?' on':''}"><i></i>ON AIR</span></div>
+    <div class="fm-sub"><span><i class="fm-live"></i>Live · Your library · Apple Music</span><span class="fm-air${FM.air?' on':''}"><i></i>ON AIR</span></div>
     <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
       <div class="np-art fm-art"></div><div class="fm-meta"><div class="fm-t">${esc(s.title||'')}</div><div class="fm-a">${esc(s.artist||'')}</div>${s.album?`<div class="fm-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
-      ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}</div></div>
+      ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}<div class="fm-eq${s.state==='paused'?' paused':''}">${Array.from({length:30},(_,i)=>`<i style="--d:${(.45+((i*37)%23)/45).toFixed(2)}s;animation-delay:-${((i*17)%10)/10}s"></i>`).join('')}</div></div></div>
     ${(s.next&&s.next.length)||s.shuf||s.from?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>${s.shuf?'⤮':'♪'}</i><div><b>${s.shuf?'Shuffling':'Playing from'}</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
-    <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dg">${fmDesk()}</div>
-      <div class="fm-nx"><span>Next break · ${FM.busy?'writing it now…':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
+    <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dsk in"></div>
+      <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
     ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
     </div>`}
 /* the full-screen "on air" view */
@@ -6151,7 +6198,7 @@ function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pa
   const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
 function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
-  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);npPaint();npTick();return}
+  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);fmDeskTick(false);npPaint();npTick();return}
   if(b.className==='fmS-on'){b.className='';npSig=''}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
   const yt=npYT(s);b.className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
