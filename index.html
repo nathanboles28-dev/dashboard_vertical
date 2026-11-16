@@ -2289,6 +2289,15 @@ html.nv2.nvx #npCard:not(.paused) b{color:var(--xink)!important;opacity:1!import
 .fm-dt b{display:block;font:700 3.6vw/1.1 'NovaGeo','Inter',sans-serif;margin-top:1vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fm-dt span{display:block;font-size:1.8vw;color:#8a867c;margin-top:.7vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fm-desk .fm-nx{margin-top:2vw}
+/* on-air: category colour + live captions */
+#fmOn{--fa:#ff6a2b}
+#fmOn::before{background:radial-gradient(70% 45% at 50% 42%,color-mix(in srgb,var(--fa) 18%,transparent),transparent 70%)!important}
+#fmOn .fo-k{color:var(--fa)!important}
+#fmOn .fo-lt{background:var(--fa)!important}
+#fmOn[data-k="sports"] .fo-lt,#fmOn[data-k="news"] .fo-lt{color:#fff}
+#fmOn .fm-air.on{background:var(--fa);border-color:var(--fa);box-shadow:0 0 3.6vw color-mix(in srgb,var(--fa) 45%,transparent)}
+#fmOn .fo-q span{opacity:.16;transition:opacity .35s ease}
+#fmOn .fo-q span.on{opacity:1}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4603,7 +4612,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;nsCount&&nsCount('fm');
-  FM.queued={words,at:Date.now()};
+  FM.queued={words,at:Date.now()};FM.queuedMode=mode;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='next'?'next':'now'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
@@ -4656,19 +4665,32 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
     ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
     </div>`}
 /* the full-screen "on air" view */
+/* what kind of break is it? sports / weather / breaking news / regular chat (colour + label on the on-air screen) */
+function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedMode==='hour')return {k:'id',lab:'Station ID',c:'#ff6a2b'};
+  const n=re=>(w.match(re)||[]).length;
+  const sp=n(/\b(leafs|knights|nhl|ohl|game|games|score|scored|goal|goals|period|overtime|shootout|win|wins|won|loss|lost|streak|playoff|puck|standings|jays|raptors)\b/g),
+    wx=n(/\b(degrees?|°|weather|snow|rain|cold|warm|wind|sunny|cloudy|overcast|forecast|frost|freezing|storm|hoodie|jacket|umbrella|temperature|low of|high of)\b/g),
+    nw=n(/\b(breaking|news|council|police|crash|closure|closed|fire|warning|alert|emergency|announced|investigation)\b/g);
+  if(nw>=2&&nw>=sp&&nw>=wx)return {k:'news',lab:'Breaking news',c:'#e5484d'};
+  if(sp>=2&&sp>=wx)return {k:'sports',lab:'Sports update',c:'#3b7bff'};
+  if(wx>=2)return {k:'weather',lab:'Weather',c:'#4fb3d9'};
+  return {k:'dj',lab:'Nova is on the mic',c:'#ff6a2b'}}
 function fmOnAir(on){let el=$('fmOn');
   if(!on){if(el)el.classList.remove('on');cancelAnimationFrame(FM.raf);FM.raf=0;return}
   if(typeof orbOK==='function'&&ORB.st)return;   /* talking to Nova wins */
   if(!el){el=document.createElement('div');el.id='fmOn';document.body.appendChild(el)}
-  const w=FM.airWords||'';
+  const w=FM.airWords||'',K=fmKind(w);el.style.setProperty('--fa',K.c);el.dataset.k=K.k;
   el.innerHTML=`<div class="fo-hd"><div class="fm-logo">${FM_LOGO}<div><b>${fmName()}</b></div></div><span class="fm-air on"><i></i>ON AIR</span></div>
-    <div class="fo-k">Nova is on the mic</div><canvas width="1080" height="520"></canvas>
-    <div class="fo-q">${w?'“'+esc(w)+'”':''}</div><div class="fo-n">Music down to ${Math.round(FMC().duck)}% · back to the music in a moment</div>
+    <div class="fo-k">${esc(K.lab)}</div><canvas width="1080" height="520"></canvas>
+    <div class="fo-q">${w?w.split(/\s+/).map(x=>`<span>${esc(x)}</span>`).join(' '):''}</div><div class="fo-n">Music down to ${Math.round(FMC().duck)}% · back to the music in a moment</div>
     <div class="fo-lt"><b>${esc(String(FMC().station).toUpperCase())}</b><span>WOODSTOCK${fmWx()?' · '+fmWx():''} · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).toUpperCase()}</span></div>`;
   el.classList.add('on');wakeScreen&&wakeScreen();
   const cv=el.querySelector('canvas'),c=cv.getContext('2d'),t0=performance.now();
+  /* live captions: words light up at her speaking pace (after the jingle and the fade, ~1.6 s) */
+  clearInterval(FM.capT);{const sp=[...el.querySelectorAll('.fo-q span')],per=60/((CFG.fm&&CFG.fm.rate)||160)*1000;let i=0;
+   setTimeout(()=>{clearInterval(FM.capT);FM.capT=setInterval(()=>{if(i>=sp.length||!el.classList.contains('on')){clearInterval(FM.capT);return}sp[i].classList.add('on');i++},per)},1600)}
   const go=()=>{if(!el.classList.contains('on'))return;const t=(performance.now()-t0)/1000;c.clearRect(0,0,1080,520);
-    for(let i=0;i<64;i++){const a=16+Math.abs(Math.sin(i*.9+t*4.3)*Math.cos(i*.31-t*2.7))*200+Math.abs(Math.sin(i*.17+t*1.3))*50;c.fillStyle=i>26&&i<38?'#ff6a2b':'rgba(230,226,217,.75)';c.fillRect(60+i*15.2,260-a/2,8,a)}
+    for(let i=0;i<64;i++){const a=16+Math.abs(Math.sin(i*.9+t*4.3)*Math.cos(i*.31-t*2.7))*200+Math.abs(Math.sin(i*.17+t*1.3))*50;c.fillStyle=i>26&&i<38?(K.c||'#ff6a2b'):'rgba(230,226,217,.75)';c.fillRect(60+i*15.2,260-a/2,8,a)}
     FM.raf=setTimeout(()=>requestAnimationFrame(go),40)};go()}
 /* "Wake up" on the remote late at night: Nova FM can play through quiet hours until they end */
 function fmWakeNight(){const q=FMC().quiet;if(!q||q.length<2)return;const n=new Date(),end=new Date(n);end.setHours(q[1],0,0,0);if(end<=n)end.setDate(end.getDate()+1);
