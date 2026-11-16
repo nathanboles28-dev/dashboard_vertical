@@ -2283,6 +2283,12 @@ html.nv2.nvx #npCard:not(.paused) b{color:var(--xink)!important;opacity:1!import
 .fm-shuf b{display:block;font:700 3.2vw 'NovaGeo','Inter',sans-serif}
 .fm-shuf small{display:block;font-size:2vw;color:#8a867c;margin-top:.4vw}
 .fm-sub>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68%}
+.fm-dg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw}
+.fm-dt{background:#1a1a18;border:1.5px solid #2c2b28;border-radius:.8vw;padding:1.8vw 1.8vw 1.6vw;min-width:0}
+.fm-dt small{display:block;font-size:1.6vw;letter-spacing:.09em;text-transform:uppercase;color:#ff6a2b}
+.fm-dt b{display:block;font:700 3.6vw/1.1 'NovaGeo','Inter',sans-serif;margin-top:1vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-dt span{display:block;font-size:1.8vw;color:#8a867c;margin-top:.7vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-desk .fm-nx{margin-top:2vw}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4613,6 +4619,14 @@ const fmWx=()=>{try{const c=WXD&&WXD.c;if(!c)return '';return `${Math.round(c.te
 /* songs and breaks, newest first, kept on this screen */
 function fmLog(x){const td=new Date().toDateString(),D=NM.get('fmday',{});if(D.d!==td){D.d=td;D.songs=0;D.breaks=0;D.since=Date.now()}if(x.brk)D.breaks++;else D.songs++;NM.set('fmday',D);
   const H=NM.get('fmhist',[]);if(!x.brk&&H[0]&&!H[0].brk&&H[0].title===x.title&&H[0].artist===x.artist)return;H.unshift({...x,at:Date.now()});NM.set('fmhist',H.slice(0,12))}
+/* the desk: what Nova keeps an eye on between breaks */
+function fmDesk(){const tile=(k,big,sub)=>`<div class="fm-dt"><small>${k}</small><b>${big}</b><span>${sub}</span></div>`,out=[];
+  try{const c=WXD&&WXD.c,dl=WXD&&WXD.dl;if(c)out.push(tile('Woodstock',Math.round(c.temperature_2m)+'°',esc(String(WXT[c.weather_code]||''))+(dl?` · low ${Math.round(dl.temperature_2m_min[0])}°`:'')))}catch(e){}
+  const gm=(lab,H)=>{try{if(!H)return;const g=(H.next||[])[0];if(g){const d=new Date(g.start),n=daysUntil(d);const op=String(g.opp||'');out.push(tile(lab,esc((g.home?'vs ':'at ')+(op.length>9&&g.code?g.code:op)),(n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short'}))+' · '+fmt(d)));return}
+    const L=H.last;if(L)out.push(tile(lab,`${L.res==='W'?'W':'L'} ${esc(L.us)}–${esc(L.them)}`,esc((L.home?'vs ':'at ')+(L.opp||''))))}catch(e){}};
+  gm('Leafs',typeof HUB!=='undefined'?HUB:null);gm('Knights',typeof KH!=='undefined'?KH:null);
+  if(!out.length)out.push(tile('Nova FM','On air soon','between songs'));
+  return out.join('')}
 const fmStudioOn=s=>!!(FM.on&&s&&!npYT(s)&&!s.radio&&!(typeof rgListening==='function'&&rgListening(s)));
 function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,3),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
   const left=Math.max(0,(FM.target||fmTarget())-FM.count),test=NM.get('fmtest',false);
@@ -4625,13 +4639,11 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
     <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
       <div class="np-art fm-art"></div><div class="fm-meta"><div class="fm-t">${esc(s.title||'')}</div><div class="fm-a">${esc(s.artist||'')}</div>${s.album?`<div class="fm-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
       ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}</div></div>
-    ${(s.next&&s.next.length)||s.shuf?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>⤮</i><div><b>Shuffling</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
-    <div class="fm-card fm-last"><span class="fm-tag">On the air with Nova</span><div class="fm-lr"><div class="fm-rec"></div><div>
-      <div class="fm-k">${last?'Last break · '+new Date(last.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'Coming up'}</div>
-      <div class="fm-q">${last?'“'+esc(last.words)+'”':'Nova will jump in between songs.'}</div></div></div>
+    ${(s.next&&s.next.length)||s.shuf||s.from?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>${s.shuf?'⤮':'♪'}</i><div><b>${s.shuf?'Shuffling':'Playing from'}</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
+    <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dg">${fmDesk()}</div>
       <div class="fm-nx"><span>Next break · ${FM.busy?'writing it now…':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
     ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
-    <div class="fm-ft"><span>${fmWx()}</span></div></div>`}
+    </div>`}
 /* the full-screen "on air" view */
 function fmOnAir(on){let el=$('fmOn');
   if(!on){if(el)el.classList.remove('on');cancelAnimationFrame(FM.raf);FM.raf=0;return}
