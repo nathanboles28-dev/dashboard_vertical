@@ -4655,11 +4655,11 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
-  FM.queued={words,at:Date.now()};FM.queuedMode=mode;
+  FM.queued={words,at:Date.now()};FM.queuedMode=mode;FM.pend=mode==='next'?Date.now():0;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='next'?'next':'now'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
-function fmAirUI(on){if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
+function fmAirUI(on){if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
   if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
@@ -4722,7 +4722,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
       ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}<div class="fm-eq${s.state==='paused'?' paused':''}">${Array.from({length:30},(_,i)=>`<i style="--d:${(.45+((i*37)%23)/45).toFixed(2)}s;animation-delay:-${((i*17)%10)/10}s"></i>`).join('')}</div></div></div>
     ${(s.next&&s.next.length)||s.shuf||s.from?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>${s.shuf?'⤮':'♪'}</i><div><b>${s.shuf?'Shuffling':'Playing from'}</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
     <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dsk in"></div>
-      <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
+      <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':FM.pend&&Date.now()-FM.pend<15*60000?'ready, on air when this song ends':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
     ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
     </div>`}
 /* the full-screen "on air" view */
@@ -6198,7 +6198,7 @@ function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pa
   const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
 function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
-  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);fmDeskTick(false);npPaint();npTick();return}
+  if(fmStudioOn(s)){const sig='fm|'+[FM.pend,s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);fmDeskTick(false);npPaint();npTick();return}
   if(b.className==='fmS-on'){b.className='';npSig=''}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
   const yt=npYT(s);b.className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
