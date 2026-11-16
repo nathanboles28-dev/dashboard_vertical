@@ -6803,7 +6803,7 @@ function voiceRun(cmd){const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clear
   if(fol){if(!cmd||/^(no|nope|nah|that'?s (it|all|good)|never ?mind|thanks|thank you|cheers|goodbye|bye|stop|cancel|all good|i'?m good)\b/i.test(cmd)){VOICE.convo=null;if(cmd)voiceChime(false);return}
     VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();
     /* Nova's own commands (FM, reminders, memory, styles, modes) still work mid-conversation */
-    const own=/^(?:(?:can|could|would|will) you |please )?(?:(?:nova )?f\.? ?m\b|go live|go on air|on air|dj break|remind me|set a reminder|remember\b|forget\b|what are my reminders|(?:cancel|delete|clear) (?:the |my |all )?reminders?|what did i (?:ask|say)|what do you remember|take me back|(?:the )?(?:new|old|og|original|classic) (?:style|look)|done$|snooze|\w+ mode$)/i.test(cmd);
+    const own=/^(?:(?:can|could|would|will) you |please )?(?:(?:nova )?f\.? ?m\b|go live|go on air|on air|dj break|remind me|set a reminder|remember\b|forget\b|what are my reminders|(?:cancel|delete|clear) (?:the |my |all )?reminders?|what did i (?:ask|say)|what do you remember|take me back|(?:the )?(?:new|old|og|original|classic) (?:style|look)|done$|snooze|\w+ mode$|what(?:'?s| is) (?:that|this) (?:plane|jet|aircraft|flight|airplane)|what plane|what'?s flying|which plane|whose plane|(?:when(?:'?s| is) )?(?:the )?(?:space station|iss\b)|(?:are there |any )?(?:northern lights|aurora))/i.test(cmd);
     return (own||COOK.on||COOK.offer||/^(?:(?:can|could|would|will) you |please )?(show|turn|switch|dim|set|open|play|put on|throw on|shuffle|pause|skip|next|start|stop|resume|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
   if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
   VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
@@ -7698,7 +7698,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 187';
+document.getElementById('ver').textContent='build nova 188';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
