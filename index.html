@@ -2033,7 +2033,7 @@ html.nv2.nvx #live .lvtag .dot{display:none}
 html.nv2.nvx #live{padding-top:calc(4.8*var(--u))!important}
 html.nv2.nvx :is(#lvA,#lvH,#lvClock){font-family:var(--head)!important}
 html.nv2.nvx :is(#npCard,#npCard.xb){background:var(--xmod)!important;border:1.5px solid var(--xline)!important}
-html.nv2.nvx :is(#npCard .ca,.np-art,#npMini .mn-a){background:var(--xmod2)!important}
+html.nv2.nvx :is(#npCard .ca,.np-art,#npMini .mn-a){background-color:var(--xmod2)!important;background-size:cover;background-position:center}
 html.nv2.nvx #npMini{background:var(--xbg)!important;border:1.5px solid var(--xline)!important;box-shadow:none!important;backdrop-filter:none!important}
 html.nv2.nvx #npMini .np-fill{background:var(--xor)!important}
 html.nv2.nvx .np-viz i{background:var(--xink)!important}
@@ -2198,6 +2198,72 @@ html.nv2.nvx .n2tl .cev>span{color:var(--xor)!important}
 html.fmAir #fmAir{display:flex}
 #fmAir i{width:.9vw;height:.9vw;border-radius:50%;background:#171716;animation:fmBlink 1.2s ease-in-out infinite}
 @keyframes fmBlink{50%{opacity:.25}}
+/* ===== Nova FM: studio page + on-air screen ===== */
+#npBody.fmS-on>*:not(.fmS){display:none!important}
+.fmS{position:absolute;left:5vw;right:5vw;top:calc(12.5*var(--u,1.14vw));bottom:calc(8.5*var(--u,1.14vw));display:flex;flex-direction:column;gap:2.2vw;font-family:'NovaSans','Inter',sans-serif;color:#e6e2d9;z-index:2}
+.fm-logo{display:flex;align-items:center;gap:2vw}
+.fm-logo svg{width:7.6vw;height:7.6vw;flex:none}
+.fm-logo b{display:block;font:700 6.8vw/1 'NovaGeo','Inter',sans-serif;letter-spacing:-.02em}
+.fm-logo b span{color:#ff6a2b}
+.fm-logo small{display:block;margin-top:.8vw;font-size:1.6vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
+.fm-dial{position:relative;height:6.5vw;border-top:1.5px solid #3a3935;border-bottom:1.5px solid #3a3935;margin-top:.6vw}
+.fm-dial i{position:absolute;bottom:0;width:2px;background:#3a3935}
+.fm-dial em{position:absolute;top:.6vw;transform:translateX(-50%);font-style:normal;font-size:1.6vw;color:#6d6a63}
+.fm-dial u{position:absolute;left:63.5%;top:-1vw;bottom:-1vw;width:.4vw;background:#ff6a2b;box-shadow:0 0 1.8vw rgba(255,106,43,.7)}
+.fm-dial span{position:absolute;left:63.5%;bottom:-3.4vw;transform:translateX(-50%);font-size:1.6vw;font-weight:600;letter-spacing:.08em;color:#ff6a2b}
+.fm-sub{display:flex;justify-content:space-between;align-items:center;margin-top:1.4vw;font-size:1.75vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
+.fm-air{display:inline-flex;align-items:center;gap:1vw;border:2px solid #3a3935;color:#55534d;border-radius:.7vw;padding:.8vw 1.6vw;font-size:1.9vw;letter-spacing:.14em;font-weight:600;transition:all .4s}
+.fm-air i{width:1.2vw;height:1.2vw;border-radius:50%;background:currentColor}
+.fm-air.on{background:#ff6a2b;border-color:#ff6a2b;color:#141413;box-shadow:0 0 3.6vw rgba(255,106,43,.45)}
+.fm-air.on i{animation:fmBlink 1.2s ease-in-out infinite}
+.fm-card{position:relative;background:#1f1f1d;border:1.5px solid #3a3935;border-radius:1.1vw;padding:6vw 3.6vw 3vw}
+.fm-tag{position:absolute;top:-1.5px;left:-1.5px;background:#e6e2d9;color:#141413;font-size:1.65vw;letter-spacing:.07em;text-transform:uppercase;padding:.6vw 1.3vw;border-radius:1.1vw 0 1.1vw 0}
+.fm-tag.o{background:#ff6a2b}
+.fm-now{display:flex;gap:3.6vw;align-items:flex-start}
+.fm-art{position:relative!important;inset:auto!important;width:31vw!important;height:31vw!important;flex:none;border-radius:.9vw!important;background-size:cover!important;background-position:center!important;background-color:#26251f;box-shadow:0 2.6vw 5vw -1.8vw #000!important;transform:none!important;margin:0!important}
+.fm-meta{flex:1;min-width:0;padding-top:.8vw}
+.fm-t{font:700 5.2vw/1.06 'NovaGeo','Inter',sans-serif;letter-spacing:-.015em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.fm-a{font-size:3.1vw;margin-top:1.5vw}
+.fm-al{font-size:1.75vw;letter-spacing:.08em;text-transform:uppercase;color:#8a867c;margin-top:1.1vw}
+.fm-bar{height:.75vw;background:#2c2b28;border-radius:1vw;margin-top:4vw;overflow:hidden}
+.fm-bar .np-fill{display:block;height:100%;background:#ff6a2b!important;border-radius:1vw}
+.fm-tm{display:flex;justify-content:space-between;margin-top:1.1vw;font-size:1.7vw;color:#8a867c}
+.fm-lr{display:flex;gap:3.2vw;align-items:center}
+.fm-rec{width:10vw;height:10vw;border-radius:50%;flex:none;background:radial-gradient(circle,#ff8a50 0 .55vw,rgba(255,106,43,.35) .65vw 2vw,transparent 2.1vw),repeating-radial-gradient(circle,rgba(230,226,217,.18) 0 .18vw,transparent .28vw 1.1vw);animation:fmSpin 6s linear infinite}
+@keyframes fmSpin{to{transform:rotate(360deg)}}
+.fm-k{font-size:1.75vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
+.fm-q{font-size:2.75vw;line-height:1.4;margin-top:.9vw;color:#cfcac0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.fm-nx{display:flex;justify-content:space-between;margin-top:2.4vw;font-size:1.65vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
+.fm-nx .o{color:#ff6a2b}
+.fm-rp{padding-bottom:1.6vw}
+.fm-row{display:flex;align-items:center;gap:2.4vw;padding:1.35vw 0;border-top:1.5px solid #2c2b28}
+.fm-row:first-of-type{border-top:0}
+.fm-row span{width:6.5vw;font-size:1.75vw;color:#8a867c}
+.fm-row b{flex:1;font-weight:500;font-size:2.5vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-row em{font-style:normal;font-size:2vw;color:#8a867c;white-space:nowrap;max-width:32vw;overflow:hidden;text-overflow:ellipsis}
+.fm-row.brk b{color:#ff6a2b}
+.fm-ft{margin-top:auto;text-align:right;font-size:1.75vw;letter-spacing:.08em;color:#8a867c}
+#fmOn{position:fixed;inset:0;z-index:8800;background:#141413;opacity:0;pointer-events:none;transition:opacity .6s;font-family:'NovaSans','Inter',sans-serif;color:#e6e2d9}
+#fmOn.on{opacity:1}
+#fmOn::before{content:'';position:absolute;inset:0;background:radial-gradient(70% 45% at 50% 42%,rgba(255,106,43,.16),transparent 70%)}
+#fmOn .fo-hd{position:absolute;left:5vw;right:5vw;top:6vw;display:flex;justify-content:space-between;align-items:center}
+#fmOn .fo-k{position:absolute;left:0;right:0;top:30vw;text-align:center;font-size:2.2vw;letter-spacing:.3em;text-transform:uppercase;color:#ff6a2b}
+#fmOn canvas{position:absolute;left:0;top:38vw;width:100vw;height:48vw}
+#fmOn .fo-q{position:absolute;left:7vw;right:7vw;top:92vw;text-align:center;font:700 5vw/1.25 'NovaGeo','Inter',sans-serif;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden}
+#fmOn .fo-n{position:absolute;left:0;right:0;bottom:30vw;text-align:center;font-size:1.85vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
+#fmOn .fo-lt{position:absolute;left:0;right:0;bottom:11vw;height:11vw;background:#ff6a2b;color:#141413;display:flex;align-items:center;gap:2.6vw;padding:0 5vw}
+#fmOn .fo-lt b{font:700 4vw 'NovaGeo','Inter',sans-serif}
+#fmOn .fo-lt span{font-size:2.3vw;font-weight:600;letter-spacing:.06em}
+html.fmAir #fmAir{display:none}
+#npBody .fm-art::before,#npBody .fm-art::after{display:none!important}
+.fm-art{width:26vw!important;height:26vw!important}
+.fm-card{padding-top:5.4vw}
+.fmS{gap:1.8vw}
+
+/* mini player sits above the page bar so "13 / 21 · HOME" stays readable */
+html.nv2.nvx body #npMini{bottom:calc(7.4*var(--u))!important}
+.fm-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+html.nv2.nvx .np-eq i{background:var(--xor)!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4471,10 +4537,10 @@ function nmRecall(t){if(!/^(where('?s| is| are| did (i|we) (put|leave))|what('?s
    Every few songs she writes a short break (Claude, through the relay's /ask) and sends it to the Mac's music helper,
    which reads it in Zoe's voice over the start of the next song with the music turned down.
    "Nova FM on/off" · "go live" (a break right now) · optional settings in CFG.fm (relay private settings). */
-const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:30,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
+const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:18,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
 const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
-function fmQuiet(){const q=FMC().quiet;if(!q||q.length<2)return false;const h=new Date().getHours();return q[0]>q[1]?(h>=q[0]||h<q[1]):(h>=q[0]&&h<q[1])}
+function fmQuiet(){const q=FMC().quiet;if(!q||q.length<2)return false;if(Date.now()<+NM.get('fmwake',0))return false;const h=new Date().getHours();return q[0]>q[1]?(h>=q[0]||h<q[1]):(h>=q[0]&&h<q[1])}
 /* never talk over a conversation, a pop-up, the roundup, cooking, the game on the radio or a YouTube video */
 function fmBusy(j){j=j||NP||{};return !!((typeof VOICE!=='undefined'&&VOICE.armed)||(typeof ORB!=='undefined'&&ORB.st)||(typeof REM_UP!=='undefined'&&REM_UP)||(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||(typeof COOK!=='undefined'&&COOK.on)||(typeof aiBusy!=='undefined'&&aiBusy)||j.src==='youtube'||j.radio||(typeof rgListening==='function'&&rgListening(j)))}
 /* a new song started on the Mac */
@@ -4498,15 +4564,19 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
     const j=await r.json().catch(()=>({}));words=String(j.capped?'':j.answer||'')}catch(e){}
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
-  FM.busy=false;if(!words)return false;
+  FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();nsCount&&nsCount('fm');
+  FM.queued={words,at:Date.now()};
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'?'now':'next'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(words)}`)}catch(e){return false}
   return true}
-function fmAirUI(on){FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
+function fmAirUI(on){if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
+  try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
+  if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
   clearTimeout(FM.airT);if(on)FM.airT=setTimeout(()=>fmAirUI(false),90000)}
 function fmCmd(t){
+  t=t.replace(/\bf\.? ?m\b/g,'fm').replace(/\bfm testing\b/,'fm test');
   if(/^(nova )?fm test( mode)?( on)?$|^test (mode for )?(nova )?fm$/.test(t)){NM.set('fmtest',true);FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget();FM.last=0;return `${FMC().station} test mode: a break every song or two, at least 3 minutes apart, and no quiet hours.`}
   if(/^(nova )?fm (normal|test off|test mode off|regular)( mode)?$|^(stop|end|turn off) (nova )?fm test( mode)?$/.test(t)){NM.set('fmtest',false);FM.target=fmTarget();return `${FMC().station} is back to normal: every 3 to 5 songs, 12 minutes apart.`}
   if(/^(fm|nova fm)$/.test(t)){FM.on=!FM.on;NM.set('fm',FM.on);NM.set('fmlast',Date.now());return FM.on?`${FMC().station} is on. I'll jump in every few songs.`:`${FMC().station} is off.`}
@@ -4516,8 +4586,52 @@ function fmCmd(t){
   if(/^(go live|go on air|on air|dj break|radio break|take it away)$/.test(t)){if(FM.busy)return true;
     fmBreak('now').then(ok=>toast(ok?'📻 <b>Nova FM</b>Going live on the Mac…':'📻 <b>Nova FM</b>Couldn\'t write a break just now'));return true}
   return null}
+/* ---- Nova FM look: the "studio" Now playing page and the full-screen "on air" view while Nova talks ---- */
+const FM_LOGO='<svg viewBox="0 0 82 82"><circle cx="41" cy="41" r="9" fill="#ff6a2b"/><g fill="none" stroke="#ff6a2b" stroke-width="5" stroke-linecap="round"><path d="M24 24a24 24 0 0 0 0 34"/><path d="M58 24a24 24 0 0 1 0 34"/></g><g fill="none" stroke="#e6e2d9" stroke-width="5" stroke-linecap="round" opacity=".55"><path d="M13 13a40 40 0 0 0 0 56"/><path d="M69 13a40 40 0 0 1 0 56"/></g></svg>';
+const fmName=()=>{const n=String(FMC().station||'Nova FM').trim(),m=n.match(/^(.*?)\s*(fm|am|radio)$/i);return m?`${esc(m[1].toUpperCase())}<span>${esc(m[2].toUpperCase())}</span>`:esc(n.toUpperCase())};
+const fmWx=()=>{try{const c=WXD&&WXD.c;if(!c)return '';return `${Math.round(c.temperature_2m)}° · ${String((WXT[c.weather_code]||'')).toUpperCase()}`}catch(e){return ''}};
+/* songs and breaks, newest first, kept on this screen */
+function fmLog(x){const H=NM.get('fmhist',[]);if(!x.brk&&H[0]&&!H[0].brk&&H[0].title===x.title&&H[0].artist===x.artist)return;H.unshift({...x,at:Date.now()});NM.set('fmhist',H.slice(0,12))}
+const fmStudioOn=s=>!!(FM.on&&s&&!npYT(s)&&!s.radio&&!(typeof rgListening==='function'&&rgListening(s)));
+function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,4),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
+  const left=Math.max(0,(FM.target||fmTarget())-FM.count),test=NM.get('fmtest',false);
+  let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
+  b.className='fmS-on';
+  b.innerHTML=`<div class="fmS">
+    <div class="fm-hd"><div class="fm-logo">${FM_LOGO}<div><b>${fmName()}</b><small>Woodstock · audience of one</small></div></div></div>
+    <div class="fm-dial">${dial}<u></u><span>NOVA</span></div>
+    <div class="fm-sub"><span>Your library · Apple Music</span><span class="fm-air${FM.air?' on':''}"><i></i>ON AIR</span></div>
+    <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
+      <div class="np-art fm-art"></div><div class="fm-meta"><div class="fm-t">${esc(s.title||'')}</div><div class="fm-a">${esc(s.artist||'')}</div>${s.album?`<div class="fm-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
+      ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}</div></div>
+    <div class="fm-card fm-last"><span class="fm-tag">On the air with Nova</span><div class="fm-lr"><div class="fm-rec"></div><div>
+      <div class="fm-k">${last?'Last break · '+new Date(last.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'Coming up'}</div>
+      <div class="fm-q">${last?'“'+esc(last.words)+'”':'Nova will jump in between songs.'}</div></div></div>
+      <div class="fm-nx"><span>Next break · ${FM.busy?'writing it now…':left<=0?'after this song':'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
+    ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
+    <div class="fm-ft"><span>${fmWx()}</span></div></div>`}
+/* the full-screen "on air" view */
+function fmOnAir(on){let el=$('fmOn');
+  if(!on){if(el)el.classList.remove('on');cancelAnimationFrame(FM.raf);FM.raf=0;return}
+  if(typeof orbOK==='function'&&ORB.st)return;   /* talking to Nova wins */
+  if(!el){el=document.createElement('div');el.id='fmOn';document.body.appendChild(el)}
+  const w=FM.airWords||'';
+  el.innerHTML=`<div class="fo-hd"><div class="fm-logo">${FM_LOGO}<div><b>${fmName()}</b></div></div><span class="fm-air on"><i></i>ON AIR</span></div>
+    <div class="fo-k">Nova is on the mic</div><canvas width="1080" height="520"></canvas>
+    <div class="fo-q">${w?'“'+esc(w)+'”':''}</div><div class="fo-n">Music down to ${Math.round(FMC().duck)}% · back to the music in a moment</div>
+    <div class="fo-lt"><b>${esc(String(FMC().station).toUpperCase())}</b><span>WOODSTOCK${fmWx()?' · '+fmWx():''} · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).toUpperCase()}</span></div>`;
+  el.classList.add('on');wakeScreen&&wakeScreen();
+  const cv=el.querySelector('canvas'),c=cv.getContext('2d'),t0=performance.now();
+  const go=()=>{if(!el.classList.contains('on'))return;const t=(performance.now()-t0)/1000;c.clearRect(0,0,1080,520);
+    for(let i=0;i<64;i++){const a=16+Math.abs(Math.sin(i*.9+t*4.3)*Math.cos(i*.31-t*2.7))*200+Math.abs(Math.sin(i*.17+t*1.3))*50;c.fillStyle=i>26&&i<38?'#ff6a2b':'rgba(230,226,217,.75)';c.fillRect(60+i*15.2,260-a/2,8,a)}
+    FM.raf=setTimeout(()=>requestAnimationFrame(go),40)};go()}
+/* "Wake up" on the remote late at night: Nova FM can play through quiet hours until they end */
+function fmWakeNight(){const q=FMC().quiet;if(!q||q.length<2)return;const n=new Date(),end=new Date(n);end.setHours(q[1],0,0,0);if(end<=n)end.setDate(end.getDate()+1);
+  if(fmQuiet()||n.getHours()>=q[0]-1){NM.set('fmwake',end.getTime())}}
 function handleCommand(raw){if(!NOVA_MAIN)return;
   {const fs=String(raw||'').match(/^fmstate (on|off)\b/);if(fs){fmAirUI(fs[1]==='on');return}}
+  /* Goodnight on the remote ends the late-night Nova FM override */
+  if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
   if(!t){if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
@@ -4632,6 +4746,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
   if(has(/\bunmute\b/)){muted=false;return reply('Goal horn is back on.')}
   if(has(/\b(good ?night|night night|go to sleep|screen off|turn (it )?off|lights out)\b/)){goodnight();return reply('Goodnight! Turning the screen off.')}
+  if(/^wake up$/i.test(String(raw||'').trim()))try{fmWakeNight()}catch(e){}
   if(has(/\b(wake( up)?|screen on|turn (it )?on|good morning)\b/)){wakeScreen();if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})};morningAtScreenOn();return reply('Waking up! The screen will be on within a minute.')}
   if(has(/\b(mute|quiet|silence)\b/)){muted=true;return reply('Goal horn muted.')}
   const team=teamIn(t);
@@ -5936,6 +6051,8 @@ function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pa
   const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
 function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
+  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);npPaint();npTick();return}
+  if(b.className==='fmS-on'){b.className='';npSig=''}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
   const yt=npYT(s);b.className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
   b.innerHTML=`<div class="np-hd">${yt?'▶️':'🎵'} ${s.state==='paused'?'Paused':yt?'Now watching':'Now playing'}</div><div class="np-art none${yt?' yt':''}"></div>
@@ -5980,7 +6097,7 @@ function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)ret
       if(Q.prev==='morn'||!Q.prev){nextPage();return}
       nextPage(Q.prev,Q.left)},secs*1000)}}
 function npUpdate(j,fresh){if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof FM!=='undefined'&&+NM.get('fmlast',0)&&Date.now()-NM.get('fmlast',0)<30*60000)NM.set('fmlast',Date.now());const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
-  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
+  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{if(j.src!=='youtube'&&!j.radio)fmLog({title:j.title,artist:j.artist});fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
   else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
   npApply();}
@@ -6473,7 +6590,9 @@ function voiceRun(cmd){const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clear
   if(fol&&COOK.offer&&/^(no|nope|nah)\b/i.test(cmd)){COOK.offer=null;if(COOK.on){cookSay("No problem. Say start cooking when you're ready.",false);return}}
   if(fol){if(!cmd||/^(no|nope|nah|that'?s (it|all|good)|never ?mind|thanks|thank you|cheers|goodbye|bye|stop|cancel|all good|i'?m good)\b/i.test(cmd)){VOICE.convo=null;if(cmd)voiceChime(false);return}
     VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();
-    return (COOK.on||COOK.offer||/^(?:(?:can|could|would|will) you |please )?(show|turn|switch|dim|set|open|play|put on|throw on|shuffle|pause|skip|next|start|stop|resume|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
+    /* Nova's own commands (FM, reminders, memory, styles, modes) still work mid-conversation */
+    const own=/^(?:(?:can|could|would|will) you |please )?(?:(?:nova )?f\.? ?m\b|go live|go on air|on air|dj break|remind me|set a reminder|remember\b|forget\b|what are my reminders|(?:cancel|delete|clear) (?:the |my |all )?reminders?|what did i (?:ask|say)|what do you remember|take me back|(?:the )?(?:new|old|og|original|classic) (?:style|look)|done$|snooze|\w+ mode$)/i.test(cmd);
+    return (own||COOK.on||COOK.offer||/^(?:(?:can|could|would|will) you |please )?(show|turn|switch|dim|set|open|play|put on|throw on|shuffle|pause|skip|next|start|stop|resume|red alert|self destruct|round ?up)\b/i.test(cmd))?handleCommand('nova '+cmd):askNova(cmd)}
   if(!cmd||/^(nothing|never ?mind|cancel)$/i.test(cmd)){if(!cmd){voiceFlash();roundupGo({who:'',quick:false})}return}
   VOICE.lastVoiceAt=Date.now();wakeScreen&&wakeScreen();toast('🎙️ <b>Heard</b>'+esc(cmd));voiceFlash();handleCommand('nova '+cmd)}
 function voiceFlash(){const E=$('vEdge');if(!E)return;E.classList.add('go');clearTimeout(E._t);E._t=setTimeout(()=>E.classList.remove('go'),1400)}
@@ -6555,6 +6674,7 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
   rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();VOICE.live=txt;VOICE.fails=0;if(VOICE.test){if(fin)vLog('heard: "'+txt+'"');voiceTestUI()}
     const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
     if(ru||VOICE.paused)continue;   // never act on its own voice
+    if(!VOICE.armed&&typeof FM!=='undefined'&&(FM.air||Date.now()-(FM.airEnd||0)<5000))continue;   // Nova FM is on air: that's her own voice saying "Nova"
     if(VOICE.armed){const w=txt.match(WAKE),c=w?(w[1]||'').trim():txt,vF=VOICE.follow?vFillF:vFill;VOICE.heard=vF(c)?'':c;voiceUI();
       /* while you're talking, keep listening: the window restarts so it's 3 seconds after your last word */
       if(!vF(c)){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),3000)}
