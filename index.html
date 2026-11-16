@@ -2206,9 +2206,9 @@ html.fmAir #fmAir{display:flex}
 .fm-logo b{display:block;font:700 6.8vw/1 'NovaGeo','Inter',sans-serif;letter-spacing:-.02em}
 .fm-logo b span{color:#ff6a2b}
 .fm-logo small{display:block;margin-top:.8vw;font-size:1.6vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
-.fm-dial{position:relative;height:6.5vw;border-top:1.5px solid #3a3935;border-bottom:1.5px solid #3a3935;margin-top:.6vw}
-.fm-dial i{position:absolute;bottom:0;width:2px;background:#3a3935}
-.fm-dial em{position:absolute;top:.6vw;transform:translateX(-50%);font-style:normal;font-size:1.6vw;color:#6d6a63}
+.fm-dial{position:relative;height:6.5vw;border-top:1.5px solid #55534d;border-bottom:1.5px solid #55534d;margin-top:.6vw}
+.fm-dial i{position:absolute;bottom:0;width:2px;background:#6d6a63}
+.fm-dial em{position:absolute;top:.6vw;transform:translateX(-50%);font-style:normal;font-size:1.6vw;color:#a39f95}
 .fm-dial u{position:absolute;left:63.5%;top:-1vw;bottom:-1vw;width:.4vw;background:#ff6a2b;box-shadow:0 0 1.8vw rgba(255,106,43,.7)}
 .fm-dial span{position:absolute;left:63.5%;bottom:-3.4vw;transform:translateX(-50%);font-size:1.6vw;font-weight:600;letter-spacing:.08em;color:#ff6a2b}
 .fm-sub{display:flex;justify-content:space-between;align-items:center;margin-top:1.4vw;font-size:1.75vw;letter-spacing:.09em;text-transform:uppercase;color:#8a867c}
@@ -2264,6 +2264,25 @@ html.fmAir #fmAir{display:none}
 html.nv2.nvx body #npMini{bottom:calc(7.4*var(--u))!important}
 .fm-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 html.nv2.nvx .np-eq i{background:var(--xor)!important}
+/* main page "Now playing" card: big cover, big type */
+html.nv2.nvx #npCard{flex-direction:column;padding:calc(5*var(--u)) calc(2.4*var(--u)) calc(2.2*var(--u))!important;gap:0}
+html.nv2.nvx #npCard .k{position:absolute;top:-1.5px;left:-1.5px;z-index:2;background:var(--xink);color:var(--xbg)!important;font-family:'NovaSans','Inter',sans-serif;font-weight:500;font-size:calc(1.4*var(--u));letter-spacing:.07em;padding:calc(.45*var(--u)) calc(1*var(--u));border-radius:calc(1*var(--u)) 0 calc(1*var(--u)) 0}
+html.nv2.nvx #npCard .k::before{content:'02 · '}
+html.nv2.nvx #npCard .row{flex-direction:column;align-items:flex-start;gap:calc(1.6*var(--u));flex:1;min-height:0}
+html.nv2.nvx #npCard .ca:not(.yt){width:min(100%,calc(30*var(--u)))!important;height:auto!important;aspect-ratio:1;max-height:calc(100% - 9*var(--u));border-radius:calc(.8*var(--u))!important;box-shadow:0 calc(1.6*var(--u)) calc(3*var(--u)) calc(-1*var(--u)) #000}
+html.nv2.nvx #npCard .ca.yt{width:100%!important;height:auto!important;aspect-ratio:16/9}
+html.nv2.nvx #npCard b{font-family:var(--head)!important;font-weight:700!important;font-size:calc(3.4*var(--u))!important;letter-spacing:-.01em;line-height:1.1;-webkit-line-clamp:2!important}
+html.nv2.nvx #npCard small{font-size:calc(2.2*var(--u))!important;color:var(--xdim)!important;margin-top:calc(.7*var(--u))}
+html.nv2.nvx #npCard .np-bar{margin-top:calc(1.6*var(--u))}
+html.nv2.nvx #npCard .np-tm{font-size:calc(1.6*var(--u))}
+html.nv2.nvx #npCard:not(.paused) b{color:var(--xink)!important;opacity:1!important}
+.fm-up{padding-bottom:1.6vw}
+.fm-up .fm-row span{color:#ff6a2b;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:2.2vw}
+.fm-shuf{display:flex;align-items:center;gap:2.4vw;padding:.6vw 0 1.4vw}
+.fm-shuf i{font-style:normal;font-size:4.4vw;color:#ff6a2b;line-height:1}
+.fm-shuf b{display:block;font:700 3.2vw 'NovaGeo','Inter',sans-serif}
+.fm-shuf small{display:block;font-size:2vw;color:#8a867c;margin-top:.4vw}
+.fm-sub>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68%}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -2496,7 +2515,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
-  macVoice:{on:false, voice:'auto', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
+  macVoice:{on:true, voice:'Zoe (Premium)', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
   voice:{on:true, sleepWithScreen:true, converse:true, followWait:8, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
   roundup:{on:true, music:true, musicVol:0.19, song:'roundup.mp3', songStart:30, songVol:0.1, name:'', people:[], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's …")
   home:{on:false, helper:'http://127.0.0.1:8582', hero:'', badge:false, rooms:[], scenes:[]},   // rooms & scenes: from your relay's private settings
@@ -4557,7 +4576,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
   const q=(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
     (mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
-    `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use facts in the dashboard info; no made-up trivia. Say the station name once. No stage directions.`).slice(0,500);
+    `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
   const said=NM.get('fmsaid',[]);
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`;
   let words='';
@@ -4568,7 +4587,8 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'?'now':'next'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(words)}`)}catch(e){return false}
+  const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'?'now':'next'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
 function fmAirUI(on){if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
@@ -4591,9 +4611,10 @@ const FM_LOGO='<svg viewBox="0 0 82 82"><circle cx="41" cy="41" r="9" fill="#ff6
 const fmName=()=>{const n=String(FMC().station||'Nova FM').trim(),m=n.match(/^(.*?)\s*(fm|am|radio)$/i);return m?`${esc(m[1].toUpperCase())}<span>${esc(m[2].toUpperCase())}</span>`:esc(n.toUpperCase())};
 const fmWx=()=>{try{const c=WXD&&WXD.c;if(!c)return '';return `${Math.round(c.temperature_2m)}° · ${String((WXT[c.weather_code]||'')).toUpperCase()}`}catch(e){return ''}};
 /* songs and breaks, newest first, kept on this screen */
-function fmLog(x){const H=NM.get('fmhist',[]);if(!x.brk&&H[0]&&!H[0].brk&&H[0].title===x.title&&H[0].artist===x.artist)return;H.unshift({...x,at:Date.now()});NM.set('fmhist',H.slice(0,12))}
+function fmLog(x){const td=new Date().toDateString(),D=NM.get('fmday',{});if(D.d!==td){D.d=td;D.songs=0;D.breaks=0;D.since=Date.now()}if(x.brk)D.breaks++;else D.songs++;NM.set('fmday',D);
+  const H=NM.get('fmhist',[]);if(!x.brk&&H[0]&&!H[0].brk&&H[0].title===x.title&&H[0].artist===x.artist)return;H.unshift({...x,at:Date.now()});NM.set('fmhist',H.slice(0,12))}
 const fmStudioOn=s=>!!(FM.on&&s&&!npYT(s)&&!s.radio&&!(typeof rgListening==='function'&&rgListening(s)));
-function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,4),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
+function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,3),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
   const left=Math.max(0,(FM.target||fmTarget())-FM.count),test=NM.get('fmtest',false);
   let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
   b.className='fmS-on';
@@ -4604,6 +4625,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
     <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
       <div class="np-art fm-art"></div><div class="fm-meta"><div class="fm-t">${esc(s.title||'')}</div><div class="fm-a">${esc(s.artist||'')}</div>${s.album?`<div class="fm-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
       ${s.dur?`<div class="fm-bar"><i class="np-fill"></i></div><div class="fm-tm"><span class="np-cur">0:00</span><span>${npT(s.dur)}</span></div>`:''}</div></div>
+    ${(s.next&&s.next.length)||s.shuf?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>⤮</i><div><b>Shuffling</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
     <div class="fm-card fm-last"><span class="fm-tag">On the air with Nova</span><div class="fm-lr"><div class="fm-rec"></div><div>
       <div class="fm-k">${last?'Last break · '+new Date(last.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'Coming up'}</div>
       <div class="fm-q">${last?'“'+esc(last.words)+'”':'Nova will jump in between songs.'}</div></div></div>
@@ -6051,7 +6073,7 @@ function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pa
   const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
 function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
-  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);npPaint();npTick();return}
+  if(fmStudioOn(s)){const sig='fm|'+[s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);npPaint();npTick();return}
   if(b.className==='fmS-on'){b.className='';npSig=''}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
   const yt=npYT(s);b.className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
