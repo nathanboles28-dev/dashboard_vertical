@@ -4571,7 +4571,12 @@ function fmBusy(j){j=j||NP||{};return !!((typeof VOICE!=='undefined'&&VOICE.arme
 /* a new song started on the Mac */
 function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgListening==='function'&&rgListening(j)))return;
   /* a new listening session (nothing played for 30+ min): Nova FM switches itself back on, even if it was turned off last time */
-  {const lp=+NM.get('fmlast',0);if(FMC().autoStart!==false&&Date.now()-lp>30*60000&&!FM.on){FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget()}NM.set('fmlast',Date.now())}
+  {const lp=+NM.get('fmlast',0),gap=Date.now()-lp;if(FMC().autoStart!==false&&gap>30*60000&&!FM.on){FM.on=true;NM.set('fm',true)}
+   /* back after a while: the first break comes after this song, and it's a welcome back */
+   if(lp&&gap>30*60000){FM.welcome=gap;FM.count=0;FM.target=1;FM.last=0}NM.set('fmlast',Date.now())}
+  /* top of the hour: the first song that starts in the first 10 minutes of a new hour gets a station ID */
+  {const n=new Date(),hk=n.toDateString()+'|'+n.getHours();
+   if(FM.on&&!FM.busy&&n.getMinutes()<10&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
   FM.count++;if(!FM.target)FM.target=fmTarget();
   if(!FM.on||FM.busy||FM.count<FM.target||Date.now()-FM.last<FMC().minGap*60000||fmQuiet()||fmBusy(j))return;
   fmBreak('next',j)}
@@ -4581,20 +4586,26 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const tone={casual:'relaxed and friendly',morning:'bright, upbeat morning-show energy',professional:'polished, classic radio host',humorous:'funny, with a light joke',sarcastic:'dry and a little sarcastic, never mean',latenight:'smooth, low-key late-night host'}[style]||'relaxed and friendly';
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
   const q=(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
-    (mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
+    (mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
     `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
-  const said=NM.get('fmsaid',[]);
-  const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`;
+  const said=NM.get('fmsaid',[]),extra=[];
+  if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (25 words max): it's ${hh} o'clock, you're listening to ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly.`)}
+  if(FM.welcome){const h=FM.welcome/3600e3;extra.unshift(`WELCOME BACK: the listener just came back after ${h>=20?'about a day':h>=2?'about '+Math.round(h)+' hours':'a little while'} without music. Welcome them back warmly${mode==='hour'?' in the same breath as the station ID':' before anything else'}.`)}
+  if(mode!=='hour'){
+    if(song.next&&song.next.length&&!song.shuf&&Math.random()<.35)extra.push(`TEASE: hint that "${song.next[0][0]}" by ${song.next[0][1]} is coming up soon.`);
+    if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
+    if(Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
+  const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='';
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
     const j=await r.json().catch(()=>({}));words=String(j.capped?'':j.answer||'')}catch(e){}
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
   FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
-  FM.last=Date.now();FM.count=0;FM.target=fmTarget();nsCount&&nsCount('fm');
+  FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'?'now':'next'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='next'?'next':'now'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
 function fmAirUI(on){if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
