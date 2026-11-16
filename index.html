@@ -4086,6 +4086,13 @@ function teamIn(t){
   for(const [re,name] of map)if(new RegExp('\\b('+re+')\\b').test(t))return name;
   return '';
 }
+/* only ONE copy of the dashboard should run: when a newer copy opens in this browser (a new tab or window), the older one blanks itself,
+   which also hands over the remote, the speech and Nova FM. (Older builds without this have to be closed by hand once.) */
+const NOVA_ID=Math.random().toString(36).slice(2,7),NOVA_BOOT=Date.now();
+try{const bc=new BroadcastChannel('nova-copies');bc.onmessage=e=>{const d=e.data||{};if(d.id===NOVA_ID)return;
+    if(d.hello&&d.boot>NOVA_BOOT){try{fmDiag('an older copy of the dashboard closed itself for the new one')}catch(x){}setTimeout(()=>location.replace('about:blank'),400)}
+    else if(d.hello&&d.boot<NOVA_BOOT)bc.postMessage({hello:1,id:NOVA_ID,boot:NOVA_BOOT})};
+  bc.postMessage({hello:1,id:NOVA_ID,boot:NOVA_BOOT})}catch(e){}
 let NOVA_MAIN=!(navigator.locks&&navigator.locks.request);
 if(navigator.locks&&navigator.locks.request)navigator.locks.request('nova-main',()=>{NOVA_MAIN=true;console.info('this window runs commands and speech');return new Promise(()=>{})});
 /* ================= Radio game: when the team's game is on the radio on the MacBook (Apple Music station), it gets its own page,
@@ -4686,7 +4693,10 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
     try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),35000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:ctx.length>38000?ctx.slice(0,30000)+'\n…\n'+ctx.slice(-7900):ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
       const j=await r.json().catch(()=>({}));if(j.capped){why='daily AI limit reached ('+(j.cap||200)+')';break}words=String(j.answer||'');if(!words)why=String(j.error||('relay '+r.status)).slice(0,90)}
     catch(e){why=e.name==='AbortError'?'the AI took too long':'couldn\'t reach the relay ('+String(e.message||e).slice(0,40)+')'}}
-  if(!words)fmDiag('break not written: '+why);
+  if(!words){fmDiag('break not written: '+why);
+    /* the AI didn't give us words: a short, plain break so the show doesn't stall */
+    const wx=typeof WXD!=='undefined'&&WXD&&WXD.c?` It's ${Math.round(WXD.c.temperature_2m)} degrees in Woodstock.`:'';
+    if(mode!=='top5'&&!/capped|limit/.test(why))words=(mode==='hour'?`It's ${new Date().getHours()%12||12} o'clock and you're listening to ${C.station}.`:`That was ${t}${a?' by '+a:''}, on ${C.station}.`)+wx}
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
   FM.busy=false;FM.fail=words?0:Date.now();FM.failWhy=why;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
@@ -5008,6 +5018,7 @@ function remote(){
   const T=SECRETS.topic;if(!T)return;
   const onCmd=d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
+    if(!/^fmstate /.test(String(d.message||'')))window._lastCmd=Date.now();
     let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
   nbSub(T,'',onCmd,ok=>{remoteUp=ok});
   /* still listen on ntfy too, for anything not switched over yet (an old Siri shortcut); listening doesn't use up ntfy's daily limit */
@@ -7722,7 +7733,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 194';
+document.getElementById('ver').textContent='build nova 196';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -7734,7 +7745,19 @@ function bgCycle(){
   img.src=urls[0];
 }
 setInterval(bgCycle,300000);
-moon();weather();sportsLoop();setTimeout(npListen,3000);setTimeout(loadTx,12000);setTimeout(loadXb,9000);radar();loadPhotos();nextPage();alerts();loadNews();loadCalendar();dimmer();remote();loadJelly();loadGameday();loadLocal();setTimeout(loadDrives,6000);loadHub();setTimeout(ntInit,9000);setTimeout(loadTech,8000);setTimeout(loadWatch,7000);setTimeout(loadKHub,4000);loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()});setTimeout(loadSchedules,5000);loadWrapped();fxInit();loadWS();holInit();setTimeout(loadRecaps,8000);pingRelay();satGrab();setTimeout(loadRLoop,5000);setTimeout(healthDot,15000);
+window.NV_ERR=[];
+function nvStart(n,f){try{const r=f();if(r&&r.catch)r.catch(e=>nvErr(n,e))}catch(e){nvErr(n,e)}}
+function nvErr(where,e){const m=String(e&&e.message||e).slice(0,140);console.error('Nova:',where,e);NV_ERR.push(where+': '+m);if(NV_ERR.length>20)NV_ERR.shift();
+  try{const k=where+m;nvErr.seen=nvErr.seen||{};if(Date.now()-(nvErr.seen[k]||0)<600000)return;nvErr.seen[k]=Date.now();if(typeof fmDiag==='function')fmDiag('ERROR in '+where+': '+m)}catch(x){}}
+window.addEventListener('error',e=>nvErr('page',(e.error&&e.error.stack)?String(e.message)+' @'+String(e.error.stack).split('\n')[1]:e.message));
+window.addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reason.message||e.reason||'');if(!/abort|fetch|network|load failed/i.test(m))nvErr('async',m)});
+/* a status line in the Nova log: 30 s after starting, then every 10 minutes */
+function nvReport(){try{const pl=typeof PL!=='undefined'&&PL&&PL.planes?PL.planes.length:null;
+  if(!NOVA_MAIN)fmDiag('WARNING: this copy is NOT the main one: another copy of the dashboard is open in this browser and has the remote. Close it.');
+  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
+setTimeout(nvReport,30000);setInterval(nvReport,600000);
+/* start everything; one part failing (bad saved data, a site down) can't stop the rest, and the log says which */
+nvStart('moon',()=>moon());nvStart('weather',()=>weather());nvStart('sportsLoop',()=>sportsLoop());nvStart('npListen',()=>setTimeout(npListen,3000));nvStart('loadTx',()=>setTimeout(loadTx,12000));nvStart('loadXb',()=>setTimeout(loadXb,9000));nvStart('radar',()=>radar());nvStart('loadPhotos',()=>loadPhotos());nvStart('nextPage',()=>nextPage());nvStart('alerts',()=>alerts());nvStart('loadNews',()=>loadNews());nvStart('loadCalendar',()=>loadCalendar());nvStart('dimmer',()=>dimmer());nvStart('remote',()=>remote());nvStart('loadJelly',()=>loadJelly());nvStart('loadGameday',()=>loadGameday());nvStart('loadLocal',()=>loadLocal());nvStart('loadDrives',()=>setTimeout(loadDrives,6000));nvStart('loadHub',()=>loadHub());nvStart('ntInit',()=>setTimeout(ntInit,9000));nvStart('loadTech',()=>setTimeout(loadTech,8000));nvStart('loadWatch',()=>setTimeout(loadWatch,7000));nvStart('loadKHub',()=>setTimeout(loadKHub,4000));nvStart('loadSpotlight',()=>loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()}));nvStart('loadSchedules',()=>setTimeout(loadSchedules,5000));nvStart('loadWrapped',()=>loadWrapped());nvStart('fxInit',()=>fxInit());nvStart('loadWS',()=>loadWS());nvStart('holInit',()=>holInit());nvStart('loadRecaps',()=>setTimeout(loadRecaps,8000));nvStart('pingRelay',()=>pingRelay());nvStart('satGrab',()=>satGrab());nvStart('loadRLoop',()=>setTimeout(loadRLoop,5000));nvStart('healthDot',()=>setTimeout(healthDot,15000));
 setInterval(alerts,600000);setInterval(loadNews,900000);setInterval(loadCalendar,900000);setInterval(()=>{if($('pComing').classList.contains('on'))renderComing()},60000);
 setInterval(loadPhotos,600000);
 setInterval(weather,900000);
