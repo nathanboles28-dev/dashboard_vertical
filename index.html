@@ -4472,13 +4472,15 @@ function nmRecall(t){if(!/^(where('?s| is| are| did (i|we) (put|leave))|what('?s
    which reads it in Zoe's voice over the start of the next song with the music turned down.
    "Nova FM on/off" · "go live" (a break right now) · optional settings in CFG.fm (relay private settings). */
 const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:30,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
-const FM={on:NM.get('fm',false),count:0,target:0,last:0,air:false,busy:false};
+const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
 function fmQuiet(){const q=FMC().quiet;if(!q||q.length<2)return false;const h=new Date().getHours();return q[0]>q[1]?(h>=q[0]||h<q[1]):(h>=q[0]&&h<q[1])}
 /* never talk over a conversation, a pop-up, the roundup, cooking, the game on the radio or a YouTube video */
 function fmBusy(j){j=j||NP||{};return !!((typeof VOICE!=='undefined'&&VOICE.armed)||(typeof ORB!=='undefined'&&ORB.st)||(typeof REM_UP!=='undefined'&&REM_UP)||(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||(typeof COOK!=='undefined'&&COOK.on)||(typeof aiBusy!=='undefined'&&aiBusy)||j.src==='youtube'||j.radio||(typeof rgListening==='function'&&rgListening(j)))}
 /* a new song started on the Mac */
 function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgListening==='function'&&rgListening(j)))return;
+  /* a new listening session (nothing played for 30+ min): Nova FM switches itself back on, even if it was turned off last time */
+  {const lp=+NM.get('fmlast',0);if(FMC().autoStart!==false&&Date.now()-lp>30*60000&&!FM.on){FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget()}NM.set('fmlast',Date.now())}
   FM.count++;if(!FM.target)FM.target=fmTarget();
   if(!FM.on||FM.busy||FM.count<FM.target||Date.now()-FM.last<FMC().minGap*60000||fmQuiet()||fmBusy(j))return;
   fmBreak('next',j)}
@@ -4507,9 +4509,9 @@ function fmAirUI(on){FM.air=on;document.documentElement.classList.toggle('fmAir'
 function fmCmd(t){
   if(/^(nova )?fm test( mode)?( on)?$|^test (mode for )?(nova )?fm$/.test(t)){NM.set('fmtest',true);FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget();FM.last=0;return `${FMC().station} test mode: a break every song or two, at least 3 minutes apart, and no quiet hours.`}
   if(/^(nova )?fm (normal|test off|test mode off|regular)( mode)?$|^(stop|end|turn off) (nova )?fm test( mode)?$/.test(t)){NM.set('fmtest',false);FM.target=fmTarget();return `${FMC().station} is back to normal: every 3 to 5 songs, 12 minutes apart.`}
-  if(/^(fm|nova fm)$/.test(t)){FM.on=!FM.on;NM.set('fm',FM.on);return FM.on?`${FMC().station} is on. I'll jump in every few songs.`:`${FMC().station} is off.`}
+  if(/^(fm|nova fm)$/.test(t)){FM.on=!FM.on;NM.set('fm',FM.on);NM.set('fmlast',Date.now());return FM.on?`${FMC().station} is on. I'll jump in every few songs.`:`${FMC().station} is off.`}
   if(/^((turn|switch) on|start|enable) (the )?(nova fm|fm|radio dj|dj( mode)?)$|^(nova )?fm on$/.test(t)){FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget();return `${FMC().station} is on. I'll jump in every few songs.`}
-  if(/^((turn|switch) off|stop|disable) (the )?(nova fm|fm|radio dj|dj( mode)?)$|^(nova )?fm off$/.test(t)){FM.on=false;NM.set('fm',false);return `${FMC().station} is off.`}
+  if(/^((turn|switch) off|stop|disable) (the )?(nova fm|fm|radio dj|dj( mode)?)$|^(nova )?fm off$/.test(t)){FM.on=false;NM.set('fm',false);NM.set('fmlast',Date.now());return `${FMC().station} is off. It'll come back on next time you start listening.`}
   if(/^(is )?(nova )?fm (status|on\?)$|^is nova fm on$/.test(t))return FM.on?`${FMC().station} is on.`:`${FMC().station} is off.`;
   if(/^(go live|go on air|on air|dj break|radio break|take it away)$/.test(t)){if(FM.busy)return true;
     fmBreak('now').then(ok=>toast(ok?'📻 <b>Nova FM</b>Going live on the Mac…':'📻 <b>Nova FM</b>Couldn\'t write a break just now'));return true}
@@ -5977,7 +5979,7 @@ function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)ret
       if(!Q||window._curPage!=='np')return;   /* something else (remote, goal, alert) took over meanwhile */
       if(Q.prev==='morn'||!Q.prev){nextPage();return}
       nextPage(Q.prev,Q.left)},secs*1000)}}
-function npUpdate(j,fresh){const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
+function npUpdate(j,fresh){if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof FM!=='undefined'&&+NM.get('fmlast',0)&&Date.now()-NM.get('fmlast',0)<30*60000)NM.set('fmlast',Date.now());const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
   if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
   else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
