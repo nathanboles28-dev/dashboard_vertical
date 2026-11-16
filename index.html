@@ -4635,7 +4635,10 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
   {const n=new Date(),hk=n.toDateString()+'|'+n.getHours();
    if(FM.on&&!FM.busy&&n.getMinutes()<10&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
   FM.count++;if(!FM.target)FM.target=fmTarget();
-  const news=worldNew();
+  fmPlay(j);
+  /* Friday night: the top 5 countdown (once a week, 5 PM or later, at least 8 songs logged) */
+  {const d=new Date();if(FM.on&&!FM.busy&&d.getDay()===5&&d.getHours()>=17&&!NM.get('fmsaidk',[]).includes('top5:'+fmWeek())&&fmTop5().length>=3&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){FM.count=0;fmBreak('top5',j);return}}
+  const news=worldNew()||FM.req||FM.dedic||fmMoments().some(m=>m.pri>=2);
   if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   fmBreak('next',j)}
 const fmB64=s=>btoa(unescape(encodeURIComponent(s)));
@@ -4644,9 +4647,21 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const tone={casual:'relaxed and friendly',morning:'bright, upbeat morning-show energy',professional:'polished, classic radio host',humorous:'funny, with a light joke',sarcastic:'dry and a little sarcastic, never mean',latenight:'smooth, low-key late-night host'}[style]||'relaxed and friendly';
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
   const q=(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
-    (mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
+    (mode==='top5'?`Do the Nova FM Top 5 countdown (see below); then a quick bit about `:mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
     `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
   const said=NM.get('fmsaid',[]),extra=[];
+  const P=CFG.fm&&CFG.fm.people||{},me=P.me||'Nathan',fam=P.family||'Erinn';FM.saidK=[];FM.cat='';
+  /* a request is coming up */
+  if(FM.req){extra.unshift(`LISTENER REQUEST: ${me} asked for "${FM.req}". Announce it's coming up next as a request from ${me}.`);FM.reqSaid=1}
+  /* a dedication */
+  if(FM.dedic){extra.push(`DEDICATION: dedicate the next song to ${FM.dedic}${FM.dedicFrom?' from '+FM.dedicFrom:''}. Make it sweet and a little funny.`);FM.dedSaid=1}
+  else if(mode!=='hour'&&Math.random()<.1)extra.push(`SHOUT-OUT: a quick shout-out to ${fam}, who's probably within earshot.`);
+  /* morning show: the first break of a weekday morning */
+  {const d=new Date(),h=d.getHours(),k='morn:'+d.toDateString();if(d.getDay()>0&&d.getDay()<6&&h>=6&&h<11&&!NM.get('fmsaidk',[]).includes(k)){extra.unshift('MORNING SHOW: open like a morning show host: good morning, today\'s weather, the first thing on the calendar today, and any game tonight. Upbeat. You can go up to 70 words.');FM.saidK.push(k)}}
+  /* the most important personal moment, if any */
+  if(mode!=='hour'){const Mo=fmMoments();const m=Mo.find(x=>x.pri>=1)||(Mo.length&&Math.random()<.5?Mo[0]:null);if(m){extra.push(m.say);FM.saidK.push(m.k);FM.cat=m.cat;FM.onSay=m.onSay||null}}
+  /* Friday night top 5 */
+  if(mode==='top5'){const T=fmTop5();extra.unshift(`NOVA FM TOP 5: count down ${me}'s five most-played songs this week, from 5 to 1, with a line of fun commentary each: ${T.map((x,i)=>`${i+1}. ${x[0]} (${x[1]} plays)`).join('; ')}. You can go up to 110 words.`);FM.saidK.push('top5:'+fmWeek())}
   if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (25 words max): it's ${hh} o'clock, you're listening to ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly.`)}
   if(FM.welcome){const h=FM.welcome/3600e3;extra.unshift(`WELCOME BACK: the listener just came back after ${h>=20?'about a day':h>=2?'about '+Math.round(h)+' hours':'a little while'} without music. Welcome them back warmly${mode==='hour'?' in the same breath as the station ID':' before anything else'}.`)}
   {const N=worldNew();if(N){extra.unshift(`NEWS UPDATE FIRST: calmly give a short news update on this breaking story, only the facts in the headline: "${N.t}" (${N.src||'news reports'}). Be respectful, no jokes in this break.`);FM.newsId=N.id}}
@@ -4654,17 +4669,18 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
     if(song.next&&song.next.length&&!song.shuf&&Math.random()<.35)extra.push(`TEASE: hint that "${song.next[0][0]}" by ${song.next[0][1]} is coming up soon.`);
     if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
     if(!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
-  const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
+  const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='';
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
     const j=await r.json().catch(()=>({}));words=String(j.capped?'':j.answer||'')}catch(e){}
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
   FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
-  FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
+  FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;(FM.saidK||[]).forEach(fmMarkSaid);if(FM.onSay)try{FM.onSay()}catch(e){}FM.onSay=null;if(FM.reqSaid){FM.req=null;FM.reqSaid=0}if(FM.dedSaid){FM.dedic=null;FM.dedSaid=0}if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};FM.queuedMode=mode;FM.pend=mode==='next'?Date.now():0;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='next'?'next':'now'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
+  const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
 function fmAirUI(on){if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
@@ -4672,6 +4688,15 @@ function fmAirUI(on){if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
   clearTimeout(FM.airT);if(on)FM.airT=setTimeout(()=>fmAirUI(false),90000)}
 function fmCmd(t){
+  /* "play some Luke Combs next" / "queue up Wagon Wheel" / "request Tennessee Whiskey" */
+  {const m=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|queue(?: up)?|request)(?: me)? (?:some |songs by |music by )?(.+?)(?: next| after this(?: song| one)?| up next)$/)||t.match(/^(?:queue(?: up)?|request) (.+)$/);
+   if(m&&SECRETS.topic){const q=m[1].replace(/[|]/g,' ').trim().slice(0,80),art=/^(?:can you |could you |please )?(?:play|put on|throw on|queue(?: up)?|request)(?: me)? (?:some |songs by |music by )/.test(t);
+     nbPub(`${SECRETS.topic}-mcmd`,`req|${art?'artist':'song'}|${q}`).catch(()=>{});FM.req=q.replace(/\b\w/g,c=>c.toUpperCase());
+     if(FM.on&&!FM.busy&&!fmQuiet())fmBreak('next',NP);return `Got it, ${FM.req} is up next${FM.on?'. I\'ll introduce it.':'.'}`}}
+  /* "dedicate the next song to Erinn" */
+  {const m=t.match(/^(?:can you |could you |please )?dedicate (?:the next song|this(?: one| song)?|a song|the next one|one) to (.+?)(?: from (.+))?$/);
+   if(m){FM.dedic=m[1].replace(/\bmy\b/g,'your').replace(/\b\w/g,c=>c.toUpperCase());FM.dedicFrom=m[2]?m[2].replace(/\bme\b/,'Nathan'):'Nathan';
+     if(FM.on&&!FM.busy&&!fmQuiet())fmBreak('next',NP);return `You got it. The next one goes out to ${FM.dedic}.`}}
   t=t.replace(/\bf\.? ?m\b/g,'fm').replace(/\bfm testing\b/,'fm test');
   if(/^(nova )?fm test( mode)?( on)?$|^test (mode for )?(nova )?fm$/.test(t)){NM.set('fmtest',true);FM.on=true;NM.set('fm',true);FM.count=0;FM.target=fmTarget();FM.last=0;return `${FMC().station} test mode: a break every song or two, at least 3 minutes apart, and no quiet hours.`}
   if(/^(nova )?fm (normal|test off|test mode off|regular)( mode)?$|^(stop|end|turn off) (nova )?fm test( mode)?$/.test(t)){NM.set('fmtest',false);FM.target=fmTarget();return `${FMC().station} is back to normal: every 3 to 5 songs, 12 minutes apart.`}
@@ -4768,6 +4793,27 @@ function fmCaps(dur,t0){clearTimeout(FM.capF);clearTimeout(FM.capT);const el=$('
   let acc=0;const at=w.map(x=>{const t=acc;acc+=x/tot*D;return t});
   const go=()=>{const e=Date.now()-start;let n=0;while(n<at.length&&at[n]<=e)n++;sp.forEach((s,i)=>s.classList.toggle('on',i<n));if(n<sp.length&&el.classList.contains('on'))FM.capT=setTimeout(go,80)};
   const start=Date.now()-late;go()}
+/* ---- Nova FM, personal: game days, the family, the calendar, Mom & Dad's trip, your top 5, requests, morning show ---- */
+const fmWeek=()=>{const d=new Date(),j=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-'+Math.ceil(((d-j)/864e5+j.getDay()+1)/7)};
+function fmPlay(x){if(!x||!x.title)return;const P=NM.get('fmplays',{}),w=fmWeek();if(P.w!==w){P.w=w;P.c={}}const k=x.title+' — '+(x.artist||'');P.c[k]=(P.c[k]||0)+1;NM.set('fmplays',P)}
+const fmTop5=()=>{const P=NM.get('fmplays',{});return Object.entries((P.w===fmWeek()&&P.c)||{}).sort((a,b)=>b[1]-a[1]).slice(0,5)};
+/* things worth saying, newest first; each has a key so she only says it once */
+function fmMoments(){const M=[],now=Date.now(),said=NM.get('fmsaidk',[]),day=new Date().toDateString(),fresh=k=>!said.includes(k);
+  const teams=[['Leafs',typeof HUB!=='undefined'?HUB:null],['Knights',typeof KH!=='undefined'?KH:null]];
+  for(const [lab,H] of teams){try{if(!H)continue;const g=(H.next||[])[0];
+    if(g){const d=new Date(g.start),h=(d-now)/36e5;if(h>0&&h<9&&d.toDateString()===day){const k='pre:'+lab+':'+day;if(fresh(k))M.push({k,pri:1,cat:'sports',say:`GAME DAY HYPE: the ${lab} play ${g.home?'the '+g.opp+' at home':'at '+g.opp} tonight at ${fmt(d)}. Get the listener fired up for it.`})}}
+    const L=H.last;if(L){const k='post:'+lab+':'+[L.opp,L.us,L.them].join('-');const seen=NM.get('fmlastres',{});
+      if(seen[lab]===undefined){seen[lab]=k;NM.set('fmlastres',seen)}   /* first time we see a result: don't react to an old game */
+      else if(seen[lab]!==k&&fresh(k))M.push({k,pri:2,cat:'sports',onSay:()=>{const s2=NM.get('fmlastres',{});s2[lab]=k;NM.set('fmlastres',s2)},say:`POST-GAME REACTION: the ${lab} just ${L.res==='W'?'won':'lost'} ${L.us}–${L.them} ${L.home?'against':'at'} ${L.opp}. React like a fan: ${L.res==='W'?'celebrate':'commiserate, but stay hopeful'}.`})}}catch(e){}}
+  try{if(typeof tripOn==='function'&&tripOn())for(const f of tripFlights()){const ph=tripPhase(f),d=new Date(f.dep),n=daysUntil(d),who=f.who||'Mom and Dad';
+    if(ph==='air'){const k='air:'+f.key;if(fresh(k))M.push({k,pri:2,cat:'dj',say:`FLIGHT UPDATE: ${who} are in the air right now on ${f.no}, ${f.A[2]} to ${f.B[2]}, landing around ${fmt(new Date(f.arr))}. Give the listener a warm update.`})}
+    else if(ph==='landed'){const k='land:'+f.key;if(fresh(k))M.push({k,pri:2,cat:'dj',say:`FLIGHT UPDATE: ${who} just landed in ${f.B[2]} on ${f.no}. Celebrate that they made it safely.`})}
+    else if(ph==='soon'&&n>=0&&n<=7){const k='trip:'+f.key+':'+day;if(fresh(k)&&Math.random()<.3)M.push({k,pri:0,cat:'dj',say:`TRIP COUNTDOWN: ${who} fly ${f.A[2]} to ${f.B[2]} ${n===0?'today':n===1?'tomorrow':'in '+n+' days'} (${f.no}). Mention it warmly.`})}}}catch(e){}
+  try{(calEvents||[]).filter(e=>e.end>now&&e.start-now<14*864e5).forEach(e=>{const big=/birthday|bday|anniversary/i.test(e.title),n=daysUntil(e.start),k='cal:'+e.title+':'+day;
+    if(!fresh(k))return;if(big&&n<=14)M.push({k,pri:big&&n<=1?1:0,cat:'dj',say:`CALENDAR: ${e.title} is ${n===0?'today':n===1?'tomorrow':'in '+n+' days'}. ${n<=1?'Make a fun, warm shout-out about it.':'Give a heads-up.'}`});
+    else if(n===0&&!e.allDay&&e.start>now&&Math.random()<.3)M.push({k,pri:0,cat:'dj',say:`CALENDAR: ${e.title} is today at ${fmt(e.start)}. Mention it in passing.`})})}catch(e){}
+  return M.sort((a,b)=>b.pri-a.pri)}
+function fmMarkSaid(k){NM.set('fmsaidk',[...NM.get('fmsaidk',[]),k].slice(-80))}
 /* "Wake up" on the remote late at night: Nova FM can play through quiet hours until they end */
 function fmWakeNight(){const q=FMC().quiet;if(!q||q.length<2)return;const n=new Date(),end=new Date(n);end.setHours(q[1],0,0,0);if(end<=n)end.setDate(end.getDate()+1);
   if(fmQuiet()||n.getHours()>=q[0]-1){NM.set('fmwake',end.getTime())}}
@@ -7645,7 +7691,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 185';
+document.getElementById('ver').textContent='build nova 186';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
