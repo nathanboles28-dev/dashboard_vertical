@@ -4624,7 +4624,7 @@ function nmRecall(t){if(!/^(where('?s| is| are| did (i|we) (put|leave))|what('?s
    Every few songs she writes a short break (Claude, through the relay's /ask) and sends it to the Mac's music helper,
    which reads it in Zoe's voice over the start of the next song with the music turned down.
    "Nova FM on/off" · "go live" (a break right now) · optional settings in CFG.fm (relay private settings). */
-const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:18,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
+const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:12,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
 const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
 /* the studio's "Next break" line when a break is due: what it's waiting for */
@@ -4852,6 +4852,7 @@ function renderWorld(){const b=$('worldBody');if(!b)return;const L=WORLD.items||
 /* for Nova FM: the big story she hasn't mentioned yet */
 const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
 function handleCommand(raw){if(!NOVA_MAIN)return;
+  if(/^fmstate /.test(String(raw||''))){const k=String(raw).slice(0,60);if(FM.sig===k&&Date.now()-FM.sigT<20000)return;FM.sig=k;FM.sigT=Date.now()}
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
   {const fs=String(raw||'').match(/^fmstate (on|off)\b(?: (\S+))?/);if(fs){if(fs[1]==='on'&&fs[2]&&!FM.air)try{const w=decodeURIComponent(escape(atob(fs[2]))).trim();if(w)FM.queued={words:w,at:Date.now()}}catch(e){}fmAirUI(fs[1]==='on');if(fs[1]==='on')setTimeout(()=>fmDiag('on air: words '+(FM.airWords||'').split(/\s+/).filter(Boolean).length+', screen '+(!!$('fmOn')&&$('fmOn').classList.contains('on'))+(ORB.st?', orb '+ORB.st:'')+', page '+(window._curPage||'')),800);return}}
   /* Goodnight on the remote ends the late-night Nova FM override */
@@ -6335,7 +6336,10 @@ function npUpdate(j,fresh){if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof 
   npApply();}
 setInterval(()=>{const had=document.body.classList.contains('npBar')||document.body.classList.contains('npCardOn');if(had&&!npState())npApply()},15000);
 function npListen(){const T=SECRETS.topic;if(!T||NPC().on===false)return;
-  const onNP=d=>{if(d.event&&d.event!=='message')return;let j;try{j=JSON.parse(d.message)}catch(x){return}if(j&&j.state)npUpdate(j,!!d.time&&Date.now()/1000-d.time<20)};
+  const onNP=d=>{if(d.event&&d.event!=='message')return;let j;try{j=JSON.parse(d.message)}catch(x){return}
+    /* Nova FM's on air / speaking / off, sent on this channel too as a backup */
+    if(j&&j.fm){if(!d.time||Date.now()/1000-d.time<30)handleCommand('fmstate '+j.fm);return}
+    if(j&&j.state)npUpdate(j,!!d.time&&Date.now()/1000-d.time<20)};
   nbSub(`${T}-music`,'3h',onNP);
   nbCheck().then(ok=>{if(ok&&window.EventSource){const es=new EventSource(`https://ntfy.sh/${T}-music/sse`);es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}onNP(d)}}})}
 /* ================= Trades & signings: NHL trades (ESPN), MLB trades + free-agent signings (MLB), your teams first ================= */
@@ -7718,7 +7722,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 193';
+document.getElementById('ver').textContent='build nova 194';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
