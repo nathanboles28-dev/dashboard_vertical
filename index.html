@@ -2576,7 +2576,7 @@ const CFG={
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
   nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM'},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
-  macVoice:{on:true, voice:'Zoe (Premium)', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
+  macVoice:{on:true, voice:'kokoro:af_heart', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
   voice:{on:true, sleepWithScreen:true, converse:true, followWait:8, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
   roundup:{on:true, music:true, musicVol:0.19, song:'roundup.mp3', songStart:30, songVol:0.1, name:'', people:[], morning:false, volume:0.8},   // people: others it greets by name ("hello Nova, it's …")
   home:{on:false, helper:'http://127.0.0.1:8582', hero:'', badge:false, rooms:[], scenes:[]},   // rooms & scenes: from your relay's private settings
@@ -3899,10 +3899,10 @@ async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=C
   if(!force&&MV.ok!==null&&Date.now()-MV.at<(MV.ok?300000:60000))return MV.ok;MV.at=Date.now();
   try{const r=await tfetch(H+'/voices',8000);if(!r.ok){MV.err='helper said '+r.status+(r.status===404?' (voice part not added yet)':'');MV.ok=false;return false}
     const j=await r.json();const vs=(j.voices||[]).filter(v=>/^en/i.test(v.lang)),ca=v=>/CA|US/i.test(v.lang)?1:0;MV.n=vs.length;
-    const cv=NM.get('voice','')||C.voice,want=cv&&cv!=='auto'?vs.find(v=>v.name.toLowerCase()===String(cv).toLowerCase()):null;MV.hasKo=vs.some(v=>/^kokoro:/.test(v.name));
+    const cv=NM.get('voice','')||C.voice,want=cv&&cv!=='auto'?vs.find(v=>v.name.toLowerCase()===String(cv).toLowerCase()):null;MV.hasKo=vs.some(v=>/^kokoro:/.test(v.name));if(MV.hasKo)NM.set('kosen',Date.now());
     const apple=vs.filter(v=>!/^kokoro:/.test(v.name)),ko=vs.filter(v=>/^kokoro:/.test(v.name)),kw='kokoro:'+(C.kokoro||'af_heart');
-    MV.fallback=(apple.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||apple.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||{}).name||'';
-    MV.voice=want||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice;
+    MV.fallback=(apple.find(v=>/^zoe \(premium\)$/i.test(v.name))||apple.filter(v=>/premium/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||apple.filter(v=>/enhanced/i.test(v.name)).sort((a,b)=>ca(b)-ca(a))[0]||{}).name||'';
+    MV.voice=want||(/^kokoro:/.test(cv||'')&&Date.now()-NM.get('kosen',0)<7*864e5?{name:cv}:null)||(C.kokoro!==false&&(ko.find(v=>v.name===kw)||ko.find(v=>v.name==='kokoro:af_heart')||ko[0]))||(MV.fallback?{name:MV.fallback}:null);MV.ok=!!MV.voice;
     MV.err=MV.ok?'':`the helper lists ${vs.length} English voices but no Premium, Enhanced or Kokoro one`}
   catch(e){MV.ok=false;MV.err="can't reach the home helper ("+e.message+')'}return MV.ok}
 /* Apple voices read a long answer in one flat run: give them a speaker's pauses (between sentences, at commas) and slow down a touch */
@@ -3910,10 +3910,11 @@ function mvPace(text){const w=String(text).split(/\s+/).length;if(w<16)return {t
   return {text:String(text).replace(/([.!?])["”']?\s+(?=[A-Z0-9"“])/g,'$1 [[slnc 300]] ').replace(/([,;:])\s+/g,'$1 [[slnc 120]] ').replace(/\s+[—–-]\s+/g,' [[slnc 160]] '),k:w>40?.93:.96}}
 async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   if(!/^kokoro:/.test(MV.voice.name)){const P=mvPace(text);text=P.text;rate=(rate||1)*P.k}
+  const orbMine=typeof ORB!=='undefined'&&ORB.st==='speak';if(orbMine)ORB.until=Date.now()+120000;
   const t0=Date.now();
   try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();
     if(typeof vLog==='function')vLog(`said ${((Date.now()-t0)/1000).toFixed(1)}s ${j.engine||''}${j.code!=null&&j.code!==0?' code '+j.code:''}${j.err?' err '+j.err:''}: "${String(text).slice(0,28)}…"`);return !!j.ok}
-  catch(e){if(typeof vLog==='function')vLog('Mac voice failed: '+e.message);MV.at=0;return false}finally{window._macSpeaking=0}}
+  catch(e){if(typeof vLog==='function')vLog('Mac voice failed: '+e.message);MV.at=0;return false}finally{window._macSpeaking=0;if(orbMine&&ORB.st==='speak')ORB.until=Date.now()+1200}}
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
 window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
 setTimeout(()=>mvCheck(true),3000);setInterval(()=>mvCheck(true),300000);
@@ -4627,7 +4628,9 @@ const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM
 const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
 /* the studio's "Next break" line when a break is due: what it's waiting for */
-function fmWhy(){if(FM.fail&&Date.now()-FM.fail<15*60000)return 'couldn\'t write the last one, trying next song';
+/* a line for the Nova log on the Mac (it's copied to Music > Nova FM > nova-log.txt) */
+function fmDiag(m){try{const T=SECRETS.topic;if(T)nbPub(`${T}-mcmd`,'log|dash '+new Date().toLocaleTimeString([],{hour12:false})+' '+String(m).replace(/[|\n]/g,' ').slice(0,200)).catch(()=>{})}catch(e){}}
+function fmWhy(){if(FM.fail&&Date.now()-FM.fail<15*60000)return 'couldn\'t write the last one ('+(FM.failWhy||'no answer')+'), trying next song';
   const g=FMC().minGap*60000-(Date.now()-FM.last);if(FM.last&&g>60000)return 'in about '+Math.ceil(g/60000)+' min';if(fmBusy())return 'when Nova\'s free';return 'after this song'}
 function fmQuiet(){const q=FMC().quiet;if(!q||q.length<2)return false;if(Date.now()<+NM.get('fmwake',0))return false;const h=new Date().getHours();return q[0]>q[1]?(h>=q[0]||h<q[1]):(h>=q[0]&&h<q[1])}
 /* never talk over a conversation, a pop-up, the roundup, cooking, the game on the radio or a YouTube video */
@@ -4677,16 +4680,21 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
     if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
     if(!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
-  let words='';
-  try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
-    const j=await r.json().catch(()=>({}));words=String(j.capped?'':j.answer||'')}catch(e){}
+  let words='',why='';
+  /* ask the relay to write it; one retry for a hiccup (slow answer, busy AI), and remember why if it still fails */
+  for(let tr=0;tr<2&&!words;tr++){if(tr)await new Promise(r=>setTimeout(r,4000));
+    try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),35000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:ctx.length>38000?ctx.slice(0,30000)+'\n…\n'+ctx.slice(-7900):ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
+      const j=await r.json().catch(()=>({}));if(j.capped){why='daily AI limit reached ('+(j.cap||200)+')';break}words=String(j.answer||'');if(!words)why=String(j.error||('relay '+r.status)).slice(0,90)}
+    catch(e){why=e.name==='AbortError'?'the AI took too long':'couldn\'t reach the relay ('+String(e.message||e).slice(0,40)+')'}}
+  if(!words)fmDiag('break not written: '+why);
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
-  FM.busy=false;FM.fail=words?0:Date.now();try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
+  FM.busy=false;FM.fail=words?0:Date.now();FM.failWhy=why;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
   FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;(FM.saidK||[]).forEach(fmMarkSaid);if(FM.onSay)try{FM.onSay()}catch(e){}FM.onSay=null;if(FM.reqSaid){FM.req=null;FM.reqSaid=0}if(FM.dedSaid){FM.dedic=null;FM.dedSaid=0}if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};FM.queuedMode=mode;FM.pend=mode==='next'?Date.now():0;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
+  fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
 function fmAirUI(on){if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
@@ -4845,7 +4853,7 @@ function renderWorld(){const b=$('worldBody');if(!b)return;const L=WORLD.items||
 const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
 function handleCommand(raw){if(!NOVA_MAIN)return;
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
-  {const fs=String(raw||'').match(/^fmstate (on|off)\b(?: (\S+))?/);if(fs){if(fs[1]==='on'&&fs[2]&&!FM.air)try{const w=decodeURIComponent(escape(atob(fs[2]))).trim();if(w)FM.queued={words:w,at:Date.now()}}catch(e){}fmAirUI(fs[1]==='on');return}}
+  {const fs=String(raw||'').match(/^fmstate (on|off)\b(?: (\S+))?/);if(fs){if(fs[1]==='on'&&fs[2]&&!FM.air)try{const w=decodeURIComponent(escape(atob(fs[2]))).trim();if(w)FM.queued={words:w,at:Date.now()}}catch(e){}fmAirUI(fs[1]==='on');if(fs[1]==='on')setTimeout(()=>fmDiag('on air: words '+(FM.airWords||'').split(/\s+/).filter(Boolean).length+', screen '+(!!$('fmOn')&&$('fmOn').classList.contains('on'))+(ORB.st?', orb '+ORB.st:'')+', page '+(window._curPage||'')),800);return}}
   /* Goodnight on the remote ends the late-night Nova FM override */
   if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
@@ -4942,8 +4950,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
-  if(/\b(try|use|switch to|change to)( the)? (ai|kokoro|new|natural) voice\b/.test(t)){mvCheck(true).then(()=>{if(!MV.hasKo)return reply("The AI voice isn't set up on this Mac yet. Run the Kokoro setup on the dashboard Mac and ask me again.");NM.set('voice','kokoro:'+((CFG.macVoice||{}).kokoro||'af_heart'));mvCheck(true).then(()=>reply("This is the AI voice. I'm built for longer answers, so I should sound a bit more natural when I've got a lot to say. Say use Zoe to switch back."))});return}
-  if(/\b(use|switch to|switch back to|go back to|back to|change to)( the)? zoe\b|\b(old|normal|regular) voice\b/.test(t)){NM.set('voice','');mvCheck(true).then(()=>reply("Back to Zoe."));return}
+  if(/\b(try|use|switch to|change to)( the)? (ai|kokoro|new|natural) voice\b/.test(t)){mvCheck(true).then(()=>{if(!MV.hasKo)return reply("The AI voice isn't set up on this Mac yet. Run the Kokoro setup on the dashboard Mac and ask me again.");NM.set('voice','');mvCheck(true).then(()=>reply("This is the AI voice. I'm built for longer answers, so I should sound a bit more natural when I've got a lot to say. Say use Zoe to switch back."))});return}
+  if(/\b(use|switch to|switch back to|go back to|back to|change to)( the)? zoe\b|\b(old|normal|regular) voice\b/.test(t)){NM.set('voice','Zoe (Premium)');mvCheck(true).then(()=>reply("Back to Zoe. Say use the AI voice to switch again."));return}
   if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){mvCheck(true).then(()=>reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}. Mac voice problem: ${MV.err||'unknown'}.`));return}
   if(false){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
   if(/\b(voice|mic|microphone) (test|check|debug)\b/.test(t)){VOICE.test=Date.now()+120000;voiceTestUI();return reply('Voice test on for two minutes. Say hey Nova and watch what I hear.')}
@@ -6254,8 +6262,14 @@ const npYT=s=>!!s&&s.src==='youtube';
 async function npArt(s){const k=npKey(s);if(npArtCache[k]!==undefined)return npArtCache[k];npArtCache[k]=null;
   const q=async(term,ent)=>{const j=await jsonpObj('https://itunes.apple.com/search?country=CA&limit=1&entity='+ent+'&term='+encodeURIComponent(term),8000);const r=(j.results||[])[0];return r&&r.artworkUrl100?r.artworkUrl100.replace(/\d+x\d+bb/,'600x600bb'):null};
   let u=null;if(s.radio)u=rgLogo()||null;else if(npYT(s))u=s.vid?`https://i.ytimg.com/vi/${encodeURIComponent(s.vid)}/hqdefault.jpg`:null;
-  else try{if(s.album)u=await q(s.artist+' '+s.album,'album');if(!u)u=await q(s.artist+' '+s.title,'song')}catch(e){}
+  else{/* search simply: main artist only, no "(feat. …)", no "(Deluxe)" etc. Several tries, most exact first */
+    const cl=x=>String(x||'').replace(/\s*[\(\[][^\)\]]*(feat|ft\.|with |deluxe|edition|remaster|version|explicit|clean|sold out|anniversary|expanded|bonus)[^\)\]]*[\)\]]/gi,'').replace(/\s+-\s+(single|ep)$/i,'').trim(),
+      a1=String(s.artist||'').split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bx\b|\band\b)\s*/i)[0].trim(),al=cl(s.album),ti=cl(s.title);
+    const tries=[[s.album&&s.artist+' '+s.album,'album'],[al&&a1+' '+al,'album'],[a1+' '+ti,'song'],[ti+' '+al,'song'],[a1+' '+ti,'musicTrack']].filter(t=>t[0]);
+    const seen=new Set();for(const [t,e] of tries){if(u)break;const k2=e+t.toLowerCase();if(seen.has(k2))continue;seen.add(k2);try{u=await q(t,e)}catch(e){}}}
   const out={url:u,pal:null};
+  /* nothing found (or the lookup failed): try again in a couple of minutes instead of never */
+  if(!u&&!s.radio&&!npYT(s))setTimeout(()=>{if(npArtCache[k]&&!npArtCache[k].url){delete npArtCache[k];const st=npState();if(st&&npKey(st)===k)npArt(st).then(()=>{renderNPMini();npPaint();if($('pNP').classList.contains('on')){npSig='';renderNP()}})}},120000);
   if(u)try{out.pal=await new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const c=document.createElement('canvas');c.width=c.height=6;const x=c.getContext('2d');x.drawImage(im,0,0,6,6);
       const d=x.getImageData(0,0,6,6).data,px=[];for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);px.push({r,g,b,sat:mx?(mx-mn)/mx:0,l:(mx+mn)/2})}
       px.sort((a,b)=>b.sat*(.4+b.l/255)-a.sat*(.4+a.l/255));const A=px[0],B=px.find(p=>Math.abs(p.r-A.r)+Math.abs(p.g-A.g)+Math.abs(p.b-A.b)>90)||px[Math.floor(px.length/2)];res([A,B])}catch(e){res(null)}};im.onerror=()=>res(null);im.src=u;setTimeout(()=>res(null),6000)})}catch(e){}
@@ -7704,7 +7718,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 190';
+document.getElementById('ver').textContent='build nova 193';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
