@@ -2125,6 +2125,11 @@ html.nv2.nvx #time{line-height:.92}
 html.nv2.nvx #pTech :is([style*="#7fb0ff"],[style*="#5fd88a"]){background:var(--xink)!important}
 html.nv2.nvx #pTech [style*="#ffb84d"]{background:#d9a13a!important}
 html.nv2.nvx #pTech [style*="#ff5c6c"]{background:#e5484d!important}
+html.nv2.nvx .mc{gap:calc(.35*var(--u))!important}
+html.nv2.nvx .mgrid{row-gap:calc(1.3*var(--u))!important}
+html.nv2.nvx .mc b{height:calc(3*var(--u))!important}
+html.nv2.nvx .mc.today b,html.nv2.nvx .mc.td b{width:calc(3.8*var(--u))!important;height:calc(3*var(--u))!important}
+html.nv2.nvx :is(.mc.today,.mc.td) span{margin-top:calc(.35*var(--u))}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4017,7 +4022,7 @@ function renderTrip(){const b=$('tpBody');if(!b)return;const f=tripActive();canc
     b.innerHTML=`<div class="jf-title">${who?esc(who)+"'s trip":'Planes around home'}</div><div class="tp-wrap"><div class="tp-up">${A?stayCard(A):''}${L.map(x=>{const d=new Date(x.dep),k=Math.round((new Date(d).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/864e5);
       return `<div class="jf-glass tp-leg"><div class="tp-day"><b>${d.toLocaleDateString([],{weekday:'short'})}</b><span>${d.toLocaleDateString([],{month:'short',day:'numeric'})}</span></div>
         <div class="tp-rt"><b>${esc(x.A[2])} <i>→</i> ${esc(x.B[2])}</b><span>${esc(x.no.slice(0,2)+' '+x.no.slice(2))} · departs ${tripT(x.dep)} · lands ${x.guess?'about ':''}${tripT(x.arr)}</span></div>
-        <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>${(()=>{const e=tripDrive(x);if(!e)return '';const r=e.loc&&typeof rtGet==='function'?rtGet(e.loc):null;if(e.loc&&!r&&typeof routeTo==='function')routeTo(e.loc);
+        <div class="tp-in"><b>${k===0?'Today':k===1?'Tomorrow':k}</b><span>${k>1?'days':''}</span></div></div>${(()=>{const e=null;if(!e)return '';const r=e.loc&&typeof rtGet==='function'?rtGet(e.loc):null;if(e.loc&&!r&&typeof routeTo==='function')routeTo(e.loc);
           return `<div class="jf-glass tp-drive">🚗 <b>You're driving them</b> · leave at <b>${tripT(e.start)}</b>${r&&r.min!=null?` · ${driveTxt(r.min)} to ${esc(x.A[2])} right now`:''}</div>`})()}`}).join('')}${skyCard()}</div>${stage}</div>`;
     TRIP.view=null;requestAnimationFrame(()=>{tripMap();TRIP.raf=requestAnimationFrame(tripLoop)});tripPreviewPoll();return}
   b.innerHTML=`<div class="jf-title">${esc(f.who)}'s flight</div><div class="tp-wrap">${stage}<div class="jf-glass tp-info" id="tpInfo"></div></div>`;
