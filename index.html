@@ -2298,6 +2298,14 @@ html.nv2.nvx #npCard:not(.paused) b{color:var(--xink)!important;opacity:1!import
 #fmOn .fm-air.on{background:var(--fa);border-color:var(--fa);box-shadow:0 0 3.6vw color-mix(in srgb,var(--fa) 45%,transparent)}
 #fmOn .fo-q span{opacity:.16;transition:opacity .35s ease}
 #fmOn .fo-q span.on{opacity:1}
+/* North America news page */
+.wn-t{display:inline-block;font:600 calc(1.3*var(--u)) 'NovaSans','Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:calc(.3*var(--u)) calc(.8*var(--u));border-radius:calc(.5*var(--u));margin:0 calc(.6*var(--u)) calc(.6*var(--u)) 0;border:1.5px solid #3a3935;color:#e6e2d9}
+.wn-t.can{border-color:#e5484d;color:#ff8a80}
+.wn-t.us{border-color:#3b7bff;color:#8fb2ff}
+.wn-b{display:inline-block;background:#e5484d;color:#fff;font:700 calc(1.4*var(--u)) 'NovaSans','Inter',sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:calc(.35*var(--u)) calc(.9*var(--u));border-radius:calc(.5*var(--u));margin-right:calc(.6*var(--u));animation:fmBlink 1.6s ease-in-out infinite}
+.wn-s{display:inline-block;font:600 calc(1.25*var(--u)) 'NovaSans','Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#e5484d;margin-left:calc(.4*var(--u))}
+.n3hero.wn-brk{box-shadow:inset 0 0 0 2px #e5484d}
+.wn-r b{display:block}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -2347,6 +2355,7 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
  <div class="card"><h2>7-day forecast</h2><div id="fDays"></div></div>
  <div class="fc-extra"><div class="card"><h2>❄️ Snow</h2><div id="fxSnow"></div></div><div class="card"><h2>🌅 Daylight</h2><div id="fxDay"></div></div></div>
 </section>
+<section id="pWorld" class="page"><div class="pwrap"><div class="ptitle">North America</div><div id="worldBody"><div class="gnone">Loading the news…</div></div></div></section>
 <section id="pTown" class="page"><div class="pwrap"><div class="ptitle">Around here</div><div id="townBody"><div class="gnone">Loading local news…</div></div></div></section>
 <section id="pNews" class="page"><div class="pwrap"><div class="ptitle">Team news</div><div id="newsBody"><div class="gnone">Loading headlines…</div></div></div></section>
 <section id="pStand" class="page"><div class="pwrap"><div class="ptitle">Standings</div><div id="standBody"><div class="gnone">Loading standings…</div></div></div></section>
@@ -2422,6 +2431,7 @@ const CFG={
     {type:'cams',      secs:40},
     {type:'news',      secs:40},   // team news: a featured story to read + more headlines
     {type:'townnews',  secs:30},   // Around here: local headlines
+    {type:'world',     secs:30},   // North America: top stories, with BREAKING when something major happens
     {type:'tx',        secs:35},
     {type:'home',      secs:30},   // Home: your lights, plugs and Rokus from Homebridge (needs the nova-home helper on this Mac)
     {type:'xbox',      secs:30},   // Xbox: you, recent games, achievements, friends online (needs XBL_KEY on the relay)   // trades & signings (NHL trades, MLB trades + free agents, your teams first) - last 30 days
@@ -3102,10 +3112,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
+const PAGE_EL={world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='world'||!!(CFG.relay&&WORLD.items.length))&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -3130,6 +3140,7 @@ function nextPage(force,hold){
   if(p.type==='games')renderGames();
   if(p.type==='news'){newsVisit++;renderNews()}
   if(p.type==='townnews')renderTown();
+  if(p.type==='world')renderWorld();
   if(p.type==='standings'){stView=0;renderStandings();clearTimeout(window._stT);window._stT=setTimeout(()=>{if($('pStand').classList.contains('on')){stView=1;renderStandings()}},Math.max(4000,(p.secs||15)*500))}
   if(p.type==='coming')renderComing();
   if(p.type==='jellyfin'){renderJelly();loadJelly()}
@@ -3597,7 +3608,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={world:'North America',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
@@ -3948,6 +3959,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Radio game',()=>radioOn()&&RG.g?`Listening to ${rgCfg().title} (${rgCfg().station}). ${RG.g.line} · ${RG.g.det}`:'');
   add('Now playing',()=>NP&&NP.state==='playing'?`${NP.title} by ${NP.artist}${NP.album?' ('+NP.album+')':''}`:'Nothing playing');
   add('Jellyfin',()=>jfSay());
+  add('North America news (top stories now)',()=>(WORLD.major?`BREAKING: ${WORLD.major.t} (${WORLD.major.src})\n`:'')+(WORLD.items||[]).slice(0,8).map(x=>`${x.t} (${x.src})`).join('\n'));
   add('Things the family asked Nova to remember',()=>NM.get('mem',[]).map(x=>`${x.t} (told ${new Date(x.at).toLocaleDateString()})`).join('\n'));
   add('Reminders set',()=>remList().map(r=>`${r.text} at ${remFmt(r.at)}`).join('\n'));
   add('Continue watching',()=>((typeof WT!=='undefined'&&WT&&WT.resume)||[]).slice(0,5).map(r=>`${r.user}: ${r.title} ${r.sub||''} ${r.pct||0}%`).join('\n'));
@@ -4587,7 +4599,8 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
   {const n=new Date(),hk=n.toDateString()+'|'+n.getHours();
    if(FM.on&&!FM.busy&&n.getMinutes()<10&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
   FM.count++;if(!FM.target)FM.target=fmTarget();
-  if(!FM.on||FM.busy||FM.count<FM.target||Date.now()-FM.last<FMC().minGap*60000||fmQuiet()||fmBusy(j))return;
+  const news=worldNew();
+  if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   fmBreak('next',j)}
 const fmB64=s=>btoa(unescape(encodeURIComponent(s)));
 async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)return false;song=song||NP||{};FM.busy=true;
@@ -4600,10 +4613,11 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const said=NM.get('fmsaid',[]),extra=[];
   if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (25 words max): it's ${hh} o'clock, you're listening to ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly.`)}
   if(FM.welcome){const h=FM.welcome/3600e3;extra.unshift(`WELCOME BACK: the listener just came back after ${h>=20?'about a day':h>=2?'about '+Math.round(h)+' hours':'a little while'} without music. Welcome them back warmly${mode==='hour'?' in the same breath as the station ID':' before anything else'}.`)}
+  {const N=worldNew();if(N){extra.unshift(`NEWS UPDATE FIRST: calmly give a short news update on this breaking story, only the facts in the headline: "${N.t}" (${N.src||'news reports'}). Be respectful, no jokes in this break.`);FM.newsId=N.id}}
   if(mode!=='hour'){
     if(song.next&&song.next.length&&!song.shuf&&Math.random()<.35)extra.push(`TEASE: hint that "${song.next[0][0]}" by ${song.next[0][1]} is coming up soon.`);
     if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
-    if(Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
+    if(!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='';
   try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),25000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
@@ -4611,7 +4625,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   words=words.replace(/\[\[[^\]]*\]\]/g,'').replace(/[*_#"“”]/g,'').replace(/^\s*(dj|nova)\s*:\s*/i,'').replace(/\s+/g,' ').trim();
   FM.busy=false;try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}if(!words)return false;
   NM.set('fmsaid',[...said,words.slice(0,90)].slice(-4));
-  FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;nsCount&&nsCount('fm');
+  FM.last=Date.now();FM.count=0;FM.target=fmTarget();FM.welcome=0;if(FM.newsId){NM.set('wsaid',[...NM.get('wsaid',[]),FM.newsId].slice(-30));FM.queuedNews=1;FM.newsId=null}else FM.queuedNews=0;nsCount&&nsCount('fm');
   FM.queued={words,at:Date.now()};FM.queuedMode=mode;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='next'?'next':'now'}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
@@ -4666,7 +4680,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
     </div>`}
 /* the full-screen "on air" view */
 /* what kind of break is it? sports / weather / breaking news / regular chat (colour + label on the on-air screen) */
-function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedMode==='hour')return {k:'id',lab:'Station ID',c:'#ff6a2b'};
+function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedNews)return {k:'news',lab:'News update',c:'#e5484d'};if(FM.queuedMode==='hour')return {k:'id',lab:'Station ID',c:'#ff6a2b'};
   const n=re=>(w.match(re)||[]).length;
   const sp=n(/\b(leafs|knights|nhl|ohl|game|games|score|scored|goal|goals|period|overtime|shootout|win|wins|won|loss|lost|streak|playoff|puck|standings|jays|raptors)\b/g),
     wx=n(/\b(degrees?|°|weather|snow|rain|cold|warm|wind|sunny|cloudy|overcast|forecast|frost|freezing|storm|hoodie|jacket|umbrella|temperature|low of|high of)\b/g),
@@ -4695,6 +4709,25 @@ function fmOnAir(on){let el=$('fmOn');
 /* "Wake up" on the remote late at night: Nova FM can play through quiet hours until they end */
 function fmWakeNight(){const q=FMC().quiet;if(!q||q.length<2)return;const n=new Date(),end=new Date(n);end.setHours(q[1],0,0,0);if(end<=n)end.setDate(end.getDate()+1);
   if(fmQuiet()||n.getHours()>=q[0]-1){NM.set('fmwake',end.getTime())}}
+/* ================= North America news (Canada + U.S. only): /world on the relay =================
+   A page in the rotation, a red BREAKING story when something major happens, and Nova FM works it into a break. Never India. */
+let WORLD={items:[],major:null,at:0};
+async function worldLoad(){if(!CFG.relay||!SECRETS.calkey||(CFG.world||{}).on===false)return;
+  try{const j=await (await tfetch(`${relayBase()}/world?key=${encodeURIComponent(SECRETS.calkey)}`,20000)).json();if(j&&j.items){
+    const nm=j.major&&j.major.id!==(WORLD.major&&WORLD.major.id)?j.major:null;WORLD={items:j.items,major:j.major||null,at:Date.now()};
+    /* a new major story: show the page once (daytime, screen awake, nothing else going on) */
+    if(nm&&!NM.get('wseen',[]).includes(nm.id)){const h=new Date().getHours();if(h>=8&&h<23&&!(typeof ORB!=='undefined'&&ORB.st)&&!(typeof REM_UP!=='undefined'&&REM_UP)&&!(typeof COOK!=='undefined'&&COOK.on))try{showFor('world')}catch(e){}}
+    if($('pWorld')&&$('pWorld').classList.contains('on'))renderWorld()}}catch(e){console.warn('world',e)}}
+setTimeout(worldLoad,8000);setInterval(worldLoad,10*60000);
+const wnTag=r=>`<span class="wn-t ${r==='CAN'?'can':r==='US'?'us':'wo'}">${r==='CAN'?'Canada':r==='US'?'U.S.':'World'}</span>`;
+function renderWorld(){const b=$('worldBody');if(!b)return;const L=WORLD.items||[];if(!L.length){b.innerHTML='<div class="gnone">Loading the news…</div>';return}
+  const M=WORLD.major,h=M||L.find(x=>x.img)||L[0],rest=L.filter(x=>x.id!==h.id);
+  const html=`<div class="n3hero${h.img?' img':''}${M?' wn-brk':''}">${h.img?`<img class="n3himg" src="${esc(h.img)}" alt="" onerror="this.remove()">`:''}<div class="n3hbg"></div><div class="n3htx">${M?'<span class="wn-b">● Breaking</span> ':''}${wnTag(h.reg)}<b>${esc(h.t)}</b>${h.d?`<p>${esc(h.d)}</p>`:''}<small>${esc(h.src||'')}${h.n>1?` · ${h.n} outlets`:''} · ${ago(new Date(h.at))}</small></div></div>
+    <div class="card n3c1"><h2 class="hwx"><span>Top stories</span><em>Canada · U.S.</em></h2>${rest.slice(0,10).map(n=>`<div class="n3r wn-r${n.sev>=4?' sev':''}"><div>${wnTag(n.reg)}${n.sev>=4?'<span class="wn-s">Developing</span>':''}<b>${esc(n.t)}</b><small>${esc(n.src||'')}${n.n>1?` · ${n.n} outlets`:''} · ${ago(new Date(n.at))}</small></div></div>`).join('')}</div>`;
+  if(b.dataset.h!==html){b.dataset.h=html;b.innerHTML=html}
+  b.style.cssText='display:flex;flex-direction:column;gap:calc(2.2*var(--u));flex:1;min-height:0;overflow:hidden';try{newsFit(b,'.n3r',2)}catch(e){}}
+/* for Nova FM: the big story she hasn't mentioned yet */
+const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
 function handleCommand(raw){if(!NOVA_MAIN)return;
   {const fs=String(raw||'').match(/^fmstate (on|off)\b/);if(fs){fmAirUI(fs[1]==='on');return}}
   /* Goodnight on the remote ends the late-night Nova FM override */
