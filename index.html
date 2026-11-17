@@ -3909,10 +3909,17 @@ async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=C
 function mvPace(text){const w=String(text).split(/\s+/).length;if(w<16)return {text,k:1};
   return {text:String(text).replace(/([.!?])["”']?\s+(?=[A-Z0-9"“])/g,'$1 [[slnc 300]] ').replace(/([,;:])\s+/g,'$1 [[slnc 120]] ').replace(/\s+[—–-]\s+/g,' [[slnc 160]] '),k:w>40?.93:.96}}
 async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
-  if(!/^kokoro:/.test(MV.voice.name)){const P=mvPace(text);text=P.text;rate=(rate||1)*P.k}
+  /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
+  let vName=MV.voice.name;const kspd=NM.get('kospd',0);
+  if(window._ruFast&&/^kokoro:/.test(vName)&&MV.fallback&&!(kspd&&kspd<480))vName=MV.fallback;
+  const words=String(text).split(/\s+/).length,isKo=/^kokoro:/.test(vName);
+  if(!isKo){const P=mvPace(text);text=P.text;rate=(rate||1)*P.k}
   const orbMine=typeof ORB!=='undefined'&&ORB.st==='speak';if(orbMine)ORB.until=Date.now()+120000;
   const t0=Date.now();
-  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:MV.voice.name,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();
+  try{const j=await (await fetch(CFG.home.helper+'/say',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({text:String(text).slice(0,5000),voice:vName,fallback:MV.fallback||'',rate:Math.round(((CFG.macVoice||{}).rate||185)*(rate||1))})})).json();
+    /* how long Kokoro takes per word, start to finish (a person talks at about 360-400 ms a word) */
+    if(isKo&&j.engine==='kokoro'&&words>=8){const ms=(Date.now()-t0)/words,old=NM.get('kospd',0),nv=Math.round(old?old*.7+ms*.3:ms);NM.set('kospd',nv);
+      if(!macSay.lg||Date.now()-macSay.lg>3600e3){macSay.lg=Date.now();try{fmDiag(`kokoro speed: ${Math.round(ms)} ms a word this time, average ${nv} (normal talking is about 380; the roundup uses Zoe above 480)`)}catch(e){}}}
     if(typeof vLog==='function')vLog(`said ${((Date.now()-t0)/1000).toFixed(1)}s ${j.engine||''}${j.code!=null&&j.code!==0?' code '+j.code:''}${j.err?' err '+j.err:''}: "${String(text).slice(0,28)}…"`);return !!j.ok}
   catch(e){if(typeof vLog==='function')vLog('Mac voice failed: '+e.message);MV.at=0;return false}finally{window._macSpeaking=0;if(orbMine&&ORB.st==='speak')ORB.until=Date.now()+1200}}
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
@@ -4357,8 +4364,13 @@ setInterval(()=>{if(!skyOn())return;const now=Date.now(),h=new Date().getHours()
     const msg=`Northern lights alert: there's a chance of seeing them tonight after ${tripT(a.t)}. Look north, away from town lights.`;toast('🌌 <b>Northern lights</b>'+esc(msg));reply(msg);if(!(CFG.remote||{}).speak)speak(msg)}}},60000);
 setTimeout(skyLoad,20000);
 /* ================= "What's that plane?": the closest, lowest plane is the one you're hearing ================= */
-async function whatPlane(){if(!CFG.relay||!SECRETS.calkey)return reply("I can't see the planes from this screen.");
-  try{const d=await (await tfetch(relayBase()+'/planes?'+locQ()+'&r=30',15000)).json(),P=(d.planes||[]).filter(p=>p.alt!=null&&p.alt>0);
+/* planes near home: from the home helper on the dashboard Mac first (home internet, which the flight sites accept), the relay if that's not there */
+async function planesFetch(r){const q=`lat=${CFG.lat}&lon=${CFG.lon}&r=${r}`,why=[];
+  if(CFG.home&&CFG.home.helper){try{const j=await (await tfetch(CFG.home.helper+'/planes?'+q,12000)).json();if(j&&Array.isArray(j.planes))return j;why.push('home: '+(j&&j.error||'no list'))}catch(e){why.push('home: '+e.message)}}
+  if(CFG.relay&&SECRETS.calkey){try{const j=await (await tfetch(relayBase()+'/planes?'+locQ()+'&r='+r,20000)).json();if(j&&Array.isArray(j.planes))return j;why.push('relay: '+(j&&j.error||'no list'))}catch(e){why.push('relay: '+e.message)}}
+  const e=new Error(why.join('; ')||'no helper or relay');try{const k=e.message.slice(0,60);if(planesFetch.last!==k){planesFetch.last=k;fmDiag('planes failed: '+e.message)}}catch(x){}throw e}
+async function whatPlane(){
+  try{const d=await planesFetch(30),P=(d.planes||[]).filter(p=>p.alt!=null&&p.alt>0);
     if(!P.length)return reply("I don't see any planes close by right now.");
     const p=P.slice().sort((a,b)=>(a.dist+a.alt/2000)-(b.dist+b.alt/2000))[0],air=/^[A-Z]{3}\d/.test(p.cs||''),num=String(p.cs||'').replace(/^[A-Z]{3}/,'');
     const who=air&&p.airline?`${p.airline} ${num}`:p.cs?p.cs:'a private plane';
@@ -4368,7 +4380,10 @@ async function whatPlane(){if(!CFG.relay||!SECRETS.calkey)return reply("I can't 
     if(ap&&p.vs<-300&&p.kt>60){const br=(p.brg||0)*Math.PI/180,pla=CFG.lat+p.dist*Math.cos(br)/111.2,plo=CFG.lon+p.dist*Math.sin(br)/(111.2*Math.cos(CFG.lat*Math.PI/180)),km=gcKm(pla,plo,ap[0],ap[1]);
       if(km<160)land=` It's coming down into ${ap[2].replace(/, Ontario$/,'')}, landing in about ${Math.max(2,Math.round(km/(p.kt*1.852)*60+4))} minutes.`}
     const say=`That's ${who}${ty?(/^[aeiou]/i.test(ty)?', an ':', a ')+ty:''}${route}. It's ${p.dist} kilometres away at ${Number(Math.round(p.alt/100)*100).toLocaleString()} feet${p.vs<-500?' and descending':p.vs>500?' and climbing':''}.${land}`;
-    TRIP.hl={cs:p.cs,until:Date.now()+90e3};if(tripPgOn()&&!tripActive())showFor('trip');reply(say)}
+    /* another one close by too? name it briefly, in case that's the one you heard */
+    const sc=x=>x.dist+x.alt/2000,o=P.slice().sort((a,b)=>sc(a)-sc(b))[1];let also='';
+    if(o&&sc(o)-sc(p)<4){const oa=/^[A-Z]{3}\d/.test(o.cs||'')&&o.airline?`${o.airline} ${String(o.cs).replace(/^[A-Z]{3}/,'')}`:o.cs||'a private plane';also=` Also close: ${oa}${o.to&&o.to.city?' to '+o.to.city:''}, ${o.dist} kilometres away at ${Number(Math.round(o.alt/100)*100).toLocaleString()} feet.`}
+    TRIP.hl={cs:p.cs,until:Date.now()+90e3};if(tripPgOn()&&!tripActive())showFor('trip');reply(say+also)}
   catch(e){reply("Sorry, I couldn't check the planes just now.")}}
 function planesSay(){const A=TRIP.area;if(A&&A.traffic&&Date.now()-A.t<10*60e3){const n=A.traffic.length;return `${n} plane${n===1?'':'s'} in the air around home right now. Ask me "what's that plane" when you hear one.`}return radarSay()}
 /* ================= Trivia you play together + Nova Wrapped (monthly stats, kept on this screen) ================= */
@@ -5800,6 +5815,27 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
       say:`Trivia time. ${sayQ}${tail} Is it ${q.opts.slice(0,3).join(', ')}, or ${q.opts[3]}?`,
       quiz:{idx,wait:5,say:`The answer is ${q.ans}.`}}});
   }
+  /* 13. top headlines (North America news page) */
+  if(!Q)sg(()=>{const L=((typeof WORLD!=='undefined'&&WORLD.items)||[]).filter(x=>x.reg==='CAN'||x.reg==='US').slice(0,3);if(!L.length)return;
+    const reg=r=>r==='CAN'?'CA':'US',sh=t=>String(t).replace(/\s+[-–—|]\s+[^-–—|]{2,40}$/,'').trim();
+    return {key:'news',tag:'NEWS',title:'Headlines',kicker:'North America',value:String(L.length),unit:'Stories',big:sh(L[0].t),gauge:.6,color:'#7fb2ff',
+      rows:L.map(x=>({pill:reg(x.reg),t:sh(x.t)})),
+      say:'In the news: '+andJ(L.slice(0,2).map(x=>sh(x.t).replace(/[.!?]$/,'')))+'.'}});
+  /* 14. your music (Nova FM) */
+  if(!Q)sg(()=>{const T=typeof fmTop5==='function'?fmTop5():[];if(!T.length)return;const P=NM.get('fmplays',{}),tot=Object.values(P.c||{}).reduce((a,b)=>a+b,0),D=NM.get('fmday',{}),[t1,a1]=String(T[0][0]).split(' — ');
+    return {key:'music',tag:'MUSIC',title:'Your music',kicker:'Nova FM',value:String(tot),unit:'Plays',big:t1,gauge:.5,color:'#ff6a2b',
+      rows:[{k:'Most played this week',v:`${t1}${a1?' · '+a1:''}`},...(T[1]?[{k:'Also on repeat',v:String(T[1][0]).replace(' — ',' · ')}]:[]),{k:'This week',v:`${tot} plays${D.d===new Date().toDateString()&&D.breaks?' · '+D.breaks+' breaks today':''}`}],
+      say:`Your most played this week is ${t1}${a1?' by '+a1:''}${T[0][1]>1?', '+nw(T[0][1])+' plays':''}.`}});
+  /* 15. overhead now: the closest plane and the next space station pass */
+  if(!Q)sg(()=>{const PD=window._ruPlanes,P=((PD&&PD.planes)||[]).filter(p=>p.alt>0),sc=x=>x.dist+x.alt/2000,p=P.slice().sort((a,b)=>sc(a)-sc(b))[0],st=typeof skyOn==='function'&&skyOn()?skyNext(14):null;if(!p&&!st)return;
+    const nm=x=>/^[A-Z]{3}\d/.test(x.cs||'')&&x.airline?`${x.airline} ${String(x.cs).replace(/^[A-Z]{3}/,'')}`:x.cs||'A private plane',ft=x=>Number(Math.round(x.alt/100)*100).toLocaleString();
+    const rows=[];if(p)rows.push({k:`${nm(p)}${p.from&&p.to&&p.from.city&&p.to.city?' · '+p.from.city+' → '+p.to.city:''}`,v:`${ft(p)} ft`});if(P.length>1)rows.push({k:'In the air around home',v:`${P.length} planes`});
+    if(st)rows.push({k:'Space station',v:`Passes over ${tripT(st.vs)}`,hot:1});
+    return {key:'air',tag:'AIR',title:'Overhead now',kicker:'Above Woodstock',value:String(P.length),unit:'Planes',big:p?nm(p):'Space station',gauge:.5,color:'#7fb2ff',rows,
+      say:[p?`Right overhead, ${nm(p)}${p.to&&p.to.city?' heading to '+p.to.city:''}, at ${ft(p)} feet.`:'',st?`The space station passes over at ${tripT(st.vs).replace(':00','')}${/[AP]M/.test(tripT(st.vs))?'':''}, look ${compass(st.azS)}.`:''].filter(Boolean).join(' ')}});
+  /* the roundup: no Jellyfin or trivia; "overhead" covers the sky; then a set order */
+  {const drop=['jf','trv'];if(segs.some(x=>x.key==='air'))drop.push('sky');for(let i=segs.length-1;i>=0;i--)if(drop.includes(segs[i].key))segs.splice(i,1);
+    const ord=['live','alert','wx','cal','drv','tor','ldn','news','tk','home','music','air','sky','cd','trip','sys'],ix=k=>{const i=ord.indexOf(k);return i<0?ord.indexOf('news')+.5:i};segs.sort((a,b)=>ix(a.key)-ix(b.key))}
   /* game day: the whole HUD in team colours, and it ends with the chant */
   const L1=typeof gdToday==='function'&&gdToday(),K1=typeof kgdToday==='function'&&kgdToday();
   const skin=K1?{P:{a:'#3fd47f',b:'#ffd23f',c:'#ffd23f',d:'#21a35d',e:'#9be8b8',core:['#fff3b0','#ffd23f','#21a35d']},label:'GO KNIGHTS GO'}:null;
@@ -5837,7 +5873,12 @@ function roundupGo(o){try{const al=document.getElementById('nvxAlias');if(al&&al
   wakeScreen();if(SECRETS.topic)nbPub(`${SECRETS.topic}-reply`,o.egg?'Watch the dashboard 👀':'Starting your roundup on the dashboard.').catch(()=>{});
   try{if(speechSynthesis.speaking)speechSynthesis.cancel()}catch(e){}
   const base={voice:novaVoice,volume:R.volume==null?.8:R.volume,ver:(($('ver')&&$('ver').textContent)||'').replace(/\D/g,'')};
-  if(o.egg==='red')NovaRoundup.redAlert(base);else if(o.egg==='boom')NovaRoundup.selfDestruct(base);else NovaRoundup.play(ruData(o));return true}
+  if(o.egg==='red')NovaRoundup.redAlert(base);else if(o.egg==='boom')NovaRoundup.selfDestruct(base);
+  else if(document.documentElement.classList.contains('nvx')&&NovaRoundup.playB){
+    /* new style: look up what's overhead first (a few seconds at most), Zoe reads it if Kokoro is too slow on this Mac */
+    if(window._ruStarting)return true;window._ruStarting=1;window._ruFast=true;const go=()=>{window._ruStarting=0;NovaRoundup.playB(ruData(o)).finally(()=>{window._ruFast=false})};
+    Promise.race([planesFetch(30).then(d=>{window._ruPlanes=d}).catch(()=>{window._ruPlanes=null}),new Promise(r=>setTimeout(r,3500))]).then(go)}
+  else NovaRoundup.play(ruData(o));return true}
 /* HUD style: the frame, scanlines and a still network of lines (drawn once, drifts slowly with CSS so it costs nothing) */
 (function hudLayer(){if(CFG.style!=='hud')return;const add=h=>{const d=document.createElement('div');d.innerHTML=h;document.body.appendChild(d.firstElementChild)};
   add(`<svg id="hudFrame" viewBox="0 0 1000 1000" preserveAspectRatio="none"><defs><linearGradient id="hudFG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ee8ff"/><stop offset=".5" stop-color="#9b5cff"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient></defs>
@@ -7632,11 +7673,11 @@ function tmDraw(el,v){
 let tmFails=0;function tmFail(){tmFails++}
 /* ================= Plane radar: animated scope over a dark map, planes glide between updates ================= */
 const RD={planes:{},at:0,canvas:null,ctx:null,raf:0,scale:1,W:0,H:0,cx:0,cy:0,sweep:0,last:0};
-const rdOn=()=>!!(CFG.planes&&CFG.planes.on!==false&&CFG.relay&&SECRETS.calkey);
+const rdOn=()=>!!(CFG.planes&&CFG.planes.on!==false&&((CFG.relay&&SECRETS.calkey)||(CFG.home&&CFG.home.helper)));
 const rdR=()=>(CFG.planes&&CFG.planes.radiusKm)||40;
 async function loadRadar(){
   if(!rdOn())return;
-  try{const r=await tfetch(relayBase()+'/planes?'+locQ()+'&r='+rdR(),15000),d=await r.json();
+  try{let d;try{d=await planesFetch(rdR())}catch(e){plErr='Flight data unavailable';return}
     if(d.error){plErr='Flight data unavailable';return}PL=d;plErr='';const now=Date.now(),seen=new Set();
     (d.planes||[]).forEach(p=>{const id=p.cs||p.reg||(p.type+p.dist);seen.add(id);const a=p.brg*Math.PI/180,x=Math.sin(a)*p.dist,y=Math.cos(a)*p.dist;
       const o=RD.planes[id];
@@ -7733,7 +7774,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 196';
+document.getElementById('ver').textContent='build nova 198';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -8093,6 +8134,89 @@ async function play(D){
   }catch(e){console.warn('roundup',e)}
   S.bed(false);S.song(false);R.classList.add('bye');await sleep(1400);clearInterval(ck);clearInterval(anim);stopNet();R.remove();busy=false;stopFn=null;
 }
+/* ---------------- the new-style roundup (graphite + orange): one page that builds as Nova reads it ---------------- */
+const CSSB=`#ruB{position:fixed;inset:0;z-index:99990;background:#171716;color:#e6e2d9;font-family:'NovaSans','Inter',sans-serif;opacity:0;transition:opacity .6s;overflow:hidden;--u:min(1vw,.5625vh)}
+#ruB.on{opacity:1}#ruB.out{opacity:0;transition:opacity 1.2s}
+#ruB::before{content:'';position:absolute;inset:0;background:radial-gradient(120% 50% at 80% -5%,rgba(255,106,43,.16),transparent 60%),radial-gradient(90% 40% at 0% 110%,rgba(127,178,255,.06),transparent 60%);pointer-events:none}
+#ruB .rb-top{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));top:calc(6*var(--u));display:flex;justify-content:space-between;align-items:flex-start}
+#ruB .rb-br{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(5.9*var(--u));line-height:1;letter-spacing:-.01em}#ruB .rb-br b{color:#ff6a2b}
+#ruB .rb-sub,#ruB .rb-clk small,#ruB .rb-k,#ruB .rb-foot{font-size:calc(2*var(--u));letter-spacing:.14em;color:#8a867c;text-transform:uppercase}
+#ruB .rb-sub{margin-top:calc(1.3*var(--u))}
+#ruB .rb-clk{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(5.4*var(--u));text-align:right}#ruB .rb-clk small{display:block;font-family:'NovaSans','Inter',sans-serif;font-weight:500;margin-top:calc(1*var(--u))}
+#ruB .rb-pg{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));top:calc(27.5*var(--u));bottom:calc(34*var(--u));display:flex;flex-direction:column;gap:calc(1.7*var(--u));overflow:hidden}
+#ruB .rb-c{background:#1f1f1d;border:1.5px solid #3a3935;border-radius:calc(1.1*var(--u));position:relative;padding:calc(6*var(--u)) calc(3*var(--u)) calc(2*var(--u));flex:none;transition:border-color .4s,background .4s,opacity .4s}
+#ruB .rb-tag{position:absolute;top:-1.5px;left:-1.5px;background:#e6e2d9;color:#171716;font-size:calc(2.2*var(--u));letter-spacing:.08em;text-transform:uppercase;padding:calc(.7*var(--u)) calc(1.5*var(--u));border-radius:calc(1.1*var(--u)) 0 calc(1.1*var(--u)) 0;font-weight:500;white-space:nowrap}
+#ruB .rb-c.cur{border-color:#ff6a2b;background:linear-gradient(180deg,rgba(255,106,43,.08),#1f1f1d 60%)}#ruB .rb-c.cur .rb-tag{background:#ff6a2b;color:#1a0d06}
+#ruB .rb-c.wait{background:transparent;border-style:dashed;padding:calc(1.8*var(--u)) calc(2.6*var(--u));display:flex;justify-content:space-between;color:#8a867c;font-size:calc(2.5*var(--u));letter-spacing:.12em;text-transform:uppercase}
+#ruB .rb-w{display:flex;justify-content:space-between;width:100%}#ruB .rb-c.wait .rb-tag,#ruB .rb-c.wait .rb-in{display:none}#ruB .rb-c:not(.wait) .rb-w{display:none}
+#ruB .rb-c.mini{padding:calc(1.6*var(--u)) calc(2.6*var(--u));display:flex;gap:calc(2*var(--u));align-items:baseline}
+#ruB .rb-c.mini .rb-tag{position:static;border-radius:calc(.6*var(--u));flex:none}#ruB .rb-c.mini .rb-in{display:none}#ruB .rb-c:not(.mini) .rb-mi{display:none}
+#ruB .rb-mi{font-size:calc(3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#ruB .rb-g{display:grid;grid-template-columns:auto 1fr;gap:calc(3*var(--u));align-items:center}#ruB .rb-g.nov{grid-template-columns:1fr}
+#ruB .rb-v{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(9*var(--u));line-height:1;white-space:nowrap}#ruB .rb-v small{display:block;font-family:'NovaSans','Inter',sans-serif;font-size:calc(2*var(--u));letter-spacing:.12em;color:#8a867c;text-transform:uppercase;font-weight:500;margin-top:calc(.8*var(--u))}
+#ruB .rb-big{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(3.8*var(--u));line-height:1.15;margin-bottom:calc(.6*var(--u))}
+#ruB .rb-l{font-size:calc(3*var(--u));color:#8a867c;padding:calc(.45*var(--u)) 0;line-height:1.3}#ruB .rb-l b{color:#e6e2d9;font-weight:500}
+#ruB .rb-r{display:flex;justify-content:space-between;gap:calc(2*var(--u));align-items:baseline;font-size:calc(3*var(--u));padding:calc(.7*var(--u)) 0}
+#ruB .rb-r>span{color:#8a867c;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ruB .rb-r>b{font-weight:500;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62%}#ruB .rb-r>b.hot{color:#ff6a2b}
+#ruB .rb-r.hl{justify-content:flex-start}#ruB .rb-r.hl>b{max-width:none;text-align:left;white-space:normal}
+#ruB .rb-p{display:inline-block;border:1.5px solid #7fb2ff;color:#7fb2ff;border-radius:calc(.5*var(--u));font-size:calc(1.9*var(--u));letter-spacing:.1em;padding:calc(.25*var(--u)) calc(.9*var(--u));flex:none}
+#ruB .rb-cap{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));bottom:calc(9.5*var(--u))}
+#ruB .rb-who{display:flex;align-items:center;gap:calc(1.5*var(--u));margin-bottom:calc(1.4*var(--u))}
+#ruB .rb-eq{display:flex;gap:calc(.45*var(--u));align-items:flex-end;height:calc(2.8*var(--u))}#ruB .rb-eq i{width:calc(.65*var(--u));background:#ff6a2b;border-radius:2px;height:30%;transition:height .12s}
+#ruB .rb-cap p{font-family:'NovaGeo','Inter',sans-serif;font-size:calc(3.8*var(--u));line-height:1.28;color:#8a867c;max-height:calc(3*1.28*3.8*var(--u));overflow:hidden}#ruB .rb-cap p span.on{color:#e6e2d9}
+#ruB .rb-foot{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));bottom:calc(4.6*var(--u));display:flex;justify-content:space-between}
+#ruB .rb-lock{color:#ff9aa4}`;
+async function playB(D){
+  if(busy)return;busy=true;
+  if(!document.getElementById('ruCssB')){const st=document.createElement('style');st.id='ruCssB';st.textContent=CSSB;document.head.appendChild(st)}
+  const segs=(D.segs||[]).filter(Boolean),n2=i=>String(i+1).padStart(2,'0'),now=new Date();
+  const R=document.createElement('div');R.id='ruB';
+  const sub=String(D.greet||'').split('.')[0].replace(/^Good (morning|afternoon|evening)/i,m=>m)+' · '+now.toLocaleDateString([],{weekday:'long'});
+  R.innerHTML=`<div class="rb-top"><div><div class="rb-br">NOVA <b>ROUNDUP</b></div><div class="rb-sub">${esc(sub)}</div></div><div class="rb-clk"><span id="rbClk"></span><small>${esc(now.toLocaleDateString([],{month:'short',day:'numeric'}).toUpperCase())}${typeof CFG!=='undefined'&&CFG.city?' · '+esc(String(CFG.city).toUpperCase()):''}</small></div></div>
+    <div class="rb-pg">${segs.map((s,i)=>`<div class="rb-c wait" data-i="${i}"><div class="rb-tag">${n2(i)} · ${esc(s.title||s.tag)}</div><div class="rb-w"><span>${n2(i)} · ${esc(s.title||s.tag)}</span><span class="rb-wn">${i===0?'Up next':'·'}</span></div><div class="rb-in"></div><div class="rb-mi"></div></div>`).join('')}</div>
+    <div class="rb-cap"><div class="rb-who"><div class="rb-eq">${'<i></i>'.repeat(5)}</div><span class="rb-k" style="color:#ff6a2b">Nova</span></div><p id="rbCap"></p></div>
+    <div class="rb-foot"><span id="rbFoot">${D.quick?'Quick roundup':'Builds as she reads'}</span><span>Roundup</span></div>`;
+  document.body.appendChild(R);
+  const $=q=>R.querySelector(q),cards=[...R.querySelectorAll('.rb-c')];let alive=true;stopFn=()=>{alive=false};
+  const clk=()=>{const e=$('#rbClk');if(e)e.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})};clk();const ck=setInterval(clk,5000);
+  const eq=[...R.querySelectorAll('.rb-eq i')],eqT=setInterval(()=>{const on=wavePulse>.2;eq.forEach(b=>b.style.height=(on?25+75*Math.random():20)+'%')},120);
+  requestAnimationFrame(()=>R.classList.add('on'));
+  snd(D.volume==null?.8:D.volume);
+  setTimeout(()=>{if(A&&A.state!=='running'){const f=$('#rbFoot');if(f){f.textContent='Sound locked · click the screen once';f.classList.add('rb-lock')}}},700);
+  R.addEventListener('click',()=>{try{A&&A.resume()}catch(e){}const f=$('#rbFoot');if(f&&f.classList.contains('rb-lock')){f.textContent='Sound on';f.classList.remove('rb-lock')}});
+  /* captions: light the words up at speaking pace; all lit when she's done */
+  let capT=null;const cap=t=>{clearInterval(capT);const p=$('#rbCap');const w=String(t||'').split(/\s+/).filter(Boolean);p.innerHTML=w.map(x=>`<span>${esc(x)} </span>`).join('');const sp=[...p.querySelectorAll('span')];let k=0;
+    capT=setInterval(()=>{if(k<sp.length)sp[k++].classList.add('on');else clearInterval(capT)},Math.round(60000/((D.wpm||165)*1.02)))};
+  const capAll=()=>{clearInterval(capT);R.querySelectorAll('#rbCap span').forEach(x=>x.classList.add('on'))};
+  const sayB=async t=>{if(!t)return;cap(t);await say(t,D.voice||null,D.rate||1.02);capAll()};
+  /* content of a section */
+  const body=s=>{const v=String(s.value==null?'':s.value),short=v&&v.length<=6&&!s.rows;
+    const lines=(s.lines||[]).map(l=>`<div class="rb-l">${l}</div>`).join('');
+    const rows=(s.rows||[]).map(r=>r.pill?`<div class="rb-r hl"><span class="rb-p">${esc(r.pill)}</span><b>${esc(r.t)}</b></div>`:`<div class="rb-r"><span>${esc(r.k)}</span><b class="${r.hot?'hot':''}">${esc(r.v)}</b></div>`).join('');
+    return `<div class="rb-g${short?'':' nov'}">${short?`<div class="rb-v">${esc(v)}<small>${esc(s.unit||'')}</small></div>`:''}<div>${s.big&&!s.rows?`<div class="rb-big">${esc(String(s.big).replace(/&quot;/g,'"').replace(/&amp;/g,'&'))}</div>`:''}${rows}${lines}</div></div>`};
+  const mini=s=>`${s.big?esc(String(s.big).replace(/&quot;/g,'"').replace(/&amp;/g,'&')):''}${s.value&&String(s.value).length<=6&&s.big&&!String(s.big).includes(s.value)?` <span style="color:#8a867c">· ${esc(s.value)} ${esc(s.unit||'')}</span>`:''}`;
+  /* too tall? oldest finished sections shrink to one line */
+  const fit=()=>{const pg=$('.rb-pg');for(let g=0;g<20&&pg.scrollHeight>pg.clientHeight+2;g++){const c=cards.find(c=>c.classList.contains('done')&&!c.classList.contains('mini'));if(!c)break;c.classList.add('mini')}};
+  try{
+    if(D.music!==false&&!(typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.music===false)){S.song(true).then(ok=>{if(!ok&&alive)S.bed(true)})}
+    S.chime();await sleep(900);
+    await sayB(D.greet);
+    for(let i=0;i<segs.length&&alive;i++){const s=segs[i],c=cards[i];
+      cards.forEach(x=>{if(x.classList.contains('cur')){x.classList.remove('cur');x.classList.add('done')}});
+      const nx=cards[i+1];if(nx)nx.querySelector('.rb-wn').textContent='Up next';
+      c.querySelector('.rb-in').innerHTML=body(s);c.querySelector('.rb-mi').innerHTML=mini(s);c.classList.remove('wait');c.classList.add('cur');fit();
+      try{c.scrollIntoView({block:'nearest'})}catch(e){}
+      S.blip(660+i*60,.06,.16);
+      if(s.alarm){S.siren(2);await sleep(500)}
+      await sayB(s.say);
+      if(s.quiz&&alive){await sleep((s.quiz.wait||5)*1000);await sayB(s.quiz.say)}
+      await sleep(300)}
+    cards.forEach(x=>{if(x.classList.contains('cur')){x.classList.remove('cur');x.classList.add('done')}});
+    if(alive)await sayB(D.outro);
+    if(alive){const f=$('#rbFoot');if(f)f.textContent='Finished';S.bed(false);S.song(false);for(let t=0;t<20&&alive;t++)await sleep(1000)}
+  }catch(e){console.warn('roundup B',e)}
+  S.bed(false);S.song(false);R.classList.add('out');await sleep(1300);clearInterval(ck);clearInterval(eqT);clearInterval(capT);R.remove();busy=false;stopFn=null;
+}
 /* ---------------- easter eggs ---------------- */
 function redAlert(o={}){return play({...o,quick:true,music:false,hdr:'NOVA · DEFENCE GRID',coreTxt:'ALERT',segs:[],special:async X=>{const B=X.$('#ruBig');
   ['#ruCV','#ruCU','#ruCT'].forEach(k=>X.$(k).style.opacity=0);B.style.fontSize='calc(18*var(--s))';X.R.classList.add('red','alarming');X.S.siren(4);B.innerHTML='RED<br>ALERT';B.classList.add('on','tk');X.shock('#ff3b3b',12);
@@ -8164,7 +8288,7 @@ function hud(getData){if(hudOn)return;hudOn=true;
   paint();tick();const t1=setInterval(tick,1000),t2=setInterval(paint,30000);
   hudStop=()=>{clearInterval(t1);clearInterval(t2);stopNet();R.classList.add('bye');setTimeout(()=>R.remove(),1400);hudOn=false;hudSig=''}}
 function hudOff(){if(hudStop){hudStop();hudStop=null}}
-window.NovaRoundup={play,hud,hudOff,hudOn:()=>hudOn,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}try{window.novaMacHush&&window.novaMacHush()}catch(e){}},busy:()=>busy,C};
+window.NovaRoundup={play,playB,hud,hudOff,hudOn:()=>hudOn,redAlert,selfDestruct,stop:()=>{if(stopFn)stopFn();try{speechSynthesis.cancel()}catch(e){}try{window.novaMacHush&&window.novaMacHush()}catch(e){}},busy:()=>busy,C};
 })();
 
 </script>
