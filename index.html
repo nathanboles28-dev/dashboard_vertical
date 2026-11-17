@@ -3911,7 +3911,9 @@ function mvPace(text){const w=String(text).split(/\s+/).length;if(w<16)return {t
 async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
   let vName=MV.voice.name;const kspd=NM.get('kospd',0);
-  if(window._ruFast&&/^kokoro:/.test(vName)&&MV.fallback&&!(kspd&&kspd<480))vName=MV.fallback;
+  /* Kokoro measured slower than talking on this Mac (start to finish): answer in Zoe so replies are instant ("try the AI voice" measures again; "always use the AI voice" keeps it) */
+  const koSlow=kspd>600&&!NM.get('koalways',false);
+  if(/^kokoro:/.test(vName)&&MV.fallback&&((window._ruFast&&!(kspd&&kspd<480))||koSlow))vName=MV.fallback;
   const words=String(text).split(/\s+/).length,isKo=/^kokoro:/.test(vName);
   if(!isKo){const P=mvPace(text);text=P.text;rate=(rate||1)*P.k}
   const orbMine=typeof ORB!=='undefined'&&ORB.st==='speak';if(orbMine)ORB.until=Date.now()+120000;
@@ -4663,6 +4665,11 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
   {const lp=+NM.get('fmlast',0),gap=Date.now()-lp;if(FMC().autoStart!==false&&gap>30*60000&&!FM.on){FM.on=true;NM.set('fm',true)}
    /* back after a while: the first break comes after this song, and it's a welcome back */
    if(lp&&gap>30*60000){FM.welcome=gap;FM.count=0;FM.target=1;FM.last=0}NM.set('fmlast',Date.now())}
+  /* a song only counts (and only gets a break) once it's actually been listened to: 30 seconds in (less for a very short one).
+     Skip through a bunch and none of them count; the break waits for a song you stay on. */
+  clearTimeout(FM.settleT);const k=(j.title||'')+'|'+(j.artist||''),dur=+j.dur||0,settle=FMC().settle!=null?FMC().settle*1000:Math.min(30000,dur>0?dur*400:30000);
+  FM.settleT=setTimeout(()=>{const c=NP;if(!c||c.state!=='playing'||((c.title||'')+'|'+(c.artist||''))!==k)return;fmSongGo(c)},settle)}
+function fmSongGo(j){
   /* top of the hour: the first song that starts in the first 10 minutes of a new hour gets a station ID */
   {const n=new Date(),hk=n.toDateString()+'|'+n.getHours();
    if(FM.on&&!FM.busy&&n.getMinutes()<10&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
@@ -4674,7 +4681,7 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
   if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   fmBreak('next',j)}
 const fmB64=s=>btoa(unescape(encodeURIComponent(s)));
-async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)return false;song=song||NP||{};FM.busy=true;
+async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)return false;FM.prevLast0=FM.last;song=song||NP||{};FM.busy=true;
   const h=new Date().getHours(),style=C.style==='auto'?(h>=21||h<5?'latenight':h<11?'morning':'casual'):C.style;
   const tone={casual:'relaxed and friendly',morning:'bright, upbeat morning-show energy',professional:'polished, classic radio host',humorous:'funny, with a light joke',sarcastic:'dry and a little sarcastic, never mean',latenight:'smooth, low-key late-night host'}[style]||'relaxed and friendly';
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
@@ -4719,7 +4726,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   FM.queued={words,at:Date.now()};FM.queuedMode=mode;FM.pend=mode==='next'?Date.now():0;
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
-  fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');
+  fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');FM.prevLast=FM.prevLast0;
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
 function fmAirUI(on){if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
@@ -4879,6 +4886,7 @@ const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M
 function handleCommand(raw){if(!NOVA_MAIN)return;
   if(/^fmstate /.test(String(raw||''))){const k=String(raw).slice(0,60);if(FM.sig===k&&Date.now()-FM.sigT<20000)return;FM.sig=k;FM.sigT=Date.now()}
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
+  if(/^fmstate skip\b/.test(String(raw||''))){FM.queued=null;FM.pend=null;FM.last=FM.prevLast||0;FM.count=Math.max(FM.count||0,FM.target||1);fmDiag('break dropped: the song was skipped; a new one comes after the next song you stay on');try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}return}
   {const fs=String(raw||'').match(/^fmstate (on|off)\b(?: (\S+))?/);if(fs){if(fs[1]==='on'&&fs[2]&&!FM.air)try{const w=decodeURIComponent(escape(atob(fs[2]))).trim();if(w)FM.queued={words:w,at:Date.now()}}catch(e){}fmAirUI(fs[1]==='on');if(fs[1]==='on')setTimeout(()=>fmDiag('on air: words '+(FM.airWords||'').split(/\s+/).filter(Boolean).length+', screen '+(!!$('fmOn')&&$('fmOn').classList.contains('on'))+(ORB.st?', orb '+ORB.st:'')+', page '+(window._curPage||'')),800);return}}
   /* Goodnight on the remote ends the late-night Nova FM override */
   if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
@@ -4976,7 +4984,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\bself[- ]?destruct\b/)&&roundupGo({egg:'boom'}))return;
   {const er=((CFG.roundup||{}).people||[]).find(p=>new RegExp(`\\b(it'?s|this is|for) ${p}\\b|\\b${p} here\\b`,'i').test(t));
    if((er||has(/\b(hello,? nova|hey,? nova|hi,? nova|round ?up|catch me up)\b/))&&roundupGo({who:er||'',quick:/\bquick\b/.test(t)}))return;}
-  if(/\b(try|use|switch to|change to)( the)? (ai|kokoro|new|natural) voice\b/.test(t)){mvCheck(true).then(()=>{if(!MV.hasKo)return reply("The AI voice isn't set up on this Mac yet. Run the Kokoro setup on the dashboard Mac and ask me again.");NM.set('voice','');mvCheck(true).then(()=>reply("This is the AI voice. I'm built for longer answers, so I should sound a bit more natural when I've got a lot to say. Say use Zoe to switch back."))});return}
+  if(/\b(try|use|switch to|change to)( the)? (ai|kokoro|new|natural) voice\b/.test(t)){mvCheck(true).then(()=>{if(!MV.hasKo)return reply("The AI voice isn't set up on this Mac yet. Run the Kokoro setup on the dashboard Mac and ask me again.");NM.set('voice','');NM.set('kospd',0);NM.set('koalways',/\balways\b/.test(t));mvCheck(true).then(()=>reply(/\balways\b/.test(t)?"OK, the AI voice from now on, even when it's slow on this Mac.":"This is the AI voice. If it's too slow on this Mac I'll switch back to Zoe for answers on my own. Say always use the AI voice to keep it."))});return}
   if(/\b(use|switch to|switch back to|go back to|back to|change to)( the)? zoe\b|\b(old|normal|regular) voice\b/.test(t)){NM.set('voice','Zoe (Premium)');mvCheck(true).then(()=>reply("Back to Zoe. Say use the AI voice to switch again."));return}
   if(/\b(which|what) voice\b|\bvoices list\b/.test(t)){mvCheck(true).then(()=>reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}. Mac voice problem: ${MV.err||'unknown'}.`));return}
   if(false){const vs=('speechSynthesis' in window)?speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang)):[];return reply(MV.ok?`I'm using ${/^kokoro:/.test(MV.voice.name)?'the Kokoro AI voice, '+MV.voice.name.split('_').pop().replace(/^./,c=>c.toUpperCase()):MV.voice.name}, through the Mac.`:`I'm using ${novaVoice?novaVoice.name:'the default voice'}${(CFG.macVoice||{}).on!==false?". The Mac voice isn't available: run the voice update on the dashboard Mac":''}.`)}
@@ -5680,6 +5688,39 @@ function tColHours(){document.querySelectorAll('#hours .day').forEach(d=>{const 
   const sp=document.createElement('i');sp.className='tc';sp.style.color=tCol(t);sp.textContent=n.textContent;n.replaceWith(sp)})}
 /* ================= Nova Roundup: data for the sci-fi intro =================
    o.who: who's asking (greeting + their Jellyfin), o.quick: 15-second version. Morning, daytime and night versions pick different sections. */
+/* ================= Nova's final word: the end of the roundup, written fresh each time (Claude, through the relay) =================
+   A pool of styles, picked at random with these weights, so it never feels like the same bit twice. Falls back to a built-in line. */
+const RU_END=[
+  ['roast',30,"a playful roast of Nathan: his hobbies, his habits, or this over-engineered dashboard (it started as an Alexa replacement and now has ~30 pages, an AI, a radio station and a news desk). Affectionate, never mean"],
+  ['throwback',20,"a millennial throwback: something from 90s or 2000s tech, TV, music, gaming or everyday life (dial-up, burning CDs, MSN Messenger, Blockbuster, flip phones, LimeWire...), tied to today if you can"],
+  ['opinion',20,"Nova's completely unnecessary opinion or random observation about something harmless; she can disagree with Nathan and have a bit of attitude"],
+  ['thoughtful',10,"a genuinely warm, thoughtful line based on what you actually know about Nathan (no jokes this time)"],
+  ['challenge',10,"a tiny optional challenge for today (an album start to finish, a photo, a movie, something with family), specific and a bit fun"],
+  ['station',5,"a radio-station style sign-off from 'Nova headquarters in Woodstock', with a dry joke about having one listener and an unreasonable tech budget"],
+  ['simple',5,""]];
+const RU_END_FB={
+  roast:["And one final reminder: you built this dashboard to replace an Alexa. It now has a radio station and a news desk. At this point I'm expecting a benefits package. Have a good one.","That's everything. Try to get some fresh air today. And no, a live outdoor webcam doesn't count."],
+  throwback:["Before I go, your millennial reminder of the day: downloading one song used to take twenty minutes, and you prayed nobody picked up the house phone. We've come a long way. Have a good one."],
+  opinion:["One last thought: why do we park on a driveway and drive on a parkway? That's been bothering me for about four milliseconds. Anyway, have a good one."],
+  thoughtful:["One last thing. You've built a lot lately. Take a minute to enjoy the stuff that's already done. Not everything needs another feature."],
+  challenge:["Today's challenge: put on an album you haven't heard in years, start to finish, no skipping. Yes, even the weird track in the middle."],
+  station:["That wraps your briefing from Nova headquarters in Woodstock. One listener, zero advertisers, and an absolutely unreasonable technology budget."],
+  simple:["Anyway, have a good day. I'll be around."]};
+function ruEndPick(){const tot=RU_END.reduce((a,x)=>a+x[1],0);let r=Math.random()*tot;for(const x of RU_END){if((r-=x[1])<0)return x}return RU_END[0]}
+async function ruEnding(D){const st=ruEndPick(),past=NM.get('ruend',[]),fb=()=>{const L=RU_END_FB[st[0]];return L[Math.floor(Math.random()*L.length)]};
+  if(st[0]==='simple'||!CFG.relay||!SECRETS.calkey)return {style:st[0],text:fb()};
+  const per=new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening';
+  const q=`Write the last thing Nova says to close today's ${per} roundup for Nathan. Style: ${st[2]}. Spoken aloud: 1 to 3 short sentences, under 45 words, no emojis, no lists, don't start with "And that's your roundup". Connect it to something real from today's roundup or what you know about him when it fits naturally. Reply with only the line.`;
+  const ctx=['TODAY\'S ROUNDUP (what Nova just said):',...(D.segs||[]).map(s=>'- '+String(s.say||'').slice(0,240)),
+    'ABOUT NATHAN: lives in Woodstock, Ontario; partner Erinn; a millennial; Leafs and London Knights fan; builds this home dashboard and Nova himself, endlessly.'+((CFG.fm&&CFG.fm.people&&CFG.fm.people.notes)?' '+CFG.fm.people.notes:''),
+    'THINGS HE ASKED NOVA TO REMEMBER: '+NM.get('mem',[]).slice(-12).map(x=>x.t).join(' | '),
+    'RECENTLY ASKED NOVA: '+NM.get('hist',[]).slice(-15).map(x=>x.t).join(' | '),
+    'RECENT ENDINGS, don\'t reuse these ideas: '+past.slice(0,8).join(' | ')].join('\n').slice(0,6000);
+  try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
+    const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
+    const j=await r.json().catch(()=>({}));let a=j.capped?'':String(j.answer||'').replace(/\[\[[^\]]*\]\]/g,'').replace(/^["“]|["”]$/g,'').replace(/\s+/g,' ').trim();
+    if(a&&a.split(' ').length<=70){NM.set('ruend',[a.slice(0,140),...past].slice(0,12));return {style:st[0],text:a}}}catch(e){}
+  return {style:st[0],text:fb()}}
 function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=NovaRoundup.C,segs=[],sg=f=>{try{const x=f();if(x)segs.push(x)}catch(e){console.warn('roundup seg',e)}};
   /* after midnight it's still "today" until you've slept: the night version (tomorrow's weather and calendar) only runs 7 PM to midnight */
   const per=o.per||(h>=4&&h<12?'morning':h>=19?'night':'day'),Q=!!o.quick,who=o.who||R.name||'';
@@ -5876,7 +5917,7 @@ function roundupGo(o){try{const al=document.getElementById('nvxAlias');if(al&&al
   if(o.egg==='red')NovaRoundup.redAlert(base);else if(o.egg==='boom')NovaRoundup.selfDestruct(base);
   else if(document.documentElement.classList.contains('nvx')&&NovaRoundup.playB){
     /* new style: look up what's overhead first (a few seconds at most), Zoe reads it if Kokoro is too slow on this Mac */
-    if(window._ruStarting)return true;window._ruStarting=1;window._ruFast=true;const go=()=>{window._ruStarting=0;NovaRoundup.playB(ruData(o)).finally(()=>{window._ruFast=false})};
+    if(window._ruStarting)return true;window._ruStarting=1;window._ruFast=true;const go=()=>{window._ruStarting=0;const D=ruData(o);if(!D.quick&&!o.welcome)D.ending=ruEnding(D);NovaRoundup.playB(D).finally(()=>{window._ruFast=false})};
     Promise.race([planesFetch(30).then(d=>{window._ruPlanes=d}).catch(()=>{window._ruPlanes=null}),new Promise(r=>setTimeout(r,3500))]).then(go)}
   else NovaRoundup.play(ruData(o));return true}
 /* HUD style: the frame, scanlines and a still network of lines (drawn once, drifts slowly with CSS so it costs nothing) */
@@ -7774,7 +7815,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 198';
+document.getElementById('ver').textContent='build nova 201';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -8165,7 +8206,7 @@ const CSSB=`#ruB{position:fixed;inset:0;z-index:99990;background:#171716;color:#
 #ruB .rb-eq{display:flex;gap:calc(.45*var(--u));align-items:flex-end;height:calc(2.8*var(--u))}#ruB .rb-eq i{width:calc(.65*var(--u));background:#ff6a2b;border-radius:2px;height:30%;transition:height .12s}
 #ruB .rb-cap p{font-family:'NovaGeo','Inter',sans-serif;font-size:calc(3.8*var(--u));line-height:1.28;color:#8a867c;max-height:calc(3*1.28*3.8*var(--u));overflow:hidden}#ruB .rb-cap p span.on{color:#e6e2d9}
 #ruB .rb-foot{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));bottom:calc(4.6*var(--u));display:flex;justify-content:space-between}
-#ruB .rb-lock{color:#ff9aa4}`;
+#ruB .rb-lock{color:#ff9aa4}#ruB .rb-q{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(3.6*var(--u));line-height:1.25}`;
 async function playB(D){
   if(busy)return;busy=true;
   if(!document.getElementById('ruCssB')){const st=document.createElement('style');st.id='ruCssB';st.textContent=CSSB;document.head.appendChild(st)}
@@ -8185,10 +8226,17 @@ async function playB(D){
   setTimeout(()=>{if(A&&A.state!=='running'){const f=$('#rbFoot');if(f){f.textContent='Sound locked · click the screen once';f.classList.add('rb-lock')}}},700);
   R.addEventListener('click',()=>{try{A&&A.resume()}catch(e){}const f=$('#rbFoot');if(f&&f.classList.contains('rb-lock')){f.textContent='Sound on';f.classList.remove('rb-lock')}});
   /* captions: light the words up at speaking pace; all lit when she's done */
-  let capT=null;const cap=t=>{clearInterval(capT);const p=$('#rbCap');const w=String(t||'').split(/\s+/).filter(Boolean);p.innerHTML=w.map(x=>`<span>${esc(x)} </span>`).join('');const sp=[...p.querySelectorAll('span')];let k=0;
-    capT=setInterval(()=>{if(k<sp.length)sp[k++].classList.add('on');else clearInterval(capT)},Math.round(60000/((D.wpm||165)*1.02)))};
-  const capAll=()=>{clearInterval(capT);R.querySelectorAll('#rbCap span').forEach(x=>x.classList.add('on'))};
-  const sayB=async t=>{if(!t)return;cap(t);await say(t,D.voice||null,D.rate||1.02);capAll()};
+  /* captions: wait for the Mac to start talking (about 2 s), pause where she pauses (sentences, commas),
+     and learn her real pace from how long each section actually took (remembered for next time) */
+  const CAL=Object.assign({lag:2000,mpw:400},(()=>{try{return NM.get('rucal',{})}catch(e){return {}}})());
+  const wt=w=>1+(/[.!?]["”']?$/.test(w)?.9:/[,;:]$/.test(w)?.4:/[—–-]$/.test(w)?.3:0)+Math.max(0,(w.replace(/[^\w]/g,'').length-6)*.06);
+  let capTs=[];const capClear=()=>{capTs.forEach(clearTimeout);capTs=[]};
+  const cap=t=>{capClear();const p=$('#rbCap');const w=String(t||'').split(/\s+/).filter(Boolean);p.innerHTML=w.map(x=>`<span>${esc(x)} </span>`).join('');const sp=[...p.querySelectorAll('span')];
+    let at=CAL.lag;sp.forEach((x,i)=>{capTs.push(setTimeout(()=>x.classList.add('on'),Math.round(at)));at+=wt(w[i])*CAL.mpw});return w.reduce((a,x)=>a+wt(x),0)};
+  const capAll=()=>{capClear();R.querySelectorAll('#rbCap span').forEach(x=>x.classList.add('on'))};
+  const sayB=async t=>{if(!t)return;const W=cap(t),t0=Date.now();await say(t,D.voice||null,D.rate||1.02);const T=Date.now()-t0;capAll();
+    /* she took T ms for W units of words: nudge the pace toward that (start delay stays as is) */
+    if(W>=6&&T>CAL.lag+800&&T<120000){const m=(T-CAL.lag-250)/W;CAL.mpw=Math.round(Math.max(250,Math.min(800,CAL.mpw*.5+m*.5)));try{NM.set('rucal',{lag:CAL.lag,mpw:CAL.mpw})}catch(e){}}};
   /* content of a section */
   const body=s=>{const v=String(s.value==null?'':s.value),short=v&&v.length<=6&&!s.rows;
     const lines=(s.lines||[]).map(l=>`<div class="rb-l">${l}</div>`).join('');
@@ -8212,10 +8260,14 @@ async function playB(D){
       if(s.quiz&&alive){await sleep((s.quiz.wait||5)*1000);await sayB(s.quiz.say)}
       await sleep(300)}
     cards.forEach(x=>{if(x.classList.contains('cur')){x.classList.remove('cur');x.classList.add('done')}});
-    if(alive)await sayB(D.outro);
+    if(alive&&D.ending){let E=null;try{E=await Promise.race([D.ending,sleep(4000).then(()=>null)])}catch(e){}
+      if(!E)E={text:D.outro};
+      const c=document.createElement('div');c.className='rb-c cur rb-end';c.innerHTML=`<div class="rb-tag">Nova's final word</div><div class="rb-in"><div class="rb-q">${esc(E.text)}</div></div><div class="rb-mi"></div>`;
+      $('.rb-pg').appendChild(c);cards.push(c);fit();try{c.scrollIntoView({block:'nearest'})}catch(e){}S.chime();await sayB((E.style&&!/^(station|simple)$/.test(E.style)?"That's your roundup. ":'')+E.text)}
+    else if(alive)await sayB(D.outro);
     if(alive){const f=$('#rbFoot');if(f)f.textContent='Finished';S.bed(false);S.song(false);for(let t=0;t<20&&alive;t++)await sleep(1000)}
   }catch(e){console.warn('roundup B',e)}
-  S.bed(false);S.song(false);R.classList.add('out');await sleep(1300);clearInterval(ck);clearInterval(eqT);clearInterval(capT);R.remove();busy=false;stopFn=null;
+  S.bed(false);S.song(false);R.classList.add('out');await sleep(1300);clearInterval(ck);clearInterval(eqT);capClear();R.remove();busy=false;stopFn=null;
 }
 /* ---------------- easter eggs ---------------- */
 function redAlert(o={}){return play({...o,quick:true,music:false,hdr:'NOVA · DEFENCE GRID',coreTxt:'ALERT',segs:[],special:async X=>{const B=X.$('#ruBig');
