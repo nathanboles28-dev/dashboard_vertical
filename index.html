@@ -5875,7 +5875,7 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     return {key:'air',tag:'AIR',title:'Overhead now',kicker:'Above Woodstock',value:String(P.length),unit:'Planes',big:p?nm(p):'Space station',gauge:.5,color:'#7fb2ff',rows,
       say:[p?`Right overhead, ${nm(p)}${p.to&&p.to.city?' heading to '+p.to.city:''}, at ${ft(p)} feet.`:'',st?`The space station passes over at ${tripT(st.vs).replace(':00','')}${/[AP]M/.test(tripT(st.vs))?'':''}, look ${compass(st.azS)}.`:''].filter(Boolean).join(' ')}});
   /* the roundup: no Jellyfin or trivia; "overhead" covers the sky; then a set order */
-  {const drop=['jf','trv'];if(segs.some(x=>x.key==='air'))drop.push('sky');for(let i=segs.length-1;i>=0;i--)if(drop.includes(segs[i].key))segs.splice(i,1);
+  {const drop=['jf','trv','news','air'];for(let i=segs.length-1;i>=0;i--)if(drop.includes(segs[i].key))segs.splice(i,1);
     const ord=['live','alert','wx','cal','drv','tor','ldn','news','tk','home','music','air','sky','cd','trip','sys'],ix=k=>{const i=ord.indexOf(k);return i<0?ord.indexOf('news')+.5:i};segs.sort((a,b)=>ix(a.key)-ix(b.key))}
   /* game day: the whole HUD in team colours, and it ends with the chant */
   const L1=typeof gdToday==='function'&&gdToday(),K1=typeof kgdToday==='function'&&kgdToday();
@@ -5918,7 +5918,7 @@ function roundupGo(o){try{const al=document.getElementById('nvxAlias');if(al&&al
   else if(document.documentElement.classList.contains('nvx')&&NovaRoundup.playB){
     /* new style: look up what's overhead first (a few seconds at most), Zoe reads it if Kokoro is too slow on this Mac */
     if(window._ruStarting)return true;window._ruStarting=1;window._ruFast=true;const go=()=>{window._ruStarting=0;const D=ruData(o);if(!D.quick&&!o.welcome)D.ending=ruEnding(D);NovaRoundup.playB(D).finally(()=>{window._ruFast=false})};
-    Promise.race([planesFetch(30).then(d=>{window._ruPlanes=d}).catch(()=>{window._ruPlanes=null}),new Promise(r=>setTimeout(r,3500))]).then(go)}
+    go()}
   else NovaRoundup.play(ruData(o));return true}
 /* HUD style: the frame, scanlines and a still network of lines (drawn once, drifts slowly with CSS so it costs nothing) */
 (function hudLayer(){if(CFG.style!=='hud')return;const add=h=>{const d=document.createElement('div');d.innerHTML=h;document.body.appendChild(d.firstElementChild)};
@@ -7815,7 +7815,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 202';
+document.getElementById('ver').textContent='build nova 203';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -8238,7 +8238,7 @@ async function playB(D){
     /* she took T ms for W units of words: nudge the pace toward that (start delay stays as is) */
     if(W>=6&&T>CAL.lag+800&&T<120000){const m=(T-CAL.lag-250)/W;CAL.mpw=Math.round(Math.max(250,Math.min(800,CAL.mpw*.5+m*.5)));try{NM.set('rucal',{lag:CAL.lag,mpw:CAL.mpw})}catch(e){}}};
   /* content of a section */
-  const body=s=>{const v=String(s.value==null?'':s.value),short=v&&v.length<=6&&!s.rows;
+  const body=s=>{const v=String(s.value==null?'':s.value),short=v&&v.length<=6&&/\d/.test(v)&&!s.rows;
     const lines=(s.lines||[]).map(l=>`<div class="rb-l">${l}</div>`).join('');
     const rows=(s.rows||[]).map(r=>r.pill?`<div class="rb-r hl"><span class="rb-p">${esc(r.pill)}</span><b>${esc(r.t)}</b></div>`:`<div class="rb-r"><span>${esc(r.k)}</span><b class="${r.hot?'hot':''}">${esc(r.v)}</b></div>`).join('');
     return `<div class="rb-g${short?'':' nov'}">${short?`<div class="rb-v">${esc(v)}<small>${esc(s.unit||'')}</small></div>`:''}<div>${s.big&&!s.rows?`<div class="rb-big">${esc(String(s.big).replace(/&quot;/g,'"').replace(/&amp;/g,'&'))}</div>`:''}${rows}${lines}</div></div>`};
