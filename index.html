@@ -2342,6 +2342,26 @@ html.nv2.nvx #npCard .row>div:last-child{flex:none;width:100%}
 html.nv2.nvx #npCard b{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2!important;overflow:hidden;white-space:normal!important}
 html.nv2.nvx #npCard small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html.nv2.nvx #npCard .np-bar{flex:none}
+/* ---- Nova FM: a bit more colour ---- */
+/* the album's own colours glow softly behind "Now playing" */
+html.nv2.nvx .fm-card.fm-now{background:radial-gradient(120% 140% at 0% 0%,var(--np1,rgba(255,106,43,.18)),transparent 60%),radial-gradient(90% 120% at 100% 100%,var(--np2,rgba(127,178,255,.12)),transparent 60%),#1f1f1d!important}
+/* equalizer: orange through pink and violet to blue */
+html.nv2.nvx .fm-eq i{background:#ff6a2b}
+html.nv2.nvx .fm-eq i:nth-child(6n+2){background:#ff8a4c}html.nv2.nvx .fm-eq i:nth-child(6n+3){background:#f06a8f}
+html.nv2.nvx .fm-eq i:nth-child(6n+4){background:#c47bff}html.nv2.nvx .fm-eq i:nth-child(6n+5){background:#8f8bff}html.nv2.nvx .fm-eq i:nth-child(6n){background:#7fb2ff}
+html.nv2.nvx .fm-eq.paused i{background:#55534d}
+/* up next: 1 orange, 2 pink, 3 blue */
+html.nv2.nvx .fm-up .fm-row:nth-of-type(2) span{color:#f06a8f}html.nv2.nvx .fm-up .fm-row:nth-of-type(3) span{color:#7fb2ff}
+html.nv2.nvx .fm-up .fm-row:nth-of-type(4) span{color:#7fb2ff}
+/* the desk tiles: weather blue, Leafs blue, Knights green (a coloured top edge and label) */
+html.nv2.nvx .fm-dg .fm-dt{border-top:3px solid #ff6a2b}
+html.nv2.nvx .fm-dg .fm-dt:nth-child(1){border-top-color:#7fb2ff}html.nv2.nvx .fm-dg .fm-dt:nth-child(1) small{color:#7fb2ff}
+html.nv2.nvx .fm-dg .fm-dt:nth-child(2){border-top-color:#4f8dff}html.nv2.nvx .fm-dg .fm-dt:nth-child(2) small{color:#6fa0ff}
+html.nv2.nvx .fm-dg .fm-dt:nth-child(3){border-top-color:#3fd47f}html.nv2.nvx .fm-dg .fm-dt:nth-child(3) small{color:#5fe095}
+/* the progress bar and the corner tags pick up a warm gradient */
+html.nv2.nvx .fm-now .np-fill{background:linear-gradient(90deg,#ff6a2b,#f06a8f)!important}
+html.nv2.nvx .fm-card.fm-up .fm-tag{background:#7fb2ff!important;color:#0f1626!important}
+html.nv2.nvx .fm-card.fm-desk .fm-tag{background:#c47bff!important;color:#1a0f26!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4771,11 +4791,7 @@ function fmDesk(){const tile=(k,big,sub)=>`<div class="fm-dt"><small>${k}</small
   return out.join('')}
 /* the desk rotates: now (weather + teams) -> headlines -> coming up */
 function fmDeskPages(){const P=[{k:'Now',h:`<div class="fm-dg">${fmDesk()}</div>`}];
-  try{const W=(WORLD.items||[]),ca=W.find(x=>x.reg==='CAN'),us=W.find(x=>x.reg==='US'),lo=(typeof TOWN!=='undefined'&&TOWN[0])||null,R=[];
-    if(WORLD.major)R.push(`<div class="fm-hl brk"><span class="wn-b">● Breaking</span><b>${esc(WORLD.major.t)}</b></div>`);
-    [ca,us].filter(x=>x&&(!WORLD.major||x.id!==WORLD.major.id)).forEach(x=>R.push(`<div class="fm-hl">${wnTag(x.reg)}<b>${esc(x.t)}</b></div>`));
-    if(lo)R.push(`<div class="fm-hl"><span class="wn-t">Local</span><b>${esc(lo.t)}</b></div>`);
-    if(R.length)P.push({k:'Headlines',h:`<div class="fm-hls">${R.slice(0,3).join('')}</div>`})}catch(e){}
+  /* (no headlines on the desk: they don't fit the vibe) */
   try{const now=Date.now(),E=(calEvents||[]).filter(e=>e.end>now&&e.start-now<7*864e5).sort((a,b)=>a.start-b.start).slice(0,3),T=[];
     const when=d=>{const n=daysUntil(d);return (n===0?'Today':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short'}))};
     E.forEach(e=>T.push(`<div class="fm-dt"><small>${when(e.start)}${e.allDay?'':' · '+fmt(e.start)}</small><b>${esc(e.title)}</b></div>`));
@@ -7508,7 +7524,11 @@ function ntBuild(){
   ntSig=one;ntNext=null;tk.innerHTML=one+one;
   requestAnimationFrame(()=>{const w=tk.scrollWidth/2,px=((CFG.ticker&&CFG.ticker.speed)||70);tk.style.setProperty('--dur',Math.max(20,w/px).toFixed(1)+'s');tk.style.animation='none';void tk.offsetWidth;tk.style.animation=''});
 }
+/* no headlines scrolling across the top of Nova FM: they spoil the vibe */
+(function(){const go=()=>{const pg=document.getElementById('pNP');if(!pg)return setTimeout(go,500);const set=()=>{if(CFG.ticker&&CFG.ticker.on===false)return;document.body.classList.toggle('noTicker',pg.classList.contains('on'))};
+  new MutationObserver(set).observe(pg,{attributes:true,attributeFilter:['class']});set()};setTimeout(go,300)})();
 function ntInit(){if(CFG.ticker&&CFG.ticker.on===false){document.body.classList.add('noTicker');return}
+
   const tk=$('ntTrack');tk.addEventListener('animationiteration',()=>{if(ntNext){ntNext=null;ntSig='';tk.innerHTML='';ntBuild()}});
   ntBuild();setInterval(ntBuild,45000)}
 
@@ -7815,7 +7835,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 203';
+document.getElementById('ver').textContent='build nova 204';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -8184,7 +8204,7 @@ const CSSB=`#ruB{position:fixed;inset:0;z-index:99990;background:#171716;color:#
 #ruB .rb-sub,#ruB .rb-clk small,#ruB .rb-k,#ruB .rb-foot{font-size:calc(2*var(--u));letter-spacing:.14em;color:#8a867c;text-transform:uppercase}
 #ruB .rb-sub{margin-top:calc(1.3*var(--u))}
 #ruB .rb-clk{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(5.4*var(--u));text-align:right}#ruB .rb-clk small{display:block;font-family:'NovaSans','Inter',sans-serif;font-weight:500;margin-top:calc(1*var(--u))}
-#ruB .rb-pg{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));top:calc(27.5*var(--u));bottom:calc(34*var(--u));display:flex;flex-direction:column;gap:calc(1.7*var(--u));overflow:hidden}
+#ruB .rb-pg{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));top:calc(27.5*var(--u));bottom:calc(11*var(--u));display:flex;flex-direction:column;gap:calc(1.7*var(--u));overflow:hidden}
 #ruB .rb-c{background:#1f1f1d;border:1.5px solid #3a3935;border-radius:calc(1.1*var(--u));position:relative;padding:calc(6*var(--u)) calc(3*var(--u)) calc(2*var(--u));flex:none;transition:border-color .4s,background .4s,opacity .4s}
 #ruB .rb-tag{position:absolute;top:-1.5px;left:-1.5px;background:#e6e2d9;color:#171716;font-size:calc(2.2*var(--u));letter-spacing:.08em;text-transform:uppercase;padding:calc(.7*var(--u)) calc(1.5*var(--u));border-radius:calc(1.1*var(--u)) 0 calc(1.1*var(--u)) 0;font-weight:500;white-space:nowrap}
 #ruB .rb-c.cur{border-color:#ff6a2b;background:linear-gradient(180deg,rgba(255,106,43,.08),#1f1f1d 60%)}#ruB .rb-c.cur .rb-tag{background:#ff6a2b;color:#1a0d06}
@@ -8206,7 +8226,7 @@ const CSSB=`#ruB{position:fixed;inset:0;z-index:99990;background:#171716;color:#
 #ruB .rb-eq{display:flex;gap:calc(.45*var(--u));align-items:flex-end;height:calc(2.8*var(--u))}#ruB .rb-eq i{width:calc(.65*var(--u));background:#ff6a2b;border-radius:2px;height:30%;transition:height .12s}
 #ruB .rb-cap p{font-family:'NovaGeo','Inter',sans-serif;font-size:calc(3.8*var(--u));line-height:1.28;color:#8a867c;max-height:calc(3*1.28*3.8*var(--u));overflow:hidden}#ruB .rb-cap p span.on{color:#e6e2d9}
 #ruB .rb-foot{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));bottom:calc(4.6*var(--u));display:flex;justify-content:space-between}
-#ruB .rb-lock{color:#ff9aa4}#ruB .rb-q{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(3.6*var(--u));line-height:1.25}`;
+#ruB .rb-lock{color:#ff9aa4}#ruB .rb-cap{display:none}#ruB .rb-foot .rb-who{display:flex;align-items:center;gap:calc(1.4*var(--u));margin:0}#ruB .rb-foot .rb-eq{height:calc(2.2*var(--u))}#ruB .rb-q{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(3.6*var(--u));line-height:1.25}`;
 async function playB(D){
   if(busy)return;busy=true;
   if(!document.getElementById('ruCssB')){const st=document.createElement('style');st.id='ruCssB';st.textContent=CSSB;document.head.appendChild(st)}
@@ -8215,8 +8235,8 @@ async function playB(D){
   const sub=String(D.greet||'').split('.')[0].replace(/^Good (morning|afternoon|evening)/i,m=>m)+' · '+now.toLocaleDateString([],{weekday:'long'});
   R.innerHTML=`<div class="rb-top"><div><div class="rb-br">NOVA <b>ROUNDUP</b></div><div class="rb-sub">${esc(sub)}</div></div><div class="rb-clk"><span id="rbClk"></span><small>${esc(now.toLocaleDateString([],{month:'short',day:'numeric'}).toUpperCase())}${typeof CFG!=='undefined'&&CFG.city?' · '+esc(String(CFG.city).toUpperCase()):''}</small></div></div>
     <div class="rb-pg">${segs.map((s,i)=>`<div class="rb-c wait" data-i="${i}"><div class="rb-tag">${n2(i)} · ${esc(s.title||s.tag)}</div><div class="rb-w"><span>${n2(i)} · ${esc(s.title||s.tag)}</span><span class="rb-wn">${i===0?'Up next':'·'}</span></div><div class="rb-in"></div><div class="rb-mi"></div></div>`).join('')}</div>
-    <div class="rb-cap"><div class="rb-who"><div class="rb-eq">${'<i></i>'.repeat(5)}</div><span class="rb-k" style="color:#ff6a2b">Nova</span></div><p id="rbCap"></p></div>
-    <div class="rb-foot"><span id="rbFoot">${D.quick?'Quick roundup':'Builds as she reads'}</span><span>Roundup</span></div>`;
+    <div class="rb-cap"><p id="rbCap"></p></div>
+    <div class="rb-foot"><span class="rb-who"><span class="rb-eq">${'<i></i>'.repeat(5)}</span><span style="color:#ff6a2b">Nova</span><span id="rbFoot">${D.quick?'Quick roundup':''}</span></span><span>Roundup</span></div>`;
   document.body.appendChild(R);
   const $=q=>R.querySelector(q),cards=[...R.querySelectorAll('.rb-c')];let alive=true;stopFn=()=>{alive=false};
   const clk=()=>{const e=$('#rbClk');if(e)e.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})};clk();const ck=setInterval(clk,5000);
