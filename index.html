@@ -4731,9 +4731,9 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='',why='';
   /* ask the relay to write it; one retry for a hiccup (slow answer, busy AI), and remember why if it still fails */
-  for(let tr=0;tr<2&&!words;tr++){if(tr)await new Promise(r=>setTimeout(r,4000));
+  for(let tr=0;tr<3&&!words;tr++){if(tr)await new Promise(r=>setTimeout(r,tr===1?4000:10000));
     try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),35000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:ctx.length>38000?ctx.slice(0,30000)+'\n…\n'+ctx.slice(-7900):ctx,who:''}),signal:ac.signal}).finally(()=>clearTimeout(to));
-      const j=await r.json().catch(()=>({}));if(j.capped){why='daily AI limit reached ('+(j.cap||200)+')';break}words=String(j.answer||'');if(!words)why=String(j.error||('relay '+r.status)).slice(0,90)}
+      const j=await r.json().catch(()=>({}));if(j.capped){why='daily AI limit reached ('+(j.cap||200)+')';break}words=String(j.answer||'');if(!words)why=String(j.error||(j.usage?`the AI wrote nothing (${(j.usage.output_tokens||0)} words out)`:'the AI service had a hiccup (no reply from Anthropic)')).slice(0,90)}
     catch(e){why=e.name==='AbortError'?'the AI took too long':'couldn\'t reach the relay ('+String(e.message||e).slice(0,40)+')'}}
   if(!words){fmDiag('break not written: '+why);
     /* the AI didn't give us words: a short, plain break so the show doesn't stall */
@@ -5057,7 +5057,7 @@ function remote(){
   const T=SECRETS.topic;if(!T)return;
   const onCmd=d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
-    if(!/^fmstate /.test(String(d.message||'')))window._lastCmd=Date.now();
+    if(!/^fmstate /.test(String(d.message||''))){window._lastCmd=Date.now();if(!/^(presence|alarm)\b/i.test(String(d.message||'')))hudSeen('remote')}
     let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
   nbSub(T,'',onCmd,ok=>{remoteUp=ok});
   /* still listen on ntfy too, for anything not switched over yet (an old Siri shortcut); listening doesn't use up ntfy's daily limit */
@@ -5906,7 +5906,10 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
     greet:greetTxt,outro:o.welcome?`That's what's up. ${out.replace(/^That's the quick version\.\s*/,'')}`.trim():out}}
 /* HUD mode: the roundup look as a permanent screen (stays on through the nightly reload until you turn it off) */
 function hudSet(on){try{localStorage.setItem('nova-hud',on?'1':'0');if(!on)localStorage.removeItem('nova-hud-auto')}catch(e){}if(typeof NovaRoundup==='undefined')return;if(on){wakeScreen();NovaRoundup.hud(()=>ruData({per:'day'}))}else NovaRoundup.hudOff()}
-setTimeout(()=>{try{if(localStorage.getItem('nova-hud')==='1')hudSet(true)}catch(e){}},6000);
+/* (a refresh doesn't bring Command Center back: if nobody's home, the next 'left home' turns it on again) */
+try{localStorage.setItem('nova-hud','0');localStorage.removeItem('nova-hud-auto')}catch(e){}
+/* someone's clearly home (talked to Nova, pressed the remote, started music): the automatic away screen goes */
+function hudSeen(why){try{if(localStorage.getItem('nova-hud-auto')!=='1')return;hudSet(false);fmDiag('Command Center off: '+why)}catch(e){}}
 /* ---------- who's home ---------- */
 const PRES=(()=>{try{return JSON.parse(localStorage.getItem('nova-pres')||'{}')||{}}catch(e){return {}}})();
 const presSave=()=>{try{localStorage.setItem('nova-pres',JSON.stringify(PRES))}catch(e){}};
@@ -6438,7 +6441,7 @@ function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)ret
       if(!Q||window._curPage!=='np')return;   /* something else (remote, goal, alert) took over meanwhile */
       if(Q.prev==='morn'||!Q.prev){nextPage();return}
       nextPage(Q.prev,Q.left)},secs*1000)}}
-function npUpdate(j,fresh){if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof FM!=='undefined'&&+NM.get('fmlast',0)&&Date.now()-NM.get('fmlast',0)<30*60000)NM.set('fmlast',Date.now());const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
+function npUpdate(j,fresh){if(fresh&&j&&j.state==='playing')hudSeen('music started');if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof FM!=='undefined'&&+NM.get('fmlast',0)&&Date.now()-NM.get('fmlast',0)<30*60000)NM.set('fmlast',Date.now());const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
   if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{if(j.src!=='youtube'&&!j.radio)fmLog({title:j.title,artist:j.artist});fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
   else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
@@ -6928,7 +6931,7 @@ function voiceUI(){let el=$('vMic');if(!el){el=document.createElement('div');el.
   let E=$('vEdge');if(!E){E=document.createElement('div');E.id='vEdge';document.body.appendChild(E)}E.classList.toggle('on',!!VOICE.armed);el.innerHTML=VOICE.armed?'<i></i><b>Listening…</b>'+(VOICE.heard?`<small>${esc(VOICE.heard)}</small>`:''):'<i></i>'}
 function voiceChime(up){try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime;[up?660:880,up?990:660].forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type='sine';o.frequency.value=f;
   g.gain.setValueAtTime(0,t+i*.12);g.gain.linearRampToValueAtTime(.18,t+i*.12+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g).connect(A.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)});setTimeout(()=>A.close(),900)}catch(e){}}
-function voiceRun(cmd){const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
+function voiceRun(cmd){try{if(cmd&&!/\b(command cent(er|re)|hud|away mode)\b/i.test(cmd))hudSeen('voice')}catch(e){}const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
   cmd=(cmd||'').trim();
   /* a follow-up in a conversation: silence or "thanks" just ends it */
   if(fol&&COOK.on&&(/^(never ?mind|cancel|stop|forget it|bye|goodbye|close|exit|done cooking)\b/i.test(cmd)||(COOK.stage!=='steps'&&!COOK.offer&&/^(no|nope|nah|that'?s (it|all)|i'?m good|all good|no thanks)\b/i.test(cmd)))){cookClose();VOICE.convo=null;voiceChime(false);return}
@@ -7835,7 +7838,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 204';
+document.getElementById('ver').textContent='build nova 206';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
