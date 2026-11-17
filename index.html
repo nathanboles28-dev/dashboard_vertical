@@ -7815,7 +7815,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 201';
+document.getElementById('ver').textContent='build nova 202';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -8190,16 +8190,16 @@ const CSSB=`#ruB{position:fixed;inset:0;z-index:99990;background:#171716;color:#
 #ruB .rb-c.cur{border-color:#ff6a2b;background:linear-gradient(180deg,rgba(255,106,43,.08),#1f1f1d 60%)}#ruB .rb-c.cur .rb-tag{background:#ff6a2b;color:#1a0d06}
 #ruB .rb-c.wait{background:transparent;border-style:dashed;padding:calc(1.8*var(--u)) calc(2.6*var(--u));display:flex;justify-content:space-between;color:#8a867c;font-size:calc(2.5*var(--u));letter-spacing:.12em;text-transform:uppercase}
 #ruB .rb-w{display:flex;justify-content:space-between;width:100%}#ruB .rb-c.wait .rb-tag,#ruB .rb-c.wait .rb-in{display:none}#ruB .rb-c:not(.wait) .rb-w{display:none}
-#ruB .rb-c.mini{padding:calc(1.6*var(--u)) calc(2.6*var(--u));display:flex;gap:calc(2*var(--u));align-items:baseline}
+#ruB .rb-c.hid{display:none}#ruB .rb-c.mini{padding:calc(1.6*var(--u)) calc(2.6*var(--u));display:flex;gap:calc(2*var(--u));align-items:baseline}
 #ruB .rb-c.mini .rb-tag{position:static;border-radius:calc(.6*var(--u));flex:none}#ruB .rb-c.mini .rb-in{display:none}#ruB .rb-c:not(.mini) .rb-mi{display:none}
 #ruB .rb-mi{font-size:calc(3*var(--u));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-#ruB .rb-g{display:grid;grid-template-columns:auto 1fr;gap:calc(3*var(--u));align-items:center}#ruB .rb-g.nov{grid-template-columns:1fr}
+#ruB .rb-g>*{min-width:0}#ruB .rb-g{display:grid;grid-template-columns:auto minmax(0,1fr);gap:calc(3*var(--u));align-items:center}#ruB .rb-g.nov{grid-template-columns:minmax(0,1fr)}
 #ruB .rb-v{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(9*var(--u));line-height:1;white-space:nowrap}#ruB .rb-v small{display:block;font-family:'NovaSans','Inter',sans-serif;font-size:calc(2*var(--u));letter-spacing:.12em;color:#8a867c;text-transform:uppercase;font-weight:500;margin-top:calc(.8*var(--u))}
 #ruB .rb-big{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:calc(3.8*var(--u));line-height:1.15;margin-bottom:calc(.6*var(--u))}
 #ruB .rb-l{font-size:calc(3*var(--u));color:#8a867c;padding:calc(.45*var(--u)) 0;line-height:1.3}#ruB .rb-l b{color:#e6e2d9;font-weight:500}
 #ruB .rb-r{display:flex;justify-content:space-between;gap:calc(2*var(--u));align-items:baseline;font-size:calc(3*var(--u));padding:calc(.7*var(--u)) 0}
-#ruB .rb-r>span{color:#8a867c;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#ruB .rb-r>b{font-weight:500;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62%}#ruB .rb-r>b.hot{color:#ff6a2b}
-#ruB .rb-r.hl{justify-content:flex-start}#ruB .rb-r.hl>b{max-width:none;text-align:left;white-space:normal}
+#ruB .rb-r>span{color:#8a867c;flex:1 1 auto;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}#ruB .rb-r>span.rb-p{flex:none;display:inline-block;line-height:1.3}#ruB .rb-r>b{font-weight:500;text-align:right;min-width:0;flex:0 1 auto;max-width:62%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}#ruB .rb-r>b.hot{color:#ff6a2b}
+#ruB .rb-r.hl{justify-content:flex-start}#ruB .rb-r.hl>b{text-align:left;max-width:none;flex:1 1 auto}
 #ruB .rb-p{display:inline-block;border:1.5px solid #7fb2ff;color:#7fb2ff;border-radius:calc(.5*var(--u));font-size:calc(1.9*var(--u));letter-spacing:.1em;padding:calc(.25*var(--u)) calc(.9*var(--u));flex:none}
 #ruB .rb-cap{position:absolute;left:calc(6.5*var(--u));right:calc(6.5*var(--u));bottom:calc(9.5*var(--u))}
 #ruB .rb-who{display:flex;align-items:center;gap:calc(1.5*var(--u));margin-bottom:calc(1.4*var(--u))}
@@ -8242,9 +8242,14 @@ async function playB(D){
     const lines=(s.lines||[]).map(l=>`<div class="rb-l">${l}</div>`).join('');
     const rows=(s.rows||[]).map(r=>r.pill?`<div class="rb-r hl"><span class="rb-p">${esc(r.pill)}</span><b>${esc(r.t)}</b></div>`:`<div class="rb-r"><span>${esc(r.k)}</span><b class="${r.hot?'hot':''}">${esc(r.v)}</b></div>`).join('');
     return `<div class="rb-g${short?'':' nov'}">${short?`<div class="rb-v">${esc(v)}<small>${esc(s.unit||'')}</small></div>`:''}<div>${s.big&&!s.rows?`<div class="rb-big">${esc(String(s.big).replace(/&quot;/g,'"').replace(/&amp;/g,'&'))}</div>`:''}${rows}${lines}</div></div>`};
-  const mini=s=>`${s.big?esc(String(s.big).replace(/&quot;/g,'"').replace(/&amp;/g,'&')):''}${s.value&&String(s.value).length<=6&&s.big&&!String(s.big).includes(s.value)?` <span style="color:#8a867c">· ${esc(s.value)} ${esc(s.unit||'')}</span>`:''}`;
+  const mini=s=>esc(String(s.big||s.title||'').replace(/&quot;/g,'"').replace(/&amp;/g,'&'));
   /* too tall? oldest finished sections shrink to one line */
-  const fit=()=>{const pg=$('.rb-pg');for(let g=0;g<20&&pg.scrollHeight>pg.clientHeight+2;g++){const c=cards.find(c=>c.classList.contains('done')&&!c.classList.contains('mini'));if(!c)break;c.classList.add('mini')}};
+  const fit=()=>{const pg=$('.rb-pg'),over=()=>pg.scrollHeight>pg.clientHeight+2;
+    for(let g=0;g<30&&over();g++){const w=cards.filter(c=>c.classList.contains('wait')&&!c.classList.contains('hid'));if(w.length>1){w[w.length-1].classList.add('hid');continue}
+      const c=cards.find(c=>c.classList.contains('done')&&!c.classList.contains('mini'));if(!c)break;c.classList.add('mini')}
+    /* room again (a section came out shorter): bring waiting rows back */
+    for(let g=0;g<30;g++){const h=cards.find(c=>c.classList.contains('hid'));if(!h)break;h.classList.remove('hid');if(over()){h.classList.add('hid');break}}
+    for(let g=0;g<30;g++){const m=cards.filter(c=>c.classList.contains('mini')).pop();if(!m)break;m.classList.remove('mini');if(over()){m.classList.add('mini');break}}};
   try{
     if(D.music!==false&&!(typeof CFG!=='undefined'&&CFG.roundup&&CFG.roundup.music===false)){S.song(true).then(ok=>{if(!ok&&alive)S.bed(true)})}
     S.chime();await sleep(900);
@@ -8252,7 +8257,7 @@ async function playB(D){
     for(let i=0;i<segs.length&&alive;i++){const s=segs[i],c=cards[i];
       cards.forEach(x=>{if(x.classList.contains('cur')){x.classList.remove('cur');x.classList.add('done')}});
       const nx=cards[i+1];if(nx)nx.querySelector('.rb-wn').textContent='Up next';
-      c.querySelector('.rb-in').innerHTML=body(s);c.querySelector('.rb-mi').innerHTML=mini(s);c.classList.remove('wait');c.classList.add('cur');fit();
+      c.querySelector('.rb-in').innerHTML=body(s);c.querySelector('.rb-mi').innerHTML=mini(s);c.classList.remove('wait','hid');c.classList.add('cur');fit();
       try{c.scrollIntoView({block:'nearest'})}catch(e){}
       S.blip(660+i*60,.06,.16);
       if(s.alarm){S.siren(2);await sleep(500)}
