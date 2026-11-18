@@ -2362,6 +2362,17 @@ html.nv2.nvx .fm-dg .fm-dt:nth-child(3){border-top-color:#3fd47f}html.nv2.nvx .f
 html.nv2.nvx .fm-now .np-fill{background:linear-gradient(90deg,#ff6a2b,#f06a8f)!important}
 html.nv2.nvx .fm-card.fm-up .fm-tag{background:#7fb2ff!important;color:#0f1626!important}
 html.nv2.nvx .fm-card.fm-desk .fm-tag{background:#c47bff!important;color:#1a0f26!important}
+/* ---- live game card: your game, names that fit, scores level with the names, the rest of the league along the bottom ---- */
+html.nv2.nvx #live{display:flex!important;flex-direction:column}
+html.nv2.nvx #live .lvrow{display:flex!important;align-items:center!important;justify-content:space-between;gap:calc(2*var(--u));margin:calc(.6*var(--u)) 0}
+html.nv2.nvx #live .lvrow .tm{display:flex;align-items:center;gap:calc(1.6*var(--u));min-width:0;flex:1 1 auto}
+html.nv2.nvx #live .lvrow .tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+html.nv2.nvx #live .lvrow .lvs{flex:none;font-variant-numeric:tabular-nums;line-height:1;align-self:center;margin:0!important;transform:none!important;position:static!important}
+html.nv2.nvx #live #lvClock{margin-top:calc(2.4*var(--u))!important;position:static!important;color:var(--xor,#ff6a2b)}
+html.nv2.nvx #live #lvMore{margin-top:auto;border-top:1.5px solid #2c2b28;padding-top:calc(1.6*var(--u))}
+html.nv2.nvx #live .lvm-h{font-size:calc(1.6*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#8a867c;margin-bottom:calc(.8*var(--u))}
+html.nv2.nvx #live .lvm{display:flex;justify-content:space-between;gap:calc(1.5*var(--u));font-size:calc(2.1*var(--u));padding:calc(.45*var(--u)) 0}
+html.nv2.nvx #live .lvm b{font-weight:500;white-space:nowrap}html.nv2.nvx #live .lvm span{color:#ff6a2b;white-space:nowrap}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -2412,7 +2423,7 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
  <section id="air" class="card"><h2 class="air-h"><span>Next 12 hours</span><em id="airSun"></em></h2>
 <div class="hours" id="hours"></div></section>
  <section id="news" class="card"><h2 id="pgTitle"></h2><div id="miniCal"></div><div id="nextList" hidden></div><div class="stg" id="stdNHL" hidden></div><div class="stg" id="stdOHL" hidden></div></section>
- <section id="live" class="card"><div class="lvtag" id="lvTag"></div><div><div class="lvrow" id="lvA"></div><div class="lvrow" id="lvH"></div></div><div id="lvClock"></div></section>
+ <section id="live" class="card"><div class="lvtag" id="lvTag"></div><div><div class="lvrow" id="lvA"></div><div class="lvrow" id="lvH"></div></div><div id="lvClock"></div><div id="lvMore"></div></section>
  <section id="sports" class="card"><h2>Scores</h2><div class="leagues" id="leagues"></div></section>
 </main>
 <section id="pPhotos" class="page"><img id="photo" alt=""><div id="pmsg"></div></section>
@@ -2985,14 +2996,20 @@ const mmss=n=>Math.floor(n/60)+':'+String(n%60).padStart(2,'0');
 function renderLive(){
   const box=$('live'),news=$('news');
   if(!favGames.length){box.style.display='none';news.style.display='';return}
-  const it=favGames[liveIdx%favGames.length],g=it.g,L=it.L,pre=g.state==='pre';
+  /* your team's game stays on the card while it's on; other games only take turns when none of yours are */
+  const mine=favGames.filter(x=>x.f),pool=mine.length?mine:favGames;
+  const it=pool[liveIdx%pool.length],g=it.g,L=it.L,pre=g.state==='pre';
   box.style.display='flex';news.style.display='none';
   box.classList.toggle('flash',Date.now()<flashUntil);
   $('lvTag').innerHTML='<i class="dot"></i>'+(pre?'Starting soon':'Live')+' · '+L.label;
   const f=L.fav||[];
   $('lvA').className='lvrow'+(f.includes(g.A)?' fav':'');$('lvH').className='lvrow'+(f.includes(g.H)?' fav':'');
-  $('lvA').innerHTML='<span class="tm">'+logoImg(g.lA)+'<span>'+esc(g.nA)+'</span></span><span>'+(pre?'':esc(g.sA))+'</span>';
-  $('lvH').innerHTML='<span class="tm">'+logoImg(g.lH)+'<span>'+esc(g.nH)+'</span></span><span>'+(pre?'':esc(g.sH))+'</span>';
+  const sn=n=>{n=nick(n||'');return ({'Maple Leafs':'Leafs','Blue Jackets':'Jackets','Golden Knights':'Knights','Hurricanes':'Canes'})[n]||n};
+  $('lvA').innerHTML='<span class="tm">'+logoImg(g.lA)+'<span>'+esc(sn(g.nA))+'</span></span><span class="lvs">'+(pre?'':esc(g.sA))+'</span>';
+  $('lvH').innerHTML='<span class="tm">'+logoImg(g.lH)+'<span>'+esc(sn(g.nH))+'</span></span><span class="lvs">'+(pre?'':esc(g.sH))+'</span>';
+  /* the rest of the league's live games, small, along the bottom */
+  const more=(window.LGRAW||[]).flatMap(r=>r.games.filter(x=>x.state==='in'&&x.id!==g.id).map(x=>({x,L:r.L}))).slice(0,4);
+  const mo=$('lvMore');if(mo)mo.innerHTML=more.length?'<div class="lvm-h">Also live</div>'+more.map(({x})=>`<div class="lvm"><b>${esc(x.A)} ${esc(x.sA)} – ${esc(x.sH)} ${esc(x.H)}</b><span>${esc((x.live&&x.live.text)||x.det||'')}</span></div>`).join(''):'';
   let txt;
   if(pre){const m=Math.round((g.date-Date.now())/60000);txt=(g.live.hockey?'Puck drop':L.sport==='baseball'?'First pitch':'Starts')+(m>0?' in '+m+' min':' now')}
   else if(g.live.clock!==null){const rem=Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000));txt=mmss(rem)+(g.live.per?' · '+g.live.per:'')}
@@ -7864,7 +7881,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 208';
+document.getElementById('ver').textContent='build nova 209';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
