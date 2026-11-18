@@ -2437,7 +2437,10 @@ html.nv2 #mini{transition:opacity 1.2s,top .3s}
 .nv-stk b{font:400 9.6vw/1.05 'Yellowtail',cursive;color:#e4572e;text-shadow:.55vw .55vw 0 #1b1310;letter-spacing:0}
 .nv-stk i{width:6.6vw;height:6.6vw;border-radius:50%;background:#1b1310;color:#e8b931;display:flex;align-items:center;justify-content:center;font:600 3.2vw 'Barlow Condensed','Inter',sans-serif;font-style:normal}
 .nv-stk small{font:600 1.6vw 'Barlow Condensed','Inter',sans-serif;letter-spacing:.4em;text-transform:uppercase;margin-top:.1vw;padding-left:.4em}
-.fm-hd{padding:1vw 0 0 1vw!important}
+.fm-hd{padding:0 0 0 1vw!important;margin-top:-3.4vw}
+.fm-hd .nv-stk b{font-size:8.6vw}
+.fm-hd .nv-stk i{width:6vw;height:6vw;font-size:2.9vw}
+.fm-hd .nv-stk{padding:.2vw 2.4vw .8vw}
 #fmOn .fo-hd{align-items:flex-start!important}
 #fmOn .fm-air.on{border:.3vw solid #1b1310;box-shadow:.6vw .6vw 0 #000!important;font-family:'Barlow Condensed','Inter',sans-serif;font-size:2.6vw}
 #fmOn .fo-k{font:400 6.4vw 'Yellowtail',cursive!important;letter-spacing:0!important;text-transform:none!important;top:46vw!important}
@@ -8023,7 +8026,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 213';
+document.getElementById('ver').textContent='build nova 214';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
