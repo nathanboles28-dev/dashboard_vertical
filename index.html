@@ -4927,7 +4927,10 @@ function fmCmd(t){
      {const C=CFG.nightClock||{},of=C.offAt==null?0:C.offAt,fr=of===0?(C.from==null?23:C.from):of,s2=new Date();s2.setHours(fr,0,0,0);if(new Date().getHours()<(C.wakeAt==null?7:C.wakeAt))s2.setDate(s2.getDate()-1);
       const b2=Math.max(+NM.get('nlate',0),n>=+s2?n:+s2);NM.set('nlate',b2+k*3600e3);
       if($('night').classList.contains('on')||nclkSlept){nclkSet(false);wakeScreen();if(SECRETS.topic&&NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})}
-      try{nclkTick()}catch(e){}}
+      try{nclkTick()}catch(e){}
+      if(SECRETS.topic&&typeof nbPub==='function')nbPub(SECRETS.topic,`nlate ${+NM.get('nlate',0)} ${+NM.get('fmwake',0)}`).catch(()=>{});
+      /* and the Mac's own 11 PM screen-off (~/nova/screen-off.sh) waits too: goodnight.sh saves this time */
+      if(SECRETS.topic)fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'late '+Math.round(+NM.get('nlate',0)/1000)}).catch(()=>{})}
      const at=new Date(until).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});fmDiag('quiet hours pushed to '+at);
      const at2=new Date(+NM.get('nlate',0)).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
      return `You got it, ${k>1?k+' more hours':'one more hour'}. The screen stays on and ${FMC().station} keeps going till ${at2}.`}}
@@ -5088,6 +5091,10 @@ function renderWorld(){const b=$('worldBody');if(!b)return;const h=worldBig();
 /* for Nova FM: the big story she hasn't mentioned yet */
 const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
 function handleCommand(raw){if(!NOVA_MAIN)return;
+  /* "one more hour" said to one screen reaches every dashboard (the kitchen screen and the MacBook each keep their own clock) */
+  {const m=String(raw||'').match(/^nlate (\d+)(?: (\d+))?$/);if(m){const a=+m[1],b=+(m[2]||0);
+    if(a>+NM.get('nlate',0)){NM.set('nlate',a);if($('night').classList.contains('on')||nclkSlept){nclkSet(false);wakeScreen()}try{nclkTick()}catch(e){}fmDiag('screen stays on till '+new Date(a).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))}
+    if(b>+NM.get('fmwake',0))NM.set('fmwake',b);return}}
   if(/^fmstate /.test(String(raw||''))){const k=String(raw).slice(0,60);if(FM.sig===k&&Date.now()-FM.sigT<20000)return;FM.sig=k;FM.sigT=Date.now()}
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
   if(/^fmstate skip\b/.test(String(raw||''))){FM.queued=null;FM.pend=null;FM.last=FM.prevLast||0;FM.count=Math.max(FM.count||0,FM.target||1);fmDiag('break dropped: the song was skipped; a new one comes after the next song you stay on');try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}return}
@@ -8066,7 +8073,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 217';
+document.getElementById('ver').textContent='build nova 219';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
