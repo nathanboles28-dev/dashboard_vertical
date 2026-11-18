@@ -4142,6 +4142,10 @@ const nclkSet=v=>{nclkSlept=v;try{localStorage.setItem('nova-slept',v?'1':'0')}c
 function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false){if(el)el.classList.remove('on');return}
   if(!el){el=document.createElement('div');el.id='nclk';document.body.appendChild(el)}
   const n=new Date(),h=n.getHours(),from=C.from==null?23:C.from,off=C.offAt==null?0:C.offAt,wake=C.wakeAt==null?7:C.wakeAt;
+  /* "one more hour": the night clock and the screen going off wait until then; once it's up, if it's already past lights-out, the screen goes off right away */
+  {const late=+NM.get('nlate',0);if(late){if(Date.now()<late){el.classList.remove('on');return}
+    NM.set('nlate',0);const inR=(x,a,b)=>a===b?false:a<b?(x>=a&&x<b):(x>=a||x<b);
+    if(!nclkSlept&&inR(h,off,wake)){nclkSet(true);el.classList.remove('on');goodnight();return}}}
   const inClock=off===0?h>=from:(h>=from&&h<off),busy=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
   if(inClock&&Date.now()>nclkSnooze&&!busy){
     const lo=WXD&&WXD.dl?Math.round(WXD.dl.temperature_2m_min[1]):null;
@@ -4919,8 +4923,14 @@ function fmCmd(t){
      const st=new Date();st.setHours(q[0],0,0,0);if(q[0]>q[1]&&new Date().getHours()<q[1])st.setDate(st.getDate()-1);
      const quietNow=fmQuiet(),base=Math.max(+NM.get('fmwake',0),quietNow||n>=+st?n:+st),until=base+k*3600e3;
      NM.set('fmwake',until);if(!FM.on){FM.on=true;NM.set('fm',true)}
+     /* the screen too: the night clock / lights-out at 11 waits the same hour (counted from 11, or from now if it's already later) */
+     {const C=CFG.nightClock||{},of=C.offAt==null?0:C.offAt,fr=of===0?(C.from==null?23:C.from):of,s2=new Date();s2.setHours(fr,0,0,0);if(new Date().getHours()<(C.wakeAt==null?7:C.wakeAt))s2.setDate(s2.getDate()-1);
+      const b2=Math.max(+NM.get('nlate',0),n>=+s2?n:+s2);NM.set('nlate',b2+k*3600e3);
+      if($('night').classList.contains('on')||nclkSlept){nclkSet(false);wakeScreen();if(SECRETS.topic&&NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})}
+      try{nclkTick()}catch(e){}}
      const at=new Date(until).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});fmDiag('quiet hours pushed to '+at);
-     return `You got it. ${FMC().station} keeps going till ${at}${k>1?'':', one more hour'}.`}}
+     const at2=new Date(+NM.get('nlate',0)).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+     return `You got it, ${k>1?k+' more hours':'one more hour'}. The screen stays on and ${FMC().station} keeps going till ${at2}.`}}
   /* "dedicate the next song to Erinn" */
   {const m=t.match(/^(?:can you |could you |please )?dedicate (?:the next song|this(?: one| song)?|a song|the next one|one) to (.+?)(?: from (.+))?$/);
    if(m){FM.dedic=m[1].replace(/\bmy\b/g,'your').replace(/\b\w/g,c=>c.toUpperCase());FM.dedicFrom=m[2]?m[2].replace(/\bme\b/,'Nathan'):'Nathan';
@@ -8056,7 +8066,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 216';
+document.getElementById('ver').textContent='build nova 217';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
