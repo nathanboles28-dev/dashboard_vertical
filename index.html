@@ -2412,6 +2412,14 @@ html.nv2.nvx #pRLoop .mx-pin i{display:block;width:calc(1.8*var(--u));height:cal
 html.nv2.nvx #pRLoop .mx-pin b{position:absolute;left:calc(2.6*var(--u));top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--head);font-weight:700;font-size:calc(2.2*var(--u));color:#fff;text-shadow:0 1px 4px #000,0 0 8px #000}
 html.nv2.nvx #pRLoop .rl-geo .rl-base,html.nv2.nvx #pRLoop .rl-geo .rl-lab,html.nv2.nvx #pRLoop .rl-geo .rl-cv{position:absolute;inset:0}
 html.nv2.nvx #pNP:has(.fmS-on) #npBg{display:none!important}
+html.nv2.nvx #live .lvp{display:flex;gap:calc(.8*var(--u));margin-bottom:calc(1.6*var(--u))}
+html.nv2.nvx #live .lvp>div{flex:1;min-width:0}
+html.nv2.nvx #live .lvp>div::before{content:'';display:block;height:calc(.7*var(--u));background:#2c2b28;border-radius:calc(.4*var(--u))}
+html.nv2.nvx #live .lvp>div{position:relative}
+html.nv2.nvx #live .lvp i{position:absolute;left:0;top:0;height:calc(.7*var(--u));background:#ff6a2b;border-radius:calc(.4*var(--u))}
+html.nv2.nvx #live .lvp span{display:block;margin-top:calc(.6*var(--u));font-size:calc(1.6*var(--u));letter-spacing:.1em;text-transform:uppercase;color:#8a867c}
+html.nv2.nvx #live .lvp>div.on span{color:#ff6a2b}
+html.nv2.nvx #live .lvm>b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;text-align:right}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -2960,6 +2968,7 @@ const postLabel=(txt,d)=>(txt||'Final')+(dayTag(d)?' · '+dayTag(d):'');
 const clockSecs=t=>{const m=String(t||'').match(/^(\d+):(\d{2})$/);return m?(+m[1])*60+(+m[2]):null};
 const perName=n=>n<=0?'':n<=3?['1st','2nd','3rd'][n-1]:n===5?'SO':'OT';
 
+const espnStat=(t,re)=>{const s=(t.statistics||[]).find(x=>re.test(x.name||'')||re.test(x.abbreviation||''));return s?String(s.displayValue??s.value??''):''};
 async function espnGames(L,q=''){
   const d=await (await tfetch(`https://site.api.espn.com/apis/site/v2/sports/${L.sport}/${L.league}/scoreboard${q}`)).json();
   const hockey=L.sport==='hockey';
@@ -2970,7 +2979,10 @@ async function espnGames(L,q=''){
     const A=away.team.abbreviation,H=home.team.abbreviation,pre=st.state==='pre';
     const sd=st.shortDetail||'',brk=/end|intermission|half|delay|postponed/i.test(sd),sit=comp.situation;
     const outs=(!hockey&&sit&&sit.outs!=null)?' · '+sit.outs+(sit.outs===1?' out':' outs'):'';
-    return {id:e.id,A,H,fA:away.team.name||away.team.shortDisplayName||A,fH:home.team.name||home.team.shortDisplayName||H,nA:away.team.shortDisplayName||A,nH:home.team.shortDisplayName||H,lA:away.team.logo||'',lH:home.team.logo||'',arena:(comp.venue&&comp.venue.fullName)||'',sA:away.score,sH:home.score,state:st.state,date,
+    return {id:e.id,A,H,fA:away.team.name||away.team.shortDisplayName||A,fH:home.team.name||home.team.shortDisplayName||H,nA:away.team.shortDisplayName||A,nH:home.team.shortDisplayName||H,lA:away.team.logo||'',lH:home.team.logo||'',arena:(comp.venue&&comp.venue.fullName)||'',
+      rA:((away.records||[])[0]||{}).summary||'',rH:((home.records||[])[0]||{}).summary||'',
+      shA:espnStat(away,/^(shots|shotsTotal|shotsOnGoal|SOG)$/i),shH:espnStat(home,/^(shots|shotsTotal|shotsOnGoal|SOG)$/i),
+      tv:[...new Set([...(comp.broadcasts||[]).flatMap(b=>b.names||[]),...(comp.geoBroadcasts||[]).map(b=>b.media&&b.media.shortName).filter(Boolean)])].slice(0,2).join(' · '),pn:+e.status.period||0,sA:away.score,sH:home.score,state:st.state,date,
       line:pre?`${A} at ${H}`:`${A} ${away.score} – ${home.score} ${H}`,
       det:pre?preLabel(date):(st.state==='post'?postLabel(sd.split(' - ')[0],date):sd),
       live:{hockey,clock:(hockey&&!brk)?clockSecs(e.status.displayClock):null,per:hockey?perName(e.status.period):'',text:sd+outs}};
@@ -3095,10 +3107,20 @@ function renderLive(){
   /* the rest of the league's live games, small, along the bottom */
   /* your game's details along the bottom: shots, the last goal, power play (from the live game feed) */
   const mo=$('lvMore');if(mo){const me=LV&&LV._g&&LV._g.id===g.id&&Date.now()-(lvAt||0)<5*60000?LV:null;let rows='';
-    if(me&&me.away&&me.home&&me.away.sog!=null)rows+=`<div class="lvm"><span>Shots</span><b>${esc(g.A)} ${esc(me.away.sog)} · ${esc(me.home.sog)} ${esc(g.H)}</b></div>`;
+    /* the game's progress: one bar per period, filled as the clock runs down */
+    if(g.live&&g.live.hockey&&g.state==='in'&&g.pn){const np=Math.max(3,g.pn),left=g.live.clock!=null?g.live.clock:(/end/i.test(g.det||'')?0:null);
+      rows+=`<div class="lvp">${Array.from({length:np},(_,i)=>{const p=i+1,f=p<g.pn?100:p>g.pn?0:left==null?50:Math.max(0,Math.min(100,(1-left/(p>3?300:1200))*100));return `<div class="${p===g.pn?'on':''}"><i style="width:${f.toFixed(1)}%"></i><span>${p>3?'OT':p===1?'1st':p===2?'2nd':'3rd'}</span></div>`}).join('')}</div>`}
+    const shA=me&&me.away&&me.away.sog!=null?me.away.sog:g.shA,shH=me&&me.home&&me.home.sog!=null?me.home.sog:g.shH;
+    if(shA!==''&&shA!=null&&shH!==''&&shH!=null)rows+=`<div class="lvm"><span>Shots</span><b>${esc(g.A)} ${esc(shA)} · ${esc(shH)} ${esc(g.H)}</b></div>`;
     if(me&&me.lastGoal&&me.lastGoal.name)rows+=`<div class="lvm"><span>Last goal</span><b>${esc(me.lastGoal.name)}${me.lastGoal.team?' · '+esc(me.lastGoal.team):''}</b></div>`;
     if(me&&me.pp&&me.pp.s)rows+=`<div class="lvm pp"><span>Power play</span><b>${esc((me.pp.s==='h'?me.home:me.away).abbr||'')}${me.pp.time?' · '+esc(String(me.pp.time).replace(/^0(\d:)/,'$1'))+' left':''}</b></div>`;
-    if(mo.dataset.h!==rows){mo.dataset.h=rows;mo.innerHTML=rows}
+    if(g.rA&&g.rH)rows+=`<div class="lvm"><span>Records</span><b>${esc(g.rA)} · ${esc(g.rH)}</b></div>`;
+    if(g.tv)rows+=`<div class="lvm"><span>On TV</span><b>${esc(g.tv)}</b></div>`;
+    if(g.arena)rows+=`<div class="lvm"><span>Arena</span><b>${esc(g.arena)}</b></div>`;
+    if(mo.dataset.h!==rows){mo.dataset.h=rows;mo.innerHTML=rows;
+      /* whatever doesn't fit in the card is left off (least important last) */
+      const box=$('live'),lim=()=>box.getBoundingClientRect().bottom-parseFloat(getComputedStyle(box).paddingBottom||0);
+      for(let k=0;k<6&&mo.lastElementChild&&mo.lastElementChild.getBoundingClientRect().bottom>lim()+1;k++)mo.lastElementChild.remove()}
     if(!pre&&(!LV||LV._g&&LV._g.id!==g.id||Date.now()-(lvAt||0)>60000)&&$('shift').classList.contains('on'))try{if(!loadLive._t||Date.now()-loadLive._t>30000){loadLive._t=Date.now();loadLive()}}catch(e){}}
   /* a long name ("Blackhawks", "Blue Jackets") shrinks to fit instead of being cut off */
   {const sps=['lvA','lvH'].map(id=>$(id).querySelector('.tm>span')).filter(Boolean);sps.forEach(sp=>sp.style.fontSize='');let k=1;
@@ -8026,7 +8048,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 214';
+document.getElementById('ver').textContent='build nova 215';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
