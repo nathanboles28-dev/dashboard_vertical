@@ -2685,7 +2685,7 @@ const CFG={
   car:{name:'Car'},
   // Spotlight card on the home page: on this day, did you know, picture of the day and trivia (answer shows after answerSecs)
   spotlight:{on:true, secs:25, answerSecs:12, only:'trivia', trivia:[21,9,22,17,11]},
-  ticker:{on:true, speed:70},
+  ticker:{on:true, speed:40},
   watch:{on:true, users:[], library:'Movies'},
   // Home tech page: the Macs (names exactly as set in each Mac's nova-stats.env), whose Time Machine backup to show, and the sticker picture
   // Morning mode: between these times the board stays on one "get going" page (weather, calendar, drives, roads, games today, headlines)
@@ -4862,8 +4862,10 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const h=new Date().getHours(),style=C.style==='auto'?(h>=21||h<5?'latenight':h<11?'morning':'casual'):C.style;
   const tone={casual:'relaxed and friendly',morning:'bright, upbeat morning-show energy',professional:'polished, classic radio host',humorous:'funny, with a light joke',sarcastic:'dry and a little sarcastic, never mean',latenight:'smooth, low-key late-night host'}[style]||'relaxed and friendly';
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
+  /* what plays right after the break (Apple Music's up next), so she can say "and coming up, ..." */
+  const nx=song.next&&song.next.length&&!song.shuf&&!FM.req?song.next[0]:null,nt=nx?String(nx[0]||'').slice(0,60):'',na=nx?String(nx[1]||'').slice(0,40):'';
   const q=(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
-    (mode==='top5'?`Do the Nova FM Top 5 countdown (see below); then a quick bit about `:mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it, then add one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it, then one bit about `)+
+    (mode==='top5'?`Do the Nova FM Top 5 countdown (see below); then a quick bit about `:mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it${nt?' and say what\'s coming up next (see COMING UP)':''}, then one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it${nt?' and what\'s coming up after it (see COMING UP)':''}, then one bit about `)+
     `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
   const said=NM.get('fmsaid',[]),extra=[];
   const P=CFG.fm&&CFG.fm.people||{},me=P.me||'Nathan',fam=P.family||'Erinn';FM.saidK=[];FM.cat='';
@@ -4878,11 +4880,11 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   if(mode!=='hour'){const Mo=fmMoments();const m=Mo.find(x=>x.pri>=1)||(Mo.length&&Math.random()<.5?Mo[0]:null);if(m){extra.push(m.say);FM.saidK.push(m.k);FM.cat=m.cat;FM.onSay=m.onSay||null}}
   /* Friday night top 5 */
   if(mode==='top5'){const T=fmTop5();extra.unshift(`NOVA FM TOP 5: count down ${me}'s five most-played songs this week, from 5 to 1, with a line of fun commentary each: ${T.map((x,i)=>`${i+1}. ${x[0]} (${x[1]} plays)`).join('; ')}. You can go up to 110 words.`);FM.saidK.push('top5:'+fmWeek())}
-  if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (25 words max): it's ${hh} o'clock, you're listening to ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly.`)}
+  if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (30 words max): it's ${hh} o'clock, you're listening to ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly${nt?`, and that "${nt}"${na?' by '+na:''} is coming up after it`:''}.`)}
   if(FM.welcome){const h=FM.welcome/3600e3;extra.unshift(`WELCOME BACK: the listener just came back after ${h>=20?'about a day':h>=2?'about '+Math.round(h)+' hours':'a little while'} without music. Welcome them back warmly${mode==='hour'?' in the same breath as the station ID':' before anything else'}.`)}
   {const N=worldNew();if(N){extra.unshift(`NEWS UPDATE FIRST: calmly give a short news update on this breaking story, only the facts in the headline: "${N.t}" (${N.src||'news reports'}). Be respectful, no jokes in this break.`);FM.newsId=N.id}}
   if(mode!=='hour'){
-    if(song.next&&song.next.length&&!song.shuf&&Math.random()<.35)extra.push(`TEASE: hint that "${song.next[0][0]}" by ${song.next[0][1]} is coming up soon.`);
+    if(nt)extra.push(`COMING UP: "${nt}"${na?' by '+na:''} plays right after this break. Say it naturally, e.g. "and coming up next, ${nt}${na?' from '+na:''}", before the rest of the break.`);
     if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
     if(!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
@@ -8073,7 +8075,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 219';
+document.getElementById('ver').textContent='build nova 221';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
