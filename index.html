@@ -2363,7 +2363,7 @@ html.nv2.nvx .fm-now .np-fill{background:linear-gradient(90deg,#ff6a2b,#f06a8f)!
 html.nv2.nvx .fm-card.fm-up .fm-tag{background:#7fb2ff!important;color:#0f1626!important}
 html.nv2.nvx .fm-card.fm-desk .fm-tag{background:#c47bff!important;color:#1a0f26!important}
 /* ---- live game card: your game, names that fit, scores level with the names, the rest of the league along the bottom ---- */
-html.nv2.nvx #live{display:flex!important;flex-direction:column}
+html.nv2.nvx #live:not([style*="none"]){display:flex!important;flex-direction:column}
 html.nv2.nvx #live .lvrow{display:flex!important;align-items:center!important;justify-content:space-between;gap:calc(2*var(--u));margin:calc(.6*var(--u)) 0}
 html.nv2.nvx #live .lvrow .tm{display:flex;align-items:center;gap:calc(1.6*var(--u));min-width:0;flex:1 1 auto}
 html.nv2.nvx #live .lvrow .tm>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -2373,6 +2373,46 @@ html.nv2.nvx #live #lvMore{margin-top:auto;border-top:1.5px solid #2c2b28;paddin
 html.nv2.nvx #live .lvm-h{font-size:calc(1.6*var(--u));letter-spacing:.14em;text-transform:uppercase;color:#8a867c;margin-bottom:calc(.8*var(--u))}
 html.nv2.nvx #live .lvm{display:flex;justify-content:space-between;gap:calc(1.5*var(--u));font-size:calc(2.1*var(--u));padding:calc(.45*var(--u)) 0}
 html.nv2.nvx #live .lvm b{font-weight:500;white-space:nowrap}html.nv2.nvx #live .lvm span{color:#ff6a2b;white-space:nowrap}
+/* ---- "Coming up" (replaces trivia) ---- */
+html.nv2.nvx #spot .cu{position:absolute;inset:0;padding:calc(5.4*var(--u)) calc(2.6*var(--u)) calc(2.2*var(--u));display:flex;flex-direction:column;gap:calc(2*var(--u))}
+html.nv2.nvx #spot .cu-l{display:flex;flex-direction:column}
+html.nv2.nvx #spot .cu-r{display:flex;flex-direction:column-reverse;gap:calc(.3*var(--u));padding:calc(1.1*var(--u)) 0;border-bottom:1.5px solid var(--xline2,#2c2b28)}
+html.nv2.nvx #spot .cu-r:last-child{border-bottom:0}
+html.nv2.nvx #spot .cu-w{font-size:calc(1.6*var(--u));letter-spacing:.12em;text-transform:uppercase;color:#7fb2ff}
+html.nv2.nvx #spot .cu-r.now .cu-w{color:#ff6a2b}
+html.nv2.nvx #spot .cu-r.rem .cu-w{color:#c47bff}
+html.nv2.nvx #spot .cu-r b{font-family:var(--head);font-weight:700;font-size:calc(2.6*var(--u));line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.nv2.nvx #spot .cu-r em{font-style:normal;font-size:calc(2*var(--u));color:var(--xdim)}
+html.nv2.nvx #spot .cu-none{color:var(--xdim);font-size:calc(2.3*var(--u))}
+html.nv2.nvx #spot .cu-cd{margin-top:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(1.2*var(--u))}
+html.nv2.nvx #spot .cu-c{background:var(--xmod2,#26251f);border:1.5px solid var(--xline,#3a3935);border-radius:calc(.9*var(--u));padding:calc(1.4*var(--u)) calc(1.4*var(--u)) calc(1.2*var(--u))}
+html.nv2.nvx #spot .cu-c b{font-family:var(--head);font-weight:700;font-size:calc(4.4*var(--u));line-height:1;color:#7fb2ff}
+html.nv2.nvx #spot .cu-c small{font-size:calc(1.6*var(--u));color:#7fb2ff;margin-left:calc(.5*var(--u))}
+html.nv2.nvx #spot .cu-c span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:calc(.7*var(--u));font-size:calc(1.8*var(--u));line-height:1.25;color:var(--xdim)}
+/* ---- live card: your game's details (replaces "also live") ---- */
+html.nv2.nvx #live .lvm>span{color:#8a867c;font-size:calc(1.9*var(--u));letter-spacing:.06em}
+html.nv2.nvx #live .lvm>b{font-weight:500;color:var(--xink)}
+html.nv2.nvx #live .lvm.pp>b{color:#ff6a2b}
+html.nv2.nvx #live #lvMore:empty{display:none}
+/* ---- weather corner: icon beside the temperature, smaller, everything lined up on the right ---- */
+html.nv2.nvx #shift>#wx{display:grid!important;grid-template-columns:auto auto;justify-content:end;align-content:center;column-gap:calc(1.6*var(--u));row-gap:0;text-align:right}
+html.nv2.nvx #shift>#wx>div:not(.map){display:contents!important}
+html.nv2.nvx #shift>#wx #wxicon{grid-column:1;grid-row:1;align-self:center;width:calc(8.5*var(--u))!important;height:calc(8.5*var(--u))!important;font-size:calc(7*var(--u))!important;position:static!important;margin:0!important;transform:none!important}
+html.nv2.nvx #shift>#wx #wxicon :is(svg,img,canvas){width:100%!important;height:100%!important}
+html.nv2.nvx #shift>#wx #temp{grid-column:2;grid-row:1;font-size:calc(10.5*var(--u))!important;line-height:.95!important;margin:0!important}
+html.nv2.nvx #shift>#wx :is(#wxdesc,#wxsub,#wxTm,#snowChip){grid-column:1/-1;justify-self:end}
+html.nv2.nvx #shift>#wx #wxdesc{font-size:calc(2.9*var(--u))!important;margin-top:calc(.8*var(--u))!important;line-height:1.15}
+html.nv2.nvx #shift>#wx :is(#wxsub,#wxTm){font-size:calc(1.9*var(--u))!important;line-height:1.5}
+/* ---- weather maps page: satellite 60% / radar 40% ---- */
+html.nv2.nvx #pRLoop.mxs .sat-card.mx-sat{flex:6 1 0}
+html.nv2.nvx #pRLoop.mxs .sat-card.rl-card{flex:4 1 0}
+html.nv2.nvx #pRLoop.mxs .rl-tip{display:none}
+html.nv2.nvx #pRLoop .mx-stage{position:relative;flex:1;min-height:0;border-radius:calc(1.8*var(--u));overflow:hidden;background:#000}
+html.nv2.nvx #pRLoop .mx-cv{position:absolute;inset:0;width:100%;height:100%}
+html.nv2.nvx #pRLoop .mx-pin{position:absolute;transform:translate(-50%,-50%);pointer-events:none}
+html.nv2.nvx #pRLoop .mx-pin i{display:block;width:calc(1.8*var(--u));height:calc(1.8*var(--u));border-radius:50%;background:#ff6a2b;border:3px solid #fff;box-shadow:0 0 0 calc(1*var(--u)) rgba(255,106,43,.3)}
+html.nv2.nvx #pRLoop .mx-pin b{position:absolute;left:calc(2.6*var(--u));top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--head);font-weight:700;font-size:calc(2.2*var(--u));color:#fff;text-shadow:0 1px 4px #000,0 0 8px #000}
+html.nv2.nvx #pRLoop .rl-geo .rl-base,html.nv2.nvx #pRLoop .rl-geo .rl-lab,html.nv2.nvx #pRLoop .rl-geo .rl-cv{position:absolute;inset:0}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -3008,8 +3048,16 @@ function renderLive(){
   $('lvA').innerHTML='<span class="tm">'+logoImg(g.lA)+'<span>'+esc(sn(g.nA))+'</span></span><span class="lvs">'+(pre?'':esc(g.sA))+'</span>';
   $('lvH').innerHTML='<span class="tm">'+logoImg(g.lH)+'<span>'+esc(sn(g.nH))+'</span></span><span class="lvs">'+(pre?'':esc(g.sH))+'</span>';
   /* the rest of the league's live games, small, along the bottom */
-  const more=(window.LGRAW||[]).flatMap(r=>r.games.filter(x=>x.state==='in'&&x.id!==g.id).map(x=>({x,L:r.L}))).slice(0,4);
-  const mo=$('lvMore');if(mo)mo.innerHTML=more.length?'<div class="lvm-h">Also live</div>'+more.map(({x})=>`<div class="lvm"><b>${esc(x.A)} ${esc(x.sA)} – ${esc(x.sH)} ${esc(x.H)}</b><span>${esc((x.live&&x.live.text)||x.det||'')}</span></div>`).join(''):'';
+  /* your game's details along the bottom: shots, the last goal, power play (from the live game feed) */
+  const mo=$('lvMore');if(mo){const me=LV&&LV._g&&LV._g.id===g.id&&Date.now()-(lvAt||0)<5*60000?LV:null;let rows='';
+    if(me&&me.away&&me.home&&me.away.sog!=null)rows+=`<div class="lvm"><span>Shots</span><b>${esc(g.A)} ${esc(me.away.sog)} · ${esc(me.home.sog)} ${esc(g.H)}</b></div>`;
+    if(me&&me.lastGoal&&me.lastGoal.name)rows+=`<div class="lvm"><span>Last goal</span><b>${esc(me.lastGoal.name)}${me.lastGoal.team?' · '+esc(me.lastGoal.team):''}</b></div>`;
+    if(me&&me.pp&&me.pp.s)rows+=`<div class="lvm pp"><span>Power play</span><b>${esc((me.pp.s==='h'?me.home:me.away).abbr||'')}${me.pp.time?' · '+esc(String(me.pp.time).replace(/^0(\d:)/,'$1'))+' left':''}</b></div>`;
+    if(mo.dataset.h!==rows){mo.dataset.h=rows;mo.innerHTML=rows}
+    if(!pre&&(!LV||LV._g&&LV._g.id!==g.id||Date.now()-(lvAt||0)>60000)&&$('shift').classList.contains('on'))try{if(!loadLive._t||Date.now()-loadLive._t>30000){loadLive._t=Date.now();loadLive()}}catch(e){}}
+  /* a long name ("Blackhawks", "Blue Jackets") shrinks to fit instead of being cut off */
+  {const sps=['lvA','lvH'].map(id=>$(id).querySelector('.tm>span')).filter(Boolean);sps.forEach(sp=>sp.style.fontSize='');let k=1;
+   for(let i=0;i<9&&sps.some(sp=>sp.scrollWidth>sp.clientWidth+1);i++){k-=.07;sps.forEach(sp=>sp.style.fontSize=(k*100)+'%')}}
   let txt;
   if(pre){const m=Math.round((g.date-Date.now())/60000);txt=(g.live.hockey?'Puck drop':L.sport==='baseball'?'First pitch':'Starts')+(m>0?' in '+m+' min':' now')}
   else if(g.live.clock!==null){const rem=Math.max(0,g.live.clock-Math.floor((Date.now()-it.at)/1000));txt=mmss(rem)+(g.live.per?' · '+g.live.per:'')}
@@ -3244,10 +3292,9 @@ function nextPage(force,hold){
   if(p.type==='nwrap')renderNWrap();
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
   if(p.type==='dashboard')renderSpot();
-  if(p.type==='rloop'||p.type==='maps')renderRLoop();
+  if(p.type==='rloop'||p.type==='maps'){const mx=p.type==='maps';if($('pRLoop').classList.contains('mxs')!==mx){$('pRLoop').classList.toggle('mxs',mx);$('rlBody').innerHTML='';RL.sig=''}renderRLoop()}
   clearTimeout(window._mapsT);
-  if(p.type==='maps'){if(Date.now()-SAT.at>600000)satGrab();const half=(hold||pageSecs(p))*500;
-    window._mapsT=setTimeout(()=>{if(!$('pRLoop').classList.contains('on'))return;$('pRLoop').classList.remove('on');$('pSat').classList.add('on','enter');setTimeout(()=>$('pSat').classList.remove('enter'),1700);renderSat()},half)}
+  if(p.type==='maps'){if(Date.now()-SAT.at>600000)satGrab();renderMxSat()}
   if(p.type==='aqua')aqStart();else aqStop();
   if(p.type==='car'){renderCar();loadCar()}
   renderCams(p.type==='cams');
@@ -3263,7 +3310,7 @@ function nextPage(force,hold){
   if(p.type==='tech'){tsVisit++;renderTech();if(Date.now()-tsAt>60000)loadTech()}
   if(p.type==='watch'){wtVisit++;renderWatch();if(Date.now()-wtAt>1800000)loadWatch()}
   pauseVideos();
-  Object.entries(PAGE_EL).forEach(([t,id])=>$(id).classList.toggle('on',t===p.type));
+  {const tid=PAGE_EL[p.type];new Set(Object.values(PAGE_EL)).forEach(id=>$(id).classList.toggle('on',id===tid))}
   {const pe=$(PAGE_EL[p.type]);if(pe&&!stay){pe.classList.add('enter');clearTimeout(pe._et);pe._et=setTimeout(()=>pe.classList.remove('enter'),1900);
     const ac=getComputedStyle(pe).getPropertyValue('--acc').trim();if(ac)$('pglow').style.setProperty('--pacc',ac);setTimeout(()=>countUp(pe),120)}}
   if(p.type==='hub'&&HUB&&(HUB.videos||[]).length){const v=vidPlayer('hub');if(v._list&&HUB.videos.length>1)v._idx=((v._idx||0)+1)%HUB.videos.length;mountVideo('hub','#hubVid',HUB.videos,true)}
@@ -7157,7 +7204,7 @@ async function celebrate(L,g,side){
 /* ================= Satellite (NOAA GOES-East, Great Lakes) ================= */
 const SAT={frames:[],idx:0,at:0};
 const satURL=()=>((CFG.satellite&&CFG.satellite.url)||'https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/cgl/GEOCOLOR/latest.jpg');
-function satGrab(){const im=new Image();im.decoding='async';im.onload=async()=>{try{await im.decode()}catch(e){}SAT.frames.push({im,at:Date.now()});if(SAT.frames.length>12)SAT.frames.shift();SAT.at=Date.now();if($('pSat').classList.contains('on'))renderSat()};
+function satGrab(){const im=new Image();im.decoding='async';im.onload=async()=>{try{await im.decode()}catch(e){}SAT.frames.push({im,at:Date.now()});if(SAT.frames.length>12)SAT.frames.shift();SAT.at=Date.now();if($('pSat').classList.contains('on'))renderSat();if($('pRLoop').classList.contains('mxs')&&$('pRLoop').classList.contains('on')&&!MXS.cur)renderMxSat()};
   im.onerror=()=>{SAT.err=true;if($('pSat').classList.contains('on'))renderSat()};im.src=satURL()+(satURL().includes('?')?'&':'?')+'t='+Math.floor(Date.now()/600000)}
 setInterval(satGrab,600000);
 let satT=null;
@@ -7183,6 +7230,24 @@ function renderSat(){
   if(F.length>1)satT=setInterval(()=>{if(!$('pSat').classList.contains('on')){clearInterval(satT);return}SAT.idx=(SAT.idx+1)%(F.length+3);show(Math.min(SAT.idx,F.length-1))},1600);
 }
 
+
+/* ================= Weather maps page: satellite (top 60%), cropped to Southern Ontario with a home pin ================= */
+const MXS={i:0,raf:0,t:null,cur:null};
+function renderMxSat(){clearInterval(MXS.t);
+  const go=()=>{const pg=$('pRLoop');if(!pg.classList.contains('on')||!pg.classList.contains('mxs')){clearInterval(MXS.t);return}
+    const cv=pg.querySelector('.mx-cv'),st=pg.querySelector('.mx-stage');if(!cv||!st)return;
+    const F=SAT.frames;if(!F.length){$('mxTime').textContent=SAT.err?'Satellite unavailable':'Loading satellite…';return}
+    const W=st.clientWidth,H=st.clientHeight;if(W<50||H<50)return;const dpr=Math.min(2,window.devicePixelRatio||1);
+    if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);MXS.cur=null}
+    MXS.i=(MXS.i+1)%(F.length+3);const fi=Math.min(MXS.i,F.length-1),f=F[fi],im=f.im,iw=im.naturalWidth,ih=im.naturalHeight;if(!iw)return;
+    /* home is at about 70% across / 34.6% down the GOES Great Lakes picture; crop so it sits a bit right of centre (weather comes from the west) */
+    const S=CFG.satellite||{},hx=S.homeX||.697,hy=S.homeY||.346,span=S.span||.476,sw=iw*span,sh=Math.min(ih,sw*H/W);
+    let sx=hx*iw-.6*sw,sy=hy*ih-.5*sh;sx=Math.max(0,Math.min(iw-sw,sx));sy=Math.max(0,Math.min(ih-sh,sy));
+    const pin=st.querySelector('.mx-pin');pin.style.left=((hx*iw-sx)/sw*100)+'%';pin.style.top=((hy*ih-sy)/sh*100)+'%';
+    const last=fi===F.length-1;$('mxTime').textContent=(last?'Latest · ':'')+fmt(new Date(f.at));$('mxLive').style.visibility=last?'visible':'hidden';
+    if(MXS.cur===im)return;MXS.cur=im;const c=cv.getContext('2d');cancelAnimationFrame(MXS.raf);const t0=performance.now();
+    const step=t=>{const a=Math.min(1,(t-t0)/700);c.globalAlpha=a<1?.25:1;c.drawImage(im,sx,sy,sw,sh,0,0,cv.width,cv.height);if(a<1)MXS.raf=requestAnimationFrame(step)};MXS.raf=requestAnimationFrame(step)};
+  MXS.i=(SAT.frames.length||1)+1;MXS.cur=null;go();MXS.t=setInterval(go,1600)}
 /* ================= Rain radar loop (Environment Canada 1 km radar, last ~90 minutes) ================= */
 const RL={times:[],at:0,step:6,sig:'',idx:0,err:false,ok:0};let rlT=null;
 const rlCfg=()=>Object.assign({frames:15,zoom:7},CFG.radarLoop||{});
@@ -7211,21 +7276,26 @@ function rlOutlook(){const H=WXD&&WXD.hr;if(!H||!H.time)return '';
   return `<b>Next 6 hours: ${mx}% chance of ${w}</b><span>${k<0?'Possible showers, but nothing certain.':k===0?'Likely within the hour — watch the blobs heading for the pin.':'Most likely starting around '+fmt(new Date(H.time[i0+k]))+'.'}</span>`}
 function renderRLoop(){
   const b=$('rlBody'),C=rlCfg();
-  if(!b.querySelector('.rl-stage')){b.innerHTML=`<div class="jf-title">Rain radar · Southern Ontario</div><div class="sat-wrap"><div class="jf-glass sat-card"><div class="rl-stage"><div class="rl-base"></div><canvas class="rl-cv"></canvas><div class="rl-lab"></div><div class="rl-fx"></div></div>
+  const MX=$('pRLoop').classList.contains('mxs');
+  if(!b.querySelector('.rl-stage')){b.innerHTML=`<div class="jf-title">${MX?'Weather maps':'Rain radar'} · Southern Ontario</div><div class="sat-wrap">${MX?`<div class="jf-glass sat-card mx-sat"><div class="mx-stage"><canvas class="mx-cv"></canvas><div class="mx-pin"><i></i><b>${esc(CFG.city||'Home')}</b></div></div>
+      <div class="sat-bar"><span class="sat-live" id="mxLive">● LIVE</span><span id="mxTime">Loading satellite…</span><span class="sat-src">NOAA GOES-East · clouds</span></div></div>`:''}<div class="jf-glass sat-card rl-card"><div class="rl-stage"><div class="rl-geo"><div class="rl-base"></div><canvas class="rl-cv"></canvas><div class="rl-lab"></div></div><div class="rl-fx"></div></div>
       <div class="sat-bar"><span class="sat-live" id="rlLive">● LIVE</span><span id="rlTime"></span><span class="sat-src">Environment Canada · 1 km radar</span></div><div class="rl-prog" id="rlProg"></div></div>
       <div class="jf-glass gd-card rl-tip" id="rlTip"></div></div>`;RL.sig=''}
   const tip=$('rlTip'),ot=rlOutlook();tip.innerHTML=ot||`<b>What you're seeing</b><span>The last ${Math.round(C.frames*RL.step/6)*6} minutes of rain and snow, every ${RL.step} minutes. Rings are 50, 100 and 200 km from home.</span>`;
   if(!RL.times.length){if(Date.now()-RL.at>60000)loadRLoop();return}
   const st=b.querySelector('.rl-stage'),W=Math.round(st.clientWidth),H=Math.round(st.clientHeight);if(W<50||H<50){setTimeout(renderRLoop,300);return}
+  /* in the split view the map is drawn bigger then shrunk (k), i.e. zoomed out a notch, so snow coming across the lakes shows up sooner */
+  const k=MX?(+C.splitScale||.72):1,VW=Math.round(W/k),VH=Math.round(H/k);
+  const geo=st.querySelector('.rl-geo');geo.style.cssText=`position:absolute;left:0;top:0;width:${VW}px;height:${VH}px;transform:scale(${k});transform-origin:0 0`;
   const z=C.zoom,N=256*2**z,lr=CFG.lat*Math.PI/180,px=(CFG.lon+180)/360*N,py=(1-Math.log(Math.tan(lr)+1/Math.cos(lr))/Math.PI)/2*N;
   /* home sits a bit right of centre so more of the west (where weather comes from) is visible */
-  const ox=px-W*.58,oy=py-H*.5,sig=[W,H,z,RL.times.join()].join('|');
+  const ox=px-VW*.58,oy=py-VH*.5,sig=[W,H,z,k,RL.times.join()].join('|');
   if(sig!==RL.sig){RL.sig=sig;
     const tile=(svc,tx,ty)=>`<img src="https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/${svc}/MapServer/tile/${z}/${ty}/${tx}" style="left:${Math.round(tx*256-ox)}px;top:${Math.round(ty*256-oy)}px" alt="" onerror="this.remove()">`;
-    let bs='',ls='';for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+W)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+H)/256);ty++){bs+=tile('World_Dark_Gray_Base',tx,ty);ls+=tile('World_Dark_Gray_Reference',tx,ty)}
+    let bs='',ls='';for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+VW)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+VH)/256);ty++){bs+=tile('World_Dark_Gray_Base',tx,ty);ls+=tile('World_Dark_Gray_Reference',tx,ty)}
     st.querySelector('.rl-base').innerHTML=bs;st.querySelector('.rl-lab').innerHTML=ls;
-    const R=6378137,mx=x=>x/N*2*Math.PI*R-Math.PI*R,my=y=>Math.PI*R-y/N*2*Math.PI*R,bb=[mx(ox),my(oy+H),mx(ox+W),my(oy)].map(v=>v.toFixed(0)).join(',');
-    const sc=Math.min(1,1400/Math.max(W,H)),iw=Math.round(W*sc),ih=Math.round(H*sc);
+    const R=6378137,mx=x=>x/N*2*Math.PI*R-Math.PI*R,my=y=>Math.PI*R-y/N*2*Math.PI*R,bb=[mx(ox),my(oy+VH),mx(ox+VW),my(oy)].map(v=>v.toFixed(0)).join(',');
+    const sc=Math.min(1,1400/Math.max(VW,VH)),iw=Math.round(VW*sc),ih=Math.round(VH*sc);
     const cv=st.querySelector('.rl-cv');cv.width=iw;cv.height=ih;RL.ctx=cv.getContext('2d');RL.ctx.clearRect(0,0,iw,ih);RL.ok=0;RL.loaded=new Set();RL.bad=new Set();
     /* frames are decoded up front and painted onto one canvas, so the loop never flickers */
     /* each frame = a rain picture + a snow picture (Environment Canada only serves one layer per request) */
@@ -7236,7 +7306,7 @@ function renderRLoop(){
         im.src=`${WMS_RL}&layers=${ly}&bbox=${bb}&width=${iw}&height=${ih}&time=${tm}`;fr.ims.push(im)});
       return fr});
     /* range rings + home pin + sweep */
-    const hx=px-ox,hy=py-oy,kmPx=1000/(156543.034*Math.cos(lr)/2**z);
+    const hx=(px-ox)*k,hy=(py-oy)*k,kmPx=k*1000/(156543.034*Math.cos(lr)/2**z);
     st.querySelector('.rl-fx').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${[50,100,200].map(k=>`<circle cx="${hx}" cy="${hy}" r="${(k*kmPx).toFixed(1)}" fill="none" stroke="rgba(79,209,165,.35)" stroke-width="1.5" stroke-dasharray="6 6"/>`).join('')}</svg>
       ${[50,100,200].map(k=>`<div class="rl-ring" style="left:${hx}px;top:${(hy-k*kmPx).toFixed(0)}px">${k} km</div>`).join('')}
       <div class="rl-sweep" style="--px:${hx}px;--py:${hy}px"></div><div class="rl-pin" style="left:${hx}px;top:${hy}px"><i></i><b>${esc(CFG.city||'Home')}</b></div>
@@ -7450,6 +7520,7 @@ const spPlain=h=>{const d=document.createElement('div');d.innerHTML=String(h||''
 /* nothing grim on a kitchen screen */
 const spGrim=/\b(kill|killed|killing|bomb|bombing|attack|massacre|murder|shoot|shooting|terror|dies|died|death|dead|crash|disaster|execut|war\b|wars\b|genocide|assassin|hijack|sank|sinks|explosion|riot|invasion|invade|suicide|plague|famine)/i;
 async function loadSpotlight(){
+  return;   /* the trivia/spotlight card is now "Coming up" (renderSpot below) */
   if(CFG.spotlight&&CFG.spotlight.on===false)return;
   const n=new Date(),p=x=>String(x).padStart(2,'0'),out=[];
   if(Date.now()-SP.at>3*3600e3||!SP.items.length){
@@ -7504,7 +7575,22 @@ function spFit(el){const tx=el.querySelector('.sp-txt'),inn=el.querySelector('.s
     for(let g=0;g<14&&over()&&f>min;g++){f*=.93;tx.style.fontSize=f+'px'}
     if(over()){tx.style.display='';tx.style.webkitLineClamp=''}};
   go();const im=el.querySelector('.sp-img img:not(.sp-bg)');if(im&&!im.complete)im.addEventListener('load',go,{once:true})}
-function renderSpot(midVisit){
+
+/* ================= "Coming up" (where the trivia used to be): next events, countdowns, reminders ================= */
+function renderSpot(){const el=$('spot');if(!el)return;const now=new Date(),t0=dayStart(now),D=864e5;
+  const when=d=>{const k=Math.round((dayStart(d)-t0)/D);return k<=0?'Today':k===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short'})};
+  const ev=(typeof calEvents!=='undefined'?calEvents:[]).filter(e=>e.end>now&&e.start-now<10*D&&!/birthday|anniversary|bday/i.test(e.title)).sort((a,b)=>a.start-b.start).slice(0,7);
+  const cd=(typeof countdownList==='function'?countdownList():[]).filter(c=>daysUntil(c.date)>0).slice(0,3);
+  const rm=(typeof remList==='function'?remList():[]).filter(r=>r.at>Date.now()&&r.at-Date.now()<7*D).slice(0,2);
+  const rows=[...ev.map(e=>({t:+e.start,h:(()=>{const on=e.start<=now&&e.end>now;return `<div class="cu-r${on?' now':''}"><b>${esc(e.title)}</b><span class="cu-w">${on?'Now':when(e.start)} · ${e.allDay?'All day':fmt(e.start)}</span></div>`})()})),
+    ...rm.map(r=>({t:r.at,h:`<div class="cu-r rem"><b>${esc(r.text)}</b><span class="cu-w">Reminder · ${when(new Date(r.at))} ${fmt(new Date(r.at))}</span></div>`}))].sort((a,b)=>a.t-b.t).slice(0,7);
+  const evH=rows.map(r=>r.h).join('');
+  const cdH=cd.map(c=>{const n=daysUntil(c.date);return `<div class="cu-c"><b>${n}</b><small>${n===1?'day':'days'}</small><span>${esc(String(c.name).replace(/'s birthday/i,"'s bday"))}</span></div>`}).join('');
+  const rmH='';
+  const html=`<div class="sp-tag">Coming up</div><div class="cu">${evH||rmH?`<div class="cu-l">${evH}${rmH}</div>`:'<div class="cu-none">Nothing on the calendar this week</div>'}${cdH?`<div class="cu-cd">${cdH}</div>`:''}</div>`;
+  if(el.dataset.h!==html){el.dataset.h=html;el.innerHTML=html}}
+setInterval(()=>{if($('shift').classList.contains('on'))renderSpot()},60000);
+function renderSpotOld(midVisit){
   const el=$('spot');if(!el)return;clearTimeout(SP.reveal);SP.shownAt=Date.now();if(SP.cur&&!SP.done)tvReveal(SP.cur);
   const left=((window._pgEnd||Infinity)-Date.now())/1000,need=((CFG.spotlight&&CFG.spotlight.answerSecs)||12)+4;
   let it=spNext();
@@ -7881,7 +7967,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 209';
+document.getElementById('ver').textContent='build nova 210';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
