@@ -2455,6 +2455,11 @@ html.nv2.nvx #live .lvm>b{white-space:nowrap;overflow:hidden;text-overflow:ellip
 #npBody.fmS-on .fm-card>*{flex-shrink:0}
 #npBody.fmS-on .fm-card:not(.fm-feat){flex-shrink:0}
 #npBody.fmS-on .fm-card.fm-feat{padding-bottom:3vw}
+.fm-show b i{font-style:normal;text-transform:lowercase;letter-spacing:.06em;color:#c9c4b8;font-weight:500}
+.fm-feat .ff-lu .fm-row{padding:.7vw 0}
+.fm-feat .ff-lu .fm-row b{font-size:2.2vw}
+.fm-feat .ff-lu .fm-row em{color:#8a867c;font-size:1.9vw}
+.fm-feat .ff-lu .fm-row.on b,.fm-feat .ff-lu .fm-row.on em{color:#ff6a2b}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -5049,7 +5054,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
   let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
   b.className='fmS-on';
   b.innerHTML=`<div class="fm-ban"><svg viewBox="0 0 1080 520" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3836"/><stop offset=".55" stop-color="#232220"/><stop offset="1" stop-color="#141413"/></linearGradient><radialGradient id="fmgl" cx=".18" cy=".1" r=".7"><stop offset="0" stop-color="rgba(255,255,255,.10)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><rect width="1080" height="520" fill="url(#fmbg)"/><rect width="1080" height="520" fill="url(#fmgl)"/><g fill="none" stroke-linecap="round"><path d="M-120 330 Q 420 520 1220 40" stroke="rgba(255,255,255,.10)" stroke-width="2"/><path d="M-120 380 Q 480 560 1220 110" stroke="rgba(255,255,255,.07)" stroke-width="1.5"/><path d="M-120 420 Q 520 600 1220 190" stroke="rgba(255,106,43,.45)" stroke-width="2.5"/><path d="M-120 460 Q 560 640 1220 260" stroke="rgba(255,255,255,.05)" stroke-width="1.5"/><path d="M-160 250 Q 380 470 1240 -60" stroke="rgba(255,255,255,.06)" stroke-width="40"/></g></svg></div><div class="fmS">
-    <div class="fm-hd">${fmSticker()}<div class="fm-show"><b>${esc(fmShow().name)}</b><small>with ${esc(fmShow().host)} · ${esc(fmShow().tag)}</small></div></div>
+    <div class="fm-hd">${fmSticker()}<div class="fm-show"><b>${esc(fmShow().name)} <i>with</i> ${esc(fmShow().host)}</b><small>${esc(fmShow().tag)}</small></div></div>
     <div class="fm-dial">${dial}<u></u><span>NOVA</span></div>
     <div class="fm-sub"><span><i class="fm-live"></i>Live · Your library · Apple Music</span><span class="fm-air${FM.air?' on':''}"><i></i>ON AIR</span></div>
     <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
@@ -5108,15 +5113,18 @@ function fmFeatures(s){const C=NM.get('fmfsong',{})[fmFeatKey(s||{})]||{},D=NM.g
     if(FM.on&&!fmQuiet()){if(FM.pend||FM.busy)out.push(['Next break','after this song']);else if(left>0)out.push(['Next break',`after ${left} more song${left>1?'s':''}`]);
       const hh=new Date(now);hh.setHours(now.getHours()+1,0,0,0);const nxt=new Date(+hh);const qs=FMC().quiet;const quietSoon=(()=>{const h=nxt.getHours();return qs[0]>qs[1]?(h>=qs[0]||h<qs[1]):(h>=qs[0]&&h<qs[1])})();
       if(!quietSoon||+NM.get('fmwake',0)>+hh)out.push(['Station ID',hh.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})])}
-    const ns=fmNextShow();out.push([ns.show.name,ns.at.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})]);
+    const ns=fmNextShow();out.push([`${ns.show.name} with ${ns.show.host}`,ns.at.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})]);
     if(now.getDay()===5&&typeof fmTop5==='function'&&fmTop5().length>=5&&!NM.get('fmsaidk',[]).includes('top5:'+fmWeek()))out.push(['Top 5 countdown','tonight']);
     if(FM.req)out.push(['Your request',FM.req]);
     if(+NM.get('fmwake',0)>Date.now())out.push(['Staying up till',new Date(+NM.get('fmwake',0)).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})]);
     else if(FM.on){const st=new Date();st.setHours(FMC().quiet[0],0,0,0);if(st>now&&st-now<6*3600e3)out.push(['Quiet hours',st.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})])}
     return out.length?{tag:'Coming up on Nova',rows:out.slice(0,4)}:null}]);
+  /* the day's shows and who hosts them, starting with the one on now */
+  F.push(['lineup',()=>{const cur=fmShow(),i0=FM_SHOWS.indexOf(cur),hr=h=>{const d=new Date();d.setHours(h,0,0,0);return d.toLocaleTimeString([],{hour:'numeric'}).replace(/:00/,'')};
+    return {tag:"Today's lineup",rows:Array.from({length:FM_SHOWS.length},(_,k)=>FM_SHOWS[(i0+k)%FM_SHOWS.length]).map((x,k)=>[`${x.name} with ${x.host}`,k===0?'On now · till '+hr(x.to):hr(x.from)+'–'+hr(x.to)]),rowsAll:1}}]);
   F.push(['take',()=>C.take?{tag:"Nova's take",body:C.take,foot:'— Nova'}:null]);
   return F}
-function fmFeatHTML(f){if(f.rows)return `<span class="fm-tag">${esc(f.tag)}</span><div class="ff-rows">${f.rows.map(r=>`<div class="fm-row"><b>${esc(r[0])}</b><em>${esc(r[1])}</em></div>`).join('')}</div>`;
+function fmFeatHTML(f){if(f.rows)return `<span class="fm-tag">${esc(f.tag)}</span><div class="ff-rows${f.rowsAll?' ff-lu':''}">${f.rows.map((r,i)=>`<div class="fm-row${f.rowsAll&&i===0?' on':''}"><b>${esc(r[0])}</b><em>${esc(r[1])}</em></div>`).join('')}</div>`;
   if(f.stats)return `<span class="fm-tag">${esc(f.tag)}</span><div class="ff-st">${f.stats.map(x=>`<div><b>${esc(String(x[0]))}</b><small>${esc(x[1])}</small></div>`).join('')}</div>${f.body?`<div class="ff-b">${f.body}</div>`:''}${f.foot?`<div class="ff-f">${f.foot}</div>`:''}`;
   return `<span class="fm-tag">${esc(f.tag)}</span>${f.title?`<div class="ff-t">${esc(f.title)}</div>`:''}<div class="ff-b">${esc(f.body)}</div>${f.foot?`<div class="ff-f">${esc(f.foot)}</div>`:''}`}
 /* pick the next feature that has something real to say; the rotation keeps its place through screen redraws */
@@ -8212,7 +8220,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 225';
+document.getElementById('ver').textContent='build nova 227';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
