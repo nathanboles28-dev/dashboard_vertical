@@ -2541,6 +2541,61 @@ body:not(.noTicker):not(.hasTicker) #npBody.fmS-on:not(.fm-noup) .fm-row{padding
 @keyframes amb_bokeh{0%,100%{opacity:.55}50%{opacity:.95}}
 @keyframes amb_ovl{0%,70%{opacity:1}80%,100%{opacity:.0}}
 @keyframes amb_slide{from{transform:translateY(-8px)}to{transform:translateY(8px)}}
+/* ================= Nova Observatory ================= */
+#obsBody{position:absolute;inset:0;display:flex;flex-direction:column}
+.ob-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:11.4vw 5vw 9.4vw;gap:1.05vw;color:#e6e2d9;font-family:'NovaSans','Inter',sans-serif}
+.ob-k{font-style:normal;font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;font-size:1.45vw;letter-spacing:.14em;text-transform:uppercase;padding:.25vw .8vw;border-radius:.5vw;border:1px solid #3a3935;color:#8a867c;vertical-align:middle;margin-left:1vw}
+.ob-k-est{color:#c9b38a;border-color:#4a4234}.ob-k-calc{color:#9fb4c9;border-color:#2f3a46}.ob-k-rep{color:#9cc9a8;border-color:#2e4235}.ob-k-pub{color:#c9a8c9;border-color:#443246}
+.ob-pop{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:.4vw}
+.ob-pop small{font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;font-size:2vw;letter-spacing:.2em;text-transform:uppercase;color:#8a867c}
+.ob-pop b{font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:8vw;line-height:1.02;letter-spacing:-.02em;color:#f4efe6;font-variant-numeric:tabular-nums;margin:.4vw 0 .2vw}
+.ob-pop span{font-size:1.9vw;color:#8a867c}
+.ob-stage{position:relative;flex:0 0 auto;height:57vw;margin:-.6vw -5vw 0}
+.ob-globe{position:absolute;inset:0}
+.ob-globe canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ob-globe.obg-nogl{background:radial-gradient(circle at 50% 50%,#1d2a3c 0,#0f1520 31%,transparent 32%)}
+.ob-side{position:absolute;top:2vw;bottom:9vw;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.ob-side.l{left:5vw;text-align:left}.ob-side.r{right:5vw;text-align:right}
+.ob-side small{display:block;font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;font-size:1.7vw;letter-spacing:.16em;text-transform:uppercase;color:#8a867c}
+.ob-side b{display:block;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:4.2vw;line-height:1.1;color:#ff6a2b;font-variant-numeric:tabular-nums}
+.ob-side em{display:block;font-style:normal;font-size:1.6vw;color:#8a867c;max-width:24vw;margin-left:auto}
+.ob-utc{position:absolute;left:5vw;bottom:1.2vw;font-variant-numeric:tabular-nums}
+.ob-utc small{font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;font-size:1.7vw;letter-spacing:.16em;color:#8a867c;margin-right:1vw}
+.ob-utc b{font-size:2.6vw;font-weight:500;color:#e6e2d9}
+.ob-yr{position:absolute;right:5vw;bottom:1.4vw;font-size:1.75vw;color:#8a867c;text-align:right}
+.ob-yr b{color:#e6e2d9;font-weight:600}
+.ob-yr .ob-k{font-size:1.3vw}
+.ob-sec{display:flex;align-items:center;gap:0;margin-top:.5vw;font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;font-size:2.2vw;letter-spacing:.18em;text-transform:uppercase;color:#ff6a2b}
+.ob-sec em{margin-left:auto;font-style:normal;font-family:'Inter',sans-serif;font-weight:400;font-size:1.6vw;letter-spacing:0;text-transform:none;color:#6f6b62}
+.ob-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2vw}
+.ob-grid>div,.ob-chips>div,.ob-sp>div{background:#1f1f1d;border:1.5px solid #34332f;border-radius:1.2vw;padding:1.2vw 1.8vw 1.1vw;min-width:0}
+.ob-grid small,.ob-chips small,.ob-sp small{display:block;font-size:1.6vw;color:#8a867c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-grid b{display:block;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:3.3vw;line-height:1.15;color:#f4efe6;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ob-grid b i{font-style:normal;font-family:'Inter',sans-serif;font-weight:500;font-size:1.8vw;color:#8a867c;margin-left:.6vw}
+.ob-grid span,.ob-chips span,.ob-sp span{display:block;font-size:1.55vw;color:#6f6b62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.2vw}
+.ob-chips b{display:block;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:3.3vw;line-height:1.15;color:#f4efe6;white-space:nowrap}
+.ob-chips>div.red{border-color:#e5484d}.ob-chips>div.red b{color:#e5484d}
+.ob-ev{display:flex;flex-direction:column;background:#1f1f1d;border:1.5px solid #34332f;border-radius:1.2vw;padding:.4vw 2vw;min-height:0;overflow:hidden}
+.ob-ev>div{display:flex;align-items:center;gap:2vw;padding:.95vw 0;border-top:1px solid #2c2b28;min-width:0}
+.ob-ev>div:first-child{border-top:0}
+.ob-ic{flex:none;width:4.4vw;height:4.4vw;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:2.4vw;background:#2a2926;color:#e8b931}
+.ob-ic-storm{color:#78beff}.ob-ic-volcano,.ob-ic-fire{color:#ff9a3c}.ob-ic-space{color:#c9a8ff}.ob-ic-tsunami{color:#5fc8ff}
+.ob-ev>div.red .ob-ic{background:rgba(229,72,77,.18);color:#e5484d}
+.ob-ev>div.calm .ob-ic{color:#4fd18b}
+.ob-ev>div>div{flex:1;min-width:0}
+.ob-ev b{display:block;font-size:2.35vw;font-weight:600;color:#efe9dc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-ev>div.red b{color:#ff6b6f}
+.ob-ev span{display:block;font-size:1.75vw;color:#8a867c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-ev em{flex:none;font-style:normal;text-align:right;font-size:1.75vw;color:#c9c4b8}
+.ob-ev em small{display:block;font-size:1.45vw;color:#6f6b62}
+.ob-sp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.6fr);gap:1.2vw}
+.ob-sp:not(:has(> :nth-child(3))){grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+.ob-sp b{display:block;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:3.3vw;line-height:1.15;color:#f4efe6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-sp .ob-ln b{font-family:'Inter',sans-serif;font-weight:600;font-size:2.5vw;line-height:1.5}
+.ob-src{margin-top:auto;font-size:1.3vw;line-height:1.4;color:#5a5650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
+.ob-grid b u{text-decoration:none}
+.ob-ev{flex:0 0 auto}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -2770,6 +2825,7 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 <section id="pTrip" class="page"><div id="tpBody"></div></section>
 <section id="pNWrap" class="page"><div id="nwBody"></div></section>
 <section id="pSat" class="page"><div id="satBody"></div></section>
+<section id="pObs" class="page"><div id="obsBody"></div></section>
 <section id="pRLoop" class="page"><div id="rlBody"></div></section>
 <section id="pCams" class="page"><div id="camBody"></div></section>
 <section id="pAqua" class="page"><canvas id="aqCv"></canvas><div id="aqClock"></div></section>
@@ -2833,7 +2889,8 @@ const CFG={
     {type:'nwrap',     secs:25},   // Nova Wrapped: the 1st to 3rd of each month (trivia champ, recipes, questions, flights)
     {type:'week',      secs:45},   // Sunday evening + Monday morning only
     {type:'local',     secs:40},
-    {type:'maps',      secs:60},   // weather maps: rain radar loop, then the satellite loop (half the time each)
+    {type:'maps',      secs:60},
+    {type:'obs',       secs:45},   // Nova Observatory: the live Earth, people, planet events (turn off: observatory:{on:false} below, or say "observatory off")   // weather maps: rain radar loop, then the satellite loop (half the time each)
     {type:'cams',      secs:40},
     {type:'news',      secs:40},   // team news: a featured story to read + more headlines
     {type:'townnews',  secs:30},   // Around here: local headlines
@@ -2862,6 +2919,7 @@ const CFG={
   // apiKey: a free Google API key with the Google Drive API turned on.
   // Until both are filled in, the photos page is skipped.
   // Photos come from your Google Drive folder through the relay (Worker secrets DRIVE_KEY + DRIVE_FOLDER), so no key lives in this file
+  observatory:{on:true},   // Nova Observatory page in the rotation
   photos:{on:true},
   // Nicer names on the Tonight page (full team name → what to show)
   nicknames:{'Maple Leafs':'Leafs','Blue Jays':'Jays'},
@@ -3546,10 +3604,10 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
+const PAGE_EL={obs:'pObs',world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
-const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='world'||!!worldBig())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
+const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='obs'||obsOn())&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='world'||!!worldBig())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
   const G=CFG.goalAlert||{};if(G.on===false)return;
@@ -3591,6 +3649,7 @@ function nextPage(force,hold){
   if(p.type==='radio'){renderRadio();rgSummary()}
   if(p.type==='nwrap')renderNWrap();
   if(p.type==='sat'){if(Date.now()-SAT.at>600000)satGrab();renderSat()}
+  if(p.type==='obs')renderObs();
   if(p.type==='dashboard')renderSpot();
   if(p.type==='rloop'||p.type==='maps'){const mx=p.type==='maps';if($('pRLoop').classList.contains('mxs')!==mx){$('pRLoop').classList.toggle('mxs',mx);$('rlBody').innerHTML='';RL.sig=''}renderRLoop()}
   clearTimeout(window._mapsT);
@@ -4041,7 +4100,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={world:'Breaking news',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={obs:'Observatory',world:'Breaking news',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
@@ -4400,6 +4459,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Hourly (next 12 h)',()=>{const H=WXD&&WXD.hr;if(!H||!H.time)return '';const i0=H.time.findIndex(t=>Date.parse(t)>=Date.now()-36e5);return H.time.slice(i0,i0+12).map((t,i)=>`${new Date(t).getHours()}:00 ${Math.round(H.temperature_2m[i0+i])}° ${(WXT[H.weather_code[i0+i]]||'').toLowerCase()} ${H.precipitation_probability?H.precipitation_probability[i0+i]+'% precip':''}`).join('; ')});
   add('7-day',()=>{const d=WXD&&WXD.dl;if(!d)return '';return d.time.slice(0,7).map((t,i)=>`${new Date(t+'T12:00').toLocaleDateString([],{weekday:'short'})} ${Math.round(d.temperature_2m_max[i])}/${Math.round(d.temperature_2m_min[i])} ${(WXT[d.weather_code[i]]||'').toLowerCase()} ${(d.precipitation_probability_max||[])[i]||0}%`).join('; ')});
   add('Weather alerts',()=>wxAlerts.map(a=>a.alert_name_en).join(', '));
+  add('Nova Observatory (planet, people, natural events)',()=>typeof obsContext==='function'?obsContext():'');
   add('Calendar (next 2 weeks)',()=>calEvents.filter(e=>e.end>Date.now()&&e.start-Date.now()<14*864e5).sort((a,b)=>a.start-b.start).slice(0,25).map(e=>`${e.allDay?e.start.toDateString()+' all day':D(e.start)} – ${e.title}${e.loc?' @ '+e.loc:''}`).join('\n'));
   add('Week ahead',()=>weekSay());
   add('Leafs',()=>typeof hubOn==='function'&&hubOn()?hubSay():'');add('Knights',()=>typeof khOn==='function'&&khOn()?khSay():'');
@@ -5164,6 +5224,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   if(mode!=='hour'){
     if(nt&&mode!=='roundup')extra.push(`COMING UP: "${nt}"${na?' by '+na:''} plays right after this break. Say it naturally, e.g. "and coming up next, ${nt}${na?' from '+na:''}", before the rest of the break.`);
     if(!spec&&said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
+    if(!spec&&!FM.newsId&&mode==='next'&&Math.random()<.12){const f=obsFmFact();if(f)extra.push(`PLANET FACT (from the Nova Observatory, use it naturally and briefly, with a light touch, e.g. "here's something to think about..."; keep any estimate or calculation wording honest): ${f}`)}
     if(!spec&&!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='',why='';
@@ -5188,7 +5249,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   if(FM.hostK&&!GUEST)NM.set('fmhostk',FM.hostK);
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':SHOW.voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
-function fmAirUI(on){if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmAirHost(),brk:1})}FM.queued=null}
+function fmAirUI(on){try{const k=new Date().toDateString();if(FM.on&&NM.get('fmonDay','')!==k){NM.set('fmonDay',k);NM.set('fmonAt',Date.now())}}catch(e){}if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmAirHost(),brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
   if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
@@ -5376,6 +5437,281 @@ function ambOn(k){k=AMB.S[k]?k:ambPick();let el=$('amb');
   try{wakeScreen()}catch(e){}return AMB.names[k]}
 function ambOff(){const el=$('amb');AMB.on=false;clearInterval(AMB.t);if(el){el.className='';setTimeout(()=>{if(!AMB.on){const v=el.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}el.innerHTML=''}},700)}}
 addEventListener('resize',ambFit);
+/* ================= Nova Observatory: the globe =================
+   One WebGL2 quad, no libraries: each pixel works out where its ray hits the Earth, then lights it from the real Sun
+   position (day side from NASA Blue Marble, night side from NASA Black Marble city lights, a soft atmosphere at the rim).
+   Markers (Woodstock, earthquakes, storms…) are drawn on a 2D canvas on top with the same projection.
+   It only draws while the page is on screen, at most 30 frames a second. */
+const OBG={gl:null,cv:null,ov:null,prog:null,tex:{},ready:0,lon0:-80.75,lat0:22,spin:1.5,raf:0,last:0,focus:null,marks:[],t0:performance.now(),err:''};
+const OB_D2R=Math.PI/180;
+/* where the Sun is overhead right now (subsolar point), NOAA/Meeus low-precision formulas, good to ~0.01° */
+function obSun(ms){const n=(ms||Date.now())/864e5+2440587.5-2451545,L=(280.460+.9856474*n)%360,g=(357.528+.9856003*n)*OB_D2R,
+  lam=(L+1.915*Math.sin(g)+.020*Math.sin(2*g))*OB_D2R,eps=(23.439-4e-7*n)*OB_D2R,dec=Math.asin(Math.sin(eps)*Math.sin(lam)),
+  ra=Math.atan2(Math.cos(eps)*Math.sin(lam),Math.cos(lam))/OB_D2R,gmst=(280.46061837+360.98564736629*n)%360;
+  let lon=((ra-gmst)%360+540)%360-180;return {lat:dec/OB_D2R,lon,R:1.00014-.01671*Math.cos(g)-.00014*Math.cos(2*g)}}
+const obVec=(lat,lon)=>{const a=lat*OB_D2R,b=lon*OB_D2R;return [Math.cos(a)*Math.sin(b),Math.sin(a),Math.cos(a)*Math.cos(b)]};
+function obBasis(lat0,lon0){const F=obVec(lat0,lon0),Y=[0,1,0],c=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],nz=v=>{const l=Math.hypot(...v);return v.map(x=>x/l)};
+  const R=nz(c(Y,F)),U=c(F,R);return {R,U,F}}
+const OB_VS=`#version 300 es
+in vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
+const OB_FS=`#version 300 es
+precision highp float;
+uniform sampler2D uDay,uNight,uCloud,uSpec;uniform vec3 uSun,uR,uU,uF;uniform vec2 uRes;uniform float uRad,uCl;out vec4 o;
+const float PI=3.14159265;
+vec3 lin(vec3 c){return pow(c,vec3(2.2));}
+vec4 tex(sampler2D t,vec2 uv,vec2 uv2){vec2 a=dFdx(uv),b=dFdy(uv),a2=dFdx(uv2),b2=dFdy(uv2);if(dot(a2,a2)+dot(b2,b2)<dot(a,a)+dot(b,b)){a=a2;b=b2;}return textureGrad(t,uv,a,b);}
+void main(){
+  vec2 q=(gl_FragCoord.xy-uRes*.5)/uRad;float r2=dot(q,q),r=sqrt(r2);
+  vec3 atm=vec3(.33,.58,1.);
+  if(r>1.){float h=r-1.;vec3 n=normalize(q.x*uR+q.y*uU);float s=dot(n,uSun);
+    float a=exp(-h*30.)*(.06+.94*smoothstep(-.3,.45,s))*.6;o=vec4(atm*a,a);return;}
+  float z=sqrt(max(0.,1.-r2));vec3 n=normalize(q.x*uR+q.y*uU+z*uF);
+  float lat=asin(clamp(n.y,-1.,1.)),lon=atan(n.x,n.z);
+  vec2 uv=vec2(lon/(2.*PI)+.5,.5-lat/PI),uv2=vec2(fract(uv.x+.5),uv.y);
+  vec3 day=lin(tex(uDay,uv,uv2).rgb),night=lin(tex(uNight,uv,uv2).rgb);
+  vec2 cu=vec2(fract(uv.x+uCl),uv.y),cu2=vec2(fract(cu.x+.5),uv.y);
+  float cl=tex(uCloud,cu,cu2).r;cl=smoothstep(.18,.85,cl)*.62;
+  float sea=smoothstep(.3,.7,tex(uSpec,uv,uv2).r);
+  float d=dot(n,uSun),dayAmt=smoothstep(-.10,.10,d),lam=max(d,0.);
+  vec3 lit=day*(.012+1.05*lam);
+  vec3 hv=normalize(uSun+uF);float sp=pow(max(dot(n,hv),0.),90.)*sea*.28*lam;
+  lit=mix(lit,vec3(.86,.88,.92)*(.01+.85*lam),cl);
+  vec3 lights=night*vec3(1.,.8,.55)*2.8*(1.-cl*.65);
+  vec3 col=mix(lights,lit,dayAmt)+vec3(1.,.95,.85)*sp*(1.-cl);
+  float fr=pow(1.-z,2.6);col=mix(col,atm*(.02+.75*smoothstep(-.15,.6,d)),fr*(.2+.35*smoothstep(-.2,.3,d)));
+  col=1.-exp(-col*1.9);col=pow(col,vec3(1./2.2));
+  float e=smoothstep(1.,.994,r);
+  float h=0.;float s=dot(normalize(q.x*uR+q.y*uU),uSun);float a=(.12+.88*smoothstep(-.3,.45,s))*.6*(1.-e);
+  o=vec4(col*e+atm*a,e+a*(1.-e));}`;
+function obGlobeInit(host){
+  if(OBG.cv&&host.contains(OBG.cv))return true;
+  host.innerHTML='<canvas class="obg-gl"></canvas><canvas class="obg-ov"></canvas>';OBG.cv=host.querySelector('.obg-gl');OBG.ov=host.querySelector('.obg-ov');
+  const gl=OBG.cv.getContext('webgl2',{premultipliedAlpha:true,alpha:true,antialias:false,powerPreference:'low-power'});
+  if(!gl){OBG.err='no-webgl';host.classList.add('obg-nogl');return false}
+  OBG.gl=gl;const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);if(!gl.getShaderParameter(x,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(x));return x};
+  try{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,OB_VS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,OB_FS));gl.linkProgram(p);
+    if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));OBG.prog=p}catch(e){OBG.err=String(e.message||e);host.classList.add('obg-nogl');return false}
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(OBG.prog,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  OBG.ready=0;const base=(window.OB_ASSETS||'obs/');
+  [['uDay','earth_day.jpg',0],['uNight','earth_night.jpg',1],['uCloud','earth_clouds.jpg',2],['uSpec','earth_spec.jpg',3]].forEach(([u,f,i])=>{
+    const t=gl.createTexture();OBG.tex[u]=t;gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([8,10,16,255]));
+    const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      const ext=gl.getExtension('EXT_texture_filter_anisotropic');if(ext)gl.texParameterf(gl.TEXTURE_2D,ext.TEXTURE_MAX_ANISOTROPY_EXT,4);OBG.ready++};
+    im.onerror=()=>{OBG.err='texture '+f};im.src=base+f});
+  return true}
+function obGlobeSize(){const c=OBG.cv;if(!c)return;const r=c.getBoundingClientRect(),dpr=Math.min(1.5,window.devicePixelRatio||1),w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);
+  if(c.width!==w||c.height!==h){c.width=w;c.height=h;OBG.ov.width=w;OBG.ov.height=h}}
+/* project an earth point to the canvas (null when it's round the back) */
+function obProj(lat,lon,B,w,h,rad){const v=obVec(lat,lon),x=v[0]*B.R[0]+v[1]*B.R[1]+v[2]*B.R[2],y=v[0]*B.U[0]+v[1]*B.U[1]+v[2]*B.U[2],z=v[0]*B.F[0]+v[1]*B.F[1]+v[2]*B.F[2];
+  return {x:w/2+x*rad,y:h/2-y*rad,z}}
+function obGlobeFrame(now){
+  const gl=OBG.gl;if(!gl||!OBG.prog)return;obGlobeSize();const w=OBG.cv.width,h=OBG.cv.height,rad=Math.min(w,h)*.5*.86;
+  const dt=Math.min(.1,(now-(OBG.last||now))/1000);OBG.last=now;
+  /* turn slowly; when an event wants a look, glide over to it, hold, then carry on */
+  const f=OBG.focus;if(f){const dl=((f.lon-OBG.lon0+540)%360)-180;if(Date.now()<f.until){OBG.lon0+=dl*Math.min(1,dt*.9);OBG.lat0+=(Math.max(-35,Math.min(50,f.lat))*.6+8-OBG.lat0)*Math.min(1,dt*.6)}else OBG.focus=null}
+  else{OBG.lon0+=OBG.spin*dt;OBG.lat0+=(22-OBG.lat0)*Math.min(1,dt*.3)}
+  OBG.lon0=((OBG.lon0+540)%360)-180;
+  const B=obBasis(OBG.lat0,OBG.lon0),S=obSun(),sv=obVec(S.lat,S.lon),p=OBG.prog;
+  gl.viewport(0,0,w,h);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(p);
+  const U=n=>gl.getUniformLocation(p,n);gl.uniform1i(U('uDay'),0);gl.uniform1i(U('uNight'),1);gl.uniform1i(U('uCloud'),2);gl.uniform1i(U('uSpec'),3);
+  gl.uniform3fv(U('uSun'),sv);gl.uniform3fv(U('uR'),B.R);gl.uniform3fv(U('uU'),B.U);gl.uniform3fv(U('uF'),B.F);gl.uniform2f(U('uRes'),w,h);gl.uniform1f(U('uRad'),rad);
+  gl.uniform1f(U('uCl'),((now-OBG.t0)/1000/3600*.6)%1);/* clouds drift very slowly (it's a still picture, not live weather) */
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  obMarks(B,w,h,rad,now)}
+function obMarks(B,w,h,rad,now){const c=OBG.ov.getContext('2d'),k=w/1000,t=now/1000;c.clearRect(0,0,w,h);
+  for(const m of OBG.marks){const P=obProj(m.lat,m.lon,B,w,h,rad);if(P.z<=.02)continue;const fade=Math.min(1,P.z*4);c.globalAlpha=fade;
+    if(m.k==='home'){c.fillStyle='#ff6a2b';c.beginPath();c.arc(P.x,P.y,5*k,0,7);c.fill();c.strokeStyle='rgba(255,106,43,.55)';c.lineWidth=2*k;const rr=(t*.5%1);c.globalAlpha=fade*(1-rr);c.beginPath();c.arc(P.x,P.y,(6+rr*22)*k,0,7);c.stroke();c.globalAlpha=fade;
+      c.font=`600 ${15*k}px Inter,sans-serif`;c.fillStyle='rgba(244,239,230,.92)';c.fillText('Woodstock',P.x+11*k,P.y+5*k);continue}
+    const col=m.red?'229,72,77':m.k==='storm'?'120,190,255':m.k==='volcano'?'255,150,60':m.k==='fire'?'255,120,50':'232,185,49';
+    const s=(m.size||1)*k;
+    if(m.k==='quake'){for(let i=0;i<2;i++){const ph=((t*.6+i*.5)%1);c.strokeStyle=`rgba(${col},${(1-ph)*.85})`;c.lineWidth=2*k;c.beginPath();c.arc(P.x,P.y,(4+ph*18)*s,0,7);c.stroke()}
+      c.fillStyle=`rgba(${col},1)`;c.beginPath();c.arc(P.x,P.y,3.5*s,0,7);c.fill()}
+    else if(m.k==='storm'){c.save();c.translate(P.x,P.y);c.rotate(-t*1.2);c.strokeStyle=`rgba(${col},.95)`;c.lineWidth=2.4*k;for(let a=0;a<2;a++){c.beginPath();for(let i=0;i<=20;i++){const th=i/20*Math.PI*1.3+a*Math.PI,rr=(3+i*.55)*s;c.lineTo(Math.cos(th)*rr,Math.sin(th)*rr)}c.stroke()}c.restore();
+      c.fillStyle=`rgba(${col},1)`;c.beginPath();c.arc(P.x,P.y,2.6*s,0,7);c.fill()}
+    else if(m.k==='volcano'){c.fillStyle=`rgba(${col},.95)`;c.beginPath();c.moveTo(P.x,P.y-7*s);c.lineTo(P.x+6*s,P.y+5*s);c.lineTo(P.x-6*s,P.y+5*s);c.closePath();c.fill()}
+    else if(m.k==='fire'){const fl=.75+.25*Math.sin(t*6+m.lon);c.fillStyle=`rgba(${col},${fl})`;c.beginPath();c.arc(P.x,P.y,4*s,0,7);c.fill()}
+    else if(m.k==='iss'){c.fillStyle='rgba(244,239,230,.95)';c.fillRect(P.x-5*k,P.y-1.2*k,10*k,2.4*k);c.fillRect(P.x-1.5*k,P.y-3*k,3*k,6*k)}
+    if(m.label&&P.z>.25){c.font=`500 ${12.5*k}px Inter,sans-serif`;c.fillStyle='rgba(244,239,230,.78)';c.fillText(m.label,P.x+10*s,P.y-6*s)}
+  }c.globalAlpha=1}
+function obGlobeLoop(now){OBG.raf=0;const pg=document.getElementById('pObs');const vis=!document.hidden&&(!pg||pg.classList.contains('on'))&&OBG.cv&&OBG.cv.isConnected;
+  if(!vis)return;/* off screen: stop drawing completely; obGlobeStart() picks it up again */
+  /* screen asleep or ambient mode on top: check again in a few seconds, draw nothing */
+  if((document.getElementById('night')||{}).classList?.contains('on')||(typeof AMB!=='undefined'&&AMB.on)){setTimeout(()=>{if(!OBG.raf)OBG.raf=requestAnimationFrame(obGlobeLoop)},4000);return}
+  if(now-(OBG.lastDraw||0)>=32){OBG.lastDraw=now;try{obGlobeFrame(now)}catch(e){OBG.err=String(e.message||e)}}
+  OBG.raf=requestAnimationFrame(obGlobeLoop)}
+function obGlobeStart(){if(!OBG.raf){OBG.last=0;OBG.raf=requestAnimationFrame(obGlobeLoop)}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)obGlobeStart()});
+
+/* ================= Nova Observatory: the numbers =================
+   Every figure is one of four kinds, and the page and Nova both say which:
+   ESTIMATE  population, births, deaths (UN World Population Prospects 2024, medium variant, spread evenly over the year)
+   CALCULATED  Sun / Moon / orbit / rotation / daylight (astronomy formulas run right here, nothing fetched)
+   REPORTED  earthquakes, storms, volcanoes, fires, space weather, tsunamis, people in space, launches (relay /observatory)
+   PUBLISHED  the latest monthly global temperature anomaly (NASA GISTEMP v4) */
+const OBS={d:null,at:0,err:'',seen:null,sig:''};
+/* UN WPP 2024 (medium variant): mid-year population and births / deaths over each year */
+const OB_UN={2025:{jul:8231613070,b:132399173,d:63135984},2026:{jul:8300678395,b:132503469,d:63637314},2027:{jul:8369544550,b:132590971,d:64625684}};
+const OB_YR=365.2425*864e5;
+function obPop(ms){ms=ms||Date.now();const y=new Date(ms).getFullYear(),Y=OB_UN[y]||OB_UN[2027]||OB_UN[2026],j=Date.UTC(y,6,1);return Y.jul+(Y.b-Y.d)*(ms-j)/OB_YR}
+function obVital(ms){ms=ms||Date.now();const n=new Date(ms),y=n.getFullYear(),Y=OB_UN[y]||OB_UN[2027],mid=new Date(n);mid.setHours(0,0,0,0);
+  const yr0=new Date(y,0,1).getTime(),yl=new Date(y+1,0,1).getTime()-yr0,fd=(ms-mid.getTime())/yl,fy=(ms-yr0)/yl;
+  return {bToday:Y.b*fd,dToday:Y.d*fd,bYear:Y.b*fy,dYear:Y.d*fy,perSecB:Y.b/(yl/1000),perSecD:Y.d/(yl/1000)}}
+/* ---- astronomy ---- */
+const OB_AU=149597870.7,OB_GM=1.32712440018e11/* km³/s² */,OB_A=1.00000261*OB_AU;
+const obOrbitV=ms=>{const r=obSun(ms).R*OB_AU;return Math.sqrt(OB_GM*(2/r-1/OB_A))}; /* km/s, vis-viva */
+function obTravelToday(ms){ms=ms||Date.now();const m=new Date(ms);m.setHours(0,0,0,0);const t0=m.getTime(),N=24,h=(ms-t0)/N;if(h<=0)return 0;
+  let s=obOrbitV(t0)+obOrbitV(ms);for(let i=1;i<N;i++)s+=(i%2?4:2)*obOrbitV(t0+i*h);return s*h/3/1000} /* Simpson, km */
+function obMoonKm(ms){const T=((ms||Date.now())/864e5+2440587.5-2451545)/36525,r=x=>(x%360)*OB_D2R;
+  const D=r(297.8501921+445267.1114034*T),M=r(357.5291092+35999.0502909*T),Mp=r(134.9633964+477198.8675055*T),F=r(93.272095+483202.0175233*T),E=1-.002516*T;
+  const t=[[0,0,1,0,-20905355],[2,0,-1,0,-3699111],[2,0,0,0,-2955968],[0,0,2,0,-569925],[0,1,0,0,48888],[0,0,0,2,-3149],[2,0,-2,0,246158],[2,-1,-1,0,-152138],
+    [2,0,1,0,-170733],[2,-1,0,0,-204586],[0,1,-1,0,-129620],[1,0,0,0,108743],[0,1,1,0,104755],[2,0,0,-2,10321],[0,0,1,-2,79661],[4,0,-1,0,-34782],[0,0,3,0,-23210],
+    [4,0,-2,0,-21636],[2,1,-1,0,24208],[2,1,0,0,30824],[1,0,-1,0,-8379],[1,1,0,0,-16675],[2,-1,1,0,-12831],[2,0,2,0,-10445],[4,0,0,0,-11650],[2,0,-3,0,14403]];
+  let s=0;for(const [a,b,c,d,k] of t)s+=k*Math.pow(E,Math.abs(b))*Math.cos(a*D+b*M+c*Mp+d*F);return 385000.56+s/1000}
+function obSpinKmh(lat){const p=lat*OB_D2R,a=6378.137,e2=.00669437999,N=a/Math.sqrt(1-e2*Math.sin(p)**2);return 7.2921159e-5*N*Math.cos(p)*3600}
+const obSunAlt=(lat,lon,S)=>{const d=S.lat*OB_D2R,f=lat*OB_D2R,H=(lon-S.lon)*OB_D2R;return Math.asin(Math.sin(f)*Math.sin(d)+Math.cos(f)*Math.cos(d)*Math.cos(H))/OB_D2R};
+/* daylight: a country counts as "in daylight" when the Sun is up at its capital (centre of the Sun above the horizon, with refraction: -0.833°).
+   People in daylight: those countries' populations, scaled to the UN world total. Rough, because big countries span several time zones. */
+function obDaylight(ms){const C=OBS.d&&OBS.d.countries&&OBS.d.countries.list;if(!C||!C.length)return null;const S=obSun(ms);let n=0,p=0,tot=0;
+  for(const [cc,la,lo,pop] of C){tot+=pop;if(obSunAlt(la,lo,S)>-.833){n++;p+=pop}}const W=obPop(ms);return {n,of:C.length,day:tot?p/tot*W:0,night:tot?(1-p/tot)*W:0}}
+function obCalc(ms){ms=ms||Date.now();const S=obSun(ms),v=obOrbitV(ms);
+  return {sunKm:S.R*OB_AU,v,vKmh:v*3600,travel:obTravelToday(ms),moonKm:obMoonKm(ms),spin:obSpinKmh(CFG.lat||43.13),sub:S,day:obDaylight(ms)}}
+/* ---- reported events ---- */
+const OB_BLOCK=/\b(india|indian|pakistan|bangladesh|sri lanka|nepal|afghanistan)\b/i;
+const obAgo=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'just now':m<60?m+' min ago':m<36*60?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+function obEvents(){const d=OBS.d||{},E=[],now=Date.now();
+  const Q=d.quakes&&!d.quakes.error?d.quakes:null,G=d.gdacs&&!d.gdacs.error?d.gdacs:null,SW=d.space&&!d.space.error?d.space:null,TS=d.tsunami&&!d.tsunami.error?d.tsunami:null,V=d.gvp&&!d.gvp.error?d.gvp:null;
+  (TS&&TS.list||[]).filter(x=>x.lvl!=='info').forEach(x=>E.push({id:'ts:'+x.t,k:'tsunami',red:x.lvl==='warning',rank:x.lvl==='warning'?100:80,t:x.t,head:'Tsunami '+x.lvl,where:x.title.replace(/^Tsunami\s+\w+\s*(?:Number\s*\d+)?\s*(?:for)?\s*/i,'').slice(0,70),src:x.who+' · tsunami.gov',lat:x.lat,lon:x.lon}));
+  (Q&&Q.sig||[]).filter(q=>!OB_BLOCK.test(q.place)&&now-q.t<4*864e5).forEach(q=>E.push({id:'eq:'+q.id,k:'quake',red:q.m>=7||q.alert==='red'||q.alert==='orange',rank:q.m*10-(now-q.t)/36e5*.3,t:q.t,
+    head:`M${q.m.toFixed(1)} earthquake`,where:q.place.replace(/^\d+\s*km\s+[NSEW]+\s+of\s+/,'near '),src:'USGS',lat:q.lat,lon:q.lon,m:q.m,extra:q.tsunami?'tsunami flag':''}));
+  (G&&G.storms||[]).forEach(s=>E.push({id:'tc:'+s.name+s.from,k:'storm',red:s.alert==='red',rank:s.alert==='red'?90:s.alert==='orange'?70:55,t:s.to||s.from,head:s.title||('Tropical cyclone '+s.name),where:s.sev||s.country||'',src:'GDACS',lat:s.lat,lon:s.lon}));
+  (G&&G.volcanoes||[]).forEach(s=>E.push({id:'vo:'+s.name+s.from,k:'volcano',red:s.alert==='red',rank:s.alert==='red'?85:s.alert==='orange'?65:40,t:s.to||s.from,head:s.title||('Volcano '+s.name),where:s.country,src:'GDACS',lat:s.lat,lon:s.lon}));
+  (G&&G.fires||[]).forEach(s=>E.push({id:'wf:'+s.name+s.from,k:'fire',red:s.alert==='red',rank:s.alert==='red'?80:60,t:s.to||s.from,head:s.title||'Major wildfire',where:s.country,src:'GDACS',lat:s.lat,lon:s.lon}));
+  if(V&&V.list&&!(G&&G.volcanoes&&G.volcanoes.length))V.list.slice(0,2).forEach(v=>E.push({id:'gvp:'+v.title,k:'volcano',rank:35,t:v.t,head:v.title.replace(/\s*-\s*Report for.*$/i,''),where:'new activity this week',src:'Smithsonian GVP',lat:v.lat,lon:v.lon}));
+  if(SW&&SW.kp>=5){const g=SW.kp>=9?5:SW.kp>=8?4:SW.kp>=7?3:SW.kp>=6?2:1;E.push({id:'gs:'+Math.floor(SW.kpT/108e5),k:'space',red:g>=3,rank:50+g*8,t:SW.kpT,head:`G${g} geomagnetic storm`,where:`Kp ${SW.kp} · aurora possible further south`,src:'NOAA SWPC'})}
+  if(SW&&SW.flare&&/^X/.test(SW.flare.cls)&&now-SW.flare.t<864e5)E.push({id:'fl:'+SW.flare.t,k:'space',rank:58,t:SW.flare.t,head:`${SW.flare.cls} solar flare`,where:'strongest class of flare',src:'NOAA SWPC'});
+  return E.sort((a,b)=>b.rank-a.rank)}
+/* the most significant thing for the breaking-news system (Nova FM): only big, recent, verified events, and never twice */
+function obsBreaking(){try{const now=Date.now(),said=NM.get('wsaid',[]),M=WORLD&&WORLD.major,mt=M?String(M.t).toLowerCase():'';
+  for(const e of obEvents()){if(said.includes(e.id))continue;
+    const big=(e.k==='tsunami'&&e.red)||(e.k==='quake'&&e.m>=7&&now-e.t<3*36e5)||(e.k==='storm'&&e.red&&now-e.t<12*36e5);if(!big)continue;
+    /* the news page already has this story: let that one be the announcement */
+    if(mt&&((e.k==='quake'&&/earthquake|quake/.test(mt))||(e.k==='tsunami'&&/tsunami/.test(mt))||(e.k==='storm'&&/hurricane|typhoon|cyclone|storm/.test(mt))))continue;
+    const when=new Date(e.t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    const t=e.k==='quake'?`A magnitude ${e.m.toFixed(1)} earthquake struck ${e.where} at ${when} our time, according to the US Geological Survey`:e.k==='tsunami'?`${e.head} issued: ${e.where}`:`${e.head} (${e.where})`;
+    return {id:e.id,t,src:e.src,at:e.t}}}catch(err){}return null}
+/* ---- loading ---- */
+async function obsLoad(force){if(!CFG.relay||!SECRETS.calkey)return;if(!force&&Date.now()-OBS.at<9*60000)return;OBS.at=Date.now();
+  try{const r=await tfetch(relayBase()+'/observatory?key='+encodeURIComponent(SECRETS.calkey),20000);const j=await r.json();if(j.error)throw new Error(j.error);OBS.d=j;OBS.err='';
+    const bad=['quakes','gdacs','gvp','space','tsunami','temp','people','launches','countries'].filter(k=>!j[k]||j[k].error);
+    if(bad.length)try{nbPub(`${SECRETS.topic}-mcmd`,'log|dash '+new Date().toLocaleTimeString()+' observatory: no '+bad.map(k=>k+(j[k]&&j[k].error?' ('+j[k].error+')':'')).join(', ')).catch(()=>{})}catch(e){}
+    obsFocusNew();if($('pObs')&&$('pObs').classList.contains('on'))renderObs()}catch(e){OBS.err=String(e.message||e).slice(0,80)}}
+setTimeout(()=>obsLoad(true),20000);setInterval(()=>obsLoad(),10*60000);
+/* a new significant event: turn the globe to it (once) */
+function obsFocusNew(){const S=OBS.seen||(OBS.seen=new Set(NM.get('obseen',[])));const first=!NM.get('obseen',null);
+  for(const e of obEvents()){if(!e.lat&&e.lat!==0)continue;if(S.has(e.id))continue;S.add(e.id);if(!first&&(e.red||e.rank>=60)&&!OBG.focus)OBG.focus={lat:e.lat,lon:e.lon,until:Date.now()+22000}}
+  NM.set('obseen',[...S].slice(-200))}
+
+/* ================= Nova Observatory: the page ================= */
+const obN=(n,d)=>Math.round(n).toLocaleString('en-CA');
+const obBig=n=>n>=1e9?(n/1e9).toFixed(2)+' billion':n>=1e6?(n/1e6).toFixed(1)+' million':obN(n);
+const OB_KIND={est:'Estimate',calc:'Calculated',rep:'Reported',pub:'Published'};
+const obTag=k=>`<i class="ob-k ob-k-${k}">${OB_KIND[k]}</i>`;
+function obsMarks(){const M=[{k:'home',lat:CFG.lat||43.13,lon:CFG.lon||-80.75}];
+  for(const e of obEvents().slice(0,14))if(e.lat!=null&&e.lon!=null&&isFinite(e.lat))M.push({k:e.k==='tsunami'?'quake':e.k,lat:e.lat,lon:e.lon,red:e.red,size:e.k==='quake'?Math.max(.8,Math.min(1.8,(e.m||5)-4.4)):1.15,label:e.rank>=60?(e.k==='quake'?'M'+e.m.toFixed(1):e.head.split(' ').slice(-1)[0]):''});
+  /* the ISS, from the TLE the sky page already keeps */
+  try{if(typeof issPos==='function'){const p=issPos();if(p)M.push({k:'iss',lat:p.lat,lon:p.lon,label:'ISS'})}}catch(e){}
+  OBG.marks=M}
+function renderObs(){const b=$('obsBody');if(!b)return;
+  if(!b.querySelector('.ob-wrap')){b.innerHTML=`<div class="jf-title">Observatory</div><div class="ob-wrap">
+    <div class="ob-pop"><small>World population ${obTag('est')}</small><b id="obPop">—</b><span id="obPopSub"></span></div>
+    <div class="ob-stage"><div class="ob-globe" id="obGlobe"></div>
+      <div class="ob-side l"><div><small>Born today</small><b id="obBt">—</b></div><div><small>Died today</small><b id="obDt">—</b></div></div>
+      <div class="ob-side r"><div><small>Growth today</small><b id="obGt">—</b></div><div><small>In daylight</small><b id="obDay">—</b><em id="obDaySub"></em></div></div>
+      <div class="ob-utc"><small>UTC</small><b id="obUtc">—</b></div>
+      <div class="ob-yr" id="obYr"></div></div>
+    <div class="ob-sec"><span>Earth in motion</span>${obTag('calc')}</div>
+    <div class="ob-grid" id="obMotion"></div>
+    <div class="ob-sec"><span>Around the world</span>${obTag('rep')}<em id="obFresh"></em></div>
+    <div class="ob-chips" id="obChips"></div>
+    <div class="ob-ev" id="obEv"></div>
+    <div class="ob-sec"><span>Beyond Earth</span>${obTag('rep')}</div>
+    <div class="ob-sp" id="obSpace"></div>
+    <div class="ob-src">Sources: UN World Population Prospects 2024 · USGS · GDACS · Smithsonian GVP · NOAA SWPC &amp; tsunami.gov · NASA GISTEMP · Launch Library 2 · imagery NASA Blue/Black Marble</div></div>`;
+    obGlobeInit($('obGlobe'))}
+  try{if(!SKY.tle&&typeof skyLoad==='function')skyLoad();satJS().catch(()=>{})}catch(e){}
+  obsMarks();obsSlow();obsTick();obGlobeStart();
+  clearInterval(OBS.tk);OBS.tk=setInterval(()=>{if(!$('pObs').classList.contains('on')){clearInterval(OBS.tk);OBS.tk=0;return}obsTick()},250);
+  clearInterval(OBS.sk);OBS.sk=setInterval(()=>{if($('pObs').classList.contains('on')){obsSlow();obsMarks()}},20000);
+  obsLoad()}
+/* fast numbers: four times a second */
+function obsTick(){const now=Date.now(),V=obVital(now),set=(id,v)=>{const e=$(id);if(e&&e.textContent!==v)e.textContent=v};
+  set('obPop',obN(obPop(now)));set('obBt',obN(V.bToday));set('obDt',obN(V.dToday));set('obGt','+'+obN(V.bToday-V.dToday));
+  const u=new Date(now);set('obUtc',u.toISOString().slice(11,19));
+  const tr=$('obTravel');if(tr)set('obTravel',obN(obTravelToday(now)))}
+/* slow numbers + lists: every 20 s */
+function obsSlow(){const C=obCalc(),V=obVital(),d=OBS.d||{},set=(id,h)=>{const e=$(id);if(e&&e.innerHTML!==h)e.innerHTML=h};
+  set('obPopSub',`about ${(V.perSecB-V.perSecD).toFixed(1)} more people every second · ${(V.perSecB).toFixed(1)} births, ${(V.perSecD).toFixed(1)} deaths`);
+  set('obYr',`This year so far: <b>${obBig(V.bYear)}</b> births · <b>${obBig(V.dYear)}</b> deaths ${obTag('est')}`);
+  if(C.day){set('obDay',(C.day.day/1e9).toFixed(1)+' B');set('obDaySub',`${(C.day.night/1e9).toFixed(1)} B in darkness · ${C.day.n} of ${C.day.of} countries`)}else{set('obDay','—');set('obDaySub','needs country data')}
+  const tile=(k,v,u,s)=>`<div><small>${k}</small><b>${v}<i>${u}</i></b><span>${s}</span></div>`;
+  set('obMotion',[tile('Travelled around the Sun today','<u id="obTravel">'+obN(C.travel)+'</u>','km','since midnight here'),tile('Orbital speed',obN(C.vKmh),'km/h',(C.v).toFixed(2)+' km/s, vis-viva'),
+    tile('Spin speed at Woodstock',obN(C.spin),'km/h','Earth turning, at '+(CFG.lat||43.13).toFixed(1)+'° N'),tile('Distance to the Sun',(C.sunKm/1e6).toFixed(2),'M km',(C.sub.R).toFixed(4)+' AU'),
+    tile('Distance to the Moon',obN(C.moonKm),'km','centre to centre'),tile('Sun overhead',`${Math.abs(C.sub.lat).toFixed(1)}°${C.sub.lat<0?'S':'N'} ${Math.abs(C.sub.lon).toFixed(1)}°${C.sub.lon<0?'W':'E'}`,'','the subsolar point')].join(''));
+  /* chips: the overall picture */
+  const Q=d.quakes&&!d.quakes.error?d.quakes:null,SW=d.space&&!d.space.error?d.space:null,T=d.temp&&!d.temp.error?d.temp:null,G=d.gdacs&&!d.gdacs.error?d.gdacs:null,chips=[];
+  const chip=(k,v,s,cl)=>`<div class="${cl||''}"><small>${k}</small><b>${v}</b><span>${s||''}</span></div>`;
+  if(Q){const mx=Q.max&&!OB_BLOCK.test(Q.max.place)?Q.max:null;chips.push(chip('Earthquakes · 24 h',obN(Q.n24),`${Q.n24m4} of magnitude 4+`));
+    if(mx)chips.push(chip('Strongest · 24 h','M'+mx.m.toFixed(1),esc(mx.place.replace(/^\d+\s*km\s+[NSEW]+\s+of\s+/,'near ').slice(0,34))+' · '+obAgo(mx.t),mx.m>=7?'red':''))}else chips.push(chip('Earthquakes','—','USGS unavailable'));
+  chips.push(G?chip('Tropical storms',String(G.storms.length),G.storms.length?esc(G.storms.map(s=>s.name).slice(0,2).join(', ')):'none active'):chip('Tropical storms','—','GDACS unavailable'));
+  chips.push(SW&&SW.kp!=null?chip('Geomagnetic Kp',String(SW.kp),SW.kp>=5?'storm level':SW.kp>=4?'unsettled':'quiet',SW.kp>=7?'red':''):chip('Geomagnetic Kp','—','SWPC unavailable'));
+  if(T)chips.push(chip('Global temperature',(T.anom>0?'+':'')+T.anom.toFixed(2)+'°C',`${T.mo} ${T.y} vs 1951–80 · published`));
+  set('obChips',chips.slice(0,4).join(''));
+  /* the list: only what matters */
+  const E=obEvents().slice(0,3),ic={quake:'◉',storm:'꩜',volcano:'▲',fire:'✺',space:'✷',tsunami:'≋'};
+  set('obEv',E.length?E.map(e=>`<div class="${e.red?'red':''}"><i class="ob-ic ob-ic-${e.k}">${ic[e.k]||'•'}</i><div><b>${esc(e.head)}</b><span>${esc(e.where||'')}</span></div><em>${e.t?obAgo(e.t):''}<small>${esc(e.src)}</small></em></div>`).join('')
+    :(!d.quakes||d.quakes.error)&&(!d.gdacs||d.gdacs.error)?`<div><i class="ob-ic">…</i><div><b>Event reports unavailable</b><span>${OBS.d?'The earthquake and storm feeds didn\'t answer; trying again shortly':'Waiting for the Observatory data'}</span></div><em></em></div>`:`<div class="calm"><i class="ob-ic">✓</i><div><b>A quiet planet right now</b><span>No significant earthquakes, storms, eruptions or alerts in the latest reports</span></div><em></em></div>`);
+  /* beyond Earth */
+  const P=d.people&&!d.people.error?d.people:null,L=d.launches&&!d.launches.error?d.launches:null,nx=L&&L.list.find(l=>l.net>Date.now()-36e5);
+  let planes='';try{if(typeof PL!=='undefined'&&PL&&PL.count!=null)planes=`<div><small>Planes overhead</small><b>${PL.count}</b><span>within ${(CFG.planes&&CFG.planes.r)||40} km of home, now</span></div>`}catch(e){}
+  set('obSpace',`<div><small>People in space</small><b>${P?P.n:'—'}</b><span>${P?`${P.iss} on the ISS${P.n-P.iss>0?' · '+(P.n-P.iss)+' elsewhere':''}`:'unavailable'}</span></div>${planes}
+    <div class="ob-ln"><small>Next launch</small><b>${nx?esc(nx.name.split('|').pop().trim()):'—'}</b><span>${nx?`${esc(nx.lsp)} · ${obIn(nx.net)}${nx.status&&!/go|tbc|tbd/i.test(nx.status)?'':''}`:'unavailable'}</span></div>`);
+  const ag=OBS.d?Math.round((Date.now()-OBS.d.at)/60000):null;set('obFresh',OBS.err&&!OBS.d?'data unavailable':ag==null?'loading…':ag<2?'updated just now':`updated ${ag} min ago`)}
+const obIn=t=>{const m=Math.round((t-Date.now())/60000);if(m<-5)return 'launched';if(m<1)return 'any minute';if(m<60)return 'in '+m+' min';if(m<48*60)return 'in '+Math.round(m/60)+' h · '+new Date(t).toLocaleDateString([],{weekday:'short'})+' '+fmt(new Date(t));return new Date(t).toLocaleDateString([],{month:'short',day:'numeric'})};
+/* what Nova knows (for questions) */
+function obsContext(){const C=obCalc(),V=obVital(),E=obEvents().slice(0,6),d=OBS.d||{},L=[];
+  L.push(`ESTIMATES (UN World Population Prospects 2024, spread evenly; not counted events): world population about ${obN(obPop())}; born today so far about ${obN(V.bToday)}; died today about ${obN(V.dToday)}; net growth today about ${obN(V.bToday-V.dToday)}; this year so far about ${obBig(V.bYear)} births and ${obBig(V.dYear)} deaths.`);
+  L.push(`CALCULATED (astronomy formulas): Earth has travelled about ${obN(C.travel)} km around the Sun since midnight; orbital speed ${obN(C.vKmh)} km/h; Woodstock is spinning at ${obN(C.spin)} km/h; Sun ${obN(C.sunKm)} km away; Moon ${obN(C.moonKm)} km away (centre to centre).`+(C.day?` Rough daylight split (by each country's capital): ${(C.day.day/1e9).toFixed(1)} billion people in daylight, ${(C.day.night/1e9).toFixed(1)} billion in darkness; ${C.day.n} of ${C.day.of} countries have the Sun up at their capital.`:''));
+  const Q=d.quakes&&!d.quakes.error?d.quakes:null;if(Q)L.push(`REPORTED (USGS): ${Q.n24} earthquakes worldwide in the last 24 h, ${Q.n24m4} of magnitude 4+.`+(Q.max&&!OB_BLOCK.test(Q.max.place)?` Strongest: M${Q.max.m} ${Q.max.place}, ${obAgo(Q.max.t)}.`:''));
+  if(E.length)L.push('REPORTED significant events: '+E.map(e=>`${e.head} — ${e.where} (${e.src}, ${obAgo(e.t)})`).join('; ')+'.');else if(Q||(d.gdacs&&!d.gdacs.error))L.push('REPORTED: no significant earthquakes, storms, eruptions or alerts right now.');else L.push('Natural-event reports are unavailable right now (do not guess).');
+  const P=d.people&&!d.people.error?d.people:null;if(P)L.push(`REPORTED: ${P.n} people in space right now, ${P.iss} aboard the ISS.`);
+  const Ln=d.launches&&!d.launches.error?d.launches.list.filter(l=>l.net>Date.now()).slice(0,2):[];if(Ln.length)L.push('Upcoming launches: '+Ln.map(l=>`${l.name} (${l.lsp}) ${new Date(l.net).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}`).join('; ')+'.');
+  const SW=d.space&&!d.space.error?d.space:null;if(SW&&SW.kp!=null)L.push(`Space weather (NOAA): planetary Kp ${SW.kp}${SW.flare?', latest flare '+SW.flare.cls:''}.`);
+  const T=d.temp&&!d.temp.error?d.temp:null;if(T)L.push(`PUBLISHED (NASA GISTEMP): global temperature anomaly ${T.anom>0?'+':''}${T.anom} °C for ${T.mo} ${T.y} vs 1951–1980.`);
+  L.push('When answering, say naturally whether a figure is an estimate, a calculation or a reported measurement.');return L.join('\n')}
+/* a Nova FM fact now and then: real numbers, worked out at the moment it's written */
+function obsFmFact(){try{const C=obCalc(),V=obVital(),on=+NM.get('fmonAt',0),F=[
+    ()=>`Earth is moving around the Sun at about ${obN(C.vKmh)} kilometres an hour right now (calculated).`,
+    ()=>`Since midnight, Earth has travelled roughly ${obN(C.travel)} kilometres around the Sun (calculated).`,
+    ()=>`Woodstock is spinning eastward at about ${obN(C.spin)} kilometres an hour, just from Earth turning (calculated).`,
+    ()=>`The Moon is about ${obN(C.moonKm)} kilometres away tonight (calculated).`,
+    ()=>`Roughly ${obN(V.bToday)} babies have been born worldwide so far today (a UN-based estimate, not a count).`,
+    ()=>on&&Date.now()-on>20*60000?`About ${obN((Date.now()-on)/1000*V.perSecB)} people have been born since Nova FM came on today (a UN-based estimate).`:'',
+    ()=>{const P=OBS.d&&OBS.d.people;return P&&!P.error?`There are ${P.n} people in space right now, ${P.iss} of them on the International Space Station.`:''}];
+  const k='obfact:'+new Date().toDateString(),used=NM.get('obfacts',{});if(used.d!==k){used.d=k;used.i=[]}
+  const order=F.map((_,i)=>i).filter(i=>!used.i.includes(i)).sort(()=>Math.random()-.5);
+  for(const i of order){const t=F[i]();if(t){used.i.push(i);NM.set('obfacts',used);return t}}}catch(e){}return ''}
+
+
+/* the ISS right now, from the TLE the sky page keeps (satellite.js) */
+let OB_ISSREC=null;function issPos(){const S=window.satellite;if(!S||!SKY.tle)return null;try{if(!OB_ISSREC||OB_ISSREC.k!==SKY.tle[0])OB_ISSREC={k:SKY.tle[0],r:S.twoline2satrec(SKY.tle[0],SKY.tle[1])};
+  const d=new Date(),pv=S.propagate(OB_ISSREC.r,d);if(!pv||!pv.position)return null;const g=S.eciToGeodetic(pv.position,S.gstime(d));return {lat:S.degreesLat(g.latitude),lon:S.degreesLong(g.longitude)}}catch(e){return null}}
+const obsOn=()=>!(CFG.observatory&&CFG.observatory.on===false)&&!NM.get('obsoff',false);
+
 /* ================= Nova FM health check =================
    The music Mac checks in once a minute ("fmstate hb <music> <voice>"). From that and the last few breaks we work out five
    lights. Something actually broken (not just paused or asleep) shows a small chip on every page, and if it lasts
@@ -5596,7 +5932,7 @@ function renderWorld(){const b=$('worldBody');if(!b)return;const h=worldBig();
   if(b.dataset.h!==html){b.dataset.h=html;b.innerHTML=html}
   b.style.cssText='display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden'}
 /* for Nova FM: the big story she hasn't mentioned yet */
-const worldNew=()=>{const M=WORLD.major;return M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null};
+const worldNew=()=>{const M=WORLD.major;return (M&&!NM.get('wsaid',[]).includes(M.id)&&Date.now()-(M.at||0)<10*3600e3?M:null)||(typeof obsBreaking==='function'?obsBreaking():null)};
 function handleCommand(raw){if(!NOVA_MAIN)return;
   /* "one more hour" said to one screen reaches every dashboard (the kitchen screen and the MacBook each keep their own clock) */
   {const m=String(raw||'').match(/^nlate (\d+)(?: (\d+))?$/);if(m){const a=+m[1],b=+(m[2]||0);
@@ -5692,6 +6028,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\b(weather maps?|maps)\b/)){showFor('maps');return reply(rlSay())}
   if(has(/\b(radar loop|rain (radar|loop|map)|snow (radar|map)|precip\w*|is it (going to )?(rain|snow)\w* nearby)\b/)){showFor('rloop');return reply(rlSay())}
   if(has(/\bwhat('?s| is) (that|this) (plane|jet|aircraft|flight|airplane)\b|\bwhat plane is (that|this)\b|\bwhat'?s flying (over|overhead|above)\b|\bwhich plane is (that|this|overhead)\b|\bwhose plane\b/)){whatPlane();return}
+  if(/\bobservatory\b/.test(t)){if(/\b(off|hide|stop|remove)\b/.test(t)){NM.set('obsoff',true);return reply('The Observatory is out of the rotation. Say "observatory on" to bring it back.')}
+    if(/\b(on|back|add)\b/.test(t))NM.set('obsoff',false);obsLoad();showFor('obs');return reply('Here\'s the Observatory.')}
   if(has(/\b(space station|iss)\b/)){if(!SKY.tle)skyLoad();return reply(skyNext(36)?skyPassSay(skyNext(36)):"There's no visible space station pass in the next day or so.")}
   if(has(/\b(northern lights|aurora)\b/)){return reply(SKY.aur?`Northern lights are possible ${skyWhen(SKY.aur.t)} after ${tripT(SKY.aur.t)}. It's a ${skyStorm(SKY.aur.kp)} geomagnetic storm, so look north, away from town lights.`:"No real chance of northern lights around here in the next day.")}
   if(has(/\b(the sky|sky tonight|anything in the sky|stargazing)\b/)){return reply(skySay())}
@@ -8588,7 +8926,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 235';
+document.getElementById('ver').textContent='build nova 236';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
