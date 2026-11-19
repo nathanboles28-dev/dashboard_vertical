@@ -5694,9 +5694,11 @@ function obsSlow(){const C=obCalc(),V=obVital(),d=OBS.d||{},set=(id,h)=>{const e
   /* beyond Earth */
   const P=d.people&&!d.people.error?d.people:null,L=d.launches&&!d.launches.error?d.launches:null,nx=L&&L.list.find(l=>l.net>Date.now()-36e5);
   let planes='';try{if(typeof PL!=='undefined'&&PL&&PL.count!=null)planes=`<div><small>Planes overhead</small><b>${PL.count}</b><span>within ${(CFG.planes&&CFG.planes.r)||40} km of home, now</span></div>`}catch(e){}
-  set('obSpace',`<div><small>People in space</small><b>${P?P.n:'—'}</b><span>${P?`${P.iss} on the ISS${P.n-P.iss>0?' · '+(P.n-P.iss)+' elsewhere':''}`:'unavailable'}</span></div>${planes}
+  set('obSpace',`<div><small>People in space</small><b>${P?P.n:'—'}</b><span>${P?`${P.iss} on the ISS${P.n-P.iss>0?' · '+(P.n-P.iss)+' '+obElse(P):''}`:'unavailable'}</span></div>${planes}
     <div class="ob-ln"><small>Next launch</small><b>${nx?esc(nx.name.split('|').pop().trim()):'—'}</b><span>${nx?`${esc(nx.lsp)} · ${obIn(nx.net)}${nx.status&&!/go|tbc|tbd/i.test(nx.status)?'':''}`:'unavailable'}</span></div>`);
   const ag=OBS.d?Math.round((Date.now()-OBS.d.at)/60000):null;set('obFresh',OBS.err&&!OBS.d?'data unavailable':ag==null?'loading…':ag<2?'updated just now':`updated ${ag} min ago`)}
+/* where the people not on the ISS are: China's Tiangong station (Shenzhou crews) or a named spacecraft */
+const obElse=P=>{const o=(P.people||[]).filter(p=>!p.iss);if(!o.length)return 'elsewhere';const tg=o.filter(p=>/shenzhou|tiangong|css/i.test(p.craft)).length;if(tg===o.length)return 'on Tiangong';const cr=[...new Set(o.map(p=>p.craft).filter(Boolean))];return cr.length===1?'on '+cr[0]:'elsewhere'};
 const obIn=t=>{const m=Math.round((t-Date.now())/60000);if(m<-5)return 'launched';if(m<1)return 'any minute';if(m<60)return 'in '+m+' min';if(m<48*60)return 'in '+Math.round(m/60)+' h · '+new Date(t).toLocaleDateString([],{weekday:'short'})+' '+fmt(new Date(t));return new Date(t).toLocaleDateString([],{month:'short',day:'numeric'})};
 /* what Nova knows (for questions) */
 function obsContext(){const C=obCalc(),V=obVital(),E=obEvents().slice(0,6),d=OBS.d||{},L=[];
@@ -5704,7 +5706,7 @@ function obsContext(){const C=obCalc(),V=obVital(),E=obEvents().slice(0,6),d=OBS
   L.push(`CALCULATED (astronomy formulas): Earth has travelled about ${obN(C.travel)} km around the Sun since midnight; orbital speed ${obN(C.vKmh)} km/h; Woodstock is spinning at ${obN(C.spin)} km/h; Sun ${obN(C.sunKm)} km away; Moon ${obN(C.moonKm)} km away (centre to centre).`+(C.day?` Rough daylight split (by each country's capital): ${(C.day.day/1e9).toFixed(1)} billion people in daylight, ${(C.day.night/1e9).toFixed(1)} billion in darkness; ${C.day.n} of ${C.day.of} countries have the Sun up at their capital.`:''));
   const Q=d.quakes&&!d.quakes.error?d.quakes:null;if(Q)L.push(`REPORTED (USGS): ${Q.n24} earthquakes worldwide in the last 24 h, ${Q.n24m4} of magnitude 4+.`+(Q.max&&!OB_BLOCK.test(Q.max.place)?` Strongest: M${Q.max.m} ${Q.max.place}, ${obAgo(Q.max.t)}.`:''));
   if(E.length)L.push('REPORTED significant events: '+E.map(e=>`${e.head} — ${e.where} (${e.src}, ${obAgo(e.t)})`).join('; ')+'.');else if(Q||(d.gdacs&&!d.gdacs.error))L.push('REPORTED: no significant earthquakes, storms, eruptions or alerts right now.');else L.push('Natural-event reports are unavailable right now (do not guess).');
-  const P=d.people&&!d.people.error?d.people:null;if(P)L.push(`REPORTED: ${P.n} people in space right now, ${P.iss} aboard the ISS.`);
+  const P=d.people&&!d.people.error?d.people:null;if(P)L.push(`REPORTED: ${P.n} people in space right now, ${P.iss} aboard the ISS${P.n-P.iss>0?', '+(P.n-P.iss)+' '+obElse(P)+((P.people||[]).filter(p=>!p.iss).length?' ('+[...new Set((P.people||[]).filter(p=>!p.iss).map(p=>p.craft))].join(', ')+')':''):''}.`);
   const Ln=d.launches&&!d.launches.error?d.launches.list.filter(l=>l.net>Date.now()).slice(0,2):[];if(Ln.length)L.push('Upcoming launches: '+Ln.map(l=>`${l.name} (${l.lsp}) ${new Date(l.net).toLocaleString([],{weekday:'short',hour:'numeric',minute:'2-digit'})}`).join('; ')+'.');
   const SW=d.space&&!d.space.error?d.space:null;if(SW&&SW.kp!=null)L.push(`Space weather (NOAA): planetary Kp ${SW.kp}${SW.flare?', latest flare '+SW.flare.cls:''}.`);
   const T=d.temp&&!d.temp.error?d.temp:null;if(T)L.push(`PUBLISHED (NASA GISTEMP): global temperature anomaly ${T.anom>0?'+':''}${T.anom} °C for ${T.mo} ${T.y} vs 1951–1980.`);
@@ -8942,7 +8944,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 239';
+document.getElementById('ver').textContent='build nova 240';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
