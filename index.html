@@ -2497,6 +2497,17 @@ body:not(.noTicker):not(.hasTicker) #npBody.fmS-on .fm-dial{height:5vw}
 body:not(.noTicker):not(.hasTicker) #npBody.fmS-on .fmS{gap:1.05vw}
 body:not(.noTicker):not(.hasTicker) #npBody.fmS-on .fm-card{padding-top:4.3vw;padding-bottom:1.9vw}
 body:not(.noTicker):not(.hasTicker) #npBody.fmS-on:not(.fm-noup) .fm-row{padding:.75vw 0}
+/* on air: the game-day preview / morning roundup card under the waveform */
+#fmOn .fo-sp,#fmOn .fo-ru{position:absolute;left:8vw;right:8vw;top:112vw;background:#1f1f1d;border:1.5px solid #3a3935;border-radius:1.4vw;padding:2.4vw 3vw}
+#fmOn .fo-sp-m{display:flex;justify-content:space-between;align-items:center}
+#fmOn .fo-sp-m>div{text-align:center}
+#fmOn .fo-sp-m>div>b{display:block;font:800 6vw/1 'NovaGeo','Inter',sans-serif;color:#efe9dc}
+#fmOn .fo-sp-m>div>small{font-size:1.8vw;color:#8a867c}
+#fmOn .fo-sp-c b{font:600 2.4vw/1.2 'Barlow Condensed','Inter',sans-serif!important;letter-spacing:.2em;color:var(--fa)!important}
+#fmOn .fo-sp-l{margin-top:1.8vw;padding-top:1.6vw;border-top:1px solid #2c2b28;text-align:center;font-size:2vw;color:#c9c4b8}
+#fmOn .fo-ru{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2vw 3vw}
+#fmOn .fo-ru small{display:block;font:600 1.7vw 'Barlow Condensed','Inter',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#ff6a2b}
+#fmOn .fo-ru b{display:block;font-size:2.5vw;font-weight:600;color:#efe9dc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.3vw}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -5043,6 +5054,10 @@ function fmSongGo(j){
   fmPlay(j);
   /* Friday night: the top 5 countdown (once a week, 5 PM or later, at least 8 songs logged) */
   {const d=new Date();if(FM.on&&!FM.busy&&d.getDay()===5&&d.getHours()>=17&&!NM.get('fmsaidk',[]).includes('top5:'+fmWeek())&&fmTop5().length>=3&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){FM.count=0;fmBreak('top5',j);return}}
+  /* game day: Tanner's preview (once per game, from 4 PM until 15 min before puck drop) */
+  {const P=FM.on&&!FM.busy&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000&&Date.now()-(+NM.get('fmjlast',0))>=150000?fmPreviewDue():null;if(P){FM.count=0;FM.prevP=P;fmBreak('preview',j);return}}
+  /* the morning: Nova reads the Morning Roundup as the first break after 6:30 */
+  {if(FM.on&&!FM.busy&&!fmQuiet()&&!fmBusy(j)&&fmRoundupDue()&&Date.now()-FM.last>3*60000&&Date.now()-(+NM.get('fmjlast',0))>=150000){const S=fmRoundupSegs();if(S.length>=2){FM.count=0;FM.ruS=S;fmBreak('roundup',j);return}}}
   const news=worldNew()||FM.req||FM.dedic||fmMoments().some(m=>m.pri>=2);
   if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   /* a jingle just played (under 2.5 min ago): this break waits for the next song, so the two never land back to back */
@@ -5050,39 +5065,73 @@ function fmSongGo(j){
   /* the last 10 minutes of the hour: hold a regular break, the top-of-the-hour ID is coming (breaking news still goes) */
   {const n=new Date(),hk=new Date(+n+15*60000);if(!news&&n.getMinutes()>=50&&NM.get('fmhour','')!==hk.toDateString()+'|'+hk.getHours()){fmDiag('break held for the top of the hour');return}}
   fmBreak('next',j)}
+/* ---- hosts beyond music: Tanner's game-day preview and Nova's Morning Roundup, read on air ---- */
+function fmPreviewDue(){const now=Date.now(),said=NM.get('fmsaidk',[]);
+  for(const [lab,G] of [['Leafs',typeof GD!=='undefined'?GD:null],['Knights',typeof KGD!=='undefined'?KGD:null]]){try{const g=G&&G.game;if(!g||!g.start||!g.us||!g.them)continue;
+    const st=Date.parse(g.start),k='gdp:'+(g.id||g.start);if(said.includes(k)||daysUntil(new Date(st))!==0)continue;
+    /* from 4 PM (or 4 hours before an afternoon game) until 15 minutes before puck drop */
+    const from=Math.min(new Date(st).setHours(16,0,0,0),st-4*3600e3);if(now<from||now>st-15*60000)continue;
+    if(g.state&&!/^(FUT|PRE)$/i.test(g.state)&&!/pre|sched|not started/i.test(g.state))continue;
+    return {lab,G,k}}catch(e){}}return null}
+function fmPreviewFacts(P){const G=P.G,g=G.game,us=nick(g.us.name||P.lab),them=nick(g.them.name||g.them.abbr||''),st=new Date(g.start),f=[];
+  f.push(`The ${us} ${g.home?'host':'visit'} the ${them} today at ${fmt(st)}${g.venue?', at '+g.venue:''}${g.nets&&g.nets.length?', on '+g.nets.join(' and '):''}.`);
+  const tm=(x,n)=>{if(!x)return;const a=[];if(x.rec)a.push('record '+x.rec);if(x.l10)a.push(x.l10+' in the last 10');if(x.streak)a.push('current streak '+x.streak);
+    const sc=(x.scorers||[])[0];if(sc)a.push(`top scorer ${sc.name}, ${sc.g} goals and ${sc.p} points`);const gl=(x.goalies||[])[0];if(gl)a.push(`goalie with the most games ${gl.name}, ${gl.rec}${gl.sv?', '+gl.sv+' save percentage':''}`);
+    if(a.length)f.push(`${n}: ${a.join('; ')}.`)};
+  tm(G.us,'The '+us);tm(G.them,'The '+them);
+  if(G.series&&G.series.played)f.push(`This season's series: ${us} ${G.series.us} wins, ${them} ${G.series.them}.`);
+  if(G.last)f.push(`Last time they met, the ${us} ${G.last.res==='W'?'won':'lost'} ${G.last.us} to ${G.last.them}.`);
+  return f.join(' ').slice(0,1400)}
+function fmPreviewCard(P){const G=P.G,g=G.game,st=new Date(g.start),sc=((G.us||{}).scorers||[])[0];
+  const side=(t,x)=>`<div><b>${esc(t.abbr||'')}</b><small>${esc((x||{}).rec||'')}</small></div>`;
+  return `<div class="fo-sp"><div class="fo-sp-m">${side(g.us,G.us)}<div class="fo-sp-c"><b>${daysUntil(st)===0&&st.getHours()>=17?'TONIGHT':'TODAY'} ${esc(fmt(st))}</b><small>${esc([g.venue,(g.nets||[]).join(', ')].filter(Boolean).join(' · '))}</small></div>${side(g.them,G.them)}</div>
+    <div class="fo-sp-l">${[sc?`${esc(sc.name)}: ${sc.g} G, ${sc.p} PTS`:'',(G.us||{}).l10?`Last 10: ${esc(G.us.l10)}`:'',G.series&&G.series.played?`Season series ${G.series.us}-${G.series.them}`:''].filter(Boolean).join(' · ')}</div></div>`}
+function fmRoundupDue(){const d=new Date(),h=d.getHours()+d.getMinutes()/60;if(h<6.5||h>=10)return false;
+  if(CFG.roundup&&CFG.roundup.on===false)return false;return !NM.get('fmsaidk',[]).includes('fmru:'+d.toDateString())}
+function fmRoundupSegs(){try{if(typeof ruData!=='function'||typeof NovaRoundup==='undefined')return [];const D=ruData({per:'morning'});
+  return (D.segs||[]).filter(s=>/^(live|alert|wx|cal|drv|trv|news|cd|jf|trip)$/.test(s.key)&&s.say)}catch(e){return []}}
+function fmRoundupCard(S){return `<div class="fo-ru">${S.slice(0,4).map(s=>`<div><small>${esc(String(s.title||s.tag||''))}</small><b>${String(s.big||s.value||'').replace(/<[^>]+>/g,'')}</b></div>`).join('')}</div>`}
+/* who's voicing what's on air right now (a guest host for the preview) */
+const fmAirHost=()=>(FM.spec&&FM.spec.host)||fmShow().host;
 const fmB64=s=>btoa(unescape(encodeURIComponent(s)));
 async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)return false;FM.prevLast0=FM.last;song=song||NP||{};FM.busy=true;
-  const h=new Date().getHours(),SHOW=fmShow(),style=C.style==='auto'?'show':C.style;
+  const h=new Date().getHours(),GUEST=mode==='preview'&&fmShow().k!=='drive'?FM_SHOWS.find(x=>x.k==='drive'):null,SHOW=GUEST||fmShow(),style=C.style==='auto'?'show':C.style;
   const tone=style==='show'?SHOW.tone:{casual:'relaxed and friendly',morning:'bright, upbeat morning-show energy',professional:'polished, classic radio host',humorous:'funny, with a light joke',sarcastic:'dry and a little sarcastic, never mean',latenight:'smooth, low-key late-night host'}[style]||'relaxed and friendly';
   const t=String(song.title||'this one').slice(0,60),a=String(song.artist||'').slice(0,40);
   /* what plays right after the break (Apple Music's up next), so she can say "and coming up, ..." */
   const nx=song.next&&song.next.length&&!song.shuf&&!FM.req?song.next[0]:null,nt=nx?String(nx[0]||'').slice(0,60):'',na=nx?String(nx[1]||'').slice(0,40):'';
-  const q=(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
+  const spec=mode==='preview'||mode==='roundup';
+  const q=spec?`NOVA FM BREAK. You're a host on ${C.station}, the house radio show. Write one spoken break for the special segment described below, ${tone}. Only use the facts given; no made-up details. Write it as it's spoken. No stage directions.`:(`NOVA FM BREAK. You're the DJ of ${C.station}, the house radio show. Write one spoken break, at most ${C.words} words, ${tone}. `+
     (mode==='top5'?`Do the Nova FM Top 5 countdown (see below); then a quick bit about `:mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it${nt?' and say what\'s coming up next (see COMING UP)':''}, then one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it${nt?' and what\'s coming up after it (see COMING UP)':''}, then one bit about `)+
     `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
   const said=NM.get('fmsaid',[]),extra=[];
-  {const hk=new Date().toDateString()+'|'+SHOW.k,first=NM.get('fmhostk','')!==hk,prev=FM_SHOWS[(FM_SHOWS.indexOf(SHOW)+FM_SHOWS.length-1)%FM_SHOWS.length];FM.hostK=hk;
+  {const hk=new Date().toDateString()+'|'+SHOW.k,first=!GUEST&&NM.get('fmhostk','')!==hk,prev=FM_SHOWS[(FM_SHOWS.indexOf(SHOW)+FM_SHOWS.length-1)%FM_SHOWS.length];FM.hostK=hk;
    extra.unshift(`HOST: this break is voiced by ${SHOW.host}, host of ${SHOW.name} on ${C.station} ("${SHOW.tag}"). Write it as ${SHOW.host}, in ${SHOW.host}'s style: ${SHOW.tone}. ${SHOW.host==='Nova'?'':`${SHOW.host} is a radio host on the station, not the dashboard assistant (that's Nova). `}You can name the show now and then (not every break), and use the tagline only occasionally.`+
-     (first?` FIRST BREAK OF THE SHOW: open by introducing yourself as the host taking over${prev.host!==SHOW.host?` from ${prev.host}`:''}, e.g. "${SHOW.host} here, ${SHOW.name} is on."`:''))}
+     (GUEST?` GUEST SPOT: ${SHOW.host} is popping in from ${SHOW.name} (on later today) just for the game-day preview; say so in a few words.`:'')+(first?` FIRST BREAK OF THE SHOW: open by introducing yourself as the host taking over${prev.host!==SHOW.host?` from ${prev.host}`:''}, e.g. "${SHOW.host} here, ${SHOW.name} is on."`:''))}
   const P=CFG.fm&&CFG.fm.people||{},me=P.me||'Nathan',fam=P.family||'Erinn';FM.saidK=[];FM.cat='';
   /* a request is coming up */
   if(FM.req){extra.unshift(`LISTENER REQUEST: ${me} asked for "${FM.req}". Announce it's coming up next as a request from ${me}.`);FM.reqSaid=1}
   /* a dedication */
   if(FM.dedic){extra.push(`DEDICATION: dedicate the next song to ${FM.dedic}${FM.dedicFrom?' from '+FM.dedicFrom:''}. Make it sweet and a little funny.`);FM.dedSaid=1}
-  else if(mode!=='hour'&&Math.random()<.1)extra.push(`SHOUT-OUT: a quick shout-out to ${fam}, who's probably within earshot.`);
+  else if(mode!=='hour'&&!spec&&Math.random()<.1)extra.push(`SHOUT-OUT: a quick shout-out to ${fam}, who's probably within earshot.`);
+  FM.spec=null;
+  if(mode==='preview'&&FM.prevP){const P=FM.prevP;FM.spec={k:'preview',host:SHOW.host,lab:'Game-day preview',c:'#3b7bff',html:fmPreviewCard(P)};FM.cat='sports';FM.saidK.push(P.k);
+    extra.unshift(`GAME-DAY PREVIEW: this whole break is ${SHOW.host}'s ${P.lab} game-day preview, sports-radio energy. Use only these facts, and only the ones that make it fun to hear: ${fmPreviewFacts(P)} Don't say who starts in goal (it isn't announced). End with puck drop time and a quick "go ${P.lab}" style sign-off. You can go up to 90 words.`)}
+  if(mode==='roundup'&&FM.ruS){const S=FM.ruS,d=new Date();FM.spec={k:'roundup',host:SHOW.host,lab:'The Morning Roundup',c:'#ff6a2b',html:fmRoundupCard(S)};FM.saidK.push('fmru:'+d.toDateString(),'morn:'+d.toDateString());
+    extra.unshift(`THE MORNING ROUNDUP: this whole break is ${SHOW.host}'s Morning Roundup, like a morning-show host running down the day: good morning, then these items in this order, short and warm, rewritten for radio (don't read them word for word): ${S.map(s=>s.say).join(' | ').slice(0,1600)}. Nothing else, no made-up details. You can go up to 120 words.`)}
   /* morning show: the first break of a weekday morning */
-  {const d=new Date(),h=d.getHours(),k='morn:'+d.toDateString();if(d.getDay()>0&&d.getDay()<6&&h>=6&&h<11&&!NM.get('fmsaidk',[]).includes(k)){extra.unshift('MORNING SHOW: open like a morning show host: good morning, today\'s weather, the first thing on the calendar today, and any game tonight. Upbeat. You can go up to 70 words.');FM.saidK.push(k)}}
+  {const d=new Date(),h=d.getHours(),k='morn:'+d.toDateString();if(mode!=='roundup'&&d.getDay()>0&&d.getDay()<6&&h>=6&&h<11&&!NM.get('fmsaidk',[]).includes(k)){extra.unshift('MORNING SHOW: open like a morning show host: good morning, today\'s weather, the first thing on the calendar today, and any game tonight. Upbeat. You can go up to 70 words.');FM.saidK.push(k)}}
   /* the most important personal moment, if any */
-  if(mode!=='hour'){const Mo=fmMoments();const m=Mo.find(x=>x.pri>=1)||(Mo.length&&Math.random()<.5?Mo[0]:null);if(m){extra.push(m.say);FM.saidK.push(m.k);FM.cat=m.cat;FM.onSay=m.onSay||null}}
+  if(mode!=='hour'&&mode!=='preview'&&mode!=='roundup'){const Mo=fmMoments();const m=Mo.find(x=>x.pri>=1)||(Mo.length&&Math.random()<.5?Mo[0]:null);if(m){extra.push(m.say);FM.saidK.push(m.k);FM.cat=m.cat;FM.onSay=m.onSay||null}}
   /* Friday night top 5 */
   if(mode==='top5'){const T=fmTop5();extra.unshift(`NOVA FM TOP 5: count down ${me}'s five most-played songs this week, from 5 to 1, with a line of fun commentary each: ${T.map((x,i)=>`${i+1}. ${x[0]} (${x[1]} plays)`).join('; ')}. You can go up to 110 words.`);FM.saidK.push('top5:'+fmWeek())}
   if(mode==='hour'){const hh=new Date().getHours()%12||12;extra.push(`TOP OF THE HOUR: this break is a short station ID (30 words max): it's ${hh} o'clock, you're listening to ${SHOW.name} on ${C.station}, Woodstock, Ontario. Mention "${t}"${a?' by '+a:''} briefly${nt?`, and that "${nt}"${na?' by '+na:''} is coming up after it`:''}.`)}
   if(FM.welcome){const h=FM.welcome/3600e3;extra.unshift(`WELCOME BACK: the listener just came back after ${h>=20?'about a day':h>=2?'about '+Math.round(h)+' hours':'a little while'} without music. Welcome them back warmly${mode==='hour'?' in the same breath as the station ID':' before anything else'}.`)}
   {const N=worldNew();if(N){extra.unshift(`NEWS UPDATE FIRST: calmly give a short news update on this breaking story, only the facts in the headline: "${N.t}" (${N.src||'news reports'}). Be respectful, no jokes in this break.`);FM.newsId=N.id}}
   if(mode!=='hour'){
-    if(nt)extra.push(`COMING UP: "${nt}"${na?' by '+na:''} plays right after this break. Say it naturally, e.g. "and coming up next, ${nt}${na?' from '+na:''}", before the rest of the break.`);
-    if(said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
-    if(!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
+    if(nt&&mode!=='roundup')extra.push(`COMING UP: "${nt}"${na?' by '+na:''} plays right after this break. Say it naturally, e.g. "and coming up next, ${nt}${na?' from '+na:''}", before the rest of the break.`);
+    if(!spec&&said.length&&Math.random()<.2)extra.push('CALLBACK: briefly refer back to something you said in an earlier break (listed below), like a running joke.');
+    if(!spec&&!FM.newsId&&Math.random()<.25)extra.push('SIGN-OFF: end with one short, gloriously terrible dad joke.')}
   const ctx=(typeof aiContext==='function'?aiContext():'')+`\n\nNova FM listener: ${me}, in Woodstock, Ontario. Household: ${fam}${P.notes?'. '+P.notes:''}. Speak to ${me} like a friendly host who knows him.`+`\n\nNova FM: the song is "${song.title||''}" by ${song.artist||''}${song.album?', from the album '+song.album:''}${song.year?' ('+song.year+')':''}. Recent breaks, don't repeat them: ${said.join(' / ')||'none yet'}`+(extra.length?`\nFor this break: ${extra.join(' ')}`:'');
   let words='',why='';
   /* ask the relay to write it; one retry for a hiccup (slow answer, busy AI), and remember why if it still fails */
@@ -5103,10 +5152,10 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
   fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');FM.prevLast=FM.prevLast0;
-  if(FM.hostK)NM.set('fmhostk',FM.hostK);
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':fmShow().voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
+  if(FM.hostK&&!GUEST)NM.set('fmhostk',FM.hostK);
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':SHOW.voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
-function fmAirUI(on){if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmShow().host,brk:1})}FM.queued=null}
+function fmAirUI(on){if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmAirHost(),brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
   if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
@@ -5392,7 +5441,7 @@ function fmFeatFill(s){FEAT.s=s;const k=fmFeatKey(s);
   if(!FEAT.t)FEAT.t=setInterval(()=>{if(!$('fmFeat')||!$('pNP').classList.contains('on'))return;if(Date.now()-FEAT.at>=20000)fmFeatStep()},1000)}
 /* the full-screen "on air" view */
 /* what kind of break is it? sports / weather / breaking news / regular chat (colour + label on the on-air screen) */
-function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedNews)return {k:'news',lab:'News update',c:'#e5484d'};if(FM.queuedMode==='hour')return {k:'id',lab:'Station ID',c:'#ff6a2b'};
+function fmKind(w){w=String(w||'').toLowerCase();if(FM.spec&&/^(preview|roundup)$/.test(FM.queuedMode||''))return {k:FM.spec.k==='preview'?'sports':'dj',lab:`${FM.spec.host} · ${FM.spec.lab}`,c:FM.spec.c,spec:1};if(FM.queuedNews)return {k:'news',lab:'News update',c:'#e5484d'};if(FM.queuedMode==='hour')return {k:'id',lab:'Station ID',c:'#ff6a2b'};
   const n=re=>(w.match(re)||[]).length;
   const sp=n(/\b(leafs|knights|nhl|ohl|game|games|score|scored|goal|goals|period|overtime|shootout|win|wins|won|loss|lost|streak|playoff|puck|standings|jays|raptors)\b/g),
     wx=n(/\b(degrees?|°|weather|snow|rain|cold|warm|wind|sunny|cloudy|overcast|forecast|frost|freezing|storm|hoodie|jacket|umbrella|temperature|low of|high of)\b/g),
@@ -5400,15 +5449,15 @@ function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedNews)return {k:'new
   if(nw>=2&&nw>=sp&&nw>=wx)return {k:'news',lab:'Breaking news',c:'#e5484d'};
   if(sp>=2&&sp>=wx)return {k:'sports',lab:'Sports update',c:'#3b7bff'};
   if(wx>=2)return {k:'weather',lab:'Weather',c:'#4fb3d9'};
-  return {k:'dj',lab:`${fmShow().host}'s on the mic`,c:'#e4572e'}}
+  return {k:'dj',lab:`${fmAirHost()}'s on the mic`,c:'#e4572e'}}
 function fmOnAir(on){let el=$('fmOn');
-  if(!on){if(el)el.classList.remove('on');{const sd=$('fmSid');if(sd&&sd.className==='full')sd.remove()}try{cancelAnimationFrame(FM.raf)}catch(e){}FM.raf=0;return}
+  if(!on){if(el)el.classList.remove('on');if(FM.spec&&/^(preview|roundup)$/.test(FM.queuedMode||'')){FM.spec=null;FM.queuedMode=''}{const sd=$('fmSid');if(sd&&sd.className==='full')sd.remove()}try{cancelAnimationFrame(FM.raf)}catch(e){}FM.raf=0;return}
   if(typeof orbLive==='function'&&ORB.st){if(orbLive())return;orbHide()}   /* talking to Nova wins (a stuck orb doesn't) */
   if(!el){el=document.createElement('div');el.id='fmOn';document.body.appendChild(el)}
   const w=FM.airWords||'',K=fmKind(w);el.style.setProperty('--fa',K.c);el.dataset.k=K.k;
   const first=!FM.air&&!el.classList.contains('on');
   el.innerHTML=`<div class="fo-hd">${fmSticker()}<span class="fm-air on"><i></i>ON AIR</span></div>
-    <div class="fo-k">${esc(K.lab)}</div><canvas width="1080" height="520"></canvas>
+    <div class="fo-k">${esc(K.lab)}</div><canvas width="1080" height="520"></canvas>${K.spec&&FM.spec.html?FM.spec.html:''}
     <div class="fo-n">Music down to ${Math.round(FMC().duck)}% · back to the music in a moment</div>
     <div class="fo-lt"><b>${esc(fmWord().w)}</b>${fmWord().b?`<i>${esc(fmWord().b)}</i>`:''}<span>WOODSTOCK${fmWx()?' · '+fmWx():''} · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).toUpperCase()}</span></div>`;
   el.classList.add('on');wakeScreen&&wakeScreen();if(first)fmStationId(true);
@@ -6993,7 +7042,7 @@ function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return
 function renderNPMini(){if(window._mnXb&&xbPl()){xbMini();return}const s=npState();if(!s)return;
   const yt=npYT(s);$('npMini').className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
   const nvb=typeof fmStudioOn==='function'&&fmStudioOn(s);$('npMini').classList.toggle('nvfm',nvb);
-  $('npMini').innerHTML=`${nvb?'<span class="mn-nv">N</span>':''}<div class="mn-oa">${esc(typeof fmShow==='function'?fmShow().host:'Nova')}'s on the mic<span>● ON AIR</span></div><div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
+  $('npMini').innerHTML=`${nvb?'<span class="mn-nv">N</span>':''}<div class="mn-oa">${esc(typeof fmAirHost==='function'?fmAirHost():'Nova')}'s on the mic<span>● ON AIR</span></div><div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
   $('npCard').className='card'+(s.state==='paused'?' paused':'');
   $('npCard').innerHTML=`<div class="k">${yt?'▶️':'🎵'} ${s.state==='paused'?'PAUSED':yt?'NOW WATCHING':'NOW PLAYING'}</div><div class="row"><div class="ca${yt?' yt':''}"></div><div style="min-width:0"><b>${esc(s.title||'')}</b><small>${esc(s.artist||(yt?'YouTube':''))}</small></div></div>
     ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>on ${esc(s.dev||'Macbook')}</span><span>${npT(s.dur)}</span></div>`:`<div class="np-tm"><span>on ${esc(s.dev||'Macbook')}${yt?' · YouTube':s.radio?' · radio':''}</span></div>`}`;
@@ -8462,7 +8511,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 232';
+document.getElementById('ver').textContent='build nova 233';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
