@@ -4988,7 +4988,9 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
   /* a jingle on its own between songs, every 6-7 minutes (none after a skip, none if a break is about to play or one just did;
      talk breaks open with a jingle and count as one). Quiet hours mean no jingles either, unless Nova FM was woken. */
   {const prevAt=FM.songAt||0;FM.songAt=Date.now();const C=FMC(),gap=(C.jingleMin||(NM.get('fmtest',false)?2:6.5))*60000,jl=+NM.get('fmjlast',0);
-   if(FM.on&&C.jingles!==false&&prevAt&&Date.now()-prevAt>=30000&&Date.now()-jl>=gap&&Date.now()-FM.last>=Math.min(gap,2*60000)&&!FM.pend&&!FM.queued&&!FM.air&&!FM.busy&&!fmQuiet()&&!fmBusy(j)&&SECRETS.topic){
+   /* not right before a break either: none when a break is due within a song, and none around the top of the hour while the hour ID is still to come */
+   const nd=new Date(),hkJ=nd.toDateString()+'|'+nd.getHours(),idDue=(nd.getMinutes()<20&&NM.get('fmhour','')!==hkJ)||nd.getMinutes()>=56;
+   if(FM.on&&C.jingles!==false&&prevAt&&Date.now()-prevAt>=30000&&Date.now()-jl>=gap&&!idDue&&Date.now()-FM.last>=Math.min(gap,2*60000)&&!FM.pend&&!FM.queued&&!FM.air&&!FM.busy&&!fmQuiet()&&!fmBusy(j)&&SECRETS.topic){
      NM.set('fmjlast',Date.now());const mo=fmMomentPick();nbPub(`${SECRETS.topic}-mcmd`,`jingle|${C.jingleDuck||30}${mo.jk?'|'+mo.jk:''}`).catch(()=>{});fmDiag('jingle between songs');setTimeout(()=>fmMoment(mo),900)}}
   /* a song only counts (and only gets a break) once it's actually been listened to: 30 seconds in (less for a very short one).
      Skip through a bunch and none of them count; the break waits for a song you stay on. */
@@ -4999,13 +5001,15 @@ function fmSongGo(j){
   {const n=new Date(),hk=n.toDateString()+'|'+n.getHours();
    /* never right on the heels of another break: wait until 8 minutes after the last one actually played (still inside the first 20 minutes) */
    const lastAir=Math.max(FM.last||0,FM.airEnd||0,+(NM.get('fmlastbrk',{})||{}).at||0);
-   if(FM.on&&!FM.busy&&n.getMinutes()<20&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&!FM.pend&&!FM.queued&&!FM.air&&Date.now()-lastAir>=8*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
+   if(FM.on&&!FM.busy&&n.getMinutes()<20&&NM.get('fmhour','')!==hk&&!fmQuiet()&&!fmBusy(j)&&!FM.pend&&!FM.queued&&!FM.air&&Date.now()-lastAir>=8*60000&&Date.now()-(+NM.get('fmjlast',0))>=3*60000){NM.set('fmhour',hk);FM.count=0;FM.target=fmTarget();fmBreak('hour',j);return}}
   FM.count++;if(!FM.target)FM.target=fmTarget();
   fmPlay(j);
   /* Friday night: the top 5 countdown (once a week, 5 PM or later, at least 8 songs logged) */
   {const d=new Date();if(FM.on&&!FM.busy&&d.getDay()===5&&d.getHours()>=17&&!NM.get('fmsaidk',[]).includes('top5:'+fmWeek())&&fmTop5().length>=3&&!fmQuiet()&&!fmBusy(j)&&Date.now()-FM.last>3*60000){FM.count=0;fmBreak('top5',j);return}}
   const news=worldNew()||FM.req||FM.dedic||fmMoments().some(m=>m.pri>=2);
   if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
+  /* a jingle just played (under 2.5 min ago): this break waits for the next song, so the two never land back to back */
+  if(!news&&Date.now()-(+NM.get('fmjlast',0))<150000){fmDiag('break held: a jingle just played');return}
   /* the last 10 minutes of the hour: hold a regular break, the top-of-the-hour ID is coming (breaking news still goes) */
   {const n=new Date(),hk=new Date(+n+15*60000);if(!news&&n.getMinutes()>=50&&NM.get('fmhour','')!==hk.toDateString()+'|'+hk.getHours()){fmDiag('break held for the top of the hour');return}}
   fmBreak('next',j)}
@@ -8369,7 +8373,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 229';
+document.getElementById('ver').textContent='build nova 230';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
