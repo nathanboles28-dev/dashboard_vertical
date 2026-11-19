@@ -5158,7 +5158,7 @@ const FM_SHOWS=[
   {from:10,to:15,k:'midday',host:'Riley',voice:'af_sarah',name:'Nova Midday',tag:'Your day, your music.',tone:'easygoing and friendly, a little chatty, like a coworker at the next desk keeping you company'},
   {from:15,to:19,k:'drive',host:'Tanner',voice:'am_puck',name:'Nova Drive',tag:'All the tunes, none of the traffic.',tone:'high-energy drive-time guy, punchy and fun, a little cocky, loves talking Leafs, Knights and whatever game is on'},
   {from:19,to:22,k:'nights',host:'Jace',voice:'am_michael',name:'Nova Nights',tag:"The day is done. The music isn't.",tone:'laid-back evening guy, smooth and warm, good little stories, settling into the night'},
-  {from:22,to:6,k:'afterdark',host:'Nova',voice:'af_nicole',name:'Nova After Dark',tag:'Good music. Questionable bedtimes.',tone:'smooth and relaxed late-night host, conversational, occasionally dry and sarcastic (never mean), talking to someone still up at their computer'}];
+  {from:22,to:6,k:'afterdark',host:'Nova',voice:'af_bella',name:'Nova After Dark',tag:'Good music. Questionable bedtimes.',tone:'smooth and relaxed late-night host, conversational, occasionally dry and sarcastic (never mean), talking to someone still up at their computer'}];
 function fmShow(d){const h=(d||new Date()).getHours();return FM_SHOWS.find(s=>s.from<s.to?(h>=s.from&&h<s.to):(h>=s.from||h<s.to))}
 function fmNextShow(){const d=new Date(),cur=fmShow(d),n=FM_SHOWS[(FM_SHOWS.indexOf(cur)+1)%FM_SHOWS.length],at=new Date(d);at.setHours(n.from,0,0,0);if(at<=d)at.setDate(at.getDate()+1);return {show:n,at}}
 const fmName=()=>{const n=String(FMC().station||'Nova FM').trim(),m=n.match(/^(.*?)\s*(fm|am|radio)$/i);return m?`${esc(m[1].toUpperCase())}<span>${esc(m[2].toUpperCase())}</span>`:esc(n.toUpperCase())};
@@ -8369,7 +8369,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 228';
+document.getElementById('ver').textContent='build nova 229';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
