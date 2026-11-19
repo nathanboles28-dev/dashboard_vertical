@@ -2607,6 +2607,9 @@ body.npBar #obsBody .ob-grid span{display:none}
 #obsBody .ob-utc{bottom:-2.8vw}
 #obsBody .ob-yr{bottom:-2.6vw}
 body.npBar #obsBody .ob-stage{margin-bottom:2.6vw}
+/* world population label: the words stay centred over the number, the ESTIMATE tag hangs off to the right, level with the text */
+#obsBody .ob-pop small{position:relative;display:inline-block;line-height:1.2}
+#obsBody .ob-pop small .ob-k{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:1.4vw;line-height:1.3;white-space:nowrap}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -8939,7 +8942,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 238';
+document.getElementById('ver').textContent='build nova 239';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
