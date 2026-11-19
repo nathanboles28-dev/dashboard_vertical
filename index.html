@@ -2596,6 +2596,12 @@ body:not(.noTicker):not(.hasTicker) #npBody.fmS-on:not(.fm-noup) .fm-row{padding
 .ob-src{margin-top:auto;font-size:1.3vw;line-height:1.4;color:#5a5650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none}
 .ob-grid b u{text-decoration:none}
 .ob-ev{flex:0 0 auto}
+/* music playing: the now-playing bar sits along the bottom, so the Observatory tightens up to stay clear of it */
+body.npBar #obsBody .ob-wrap{padding-bottom:calc(16.2*var(--u))}
+body.npBar #obsBody .ob-stage{height:54vw}
+body.npBar #obsBody .ob-src{display:none}
+body.npBar #obsBody .ob-pop span{display:none}
+body.npBar #obsBody .ob-grid span{display:none}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -8926,7 +8932,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 236';
+document.getElementById('ver').textContent='build nova 237';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
