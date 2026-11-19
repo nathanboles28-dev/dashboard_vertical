@@ -4903,7 +4903,9 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
     (mode==='top5'?`Do the Nova FM Top 5 countdown (see below); then a quick bit about `:mode==='hour'?`Do the top-of-the-hour station ID (see below); if there's room, mention `:mode==='next'?`It airs as "${t}"${a?' by '+a:''} ends: back-announce it${nt?' and say what\'s coming up next (see COMING UP)':''}, then one bit about `:`It's said over "${t}"${a?' by '+a:''}: mention it${nt?' and what\'s coming up after it (see COMING UP)':''}, then one bit about `)+
     `${C.topics.slice().sort(()=>Math.random()-.5).slice(0,2).join(' or ')}. Only use dashboard facts; no made-up trivia. Say the station name once. Write it as it's spoken. No stage directions.`).slice(0,500);
   const said=NM.get('fmsaid',[]),extra=[];
-  extra.push(`PROGRAM: right now it's ${SHOW.name} on ${C.station} ("${SHOW.tag}"). Host it in that show's style: ${SHOW.tone}. You can name the show now and then (not every break), and use its tagline only occasionally.`);
+  {const hk=new Date().toDateString()+'|'+SHOW.k,first=NM.get('fmhostk','')!==hk,prev=FM_SHOWS[(FM_SHOWS.indexOf(SHOW)+FM_SHOWS.length-1)%FM_SHOWS.length];FM.hostK=hk;
+   extra.unshift(`HOST: this break is voiced by ${SHOW.host}, host of ${SHOW.name} on ${C.station} ("${SHOW.tag}"). Write it as ${SHOW.host}, in ${SHOW.host}'s style: ${SHOW.tone}. ${SHOW.host==='Nova'?'':`${SHOW.host} is a radio host on the station, not the dashboard assistant (that's Nova). `}You can name the show now and then (not every break), and use the tagline only occasionally.`+
+     (first?` FIRST BREAK OF THE SHOW: open by introducing yourself as the host taking over${prev.host!==SHOW.host?` from ${prev.host}`:''}, e.g. "${SHOW.host} here, ${SHOW.name} is on."`:''))}
   const P=CFG.fm&&CFG.fm.people||{},me=P.me||'Nathan',fam=P.family||'Erinn';FM.saidK=[];FM.cat='';
   /* a request is coming up */
   if(FM.req){extra.unshift(`LISTENER REQUEST: ${me} asked for "${FM.req}". Announce it's coming up next as a request from ${me}.`);FM.reqSaid=1}
@@ -4942,9 +4944,10 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const spoken=words.replace(/(\d)[-–](?=\d)/g,'$1 ').replace(/\s+/g,' ');
   const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
   fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');FM.prevLast=FM.prevLast0;
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
+  if(FM.hostK)NM.set('fmhostk',FM.hostK);
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':fmShow().voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
   return true}
-function fmAirUI(on){if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({brk:1})}FM.queued=null}
+function fmAirUI(on){if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmShow().host,brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
   if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
   if(!el){el=document.createElement('div');el.id='fmAir';document.body.appendChild(el)}el.innerHTML=`<i></i>ON AIR · ${esc(FMC().station.toUpperCase())}`;
@@ -4998,17 +5001,19 @@ function fmStationId(full){try{if(FMC().stationId===false)return;let el=$('fmSid
   document.body.appendChild(el);wakeScreen&&wakeScreen();clearTimeout(FM.sidT);FM.sidT=setTimeout(()=>el.remove(),5200)}catch(e){}}
 /* ================= Nova FM programming: the show changes with the time of day (voice + header only, never the music) ================= */
 const FM_SHOWS=[
-  {from:6,to:10,k:'morning',name:'The Nova Morning Show',tag:'Coffee first. Everything else second.',tone:'bright, warm morning-show energy, light and quick, the friendly voice that gets the day going'},
-  {from:10,to:15,k:'midday',name:'Nova Midday',tag:'Your day, your music.',tone:'easygoing and friendly, a little chatty, like company while you get through the day'},
-  {from:15,to:19,k:'drive',name:'Nova Drive',tag:'All the tunes, none of the traffic.',tone:'upbeat drive-time energy, punchy and fun, winding down the work day'},
-  {from:19,to:22,k:'nights',name:'Nova Nights',tag:"The day is done. The music isn't.",tone:'relaxed evening host, warm and a bit playful, settling into the night'},
-  {from:22,to:6,k:'afterdark',name:'Nova After Dark',tag:'Good music. Questionable bedtimes.',tone:'smooth and relaxed late-night host, conversational, occasionally dry and sarcastic (never mean), talking to someone still up at their computer'}];
+  {from:6,to:10,k:'morning',host:'Nova',voice:'af_heart',name:'The Nova Morning Show',tag:'Coffee first. Everything else second.',tone:'bright, warm morning-show energy, light and quick, the friendly voice that gets the day going'},
+  {from:10,to:15,k:'midday',host:'Riley',voice:'af_sarah',name:'Nova Midday',tag:'Your day, your music.',tone:'easygoing and friendly, a little chatty, like a coworker at the next desk keeping you company'},
+  {from:15,to:19,k:'drive',host:'Tanner',voice:'am_puck',name:'Nova Drive',tag:'All the tunes, none of the traffic.',tone:'high-energy drive-time guy, punchy and fun, a little cocky, loves talking Leafs, Knights and whatever game is on'},
+  {from:19,to:22,k:'nights',host:'Jace',voice:'am_michael',name:'Nova Nights',tag:"The day is done. The music isn't.",tone:'laid-back evening guy, smooth and warm, good little stories, settling into the night'},
+  {from:22,to:6,k:'afterdark',host:'Nova',voice:'af_nicole',name:'Nova After Dark',tag:'Good music. Questionable bedtimes.',tone:'smooth and relaxed late-night host, conversational, occasionally dry and sarcastic (never mean), talking to someone still up at their computer'}];
 function fmShow(d){const h=(d||new Date()).getHours();return FM_SHOWS.find(s=>s.from<s.to?(h>=s.from&&h<s.to):(h>=s.from||h<s.to))}
 function fmNextShow(){const d=new Date(),cur=fmShow(d),n=FM_SHOWS[(FM_SHOWS.indexOf(cur)+1)%FM_SHOWS.length],at=new Date(d);at.setHours(n.from,0,0,0);if(at<=d)at.setDate(at.getDate()+1);return {show:n,at}}
 const fmName=()=>{const n=String(FMC().station||'Nova FM').trim(),m=n.match(/^(.*?)\s*(fm|am|radio)$/i);return m?`${esc(m[1].toUpperCase())}<span>${esc(m[2].toUpperCase())}</span>`:esc(n.toUpperCase())};
 const fmWx=()=>{try{const c=WXD&&WXD.c;if(!c)return '';return `${Math.round(c.temperature_2m)}° · ${String((WXT[c.weather_code]||'')).toUpperCase()}`}catch(e){return ''}};
 /* songs and breaks, newest first, kept on this screen */
-function fmLog(x){const td=new Date().toDateString(),D=NM.get('fmday',{});if(D.d!==td){D.d=td;D.songs=0;D.breaks=0;D.since=Date.now();D.secs=0;D.art={};D.first=null;D.pAt=0;D.pDur=0}
+function fmLog(x){const td=new Date().toDateString(),D=NM.get('fmday',{});if(D.d!==td){D.d=td;D.songs=0;D.breaks=0;D.since=Date.now();D.secs=0;D.art={};D.first=null;D.pAt=0;D.pDur=0;D.v=2;D.part=0}
+  /* a day that started before listening time / artists were tracked: say from when they're counted */
+  if(!D.v){D.v=2;D.part=D.part||Date.now()}
   if(x.brk)D.breaks++;else{D.songs++;D.art=D.art||{};D.secs=D.secs||0;
     /* listening time: the last song counts for as long as it actually played (up to its length) */
     if(D.pAt)D.secs+=Math.max(0,Math.min((Date.now()-D.pAt)/1000,D.pDur||300,1200));
@@ -5044,7 +5049,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
   let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
   b.className='fmS-on';
   b.innerHTML=`<div class="fm-ban"><svg viewBox="0 0 1080 520" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fmbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3836"/><stop offset=".55" stop-color="#232220"/><stop offset="1" stop-color="#141413"/></linearGradient><radialGradient id="fmgl" cx=".18" cy=".1" r=".7"><stop offset="0" stop-color="rgba(255,255,255,.10)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><rect width="1080" height="520" fill="url(#fmbg)"/><rect width="1080" height="520" fill="url(#fmgl)"/><g fill="none" stroke-linecap="round"><path d="M-120 330 Q 420 520 1220 40" stroke="rgba(255,255,255,.10)" stroke-width="2"/><path d="M-120 380 Q 480 560 1220 110" stroke="rgba(255,255,255,.07)" stroke-width="1.5"/><path d="M-120 420 Q 520 600 1220 190" stroke="rgba(255,106,43,.45)" stroke-width="2.5"/><path d="M-120 460 Q 560 640 1220 260" stroke="rgba(255,255,255,.05)" stroke-width="1.5"/><path d="M-160 250 Q 380 470 1240 -60" stroke="rgba(255,255,255,.06)" stroke-width="40"/></g></svg></div><div class="fmS">
-    <div class="fm-hd">${fmSticker()}<div class="fm-show"><b>${esc(fmShow().name)}</b><small>${esc(fmShow().tag)}</small></div></div>
+    <div class="fm-hd">${fmSticker()}<div class="fm-show"><b>${esc(fmShow().name)}</b><small>with ${esc(fmShow().host)} · ${esc(fmShow().tag)}</small></div></div>
     <div class="fm-dial">${dial}<u></u><span>NOVA</span></div>
     <div class="fm-sub"><span><i class="fm-live"></i>Live · Your library · Apple Music</span><span class="fm-air${FM.air?' on':''}"><i></i>ON AIR</span></div>
     <div class="fm-card fm-now"><span class="fm-tag o">Now playing${s.state==='paused'?' · paused':''}</span>
@@ -5053,7 +5058,7 @@ function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmh
     ${(s.next&&s.next.length)||s.shuf||s.from?`<div class="fm-card fm-up"><span class="fm-tag">Up next</span>${s.next&&s.next.length?s.next.slice(0,3).map((x,i)=>`<div class="fm-row"><span>${i+1}</span><b>${esc(x[0]||'')}</b><em>${esc(x[1]||'')}</em></div>`).join(''):`<div class="fm-shuf"><i>${s.shuf?'⤮':'♪'}</i><div><b>${s.shuf?'Shuffling':'Playing from'}</b><small>${esc(s.from&&!/^(library|music)$/i.test(s.from)?(s.from==='Nova Queue'?'Picked by Nova':s.from):'Your whole library')}</small></div></div>`}</div>`:''}
     <div class="fm-card fm-desk"><span class="fm-tag">On the desk</span><div class="fm-dsk in"></div>
       <div class="fm-nx"><span class="fm-dd"></span><span>Next break · ${FM.busy?'writing it now…':FM.pend&&Date.now()-FM.pend<15*60000?'ready, on air when this song ends':left<=0?fmWhy():'after '+left+' more song'+(left>1?'s':'')}</span>${test?'<span class="o">Test mode</span>':fmQuiet()&&!NM.get('fmwake',0)?'<span>Quiet hours</span>':''}</div></div>
-    ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?'Nova on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
+    ${H.length?`<div class="fm-card fm-rp"><span class="fm-tag">Recently played</span>${H.map(x=>`<div class="fm-row${x.brk?' brk':''}"><span>${tm(x.at)}</span><b>${esc(x.brk?'Break':x.title)}</b><em>${esc(x.brk?(x.host||'Nova')+' on the mic':x.artist||'')}</em></div>`).join('')}</div>`:''}
     <div class="fm-card fm-feat" id="fmFeat"></div>
     </div>`;try{fmFeatFill(s)}catch(e){}}
 
@@ -5073,7 +5078,7 @@ async function fmFeatSong(s){const k=fmFeatKey(s);if(!s||!s.title||FEAT.busy[k]|
   try{const sh=fmShow(),wx=(()=>{const t=($('temp')||{}).textContent||'',d=($('wxdesc')||{}).textContent||'';return /\d/.test(t)?`${t.trim()} and ${d.trim().toLowerCase()}`:''})(),ev=(typeof calEvents!=='undefined'?calEvents:[]).filter(e=>e.start>new Date()&&e.start-new Date()<18*3600e3)[0];
     const q=`Write three short lines for a radio station screen about "${String(s.title).slice(0,70)}" by ${String(s.artist||'').slice(0,50)}${s.album?` (album "${String(s.album).slice(0,50)}"${s.year?', '+s.year:''})`:''}. Format exactly: FACT: ... || QUIP: ... || TAKE: ...`;
     const ctx=`FACT: one true, well-documented fact about this song, artist or album (recording, release, chart, story behind it), max 26 words. Only if you're genuinely sure; otherwise write FACT: NONE. Never invent numbers or stories.
-QUIP: ${s.year?`the song is from ${s.year} (${new Date().getFullYear()-s.year} years ago). `:''}one playful nostalgic line, millennial humour welcome, max 20 words. If you don't know the year, write QUIP: NONE.
+QUIP: ${s.year&&new Date().getFullYear()-s.year>=10?`the song came out in ${s.year} (${new Date().getFullYear()-s.year} years ago). One playful nostalgic line about that era, millennial humour welcome, ONE sentence, max 16 words. He listens on Apple Music (never mention Spotify).`:'write QUIP: NONE.'}
 TAKE: Nova's own short, funny or warm observation (max 22 words) tying the song to right now: it's ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})} on ${new Date().toLocaleDateString([],{weekday:'long'})}, the show is ${sh.name}${wx?', it is '+wx+' in Woodstock':''}${ev?`, next on the calendar: ${ev.title}`:''}. No made-up facts.
 Plain text, no markdown, no emojis, no quotes around lines.`;
     const a=await fmFeatAsk(q,ctx);const g=re=>{const m=a.match(re);const v=m?m[1].replace(/\|+\s*$/,'').trim():'';return /^none\b/i.test(v)?'':v.slice(0,220)};
@@ -5093,9 +5098,11 @@ function fmFeatures(s){const C=NM.get('fmfsong',{})[fmFeatKey(s||{})]||{},D=NM.g
   F.push(['bt',()=>C.fact?{tag:'Behind the track',title:s.title,body:C.fact,foot:s.artist||''}:null]);
   F.push(['today',()=>{if(!today||!D.songs)return null;const top=Object.entries(D.art||{}).sort((a,b)=>b[1]-a[1])[0],arts=Object.keys(D.art||{}).length;
     const st=[[D.songs,D.songs===1?'song':'songs'],[fmDur(D.secs||0),'of music'],[D.breaks||0,D.breaks===1?'DJ break':'DJ breaks']];
-    return {tag:'Today on Nova',stats:st,body:top?`Most played: <b>${esc(top[0])}</b> (${top[1]}×)${arts>1?` · ${arts} artists`:''}`:'',foot:D.first?`First song today: ${esc(D.first.t)} · ${new Date(D.first.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`:'',html:1}}]);
-  F.push(['tb',()=>{const y=+s.year;if(!y||y>new Date().getFullYear())return null;const age=new Date().getFullYear()-y,round=age>=5&&age%5===0;
-    if(!C.quip&&age<5)return null;return {tag:'The Nova Throwback',title:`${s.album||s.title} · ${y}`,body:(round?`${s.album?'This album':'This song'} turns ${age} this year. `:age>=1?`${age} year${age>1?'s':''} old. `:'')+(C.quip||''),foot:s.artist||''}}]);
+    return {tag:'Today on Nova',stats:st,body:top?`Most played: <b>${esc(top[0])}</b> (${top[1]}×)${arts>1?` · ${arts} artists`:''}`:'',foot:D.part?`Listening time & artists counted since ${new Date(D.part).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})} · full day from tomorrow`:D.first?`First song today: ${esc(D.first.t)} · ${new Date(D.first.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`:'',html:1}}]);
+  /* only songs 10+ years old count as a throwback */
+  F.push(['tb',()=>{const y=+s.year;if(!y||y>new Date().getFullYear())return null;const age=new Date().getFullYear()-y;if(age<10)return null;
+    const q=String(C.quip||'').split(/(?<=[.!?])\s+/)[0].slice(0,140);
+    return {tag:'The Nova Throwback',title:`${s.album||s.title} · ${y}`,body:(age%5===0?`${s.album?'This album':'This song'} turns ${age} this year. `:`Released ${age} years ago. `)+q,foot:s.artist||''}}]);
   F.push(['dyk',()=>{const Y=NM.get('fmdyk',{});if(!Y.list||!Y.list.length)return null;const f=Y.list[(Y.i||0)%Y.list.length];return {tag:'Did you know?',body:f,adv:1}}]);
   F.push(['up',()=>{const out=[],C2=FMC(),left=Math.max(0,(FM.target||fmTarget())-FM.count),now=new Date();
     if(FM.on&&!fmQuiet()){if(FM.pend||FM.busy)out.push(['Next break','after this song']);else if(left>0)out.push(['Next break',`after ${left} more song${left>1?'s':''}`]);
@@ -5144,7 +5151,7 @@ function fmKind(w){w=String(w||'').toLowerCase();if(FM.queuedNews)return {k:'new
   if(nw>=2&&nw>=sp&&nw>=wx)return {k:'news',lab:'Breaking news',c:'#e5484d'};
   if(sp>=2&&sp>=wx)return {k:'sports',lab:'Sports update',c:'#3b7bff'};
   if(wx>=2)return {k:'weather',lab:'Weather',c:'#4fb3d9'};
-  return {k:'dj',lab:"Nova's on the mic",c:'#e4572e'}}
+  return {k:'dj',lab:`${fmShow().host}'s on the mic`,c:'#e4572e'}}
 function fmOnAir(on){let el=$('fmOn');
   if(!on){if(el)el.classList.remove('on');{const sd=$('fmSid');if(sd&&sd.className==='full')sd.remove()}try{cancelAnimationFrame(FM.raf)}catch(e){}FM.raf=0;return}
   if(typeof orbLive==='function'&&ORB.st){if(orbLive())return;orbHide()}   /* talking to Nova wins (a stuck orb doesn't) */
@@ -6736,7 +6743,7 @@ function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return
 function renderNPMini(){if(window._mnXb&&xbPl()){xbMini();return}const s=npState();if(!s)return;
   const yt=npYT(s);$('npMini').className=(s.state==='paused'?'paused':'')+(yt?' yt':'');
   const nvb=typeof fmStudioOn==='function'&&fmStudioOn(s);$('npMini').classList.toggle('nvfm',nvb);
-  $('npMini').innerHTML=`${nvb?'<span class="mn-nv">N</span>':''}<div class="mn-oa">Nova's on the mic<span>● ON AIR</span></div><div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
+  $('npMini').innerHTML=`${nvb?'<span class="mn-nv">N</span>':''}<div class="mn-oa">${esc(typeof fmShow==='function'?fmShow().host:'Nova')}'s on the mic<span>● ON AIR</span></div><div class="mn-a"></div><div class="mn-x"><b>${esc(s.title||'')}</b><small>${yt?'▶️ ':''}${esc(s.artist||(yt?'YouTube':''))}${s.state==='paused'?' · paused':' · on '+esc(s.dev||'Macbook')}</small></div>${npEq}${s.dur?'<i class="np-fill"></i>':''}`;
   $('npCard').className='card'+(s.state==='paused'?' paused':'');
   $('npCard').innerHTML=`<div class="k">${yt?'▶️':'🎵'} ${s.state==='paused'?'PAUSED':yt?'NOW WATCHING':'NOW PLAYING'}</div><div class="row"><div class="ca${yt?' yt':''}"></div><div style="min-width:0"><b>${esc(s.title||'')}</b><small>${esc(s.artist||(yt?'YouTube':''))}</small></div></div>
     ${s.dur?`<div class="np-bar"><i class="np-fill"></i></div><div class="np-tm"><span class="np-cur">0:00</span><span>on ${esc(s.dev||'Macbook')}</span><span>${npT(s.dur)}</span></div>`:`<div class="np-tm"><span>on ${esc(s.dev||'Macbook')}${yt?' · YouTube':s.radio?' · radio':''}</span></div>`}`;
@@ -8205,7 +8212,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 222';
+document.getElementById('ver').textContent='build nova 225';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
