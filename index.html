@@ -2610,6 +2610,18 @@ body.npBar #obsBody .ob-stage{margin-bottom:2.6vw}
 /* world population label: the words stay centred over the number, the ESTIMATE tag hangs off to the right, level with the text */
 #obsBody .ob-pop small{position:relative;display:inline-block;line-height:1.2}
 #obsBody .ob-pop small .ob-k{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:1.4vw;line-height:1.3;white-space:nowrap}
+/* full-screen highlights (with sound) */
+#hlFull{position:fixed;inset:0;z-index:60;background:#000;display:none;flex-direction:column;justify-content:center;cursor:none}
+#hlFull.on{display:flex}
+#hlFull video,#hlFull iframe{width:100%;aspect-ratio:16/9;height:auto;border:0;background:#000;display:block}
+#hlFull .hlf-bar{height:.5vw;background:rgba(255,255,255,.12)}
+#hlFull .hlf-bar i{display:block;height:100%;width:0;background:#ff6a2b;transition:width .25s linear}
+#hlFull .hlf-top{position:absolute;left:6vw;right:6vw;top:8vw;display:flex;justify-content:space-between;align-items:baseline;font-family:'Barlow Condensed','Inter',sans-serif;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
+#hlFull .hlf-top span{font-size:2.6vw;color:#efe9dc}
+#hlFull .hlf-top b{font-size:2.4vw;color:#ff6a2b;font-weight:600}
+#hlFull .hlf-cap{position:absolute;left:6vw;right:6vw;bottom:calc(50% - 34vw);font-size:3.6vw;font-weight:600;line-height:1.25;color:#efe9dc}
+#hlFull .hlf-tap{position:absolute;left:50%;bottom:12vw;transform:translateX(-50%);display:none;padding:1.4vw 3vw;border-radius:99px;border:1.5px solid #ff6a2b;color:#efe9dc;font-size:2.4vw}
+#hlFull.muted .hlf-tap{display:block}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -5730,6 +5742,42 @@ let OB_ISSREC=null;function issPos(){const S=window.satellite;if(!S||!SKY.tle)re
   const d=new Date(),pv=S.propagate(OB_ISSREC.r,d);if(!pv||!pv.position)return null;const g=S.eciToGeodetic(pv.position,S.gstime(d));return {lat:S.degreesLat(g.latitude),lon:S.degreesLong(g.longitude)}}catch(e){return null}}
 const obsOn=()=>!(CFG.observatory&&CFG.observatory.on===false)&&!NM.get('obsoff',false);
 
+
+/* ================= "Nova, show me the Leafs highlights": the goal clips, full screen, with sound =================
+   Tonight's goals if a game is on (or just finished), otherwise the last game's clips. Apple Music on the Mac pauses
+   while they play and picks up again after. Tap or say "stop" to close. */
+const HLF={on:false,list:[],i:0,paused:false,muted:false,t:null};
+function hlfClips(team){const lf=/leafs|toronto/i,isUs=x=>!team||lf.test(team)?lf.test(x):new RegExp(team,'i').test(x);
+  /* 1 · tonight's game, while it's on: the goal replays the live page already has */
+  try{const g=liveGames().find(z=>isUs([z.g&&z.g.name,z.g&&z.g.short,z.L&&z.L.name].join(' ')));if(g&&LVH.length)return {list:LVH.slice().sort((a,b)=>(Date.parse(a.date)||0)-(Date.parse(b.date)||0)),what:'Tonight’s goals'}}catch(e){}
+  /* 2 · the most recent recap with clips (last night / today) */
+  try{const R=Object.values(RC).filter(r=>(r.videos||[]).length&&isUs([r.us&&r.us.name,r.us&&r.us.abbr,r.league].join(' '))).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date))[0];
+    if(R)return {list:R.videos,what:`${R.us.name} ${R.us.score}–${R.them.score} ${R.home?'vs':'at'} ${R.them.name}`}}catch(e){}
+  /* 3 · the hub's last-game highlights */
+  try{const L=HUB&&HUB.last,V=(HUB&&HUB.videos)||[];if(V.length)return {list:V,what:L?`Last game · ${L.res} ${L.us}–${L.them} ${L.home?'vs':'at'} ${L.opp}`:'Last game'}}catch(e){}
+  return null}
+function hlfShow(team){const C=hlfClips(team);if(!C||!C.list.length)return false;hlfClose(true);
+  let el=$('hlFull');if(!el){el=document.createElement('div');el.id='hlFull';document.body.appendChild(el);
+    el.addEventListener('click',()=>{if(HLF.muted){const v=el.querySelector('video');if(v){v.muted=false;HLF.muted=false;el.classList.remove('muted');v.play().catch(()=>{})}return}hlfClose()})}
+  HLF.on=true;HLF.list=C.list;HLF.i=0;HLF.what=C.what;HLF.muted=false;
+  /* Apple Music on the Mac: pause it while the clips play, if it was playing */
+  HLF.paused=false;try{if(NP&&NP.state==='playing'&&NP.src!=='youtube'&&SECRETS.topic){nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{});HLF.paused=true}}catch(e){}
+  try{if(typeof AMB!=='undefined'&&AMB.on)ambOff()}catch(e){}try{pauseVideos()}catch(e){}
+  el.className='on';hlfPlay();try{wakeScreen()}catch(e){}return true}
+function hlfPlay(){const el=$('hlFull');if(!el||!HLF.on)return;const c=HLF.list[HLF.i];if(!c){hlfClose();return}
+  const n=HLF.list.length,cap=`<div class="hlf-top"><span>🎬 ${esc(HLF.what||'Highlights')}</span><b>${n>1?`Clip ${HLF.i+1} of ${n}`:''}</b></div><div class="hlf-cap">${esc(c.title||'')}</div><div class="hlf-tap">Tap for sound</div>`;
+  if(c.yt){/* a YouTube recap: no end event without their API, so it closes after 8 minutes or on tap */
+    el.innerHTML=`<iframe src="https://www.youtube.com/embed/${esc(c.yt)}?autoplay=1&mute=0&controls=0&playsinline=1&modestbranding=1&rel=0" allow="autoplay; encrypted-media" title="Highlights"></iframe>${cap}`;
+    clearTimeout(HLF.t);HLF.t=setTimeout(()=>{HLF.i++;hlfPlay()},8*60000);return}
+  el.innerHTML=`<video playsinline autoplay preload="auto"></video><div class="hlf-bar"><i></i></div>${cap}`;
+  const v=el.querySelector('video'),bar=el.querySelector('.hlf-bar i');v.src=c.mp4;v.volume=Math.min(1,Math.max(0,(CFG.highlights&&CFG.highlights.volume)||1));
+  v.ontimeupdate=()=>{if(v.duration)bar.style.width=(v.currentTime/v.duration*100).toFixed(1)+'%'};
+  v.onended=()=>{HLF.i++;if(HLF.i>=HLF.list.length)setTimeout(()=>hlfClose(),1500);else hlfPlay()};
+  v.onerror=()=>{HLF.i++;hlfPlay()};
+  /* sound needs Chrome's kiosk autoplay flag; without it, play muted and offer a tap */
+  v.play().catch(()=>{v.muted=true;HLF.muted=true;el.classList.add('muted');v.play().catch(()=>{})})}
+function hlfClose(quiet){const el=$('hlFull');clearTimeout(HLF.t);if(el){const v=el.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}el.className='';el.innerHTML=''}
+  if(HLF.on&&HLF.paused){try{nbPub(`${SECRETS.topic}-mcmd`,'play|').catch(()=>{})}catch(e){}}HLF.on=false;HLF.paused=false}
 /* ================= Nova FM health check =================
    The music Mac checks in once a minute ("fmstate hb <music> <voice>"). From that and the last few breaks we work out five
    lights. Something actually broken (not just paused or asleep) shows a small chip on every page, and if it lasts
@@ -6082,6 +6130,11 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\bknights\b/)&&khOn()){showFor('khub');return reply(khSay())}
   if(has(/\b(world series|series|brewers|rays|fall classic)\b/)){if(wsShow())showFor('ws');return reply(wsSay())}
   if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
+  if(HLF.on&&/^(stop|close|done|exit|enough|that's enough|thats enough|ok stop|stop it|stop the (video|highlights|clips))$/.test(t)){hlfClose();return reply('Okay.')}
+  if(has(/\b(highlights?|goals|replays?|clips?)\b/)&&/\b(show|play|watch|see|put on|pull up)\b/.test(t)&&!/\b(playlist|song|album)\b/.test(t)){
+    const tm=/knights|london/.test(t)?'knights':'leafs';if(hlfShow(tm)){toast('🎬 <b>Highlights</b>'+esc(HLF.what||''));return}
+    if(tm==='leafs'){showFor('hub');return reply('There aren\'t any Leafs clips yet. ESPN usually posts them during or right after the game.')}
+    return reply('I don\'t have clips for the Knights, just the Leafs.')}
   if(has(/\b(hub|highlights?|injur(y|ies|ed)|roster|trades?|channel|what channel)\b/)){showFor('hub');return reply(hubSay())}
   if(has(/\b(game ?day|matchup|puck drop)\b/)){if(gdToday())showFor('gameday');return reply(gdSay())}
   if(has(/\b(traffic|cameras?|roads?|highway|401|403|construction|accidents?|collisions?)\b/)){showFor('local');return reply(locSay())}
@@ -8944,7 +8997,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 240';
+document.getElementById('ver').textContent='build nova 241';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
