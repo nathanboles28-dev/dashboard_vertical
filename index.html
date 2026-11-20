@@ -2622,6 +2622,9 @@ body.npBar #obsBody .ob-stage{margin-bottom:2.6vw}
 #hlFull .hlf-cap{position:absolute;left:6vw;right:6vw;bottom:calc(50% - 34vw);font-size:3.6vw;font-weight:600;line-height:1.25;color:#efe9dc}
 #hlFull .hlf-tap{position:absolute;left:50%;bottom:12vw;transform:translateX(-50%);display:none;padding:1.4vw 3vw;border-radius:99px;border:1.5px solid #ff6a2b;color:#efe9dc;font-size:2.4vw}
 #hlFull.muted .hlf-tap{display:block}
+/* Observatory corners (no births/deaths): growth + darkness on the left, daylight + countries on the right */
+.ob-side b.dim{color:#e6e2d9}
+.ob-side b i{font-style:normal;font-size:2.2vw;color:#8a867c}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -5658,8 +5661,8 @@ function renderObs(){const b=$('obsBody');if(!b)return;
   if(!b.querySelector('.ob-wrap')){b.innerHTML=`<div class="jf-title">Observatory</div><div class="ob-wrap">
     <div class="ob-pop"><small>World population ${obTag('est')}</small><b id="obPop">—</b><span id="obPopSub"></span></div>
     <div class="ob-stage"><div class="ob-globe" id="obGlobe"></div>
-      <div class="ob-side l"><div><small>Born today</small><b id="obBt">—</b></div><div><small>Died today</small><b id="obDt">—</b></div></div>
-      <div class="ob-side r"><div><small>Growth today</small><b id="obGt">—</b></div><div><small>In daylight</small><b id="obDay">—</b><em id="obDaySub"></em></div></div>
+      <div class="ob-side l"><div><small>Growth today</small><b id="obGt">—</b></div><div><small>In darkness</small><b id="obNight" class="dim">—</b></div></div>
+      <div class="ob-side r"><div><small>In daylight</small><b id="obDay">—</b></div><div><small>Countries in daylight</small><b id="obCty" class="dim">—</b><em id="obDaySub"></em></div></div>
       <div class="ob-utc"><small>UTC</small><b id="obUtc">—</b></div>
       <div class="ob-yr" id="obYr"></div></div>
     <div class="ob-sec"><span>Earth in motion</span>${obTag('calc')}</div>
@@ -5678,14 +5681,14 @@ function renderObs(){const b=$('obsBody');if(!b)return;
   obsLoad()}
 /* fast numbers: four times a second */
 function obsTick(){const now=Date.now(),V=obVital(now),set=(id,v)=>{const e=$(id);if(e&&e.textContent!==v)e.textContent=v};
-  set('obPop',obN(obPop(now)));set('obBt',obN(V.bToday));set('obDt',obN(V.dToday));set('obGt','+'+obN(V.bToday-V.dToday));
+  set('obPop',obN(obPop(now)));set('obGt','+'+obN(V.bToday-V.dToday));
   const u=new Date(now);set('obUtc',u.toISOString().slice(11,19));
   const tr=$('obTravel');if(tr)set('obTravel',obN(obTravelToday(now)))}
 /* slow numbers + lists: every 20 s */
 function obsSlow(){const C=obCalc(),V=obVital(),d=OBS.d||{},set=(id,h)=>{const e=$(id);if(e&&e.innerHTML!==h)e.innerHTML=h};
-  set('obPopSub',`about ${(V.perSecB-V.perSecD).toFixed(1)} more people every second · ${(V.perSecB).toFixed(1)} births, ${(V.perSecD).toFixed(1)} deaths`);
-  set('obYr',`This year so far: <b>${obBig(V.bYear)}</b> births · <b>${obBig(V.dYear)}</b> deaths ${obTag('est')}`);
-  if(C.day){set('obDay',(C.day.day/1e9).toFixed(1)+' B');set('obDaySub',`${(C.day.night/1e9).toFixed(1)} B in darkness · ${C.day.n} of ${C.day.of} countries`)}else{set('obDay','—');set('obDaySub','needs country data')}
+  set('obPopSub',`about ${(V.perSecB-V.perSecD).toFixed(1)} more people every second`);
+  set('obYr',`Up <b>${obBig(V.bYear-V.dYear)}</b> people this year so far ${obTag('est')}`);
+  if(C.day){set('obDay',(C.day.day/1e9).toFixed(1)+' B');set('obNight',(C.day.night/1e9).toFixed(1)+' B');set('obCty',`${C.day.n}<i> / ${C.day.of}</i>`);set('obDaySub','rough, by each country’s centre')}else{set('obDay','—');set('obNight','—');set('obCty','—');set('obDaySub','')}
   const tile=(k,v,u,s)=>`<div><small>${k}</small><b>${v}<i>${u}</i></b><span>${s}</span></div>`;
   set('obMotion',[tile('Travelled around the Sun today','<u id="obTravel">'+obN(C.travel)+'</u>','km','since midnight here'),tile('Orbital speed',obN(C.vKmh),'km/h',(C.v).toFixed(2)+' km/s, vis-viva'),
     tile('Spin speed at Woodstock',obN(C.spin),'km/h','Earth turning, at '+(CFG.lat||43.13).toFixed(1)+'° N'),tile('Distance to the Sun',(C.sunKm/1e6).toFixed(2),'M km',(C.sub.R).toFixed(4)+' AU'),
@@ -9002,7 +9005,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 242';
+document.getElementById('ver').textContent='build nova 243';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
