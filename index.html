@@ -5749,7 +5749,7 @@ const obsOn=()=>!(CFG.observatory&&CFG.observatory.on===false)&&!NM.get('obsoff'
 const HLF={on:false,list:[],i:0,paused:false,muted:false,t:null};
 function hlfClips(team){const lf=/leafs|toronto/i,isUs=x=>!team||lf.test(team)?lf.test(x):new RegExp(team,'i').test(x);
   /* 1 · tonight's game, while it's on: the goal replays the live page already has */
-  try{const g=liveGames().find(z=>isUs([z.g&&z.g.name,z.g&&z.g.short,z.L&&z.L.name].join(' ')));if(g&&LVH.length)return {list:LVH.slice().sort((a,b)=>(Date.parse(a.date)||0)-(Date.parse(b.date)||0)),what:'Tonight’s goals'}}catch(e){}
+  try{if(LVH.length&&(liveGames().length||Date.now()-lvhAt<4*36e5))return {list:LVH.slice().sort((a,b)=>(Date.parse(a.date)||0)-(Date.parse(b.date)||0)),what:'Tonight’s goals'}}catch(e){}
   /* 2 · the most recent recap with clips (last night / today) */
   try{const R=Object.values(RC).filter(r=>(r.videos||[]).length&&isUs([r.us&&r.us.name,r.us&&r.us.abbr,r.league].join(' '))).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date))[0];
     if(R)return {list:R.videos,what:`${R.us.name} ${R.us.score}–${R.them.score} ${R.home?'vs':'at'} ${R.them.name}`}}catch(e){}
@@ -5758,8 +5758,8 @@ function hlfClips(team){const lf=/leafs|toronto/i,isUs=x=>!team||lf.test(team)?l
   return null}
 function hlfShow(team){const C=hlfClips(team);if(!C||!C.list.length)return false;hlfClose(true);
   let el=$('hlFull');if(!el){el=document.createElement('div');el.id='hlFull';document.body.appendChild(el);
-    el.addEventListener('click',()=>{if(HLF.muted){const v=el.querySelector('video');if(v){v.muted=false;HLF.muted=false;el.classList.remove('muted');v.play().catch(()=>{})}return}hlfClose()})}
-  HLF.on=true;HLF.list=C.list;HLF.i=0;HLF.what=C.what;HLF.muted=false;
+    el.addEventListener('click',()=>{if(HLF.muted&&!HLF.tapped){HLF.tapped=1;const v=el.querySelector('video');if(v){v.muted=false;HLF.muted=false;el.classList.remove('muted');v.play().catch(()=>{})}return}hlfClose()})}
+  HLF.on=true;HLF.list=C.list;HLF.i=0;HLF.what=C.what;HLF.muted=false;HLF.tapped=0;
   /* Apple Music on the Mac: pause it while the clips play, if it was playing */
   HLF.paused=false;try{if(NP&&NP.state==='playing'&&NP.src!=='youtube'&&SECRETS.topic){nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{});HLF.paused=true}}catch(e){}
   try{if(typeof AMB!=='undefined'&&AMB.on)ambOff()}catch(e){}try{pauseVideos()}catch(e){}
@@ -6017,6 +6017,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   /* automations from the iPhones (Shortcuts): "presence NAME arrived" / "presence NAME left" / "alarm off NAME" */
   {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
+  /* highlights playing: "stop" (or almost anything that means it) ends them first, before any other command can take the word */
+  if(HLF.on&&/\b(stop|close|done|exit|enough|pause|quit|off|cancel|shut)\b/.test(t)){hlfClose();return reply('Okay, highlights off.')}
   /* ambient displays */
   {const am=t.match(/^(?:nova,? )?(?:ambient|ambience|ambiance)(?: (?:mode|display|screen))?(?: (.+))?$/);
    if(am||/^(?:show (?:me )?)?(?:the )?(rainy city|snowy cabin|thunderstorm|sunset) (?:scene|ambient)$/.test(t)){const w=(am?am[1]:t)||'';
@@ -6132,7 +6134,10 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
   if(HLF.on&&/^(stop|close|done|exit|enough|that's enough|thats enough|ok stop|stop it|stop the (video|highlights|clips))$/.test(t)){hlfClose();return reply('Okay.')}
   if(has(/\b(highlights?|goals|replays?|clips?)\b/)&&/\b(show|play|watch|see|put on|pull up)\b/.test(t)&&!/\b(playlist|song|album)\b/.test(t)){
-    const tm=/knights|london/.test(t)?'knights':'leafs';if(hlfShow(tm)){toast('🎬 <b>Highlights</b>'+esc(HLF.what||''));return}
+    const tm=/knights|london/.test(t)?'knights':'leafs';
+    /* a game on right now: get tonight's clips first */
+    if(tm==='leafs'&&!LVH.length&&liveGames().length){loadLiveHighlights().then(()=>{if(!hlfShow(tm)){showFor('hub');reply('No clips from tonight yet. ESPN usually posts them a few minutes after each goal.')}});return reply('Getting tonight\'s goals.')}
+    if(hlfShow(tm)){toast('🎬 <b>Highlights</b>'+esc(HLF.what||''));return}
     if(tm==='leafs'){showFor('hub');return reply('There aren\'t any Leafs clips yet. ESPN usually posts them during or right after the game.')}
     return reply('I don\'t have clips for the Knights, just the Leafs.')}
   if(has(/\b(hub|highlights?|injur(y|ies|ed)|roster|trades?|channel|what channel)\b/)){showFor('hub');return reply(hubSay())}
@@ -8997,7 +9002,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 241';
+document.getElementById('ver').textContent='build nova 242';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
