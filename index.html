@@ -2804,6 +2804,20 @@ html.nv2.nvx.th-bc .fm-bar{border-radius:0!important;background:var(--xline)!imp
 html.nv2.nvx.th-bc .fm-bar .np-fill{border-radius:0!important}
 html.nv2.nvx.th-bc #fmSid .sid-bg{background:radial-gradient(120% 60% at 50% 40%,#1d2a47,#0a0e18 75%)!important}
 html.nv2.nvx.th-bc #fmSid .sid-dial{border-top-color:#3a4a6e!important;color:var(--xdim)!important;font-family:var(--head)!important;font-weight:700!important}
+html.nv2.nvx.th-bc .fm-ban{opacity:.22;filter:sepia(1) hue-rotate(185deg) saturate(2.2)}
+html.nv2.nvx.th-bc .fm-show{bottom:1.2vw!important;gap:1.1vw!important}
+html.nv2.nvx.th-bc .fm-show b{line-height:1!important}
+html.nv2.nvx.th-bc .fm-show small{line-height:1!important}
+html.nv2.nvx.th-bc .fm-show small{display:none!important}
+html.nv2.nvx.th-bc .fm-show{bottom:1.2vw!important}
+html.nv2.nvx.th-bc .ff-t{font-size:2.7vw!important;letter-spacing:.04em!important}
+html.nv2.nvx.th-bc .ff-b{font-size:2.5vw!important;line-height:1.35!important}
+html.nv2.nvx.th-bc .ff-st b{font-size:4.4vw!important}
+html.nv2.nvx.th-bc .ff-mx b{font-size:2.5vw!important}
+html.nv2.nvx.th-bc .ff-mx small{font-size:1.6vw!important}
+html.nv2.nvx.th-bc .ff-st b{font-size:3.8vw!important}
+html.nv2.nvx.th-bc .ff-mx b{color:#fff!important;-webkit-text-fill-color:#fff!important;font-size:2.3vw!important}
+html.nv2.nvx.th-bc .ff-b{font-size:2.35vw!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -9574,7 +9588,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 262';
+document.getElementById('ver').textContent='build nova 263';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
