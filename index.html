@@ -7961,8 +7961,9 @@ function txPiece(x){x=String(x||'').trim().replace(/\b2022(\d)\b/g,'202$1').repl
   .replace(/^cash considerations$/i,'cash');return x.charAt(0).toUpperCase()+x.slice(1)}
 const txEnd='(?:\\.(?:\\s+(?=(?:Placed|Recalled|Assigned|Signed|Activated|Acquired|Traded|Sent|Released|Loaned|Transferred|Waived|Claimed|Reassigned|Re-assigned|Returned)\\b)|\\s*$))';
 function nhlTrade(t){const d=t.description||'',A=t.team.abbreviation;let m;
-  if((m=d.match(new RegExp('Traded (.+?) to ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:m[3]?txPiece(m[3]):'',bGets:txPiece(m[1])};
-  if((m=d.match(new RegExp('Acquired (.+?) from ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:txPiece(m[1]),bGets:m[3]?txPiece(m[3]):''};
+  if((m=d.match(new RegExp('Traded (.+?) to ([A-Z][\\w.\' -]+?)(?: in a trade)?(?: (?:in exchange )?for:? (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:m[3]?txPiece(m[3]):'',bGets:txPiece(m[1])};
+  if((m=d.match(new RegExp('Acquired (.+?) from ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for:? (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:txPiece(m[1]),bGets:m[3]?txPiece(m[3]):''};
+  if((m=d.match(new RegExp('Acquired (.+?) in a trade with ([A-Z][\\w.\' -]+?)(?: (?:in exchange )?for:? (.+?))?'+txEnd))))return {A,B:nhlAbbr(m[2]),aGets:txPiece(m[1]),bGets:m[3]?txPiece(m[3]):''};
   return null}
 const txDate=d=>new Date(d).toLocaleDateString([],{month:'short',day:'numeric'});
 async function loadTx(){const C=TXC();if(C.on===false)return;txAt=Date.now();
@@ -9286,7 +9287,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 257';
+document.getElementById('ver').textContent='build nova 258';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
