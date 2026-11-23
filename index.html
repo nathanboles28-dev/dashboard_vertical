@@ -2699,6 +2699,8 @@ body.season-cd #seasonStripe{background:repeating-linear-gradient(90deg,#e5484d 
 #fmOn .fo-t10 .now b,#fmOn .fo-t10 .now span{color:#ff6a2b}
 #lvTake .lv-pu span b{display:inline;font-size:inherit;margin:0;color:#ff6a2b}
 #lvTake .lv-pu .lv-src{margin-top:.6vw;font-size:1.7vw;color:#5a5650}
+html.nv2.nvx .cev .cu-pu,.cu-pu{display:inline-block;margin-left:1.2vw;padding:.2vw .9vw;border-radius:.6vw;font-size:1.6vw;font-weight:600;letter-spacing:.04em;color:#4fd18b!important;border:1px solid rgba(79,209,139,.4);vertical-align:middle}
+html.nv2.nvx .cev .cu-pu.no,.cu-pu.no{color:#e8b931!important;border-color:rgba(232,185,49,.4)}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4225,9 +4227,11 @@ function renderComing(){
   const N2=CFG.style==='nova2';
   const tag=e=>{if(!N2||e.allDay)return '';const m=Math.round((e.start-now)/60000);if(m<=0)return e.end>now?'<span class="n2tag lv">Now</span>':'';
     return m>=24*60?'':`<span class="n2tag">In ${m<60?m+' min':Math.round(m/60)+' h'}</span>`};
+  /* airport pick-ups: show whether the flight number was found, so you can check days ahead */
+  const puTag=e=>{try{if(!puIs(e))return '';const no=puNo(e);return no?`<span class="cu-pu">✈ ${esc(no.replace(/^([A-Z0-9]{2})/,'$1 '))} · tracking</span>`:'<span class="cu-pu no">✈ no flight number found</span>'}catch(x){return ''}};
   const evRow=(e,td)=>{const r=e.loc?rtGet(e.loc):null;if(e.loc&&!r)routeTo(e.loc);
-    if(N2)return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div>${td?tag(e):''}</div>`;
-    return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div></div>`};
+    if(N2)return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${puTag(e)}${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div>${td?tag(e):''}</div>`;
+    return `<div class="cev${td?' tdy':''}"><span>${tm(e)}</span><div style="min-width:0"><b>${esc(e.title)}</b>${puTag(e)}${e.loc?`<small>${r?`<span class="cev-dr">🚗 ${driveTxt(r.min)}</span> · `:''}📍 ${esc(e.loc)}</small>`:''}</div></div>`};
   let cal='';
   if(calOn()){
     const today=calEvents.filter(e=>e.start>=t0&&e.start<t1&&(e.end>now||e.allDay)),later=calEvents.filter(e=>e.start>=t1&&e.start<new Date(t0.getTime()+7*864e5)).slice(0,6);
@@ -9210,7 +9214,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 247';
+document.getElementById('ver').textContent='build nova 248';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
