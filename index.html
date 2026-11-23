@@ -2708,6 +2708,8 @@ html.nv2.nvx .mleg i.de,html.nv2.nvx .mc i.de{background:#4d8bff!important}
 html.nv2.nvx .mleg i.dg,html.nv2.nvx .mc i.dg{background:#2fb36b!important}
 html.nv2.nvx .mleg i.dh,html.nv2.nvx .mc i.dh{background:#e8a317!important}
 html.nv2.nvx .mleg{opacity:1!important;color:#4a4740!important;filter:none!important}
+/* Ember clock: nothing else glowing on the screen overnight (mic and health dots hidden) */
+body.emberOn #vMic,body.emberOn #hdot,body.emberOn #fmHc{display:none!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -4565,7 +4567,7 @@ function nclkLine(n){const p=[n.toLocaleDateString([],{weekday:'short'}).toUpper
         if(what){w=(t<=now+30*60000?what+' NOW':what+' AFTER '+(hr.getHours()%12||12)+(hr.getHours()<12?' AM':' PM'));break}}}
     if(!w&&WXD&&WXD.dl){const lo=Math.round(WXD.dl.temperature_2m_min[n.getHours()>=12?1:0]);w='LOW '+lo+'°'}if(w)p.push(w)}catch(e){}
   return p.join(' · ')}
-function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false){if(el)el.classList.remove('on');return}
+function nclkTick(){setTimeout(()=>{const c=$('nclk');document.body.classList.toggle('emberOn',!!(c&&c.classList.contains('on')&&c.classList.contains('em')))},0);const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false){if(el)el.classList.remove('on');return}
   if(!el){el=document.createElement('div');el.id='nclk';document.body.appendChild(el)}
   const n=new Date(),h=n.getHours(),from=C.from==null?23:C.from,off=C.offAt==null?0:C.offAt,wake=C.wakeAt==null?7:C.wakeAt;
   /* "one more hour": the night clock and the screen going off wait until then; once it's up, if it's already past lights-out, the screen goes off right away */
@@ -4574,7 +4576,7 @@ function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false)
     if(C.allNight===false&&!nclkSlept&&inR(h,off,wake)){nclkSet(true);el.classList.remove('on');goodnight();return}}}
   const emNow=Date.now()<+NM.get('emnow',0),emSkip=Date.now()<+NM.get('emskip',0),all=C.allNight!==false,inClock=all?(!nclkSlept&&!emSkip&&(emNow||(from<wake?(h>=from&&h<wake):(h>=from||h<wake)))):off===0?h>=from:(h>=from&&h<off),busy=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
   if(inClock&&Date.now()>nclkSnooze&&!busy){
-    if(all){el.className='on em';el.innerHTML=`<div class="em-w"><div class="t">${n.getHours()%12||12}:${String(n.getMinutes()).padStart(2,'0')}</div><div class="d">${esc(nclkLine(n))}</div></div>`;
+    if(all){el.className='on em';document.body.classList.add('emberOn');el.innerHTML=`<div class="em-w"><div class="t">${n.getHours()%12||12}:${String(n.getMinutes()).padStart(2,'0')}</div><div class="d">${esc(nclkLine(n))}</div></div>`;
       /* a little dimmer after midnight; brightens over the half hour before wake-up */
       const mins=h*60+n.getMinutes(),wk=wake*60,b=h>=wake?.85:mins>=wk-30?.62+.38*(mins-(wk-30))/30:.62;el.style.setProperty('--emb',b.toFixed(2))}
     else{const lo=WXD&&WXD.dl?Math.round(WXD.dl.temperature_2m_min[1]):null;el.classList.remove('em');
@@ -8398,7 +8400,8 @@ setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking)||!
   /* Chrome's speech queue can get stuck "speaking" forever: after 45 s, clear it so the mic comes back */
   if(spk){VOICE.spk=VOICE.spk||Date.now();if(Date.now()-VOICE.spk>45000&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())){try{speechSynthesis.cancel()}catch(e){}vLog('cleared stuck speech');spk=false;VOICE.spk=0}}else VOICE.spk=0;
   /* screen off for the night = mic off too (a TV in the background can't wake her up) */
-  const dark=(CFG.voice||{}).sleepWithScreen!==false&&$('night')&&$('night').classList.contains('on');
+  const emb=document.body.classList.contains('emberOn')&&!(new Date().getHours()>=6&&new Date().getHours()<12);/* the Ember clock overnight: mic off until 6 AM (use the phone remote) */
+  const dark=(CFG.voice||{}).sleepWithScreen!==false&&(($('night')&&$('night').classList.contains('on'))||emb);
   const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||spk||dark,R=VOICE.rec;if(VOICE.test)voiceTestUI();if(!R)return;
   if(ru&&!VOICE.paused){VOICE.paused=1;VOICE.armed=0;clearTimeout(VOICE.armT);voiceUI();try{R.abort()}catch(e){}}
   else if(!ru&&VOICE.paused){if(!VOICE.pz)VOICE.pz=Date.now();if(Date.now()-VOICE.pz>(VOICE.followNext?900:2000)){VOICE.paused=0;VOICE.pz=0;VOICE.ps=0;try{R.start()}catch(e){}if(VOICE.followNext){VOICE.followNext=0;setTimeout(()=>{if(!VOICE.paused&&!VOICE.armed)voiceArm(true)},500)}}}
@@ -9231,7 +9234,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 254';
+document.getElementById('ver').textContent='build nova 255';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
