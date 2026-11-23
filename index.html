@@ -2632,6 +2632,10 @@ html.nv2.nvx #nclk.em .em-w{text-align:center;opacity:var(--emb,.8);transition:o
 html.nv2.nvx #nclk.em .t{font-family:'Inter',system-ui,sans-serif!important;font-weight:200!important;font-size:27.8vw!important;line-height:.9;letter-spacing:-1.1vw;color:#c2362b!important;opacity:1;text-shadow:0 0 7.4vw rgba(194,54,43,.35)}
 html.nv2.nvx #nclk.em .d{margin-top:4vw;font-family:'Barlow Condensed','Inter',sans-serif!important;font-weight:500;font-size:2.8vw;letter-spacing:.95vw;color:#c2362b!important;opacity:.55}
 @keyframes emDrift{0%{transform:translate(0,0)}20%{transform:translate(2.6vw,-4vw)}40%{transform:translate(-1.8vw,3.4vw)}60%{transform:translate(1.4vw,5.6vw)}80%{transform:translate(-2.2vw,-2vw)}100%{transform:translate(0,0)}}
+/* Coming up: a game that's on shows the score */
+.cu-sc{margin-left:0;font-family:'NovaGeo','Inter',sans-serif;font-weight:700;font-size:2.4vw;color:#efe9dc;letter-spacing:.02em;white-space:nowrap;display:inline-flex;align-items:center;gap:.8vw}
+.cu-sc.lv{color:#ff6a2b}
+.cu-sc i{width:1.1vw;height:1.1vw;border-radius:50%;background:#e5484d;animation:fmHcP 1.6s ease-in-out infinite}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -3038,8 +3042,9 @@ const CFG={
   // Home: devices come from Homebridge through the small nova-home helper on this Mac. Names must match Homebridge exactly.
   // Roundup: say "hello Nova" (Siri / the remote) for the sci-fi intro + spoken roundup. morning: also play it when the screen wakes up
   // Night clock: a very dim red clock from 11 PM, then the screen turns off at midnight and comes back at 7
-  // allNight: the Ember clock stays on from 11 PM until 7 AM instead of the screen going off (offAt is then ignored)
-  nightClock:{on:true, from:23, offAt:0, wakeAt:7, alarm:'7:00 AM', allNight:true},
+  // allNight: the Ember clock stays on from `from` (0 = midnight) until wakeAt instead of the screen going off (offAt is then ignored).
+  // "Goodnight" still turns the screen off, and "one more hour" still pushes the Ember clock back.
+  nightClock:{on:true, from:0, offAt:0, wakeAt:7, alarm:'7:00 AM', allNight:true},
   ai:{on:true},   // Ask Nova anything (Claude, through the relay; needs ANTHROPIC_KEY set in Cloudflare)
   macVoice:{on:true, voice:'kokoro:af_heart', kokoro:'af_heart', rate:165},   // kokoro = the AI voice when it's installed (af_heart, af_bella, af_nicole, bf_emma…)   // speak through the Mac's own voices (Premium/Enhanced) via the home helper; voice:'auto' = best installed, or a name like 'Zoe (Premium)'
   voice:{on:true, sleepWithScreen:true, converse:true, followWait:8, lang:'en-CA', wait:6},   // "Hey Nova" wake word through the mic plugged into this Mac (Chrome's speech recognition). wait = seconds it listens after "Hey Nova"
@@ -4183,10 +4188,16 @@ function renderComing(){
   /* your teams' games in the next week */
   const gms=[];try{(HUB&&HUB.next||[]).forEach(g=>gms.push({...g,tm:'Leafs',c:'#3b7bff',lg:(HUB.logo||'')}));(KH&&KH.next||[]).forEach(g=>gms.push({...g,tm:'Knights',c:'#21a35d'}))}catch(e){}
   const wk=gms.filter(g=>{const n=daysUntil(new Date(g.start));return n>=0&&n<=7}).sort((a,b)=>new Date(a.start)-new Date(b.start)).slice(0,4);
+  /* a game that's on (or just finished) shows the score instead of "tonight at 7" */
+  const gLive=g=>{try{const d=new Date(g.start),o=String(g.opp||'').toLowerCase().split(/\s+/).filter(w=>w.length>2);if(!o.length)return null;
+    for(const r of lastRes)for(const x of r.games){if(!isFav(r.L,x)||x.state==='pre'||x.date.toDateString()!==d.toDateString())continue;
+      const nm=[x.fA,x.fH,x.nA,x.nH,x.A,x.H].join(' ').toLowerCase();if(!o.some(w=>nm.includes(w)))continue;
+      const us=g.home?x.sH:x.sA,them=g.home?x.sA:x.sH;return {live:x.state==='in',us:+us||0,them:+them||0,det:x.det||''}}}catch(e){}return null};
+  const gScore=(g,L)=>`<span class="cu-sc${L.live?' lv':''}">${L.live?'<i></i>LIVE ':'FINAL '}${L.us}–${L.them}${L.live&&L.det?' · '+esc(L.det):''}</span>`;
   const gmN2=()=>`<div class="card stcard cgm" id="gmCard"><h2>Games this week</h2><div class="n2mu">${wk.map(g=>{const d=new Date(g.start),n=daysUntil(d);
-    return `<div class="n2mt cgr" style="--c:${g.c}"><span class="w">${g.tm} · ${n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',day:'numeric'})}</span><div class="vs"><i>${g.home?'vs':'at'}</i>${g.logo?`<img src="${esc(g.logo)}" alt="" onerror="this.remove()">`:''}${esc(g.opp)}<span class="when">${fmt(d)}</span></div><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div></div>`;
+    const Lv=n===0?gLive(g):null;return `<div class="n2mt cgr" style="--c:${g.c}"><span class="w">${g.tm} · ${Lv?(Lv.live?'On now':'Tonight'):n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',day:'numeric'})}</span><div class="vs"><i>${g.home?'vs':'at'}</i>${g.logo?`<img src="${esc(g.logo)}" alt="" onerror="this.remove()">`:''}${esc(g.opp)}${Lv?'':`<span class="when">${fmt(d)}</span>`}</div><small>${Lv?gScore(g,Lv):g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div></div>`;
   const gmHTML=!wk.length?'':N2?gmN2():`<div class="card stcard cgm" id="gmCard"><h2>Games this week</h2>${wk.map(g=>{const d=new Date(g.start),n=daysUntil(d);
-    return `<div class="cgr" style="--c:${g.c}"><span class="cgt">${g.tm}</span><b>${g.home?'vs':'at'} ${esc(g.opp)}</b><em>${n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})} · ${fmt(d)}</em><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div>`;
+    const Lv=n===0?gLive(g):null;return `<div class="cgr" style="--c:${g.c}"><span class="cgt">${g.tm}</span><b>${g.home?'vs':'at'} ${esc(g.opp)}</b><em>${Lv?gScore(g,Lv):(n===0?'Tonight':n===1?'Tomorrow':d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'}))+' · '+fmt(d)}</em><small>${g.nets&&g.nets.length?'📺 '+esc(g.nets.join(', ')):''}</small></div>`}).join('')}</div>`;
   const html=cal+monthHTML()+`<div id="cdCard">${cdHTML}</div>`+gmHTML;
   $('comingBody').style.cssText='position:relative;display:flex;flex-direction:column;gap:calc(3*var(--u));flex:1;min-height:0;overflow:hidden';
   if(html!==comSig){comSig=html;$('comingBody').innerHTML=html;drawRouteMaps();fitComing();setTimeout(fitComing,500)}
@@ -4483,12 +4494,12 @@ function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false)
   /* "one more hour": the night clock and the screen going off wait until then; once it's up, if it's already past lights-out, the screen goes off right away */
   {const late=+NM.get('nlate',0);if(late){if(Date.now()<late){el.classList.remove('on');return}
     NM.set('nlate',0);const inR=(x,a,b)=>a===b?false:a<b?(x>=a&&x<b):(x>=a||x<b);
-    if(!nclkSlept&&inR(h,off,wake)){nclkSet(true);el.classList.remove('on');goodnight();return}}}
-  const all=C.allNight!==false,inClock=all?(h>=from||h<wake):off===0?h>=from:(h>=from&&h<off),busy=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
+    if(C.allNight===false&&!nclkSlept&&inR(h,off,wake)){nclkSet(true);el.classList.remove('on');goodnight();return}}}
+  const all=C.allNight!==false,inClock=all?(!nclkSlept&&(from<wake?(h>=from&&h<wake):(h>=from||h<wake))):off===0?h>=from:(h>=from&&h<off),busy=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
   if(inClock&&Date.now()>nclkSnooze&&!busy){
     if(all){el.className='on em';el.innerHTML=`<div class="em-w"><div class="t">${n.getHours()%12||12}:${String(n.getMinutes()).padStart(2,'0')}</div><div class="d">${esc(nclkLine(n))}</div></div>`;
       /* a little dimmer after midnight; brightens over the half hour before wake-up */
-      const mins=h*60+n.getMinutes(),wk=wake*60,b=h>=from?.85:mins>=wk-30?.62+.38*(mins-(wk-30))/30:.62;el.style.setProperty('--emb',b.toFixed(2))}
+      const mins=h*60+n.getMinutes(),wk=wake*60,b=h>=wake?.85:mins>=wk-30?.62+.38*(mins-(wk-30))/30:.62;el.style.setProperty('--emb',b.toFixed(2))}
     else{const lo=WXD&&WXD.dl?Math.round(WXD.dl.temperature_2m_min[1]):null;el.classList.remove('em');
     el.innerHTML=`<div><div class="t">${n.getHours()%12||12}:${String(n.getMinutes()).padStart(2,'0')}</div><div class="d">${n.toLocaleDateString([],{weekday:'long'}).toUpperCase()} · ${n.toLocaleDateString([],{month:'short',day:'numeric'}).toUpperCase()}</div>
       <div class="x">${C.alarm?'ALARM '+esc(C.alarm):''}${lo!=null?(C.alarm?' · ':'')+lo+'° OVERNIGHT':''}<br>SCREEN OFF AT ${off===0?'12:00':off+':00'}</div></div>`;el.classList.add('on')}}
@@ -4498,7 +4509,7 @@ function nclkTick(){const C=CFG.nightClock||{};let el=$('nclk');if(C.on===false)
   if(h===wake&&nclkSlept){nclkSet(false);wakeScreen();nclkSnooze=0;if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})}}}
 setInterval(nclkTick,20000);setTimeout(nclkTick,3000);
 ['click','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{const c=$('nclk');if(c&&c.classList.contains('on')&&c.classList.contains('em')){wakeScreen()}},{passive:true}));
-['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,()=>{const n=$('night');if(n&&n.classList.contains('on')&&Date.now()-(n._at||0)>3000)wakeScreen()},{passive:true}));
+['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,()=>{const n=$('night');if(n&&n.classList.contains('on')&&Date.now()-(n._at||0)>3000){nclkSet(false);wakeScreen()}},{passive:true}));
 setInterval(()=>{const n=$('night'),h=new Date().getHours();if(n.classList.contains('on')&&!n._at)n._at=Date.now();if(!n.classList.contains('on'))n._at=0;if(n.classList.contains('on')&&h>=((CFG.nightClock&&CFG.nightClock.wakeAt)||7)&&h<10)wakeScreen()},5000);
 /* ===== Ask Nova (Claude) ===== */
 const aiOn=()=>!!((CFG.ai||{}).on!==false&&CFG.relay&&SECRETS.calkey);
@@ -6169,7 +6180,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\b(traffic|cameras?|roads?|highway|401|403|construction|accidents?|collisions?)\b/)){showFor('local');return reply(locSay())}
   if(has(/\b(jellyfin|watching|media server)\b/)||has(/\bwhat'?s playing\b/)){showFor('jellyfin');return reply(jfSay())}
   if(has(/\bunmute\b/)){muted=false;return reply('Goal horn is back on.')}
-  if(has(/\b(good ?night|night night|go to sleep|screen off|turn (it )?off|lights out)\b/)){goodnight();return reply('Goodnight! Turning the screen off.')}
+  if(has(/\b(good ?night|night night|go to sleep|screen off|turn (it )?off|lights out)\b/)){nclkSet(true);goodnight();return reply('Goodnight! Turning the screen off.')}
   if(/^wake up$/i.test(String(raw||'').trim()))try{fmWakeNight()}catch(e){}
   if(has(/\b(wake( up)?|screen on|turn (it )?on|good morning)\b/)){wakeScreen();if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})};morningAtScreenOn();return reply('Waking up! The screen will be on within a minute.')}
   if(has(/\b(mute|quiet|silence)\b/)){muted=true;return reply('Goal horn muted.')}
@@ -9026,7 +9037,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 244';
+document.getElementById('ver').textContent='build nova 245';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
