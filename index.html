@@ -5344,7 +5344,9 @@ function fmSongGo(j){
   /* the morning: Nova reads the Morning Roundup as the first break after 6:30 */
   {if(FM.on&&!FM.busy&&!fmQuiet()&&!fmBusy(j)&&fmRoundupDue()&&Date.now()-FM.last>3*60000&&Date.now()-(+NM.get('fmjlast',0))>=150000){const S=fmRoundupSegs();if(S.length>=2){FM.count=0;FM.ruS=S;fmBreak('roundup',j);return}}}
   const news=worldNew()||FM.req||FM.dedic||fmMoments().some(m=>m.pri>=2);
-  if(!FM.on||FM.busy||(!news&&FM.count<FM.target)||Date.now()-FM.last<(news?3:FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
+  /* spacing counts from when the last break finished airing (a queued special can air minutes after it was written), and never while one is queued or on air */
+  const lastAir=Math.max(FM.last||0,FM.airEnd||0,+(NM.get('fmlastbrk',{})||{}).at||0);
+  if(!FM.on||FM.busy||FM.pend||FM.queued||FM.air||(!news&&FM.count<FM.target)||Date.now()-lastAir<(news?Math.min(4,FMC().minGap+1):FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   /* a jingle just played (under 2.5 min ago): this break waits for the next song, so the two never land back to back */
   if(!news&&Date.now()-(+NM.get('fmjlast',0))<150000){fmDiag('break held: a jingle just played');return}
   /* the last 10 minutes of the hour: hold a regular break, the top-of-the-hour ID is coming (breaking news still goes) */
@@ -9287,7 +9289,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 258';
+document.getElementById('ver').textContent='build nova 259';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
