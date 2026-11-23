@@ -2744,6 +2744,14 @@ html.nv2.nvx.th-bc #lvTake :is(.lv-g,.lv-w) b{font-family:var(--head);font-weigh
 html.nv2.nvx.th-bc #lvTake :is(.lv-g,.lv-w) small{font-family:var(--head);font-weight:700;color:#93a4c6}
 html.nv2.nvx.th-bc #npMini{border-radius:0!important;border:0!important;border-left:5px solid var(--xor)!important;background:linear-gradient(90deg,#16203a,#0f1626)!important}
 html.nv2.nvx.th-bc #npMini :is(b,.mn-t){font-family:var(--head)!important;font-weight:700!important;text-transform:uppercase;letter-spacing:.01em}
+/* page bar: segment fills then drains (pgBar) */
+html.nv2 #dots i{position:relative;overflow:hidden}
+html.nv2 #dots i.on,html.nv2.nvx #dots i.on{background:rgba(255,255,255,.13)!important;box-shadow:none!important}
+html.nv2.nvx #dots i.on{background:var(--xline)!important}
+html.nv2 #dots i>b{position:absolute;inset:0;display:block;background:linear-gradient(90deg,var(--o2),var(--p2));transform:scaleX(0);transform-origin:0% 50%;will-change:transform}
+html.nv2.nvx #dots i>b{background:var(--xor)}
+html.nv2.nvx.th-bc #dots i{height:.5vw!important;transform:skewX(-20deg)}
+html.nv2.nvx.th-bc #dots::before{font-family:var(--head)!important;font-weight:700!important;font-style:italic;font-size:calc(1.9*var(--u))!important;letter-spacing:.06em!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -3759,6 +3767,15 @@ setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 const PAGE_EL={obs:'pObs',world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
+/* bottom page bar: the current page's segment fills left to right, then drains left to right as its time runs out */
+function pgBar(fresh){try{const i=$('dots').querySelector('i.on');if(!i)return;let f=i.querySelector('b');if(!f){f=document.createElement('b');i.appendChild(f);fresh=true}
+  f.getAnimations().forEach(a=>a.cancel());const left=(window._pgEnd||Infinity)-Date.now(),FILL=fresh?700:0;
+  if(!isFinite(left)||left<=FILL+300){if(fresh)f.animate([{transform:'scaleX(0)',transformOrigin:'0% 50%'},{transform:'scaleX(1)',transformOrigin:'0% 50%'}],{duration:700,easing:'cubic-bezier(.3,.7,.3,1)',fill:'forwards'});else f.style.transform='scaleX(1)';return}
+  const tot=left,a=FILL/tot;
+  const k=[{transform:'scaleX(1)',transformOrigin:'100% 50%',offset:Math.min(.999,a+.0001)},{transform:'scaleX(0)',transformOrigin:'100% 50%',offset:1}];
+  if(FILL)k.unshift({transform:'scaleX(0)',transformOrigin:'0% 50%',offset:0,easing:'cubic-bezier(.3,.7,.3,1)'},{transform:'scaleX(1)',transformOrigin:'0% 50%',offset:a});
+  f.animate(k,{duration:tot,fill:'forwards'})}catch(e){}}
+function pgFreeze(){window._pgEnd=Infinity;pgBar(false)}
 const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='obs'||obsOn())&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='world'||!!worldBig())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
@@ -3834,7 +3851,7 @@ function nextPage(force,hold){
   if(CFG.style==='nova2')setTimeout(n2FitTitles,60);
   {const vis=list.filter(canShow),k=vis.findIndex(q=>q===p);$('dots').dataset.nm=k<0?'':`${String(k+1).padStart(2,'0')} / ${vis.length} · ${pageName(p)}`}
   $('dots').innerHTML=p.type!=='morn'&&list.filter(canShow).length>1?list.map((q,i)=>canShow(q)?`<i class="${i===pIdx&&q.type===p.type?'on':''}"></i>`:'').join(''):'';
-  clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);
+  clearTimeout(pTimer);window._pgEnd=(!paused||hold)?Date.now()+(hold||pageSecs(p))*1000:Infinity;if(!paused||hold)pTimer=setTimeout(()=>{if(paused)return;nextPage()},(hold||pageSecs(p))*1000);pgBar(true);
 }
 
 
@@ -6347,7 +6364,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
       if(d){hmSet(d.name,{on:st==='on'});return reply(`${d.name} ${st}.`)}}
   }
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
-  if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);return reply('Okay, I\'ll stay on this page.')}
+  if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);pgFreeze();return reply('Okay, I\'ll stay on this page.')}
   if(/^(close|hide|dismiss|done|ok|okay|never ?mind|thanks|thank you)( it| that| this| status| the status)?$/.test(t)){hideOverlays();return reply('Okay.')}
   if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){if($('hpanel').classList.contains('on')){hideOverlays();return reply('Status closed.')}showHealth(20);return reply(healthSay())}
   const xOn=t=>((CFG.extras||{})[t]||{}).on!==false;
@@ -8022,11 +8039,11 @@ function recycleIn(){const n=recycleNext()[0];if(!n)return null;const t=new Date
 function stepPage(dir){const list=(CFG.pages||[]).filter(canShow);if(!list.length)return;
   let i=list.findIndex(p=>p.type===window._curPage);
   i=i<0?(dir>0?0:list.length-1):(i+dir+list.length)%list.length;
-  const was=paused;window._npPeek=null;nextPage(list[i].type,60);if(was)clearTimeout(pTimer)}
+  const was=paused;window._npPeek=null;nextPage(list[i].type,60);if(was){clearTimeout(pTimer);pgFreeze()}}
 document.addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
   if(['ArrowRight','ArrowDown','PageDown'].includes(e.key)){e.preventDefault();stepPage(1)}
   else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();stepPage(-1)}
-  else if(e.key===' '){e.preventDefault();paused=!paused;if(paused){clearTimeout(pTimer);toast('⏸ Paused · press Space to carry on')}else{toast('▶ Back to rotating');nextPage()}}});
+  else if(e.key===' '){e.preventDefault();paused=!paused;if(paused){clearTimeout(pTimer);pgFreeze();toast('⏸ Paused · press Space to carry on')}else{toast('▶ Back to rotating');nextPage()}}});
 let swX=null,swY=0;
 document.addEventListener('touchstart',e=>{const t=e.touches[0];swX=t.clientX;swY=t.clientY},{passive:true});
 document.addEventListener('touchend',e=>{if(swX==null)return;const t=e.changedTouches[0],dx=t.clientX-swX,dy=t.clientY-swY;swX=null;
@@ -9269,7 +9286,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 256';
+document.getElementById('ver').textContent='build nova 257';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
