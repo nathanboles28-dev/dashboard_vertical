@@ -2701,6 +2701,13 @@ body.season-cd #seasonStripe{background:repeating-linear-gradient(90deg,#e5484d 
 #lvTake .lv-pu .lv-src{margin-top:.6vw;font-size:1.7vw;color:#5a5650}
 html.nv2.nvx .cev .cu-pu,.cu-pu{display:inline-block;margin-left:1.2vw;padding:.2vw .9vw;border-radius:.6vw;font-size:1.6vw;font-weight:600;letter-spacing:.04em;color:#4fd18b!important;border:1px solid rgba(79,209,139,.4);vertical-align:top;line-height:1.35;position:relative;top:-.17em}
 html.nv2.nvx .cev .cu-pu.no,.cu-pu.no{color:#e8b931!important;border-color:rgba(232,185,49,.4)}
+/* Coming up month: legend dots visible in the light tag, same colours as the dots on the days */
+html.nv2.nvx .mleg i,html.nv2.nvx .mc i{display:inline-block!important;border-radius:50%!important}
+html.nv2.nvx .mleg i{width:1.25vw!important;height:1.25vw!important;margin:0 .5vw 0 1.4vw!important;box-shadow:0 0 0 1px rgba(20,20,19,.35)}
+html.nv2.nvx .mleg i.de,html.nv2.nvx .mc i.de{background:#4d8bff!important}
+html.nv2.nvx .mleg i.dg,html.nv2.nvx .mc i.dg{background:#2fb36b!important}
+html.nv2.nvx .mleg i.dh,html.nv2.nvx .mc i.dh{background:#e8a317!important}
+html.nv2.nvx .mleg{opacity:1!important;color:#4a4740!important;filter:none!important}
 
 /*NVX-END*/
 /* page titles a bit smaller, lined up with the clock */
@@ -9221,7 +9228,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 252';
+document.getElementById('ver').textContent='build nova 253';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
