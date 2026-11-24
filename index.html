@@ -5131,7 +5131,9 @@ async function tripPoll(force){if(!tripOn())return;const now=Date.now(),vis=$('p
     if(!TRIP.noAero&&now-(TRIP.aeroAt[f.key]||0)>20*60e3){TRIP.aeroAt[f.key]=now;const ymd=f.key.split('|')[1];
       tfetch(relayBase()+`/flight?key=${encodeURIComponent(SECRETS.calkey)}&no=${f.no}&date=${ymd}`,15000).then(r=>r.json()).then(j=>{if(j.error){if(/not set up/i.test(j.error))TRIP.noAero=true;return}TRIP.aero[f.key]=j}).catch(()=>{})}
     if(ph==='landed')continue;
-    try{const j=await (await tfetch(relayBase()+`/track?key=${encodeURIComponent(SECRETS.calkey)}&cs=${f.cs}`,12000)).json();const L=TRIP.live[f.key]=TRIP.live[f.key]||{trail:[]};L.chk=now;
+    try{let j=null;/* the home helper first (home internet; the flight sites block the relay's Cloudflare servers), then the relay */
+      if(CFG.home&&CFG.home.helper){try{const h=await (await tfetch(CFG.home.helper+'/track?cs='+f.cs,12000)).json();if(h&&!h.error)j=h}catch(e){}}
+      if(!j)j=await (await tfetch(relayBase()+`/track?key=${encodeURIComponent(SECRETS.calkey)}&cs=${f.cs}`,12000)).json();const L=TRIP.live[f.key]=TRIP.live[f.key]||{trail:[]};L.chk=now;
       if(!j.found||!j.me){if(L.air&&L.rem!=null&&L.rem<80&&now-(L.t||0)>5*60e3){L.landed=now;L.air=false;tripSave();tripEvent(f,'down')}continue}
       const m=j.me,dA=gcKm(f.A[0],f.A[1],m.lat,m.lon),dB=gcKm(m.lat,m.lon,f.B[0],f.B[1]);
       if(dA+dB>f.km*1.35+200)continue;   /* same flight number on another route/day: not theirs */
@@ -9964,7 +9966,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 276';
+document.getElementById('ver').textContent='build nova 277';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
