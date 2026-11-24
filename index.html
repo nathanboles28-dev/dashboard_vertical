@@ -6759,6 +6759,7 @@ setInterval(()=>{try{KV.on=kvActive();KV.wake=!KV.on&&kvWakeOK();if((!KV.on&&!KV
       /* Chrome caught a full sentence from her at the same moment: trust it (Whisper can make things up when the audio is unclear) */
       if(KID.chrome&&Date.now()-KID.chrome.at<6000){const ch=KID.chrome.t;KID.chrome=null;if(ch.toLowerCase().replace(/[^a-z ]/g,'')!==t.toLowerCase().replace(/[^a-z ]/g,'')){fmDiag(`rubble ear: Whisper [${t.replace(/["`\\]/g,'').slice(0,40)}] but Chrome [${ch.replace(/["`\\]/g,'').slice(0,40)}], using Chrome`);t=ch}}
       if(!t||t.length<2||/^(you|thank you|thanks|thank you for watching|bye|okay|hmm|uh|um|\.+)[.!?]*$/i.test(t)){fmDiag(`rubble ear: heard nothing clear (${Math.round(hz)||'?'} Hz)`);return}
+      if(/\bnova\b/i.test(t)&&KID_BYE.test(t.toLowerCase().replace(/-/g,' '))){return kidBye('ear')}
       if(kvEcho(t)){fmDiag(`rubble ear: ignored his own voice [${t.replace(/["`\\]/g,'').slice(0,40)}]`);return}
       fmDiag(`rubble ear: [${t.replace(/["`\\]/g,'').slice(0,70)}] ${Math.round(hz)||'?'} Hz`);KID.fromVoice=Date.now();KID.lastHz=hz||KID.lastHz;
       try{if(typeof VOICE!=='undefined'){VOICE.followNext=0;if(VOICE.armed){VOICE.armed=0;clearTimeout(VOICE.armT);voiceUI()}}}catch(e){}
@@ -6918,7 +6919,11 @@ async function kidChat(q,story){const nm=KIDC().name;
     kidShow(`<div class="k-title">📖 ${esc(tt)}</div><div class="k-story">${esc(body).replace(/\n+/g,'<br><br>')}</div><div class="k-row">${kidStar(150,'mini')}</div>`,'story',tt+'. '+body);KID.talkUntil=Date.now()+body.split(/\s+/).length*420;KID.sceneAt=Date.now()+60000}
   else{KID.hist.push({q:String(q).slice(0,120),a:a.slice(0,200),at:Date.now()});kidShow(`${kidSaid(q)}<div class="k-hero">${kidStar(380,'')}</div>${kidBubble(esc(a))}`,'chat',a)}}
 /* everything she says comes through here */
-function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';t=String(t||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();KID.until=Math.max(KID.until,Date.now()+KIDC().mins*60000);
+const KID_BYE=/\b(go home|goodbye|good bye|bye|bye-bye|bye bye|stop|stop it|all done|i'?m done|we'?re done|exit|close (it|this|that)|back to normal|that'?s enough|turn (it |rubble )?off|rubble off|kid mode off|rosemary mode off|go away|never mind|nevermind|see you|see ya|later)\b/i;
+function kidBye(who){kidDanceStop();clearInterval(KID.t);KID.busy=0;const el=$('kidTake');if(el)el.className='';KID.lock=Date.now()+30000;kidEnd();try{VOICE.followNext=0}catch(e){}
+  fmDiag('rubble: bye ('+(who||'')+')');try{nextPage('dashboard',30)}catch(e){}return reply(`Bye bye ${KIDC().name}! See you soon!`)}
+function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';
+  {const tt=String(t||'').toLowerCase().replace(/-/g,' ');if(KID_BYE.test(tt)&&tt.split(/\s+/).length<=8)return kidBye('her')}t=String(t||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();KID.until=Math.max(KID.until,Date.now()+KIDC().mins*60000);
   if(!t||/^(um+|uh+|hmm+|ah+|oh|eh|a|the|and|nova|star|rubble)$/.test(t))return kidShow(`<div class="k-hero">${kidStar(380,'')}</div>${kidBubble('Oops, I didn’t hear that! Can you say it again? 👂')}`,'chat','Oops, I didn\'t hear that! Can you say it again?');
   if(/^(stop|stop it|all done|i'?m done|bye|goodbye|bye bye|the end|no more)$/.test(t)){kidDanceStop();clearInterval(KID.t);KID.busy=0;const el=$('kidTake');if(el)el.className='';return reply(`Bye bye ${KIDC().name}! See you soon!`)}
   if(new RegExp(`^(?:give|add) (?:${KIDC().name.toLowerCase()}|her) .*stars?`).test(t)&&KID.lastHz&&KID.lastHz<KIDC().pitch){kidEnd();KID.lock=Date.now()+60000;KID.fromVoice=0;return handleCommand(t)}
@@ -6942,6 +6947,7 @@ function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';t=String(t||'').t
     if((g&&g.hz<180&&g.n>=5)||/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy)\b/i.test(String(c||''))){KID.lock=Date.now()+30000;kidEnd();KID.fromVoice=0;
       if(!String(c||'').trim()&&STT.ok&&STT.ring){const self=this;STT.busy=1;sttHear().then(t=>{STT.busy=0;_r.call(self,String(t||'').replace(/^(?:hey|hi|okay|ok)?[,.\s]*(?:nova|noah)\b[,.!?\s]*/i,'').replace(/[.!?]+$/,''))}).catch(()=>{STT.busy=0;_r.call(self,'')});return}
       return _r.apply(this,arguments)}
+    if(KV.on&&KID_BYE.test(String(c||'').toLowerCase().replace(/-/g,' '))){kidBye('chrome');const rest=String(c||'').toLowerCase().replace(/\b(go home|never mind|back to normal)\b/g,'').trim();return}
     if(KV.on){try{VOICE.followNext=0}catch(e){}const ct=String(c||'').trim();if(ct.split(/\s+/).length>=2)KID.chrome={t:ct,at:Date.now()};return}}
   const kidish=kidOn()||/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(c||''));
   if(kidish&&STT.ok&&!STT.busy&&STT.ring){STT.busy=1;const self=this,args=arguments,heard=String(c||'');try{if(typeof orbSet==='function'&&ORB.st)orbSet('think',{q:heard,a:'',secs:8})}catch(e){}
@@ -10087,7 +10093,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 285';
+document.getElementById('ver').textContent='build nova 286';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
