@@ -6756,6 +6756,8 @@ setInterval(()=>{try{KV.on=kvActive();KV.wake=!KV.on&&kvWakeOK();if((!KV.on&&!KV
         fmDiag(`rubble ear: woke up on [${t.replace(/["`\\]/g,'').slice(0,60)}] ${Math.round(hz)} Hz`);KID.lock=0;kidStart('voice');KID.fromVoice=Date.now();
         const rest=m[2].replace(/[.!?]+$/,'').trim();return rest&&!/^(rubble|hey rubble)/i.test(rest)?handleCommand(rest):kidMenu('')}
       if(!kidOn())return;
+      /* Chrome caught a full sentence from her at the same moment: trust it (Whisper can make things up when the audio is unclear) */
+      if(KID.chrome&&Date.now()-KID.chrome.at<6000){const ch=KID.chrome.t;KID.chrome=null;if(ch.toLowerCase().replace(/[^a-z ]/g,'')!==t.toLowerCase().replace(/[^a-z ]/g,'')){fmDiag(`rubble ear: Whisper [${t.replace(/["`\\]/g,'').slice(0,40)}] but Chrome [${ch.replace(/["`\\]/g,'').slice(0,40)}], using Chrome`);t=ch}}
       if(!t||t.length<2||/^(you|thank you|thanks|thank you for watching|bye|okay|hmm|uh|um|\.+)[.!?]*$/i.test(t)){fmDiag(`rubble ear: heard nothing clear (${Math.round(hz)||'?'} Hz)`);return}
       if(kvEcho(t)){fmDiag(`rubble ear: ignored his own voice [${t.replace(/["`\\]/g,'').slice(0,40)}]`);return}
       fmDiag(`rubble ear: [${t.replace(/["`\\]/g,'').slice(0,70)}] ${Math.round(hz)||'?'} Hz`);KID.fromVoice=Date.now();KID.lastHz=hz||KID.lastHz;
@@ -6940,7 +6942,7 @@ function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';t=String(t||'').t
     if((g&&g.hz<180&&g.n>=5)||/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy)\b/i.test(String(c||''))){KID.lock=Date.now()+30000;kidEnd();KID.fromVoice=0;
       if(!String(c||'').trim()&&STT.ok&&STT.ring){const self=this;STT.busy=1;sttHear().then(t=>{STT.busy=0;_r.call(self,String(t||'').replace(/^(?:hey|hi|okay|ok)?[,.\s]*(?:nova|noah)\b[,.!?\s]*/i,'').replace(/[.!?]+$/,''))}).catch(()=>{STT.busy=0;_r.call(self,'')});return}
       return _r.apply(this,arguments)}
-    if(KV.on){try{VOICE.followNext=0}catch(e){}return}}
+    if(KV.on){try{VOICE.followNext=0}catch(e){}const ct=String(c||'').trim();if(ct.split(/\s+/).length>=2)KID.chrome={t:ct,at:Date.now()};return}}
   const kidish=kidOn()||/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(c||''));
   if(kidish&&STT.ok&&!STT.busy&&STT.ring){STT.busy=1;const self=this,args=arguments,heard=String(c||'');try{if(typeof orbSet==='function'&&ORB.st)orbSet('think',{q:heard,a:'',secs:8})}catch(e){}
     sttHear().then(t=>{STT.busy=0;let use=heard;if(t&&t.length>1&&!/^(you|thank you\.?|bye\.?|\.+)$/i.test(t)){use=t;fmDiag(`stt: Chrome [${heard.replace(/["`\\]/g,'').slice(0,50)}] Whisper [${t.replace(/["`\\]/g,'').slice(0,70)}]`)}KID.fromVoice=Date.now();_r.call(self,use)}).catch(()=>{STT.busy=0;_r.apply(self,args)});return}
@@ -10085,7 +10087,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 284';
+document.getElementById('ver').textContent='build nova 285';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
