@@ -6699,7 +6699,7 @@ function kpTick(){const an=KP.an;if(!an)return;if(KP.ctx.state==='suspended'){tr
 function kpGuess(ms){const t0=Date.now()-(ms||4500),f=KP.fr.filter(x=>x.t>=t0).map(x=>x.f).sort((a,b)=>a-b);if(f.length<5)return null;
   const hz=Math.round(f[Math.floor(f.length/2)]),C=KIDC();return {hz,n:f.length,kid:hz>=C.pitch,adult:hz<=C.adultBelow}}
 /* decide who's talking, once per command */
-function kidJudge(why,cmd){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(why==='run')try{fmDiag(`voice: "${String(cmd||'').slice(0,60)}" · ${g?g.hz+' Hz ('+g.n+')':'pitch: not enough sound'} · ${g?(g.kid?KIDC().name:g.adult?'grown-up':'not sure'):'?'}${kidOn()?' · Rosemary mode on':''} · meter ${KP.an?(KP.ctx&&KP.ctx.state):'off'}`)}catch(e){}if(!g)return;KID.lastHz=g.hz;
+function kidJudge(why,cmd){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(why==='run')try{fmDiag(`voice: [${String(cmd||'').replace(/["`\\]/g,'').slice(0,60)}] · ${g?g.hz+' Hz ('+g.n+')':'pitch: not enough sound'} · ${g?(g.kid?KIDC().name:g.adult?'grown-up':'not sure'):'?'}${kidOn()?' · Rosemary mode on':''} · meter ${KP.an?(KP.ctx&&KP.ctx.state):'off'}`)}catch(e){}if(!g)return;KID.lastHz=g.hz;
   vLog(`voice ${g.hz} Hz (${g.n}) → ${g.kid?KIDC().name:g.adult?'grown-up':'not sure'}`);
   if(g.kid){const was=kidOn();KID.until=Date.now()+KIDC().mins*60000;KID.src='voice';if(!was)kidUI()}
   else if(g.adult&&kidOn()&&KID.src==='voice'){kidEnd()}}
@@ -6739,7 +6739,7 @@ function kidShow(html,scene,say){if(say&&scene!=='chat'&&scene!=='story'){KID.hi
   el.className='on'+(scene?' k-'+scene:'');
   el.innerHTML=`<div class="k-sky">${Array.from({length:14},(_,i)=>`<i style="left:${(i*37+11)%100}%;top:${(i*53+7)%62}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div>
    <div class="k-badge"><i>⭐</i>${esc(KIDC().name)} mode<b>${kidStars().n} ★</b></div><div class="k-in">${html}</div>`;
-  if(say){KID.talkUntil=Date.now()+Math.min(12000,String(say).split(/\s+/).length*420+800);reply(say);
+  if(say){KID.talkUntil=Date.now()+Math.min(12000,String(say).split(/\s+/).length*420+800);reply(say);try{fmDiag(`rubble (${scene||'-'}): ${String(say).replace(/["`\\]/g,'').slice(0,90)}`)}catch(e){}
     /* the star asked her something: listen for her answer without "Hey Nova" */
     if(kidOn()&&Date.now()-(KID.fromVoice||0)<120000&&!['teeth','dance','count','story'].includes(scene||'')){try{VOICE.followNext=1;VOICE.lastVoiceAt=Date.now()}catch(e){}}}}
 const kidBubble=(t,side)=>`<div class="k-bub${side?' side':''}">${t}</div>`;
@@ -6849,7 +6849,7 @@ function kidHandle(t,q){q=q==null?t:q;t=String(t||'').toLowerCase().replace(/[?.
 (()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}try{if(/(?:hey|hi|hello|hiya)[,\s]*(?:rubble|rubbles|rubel|rubbel|ruble|rumble|robble|rubbo|rebel|bubble|star)\b/i.test(String(VOICE.live||''))&&KIDC().on!==false&&Date.now()>KID.lock)kidStart('said')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();
   const kidish=kidOn()||/^(?:hey|hi|hello|hiya)[,\s]*(?:rubble|rubbles|rubel|rubbel|ruble|rumble|robble|rubbo|rebel|bubble|star)\b/i.test(String(c||''));
   if(kidish&&STT.ok&&!STT.busy&&STT.ring){STT.busy=1;const self=this,args=arguments,heard=String(c||'');try{if(typeof orbSet==='function'&&ORB.st)orbSet('think',{q:heard,a:'',secs:8})}catch(e){}
-    sttHear().then(t=>{STT.busy=0;let use=heard;if(t&&t.length>1&&!/^(you|thank you\.?|bye\.?|\.+)$/i.test(t)){use=t;fmDiag(`stt: Chrome heard "${heard.slice(0,50)}", OpenAI heard "${t.slice(0,60)}"`)}KID.fromVoice=Date.now();_r.call(self,use)}).catch(()=>{STT.busy=0;_r.apply(self,args)});return}
+    sttHear().then(t=>{STT.busy=0;let use=heard;if(t&&t.length>1&&!/^(you|thank you\.?|bye\.?|\.+)$/i.test(t)){use=t;fmDiag(`stt: Chrome [${heard.replace(/["`\\]/g,'').slice(0,50)}] Whisper [${t.replace(/["`\\]/g,'').slice(0,70)}]`)}KID.fromVoice=Date.now();_r.call(self,use)}).catch(()=>{STT.busy=0;_r.apply(self,args)});return}
   return _r.apply(this,arguments)}}catch(e){}})();
 setTimeout(()=>{try{kpStart()}catch(e){}},6000);setTimeout(()=>{try{sttReady()}catch(e){}},9000);setInterval(()=>{try{sttReady()}catch(e){}},600000);
 
@@ -6894,7 +6894,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   const kidVoice=kidOn()&&Date.now()-(KID.fromVoice||0)<4000;
   if(!t){if(kidVoice)return kidMenu('');
     /* just "hey nova": only a grown-up voice gets the roundup. A higher or unclear voice (or no pitch reading) during the day gets Rosemary's screen instead */
-    if(Date.now()-(KID.fromVoice||0)<4000&&KIDC().on!==false){const g=kpGuess(5000);if(!g||g.hz>KIDC().adultBelow){if(g&&g.hz>KIDC().adultBelow){kidStart('voice')}else{fmDiag('voice: bare "hey nova" with no pitch reading, skipped the roundup')}if(kidOn())return kidMenu('');try{VOICE.followNext=1;VOICE.lastVoiceAt=Date.now()}catch(e){}return reply('Sorry, I didn\'t catch that. Can you say it again?')}}
+    if(Date.now()-(KID.fromVoice||0)<4000&&KIDC().on!==false){const g=kpGuess(5000);if(!g||g.hz>KIDC().adultBelow){if(g&&g.hz>KIDC().adultBelow){kidStart('voice')}else{fmDiag('voice: bare hey nova with no pitch reading, skipped the roundup')}if(kidOn())return kidMenu('');try{VOICE.followNext=1;VOICE.lastVoiceAt=Date.now()}catch(e){}return reply('Sorry, I didn\'t catch that. Can you say it again?')}}
     if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
   /* automations from the iPhones (Shortcuts): "presence NAME arrived" / "presence NAME left" / "alarm off NAME" */
   {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
@@ -9938,7 +9938,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 274';
+document.getElementById('ver').textContent='build nova 275';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
