@@ -5607,7 +5607,7 @@ function nmRecall(t){if(!/^(where('?s| is| are| did (i|we) (put|leave))|what('?s
    Every few songs she writes a short break (Claude, through the relay's /ask) and sends it to the Mac's music helper,
    which reads it in Zoe's voice over the start of the next song with the music turned down.
    "Nova FM on/off" · "go live" (a break right now) · optional settings in CFG.fm (relay private settings). */
-const FMC=()=>Object.assign({every:[3,5],minGap:12,style:'auto',station:'Nova FM',words:45,duck:12,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
+const FMC=()=>Object.assign({every:[5,7],minGap:20,style:'auto',station:'Nova FM',words:45,duck:12,quiet:[23,8],topics:['the music','the weather','your teams\' scores','local news','the time of day','what\'s on the calendar']},CFG.fm||{},NM.get('fmtest',false)?{every:[1,2],minGap:3,quiet:null}:{});
 const FM={on:NM.get('fm',true),count:0,target:0,last:0,air:false,busy:false};
 const fmTarget=()=>{const e=FMC().every,a=+e[0]||3,b=+e[1]||a;return a+Math.floor(Math.random()*(b-a+1))};
 /* the studio's "Next break" line when a break is due: what it's waiting for */
@@ -5654,7 +5654,7 @@ function fmSongGo(j){
   const news=worldNew()||FM.req||FM.dedic||fmMoments().some(m=>m.pri>=2);
   /* spacing counts from when the last break finished airing (a queued special can air minutes after it was written), and never while one is queued or on air */
   const lastAir=Math.max(FM.last||0,FM.airEnd||0,+(NM.get('fmlastbrk',{})||{}).at||0);
-  if(!FM.on||FM.busy||FM.pend||FM.queued||FM.air||(!news&&FM.count<FM.target)||Date.now()-lastAir<(news?Math.min(4,FMC().minGap+1):FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
+  if(!FM.on||FM.busy||FM.pend||FM.queued||FM.air||(!news&&FM.count<FM.target)||Date.now()-lastAir<(news?Math.min(10,FMC().minGap+1):FMC().minGap)*60000||fmQuiet()||fmBusy(j))return;
   /* a jingle just played (under 2.5 min ago): this break waits for the next song, so the two never land back to back */
   if(!news&&Date.now()-(+NM.get('fmjlast',0))<150000){fmDiag('break held: a jingle just played');return}
   /* the last 10 minutes of the hour: hold a regular break, the top-of-the-hour ID is coming (breaking news still goes) */
@@ -6522,7 +6522,7 @@ function fmOnAir(on){let el=$('fmOn');
   const first=!FM.air&&!el.classList.contains('on');
   el.innerHTML=`<div class="fo-hd">${fmSticker()}<span class="fm-air on"><i></i>ON AIR</span></div>
     <div class="fo-k">${esc(K.lab)}</div><canvas width="1080" height="520"></canvas>${K.spec&&FM.spec.html?FM.spec.html:''}
-    <div class="fo-n">Music down to ${Math.round(FMC().duck)}% · back to the music in a moment</div>
+    <div class="fo-n">Song paused · it starts from the top in a moment</div>
     <div class="fo-lt"><b>${esc(fmWord().w)}</b>${fmWord().b?`<i>${esc(fmWord().b)}</i>`:''}<span>WOODSTOCK${fmWx()?' · '+fmWx():''} · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).toUpperCase()}</span></div>`;
   el.classList.add('on');wakeScreen&&wakeScreen();if(first)fmStationId(true);
   const cv=el.querySelector('canvas'),c=cv.getContext('2d'),t0=performance.now();
@@ -10095,7 +10095,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 288';
+document.getElementById('ver').textContent='build nova 289';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){

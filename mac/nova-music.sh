@@ -226,10 +226,19 @@ fm_air(){ txt="$1"; duckp="${2:-30}"; kind="${3:-dj}"; L="$DIR/.dj-lock"
   fm_post "on $(printf '%s' "$txt" | base64 | tr -d '\n')"
   # a jingle for this kind of break (jingles/sports, weather, news, id) or any general one in jingles/
   J="$(fm_jpick "$kind")"; jp=""
-  [ "$playing" = 1 ] && { fm_fade "$v0" "$dv" 0.7
+  # DJ_MODE=pause (default): like a real station between songs. The song pauses, she talks over nothing (or a quiet bed),
+  # then the song starts again from the top, so no part of it is talked over. DJ_MODE=duck: the old way, talking over the song turned down.
+  pmode="${DJ_MODE:-pause}"; ppos=0
+  if [ "$playing" = 1 ] && [ "$pmode" = pause ]; then
+    fm_fade "$v0" 0 0.5
+    ppos=$(num "$(osascript -e 'tell application "Music" to player position' 2>/dev/null | cut -d. -f1)")
+    osascript -e 'tell application "Music" to pause' >/dev/null 2>&1
+    osascript -e "tell application \"Music\" to set sound volume to $v0" >/dev/null 2>&1
+    echo "dj air: paused the song at ${ppos}s" >> "$DIR/music-debug.log"
+  elif [ "$playing" = 1 ]; then fm_fade "$v0" "$dv" 0.7
     # make sure it actually went down (Music sometimes ignores the fade right as a song starts)
     cv=$(num "$(osascript -e 'tell application "Music" to sound volume' 2>/dev/null)")
-    [ "$cv" -gt $(( dv + 3 )) ] 2>/dev/null && { osascript -e "tell application \"Music\" to set sound volume to $dv" >/dev/null 2>&1; echo "dj air: fade missed ($cv), forced $dv" >> "$DIR/music-debug.log"; }; }
+    [ "$cv" -gt $(( dv + 3 )) ] 2>/dev/null && { osascript -e "tell application \"Music\" to set sound volume to $dv" >/dev/null 2>&1; echo "dj air: fade missed ($cv), forced $dv" >> "$DIR/music-debug.log"; }; fi
   # the jingle plays once the music is already down, and louder than before (DJ_JVOL, 1.0 = file's own level)
   [ -n "$J" ] && { echo "dj jingle: $(basename "$J")" >> "$DIR/music-debug.log"; afplay -v "${DJ_JVOL:-1.15}" "$J"; }
   B="$(fm_pick "$FMDIR/beds")"; bp=""
@@ -240,7 +249,12 @@ fm_air(){ txt="$1"; duckp="${2:-30}"; kind="${3:-dj}"; L="$DIR/.dj-lock"
   fm_post "speak ${dur:-0} ${ms:-0}" &
   afplay -v "${DJ_VOL:-1.0}" "$AF"
   [ -n "$bp" ] && kill "$bp" 2>/dev/null
-  [ "$playing" = 1 ] && { sleep 0.3; fm_fade "$dv" "$v0" 2.2; }
+  if [ "$playing" = 1 ] && [ "$pmode" = pause ]; then
+    sleep 0.25
+    # back to the very start if it had only just begun (a break at a song change), otherwise carry on where it was
+    [ "${ppos:-0}" -lt 25 ] 2>/dev/null && osascript -e 'tell application "Music" to set player position to 0' >/dev/null 2>&1
+    osascript -e 'tell application "Music" to play' >/dev/null 2>&1
+  elif [ "$playing" = 1 ]; then sleep 0.3; fm_fade "$dv" "$v0" 2.2; fi
   fm_post off; rm -f "$DIR/.dj.aiff" "$DIR/.dj.wav"; rmdir "$L" 2>/dev/null; }
 # start a break in the background so the now-playing checks keep running
 fm_go(){ ( fm_air "$1" "$2" "$3" ) </dev/null >/dev/null 2>&1 3>&- & }
