@@ -2996,6 +2996,76 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+/* ===== Rosemary mode ===== */
+html.kidOn #nvOrb{background:radial-gradient(120% 55% at 50% 0%,#2a2f6b 0%,#141838 60%,#0d1028 100%)}
+#kidTake{position:fixed;inset:0;z-index:9001;display:none;flex-direction:column;align-items:center;background:radial-gradient(120% 55% at 50% 0%,#2a2f6b 0%,#141838 60%,#0d1028 100%);color:#fff;font-family:'Arial Rounded MT Bold','Fredoka','Nunito','NovaSans',sans-serif;overflow:hidden}
+#kidTake.on{display:flex;animation:lvIn .5s ease}
+#kidTake .k-sky i{position:absolute;width:.5vw;height:.5vw;border-radius:50%;background:#fff;animation:kTw 2.4s ease-in-out infinite}
+@keyframes kTw{0%,100%{opacity:.2}50%{opacity:1}}
+#kidTake .k-badge{position:absolute;left:3.5vw;top:3vw;display:flex;align-items:center;gap:1.4vw;background:rgba(255,210,74,.16);border:.4vw solid #ffd24a;border-radius:6vw;padding:.8vw 2.6vw .8vw 1vw;font-size:2.8vw;color:#ffd24a}
+#kidTake .k-badge i{font-style:normal;width:5vw;height:5vw;border-radius:50%;background:#ffd24a;display:flex;align-items:center;justify-content:center;font-size:2.8vw}
+#kidTake .k-badge b{margin-left:1.2vw;color:#fff;font-weight:400}
+#kidTake .k-in{position:relative;width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vw;padding:13vw 7vw 8vw;box-sizing:border-box}
+#kidTake .kst{overflow:visible;filter:drop-shadow(0 0 3vw rgba(255,214,90,.7))}
+#kidTake .kst .kst-b{transform-origin:50% 60%;transform-box:fill-box;animation:kBob 1.8s ease-in-out infinite}
+@keyframes kBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}}
+#kidTake .kst .kst-e{animation:kBl 4s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes kBl{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+#kidTake .kst .kst-h,#kidTake .kst .kst-m2,#kidTake .kst .kst-m3{display:none}
+#kidTake .kst.talk .kst-m1{display:none}#kidTake .kst.talk .kst-m2{display:inline;animation:kTalk .28s ease-in-out infinite alternate;transform-origin:50% 63%;transform-box:view-box}
+@keyframes kTalk{from{transform:scaleY(.35)}to{transform:scaleY(1.05)}}
+#kidTake .kst.listen .kst-m1{display:none}#kidTake .kst.listen .kst-m3{display:inline}#kidTake .kst.listen .kst-b{animation:kHop .5s ease-in-out infinite alternate}
+@keyframes kHop{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.08)}}
+#kidTake .kst.think .kst-m1{display:none}#kidTake .kst.think .kst-m3{display:inline}#kidTake .kst.think .kst-b{animation:kSpin 2.4s ease-in-out infinite}
+@keyframes kSpin{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+#kidTake .kst.dance .kst-b{animation:kDance .48s ease-in-out infinite alternate}
+@keyframes kDance{from{transform:translate(-8px,0) rotate(-16deg)}to{transform:translate(8px,-8px) rotate(16deg) scale(1.08)}}
+#kidTake .kst.dance .kst-e{display:none}#kidTake .kst.dance .kst-h{display:inline}
+#kidTake .k-hero .kst{width:38vw;height:38vw}
+#kidTake .k-row{display:flex;align-items:flex-start;gap:3vw;width:100%}
+#kidTake .k-row .kst{width:16vw;height:16vw;flex:none}
+#kidTake .k-bub{position:relative;background:#fff;color:#2a2f6b;border-radius:5vw;padding:3.2vw 4.4vw;font-size:5.4vw;line-height:1.2;text-align:center;box-shadow:0 2vw 5vw rgba(0,0,0,.3);max-width:82vw}
+#kidTake .k-bub::before{content:'';position:absolute;left:50%;top:-2vw;margin-left:-2vw;width:4vw;height:4vw;background:#fff;transform:rotate(45deg)}
+#kidTake .k-bub.side{flex:1;font-size:4.3vw;margin-top:2vw;text-align:left}
+#kidTake .k-bub.side::before{left:-1.6vw;top:4.4vw;margin-left:0}
+#kidTake .k-said{background:rgba(255,255,255,.1);border-radius:4vw;padding:1.4vw 3vw;font-size:3vw;color:#c9cff5}
+#kidTake .k-menu{display:grid;grid-template-columns:1fr 1fr;gap:2.4vw;width:84vw;margin-top:2vw}
+#kidTake .k-btn{border-radius:4.4vw;padding:3vw 2vw;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.8vw}
+#kidTake .k-btn span{font-size:8vw}#kidTake .k-btn b{font-weight:400;font-size:3.4vw}
+#kidTake .k-hint{font-size:2.6vw;color:#9aa3d8}
+#kidTake .k-title{font-size:7.4vw;text-align:center;line-height:1.1}
+#kidTake .k-ani{font-size:36vw;line-height:1;animation:kPulse 1.2s ease-in-out infinite}
+@keyframes kPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+#kidTake .k-snd{font-size:15vw;color:#ffd24a;text-shadow:0 1.2vw 0 #b7791f;text-align:center;line-height:1}
+#kidTake .k-more{display:flex;gap:4vw;margin-top:1vw}#kidTake .k-more div{text-align:center}#kidTake .k-more span{font-size:8vw;display:block}#kidTake .k-more small{font-size:2.4vw;color:#9aa3d8}
+#kidTake .k-num{font-size:34vw;color:#ffd24a;line-height:.9}
+#kidTake .k-big{font-size:8vw;text-align:center}
+#kidTake .k-big2{font-size:5.6vw;color:#ffd24a;text-align:center}
+#kidTake .k-moons{display:flex;flex-wrap:wrap;justify-content:center;gap:2.6vw;max-width:86vw}
+#kidTake .k-moon{display:flex;flex-direction:column;align-items:center}#kidTake .k-moon span{font-size:7.4vw}#kidTake .k-moon b{font-weight:400;font-size:3vw;color:#c9cff5}
+#kidTake .k-pic{font-size:15vw}
+#kidTake .k-cells{display:grid;gap:2.4vw;width:86vw;grid-template-columns:repeat(4,1fr)}
+#kidTake .k-cells.g7{grid-template-columns:repeat(4,1fr)}#kidTake .k-cells.g10{grid-template-columns:repeat(5,1fr)}
+#kidTake .k-cell{aspect-ratio:1;border-radius:4vw;border:.4vw dashed rgba(255,255,255,.2);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:12vw}
+#kidTake .k-cell.on{border:.5vw solid #ffd24a;background:rgba(255,210,74,.15)}
+#kidTake .k-cell.pop{animation:kPop 1.1s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes kPop{0%{transform:scale(0) rotate(-180deg)}100%{transform:scale(1) rotate(0)}}
+#kidTake .k-log{display:flex;justify-content:space-between;width:84vw;background:rgba(255,255,255,.06);border-radius:3vw;padding:1.8vw 3vw;font-size:3.2vw}#kidTake .k-log b{font-weight:400}#kidTake .k-log span{color:#9aa3d8;font-size:2.6vw}
+#kidTake .k-ring{position:relative;width:58vw;height:58vw}#kidTake .k-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+#kidTake .k-ring circle{fill:none;stroke-width:22}#kidTake .k-ring .bg{stroke:rgba(255,255,255,.12)}#kidTake .k-ring .fg{stroke:#5ad1f0;stroke-linecap:round;transition:stroke-dashoffset .5s linear}
+#kidTake .k-ring span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22vw;animation:kPulse 1s ease-in-out infinite}
+#kidTake .k-tip{font-size:6vw;color:#5ad1f0;text-align:center}
+#kidTake .k-parts{display:grid;grid-template-columns:repeat(4,1fr);gap:1.8vw;width:84vw}#kidTake .k-parts div{border-radius:2.6vw;padding:1.8vw 0;text-align:center;font-size:2.4vw;background:rgba(255,255,255,.08);color:#9aa3d8}
+#kidTake .k-parts div.done{background:#5ad1f0;color:#0d1028}#kidTake .k-parts div.on{background:#ffd24a;color:#0d1028;animation:kPulse 1s infinite}
+#kidTake .k-dance .kst{width:40vw;height:40vw}
+#kidTake .k-shapes{display:flex;gap:3vw}#kidTake .k-shapes span{font-size:10vw;animation:kHop .45s ease-in-out infinite alternate}
+#kidTake .k-joke{font-size:6.4vw;text-align:center;line-height:1.2}
+#kidTake .k-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:2vw;max-width:80vw}#kidTake .k-dots i{width:5vw;height:5vw;border-radius:50%;background:rgba(255,255,255,.12)}#kidTake .k-dots i.on{background:#ffd24a;animation:kPop .5s both}
+#kidTake .k-wear{display:flex;flex-wrap:wrap;justify-content:center;gap:3vw}#kidTake .k-wear span{font-size:14vw}
+#kidTake .k-story{font-size:4.2vw;line-height:1.45;background:rgba(255,255,255,.07);border-radius:4vw;padding:4vw 5vw;max-height:110vw;overflow:hidden}
+#kidTake .k-conf{position:absolute;inset:0;pointer-events:none}#kidTake .k-conf i{position:absolute;top:-3vw;width:2vw;height:3vw;border-radius:.4vw;animation:kFall 3s linear both}
+@keyframes kFall{from{transform:translateY(0) rotate(0)}to{transform:translateY(190vw) rotate(720deg)}}
+
 /* focus mode */
 #focTake{position:fixed;inset:0;z-index:54;display:none;flex-direction:column;padding:6vw 5vw;background:radial-gradient(120% 50% at 50% 0%,#1d2a47,#0a0e18 70%);color:#fff;font-family:'NovaSans','Inter',sans-serif}
 #focTake.on{display:flex;animation:lvIn .6s ease}
@@ -3170,6 +3240,7 @@ html.th-bc #rvBody .rv-r{transform:skewX(-10deg)}
 <script>
 /* ===== SETTINGS: edit these ===== */
 const CFG={
+  kid:{on:true,name:'Rosemary',pitch:265,adultBelow:215,goal:7,mins:4,birthday:''},
   city:'Home', lat:0, lon:0,   // your town comes from your relay's private settings
   clock24:false,
   // Colour theme: 'glass' (dark, frosted glass over your blurred photos), 'aurora' (blue, purple, pink), 'dusk' (warm amber and rose), 'graphite' (neutral dark), 'forest' (green), 'midnight' (the original blue and violet)
@@ -6546,6 +6617,175 @@ async function storyFetch(s){if(!s||!s.title||!CFG.relay||!SECRETS.calkey)return
   catch(e){return null}finally{delete FEAT.busy['st'+k]}}
 function storyMaybe(s){if(!s||!s.title||!storyPick(s))return;const C=NM.get('fmfsong',{})[fmFeatKey(s)];if(C&&C.story!==undefined)return;if(typeof fmFeatCapOk==='function'&&!fmFeatCapOk())return;try{fmFeatCapUse()}catch(e){}storyFetch(s).then(()=>{try{fmFeatStep(true)}catch(e){}})}
 
+/* ===== Rosemary mode: Nova hears a little voice (pitch), or "it's Rosemary". The orb turns into the star buddy, she gets her own screen, and Nova talks to her like a friendly 4-year-old's friend ===== */
+const KIDC=()=>{const k=Object.assign({on:true,name:'Rosemary',pitch:265,adultBelow:215,goal:7,mins:4,birthday:''},CFG.kid||{});if(!k.birthday)try{k.birthday=localStorage.getItem('nova-kidbday')||''}catch(e){}return k};
+const KID={until:0,src:'',lock:0,lastHz:0,scene:'',sceneAt:0,t:null,dance:null};
+const kidOn=()=>KIDC().on!==false&&KID.until>Date.now();
+/* --- the pitch meter: a second ear on the mic that only measures how high the voice is --- */
+const KP={an:null,buf:null,fr:[],sr:48000,ctx:null,try:0};
+async function kpStart(){if(KP.an||KP.try>3||KIDC().on===false)return;KP.try++;
+  try{const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    const A=new (window.AudioContext||window.webkitAudioContext)(),src=A.createMediaStreamSource(s),an=A.createAnalyser();an.fftSize=2048;src.connect(an);
+    KP.ctx=A;KP.an=an;KP.sr=A.sampleRate;KP.buf=new Float32Array(an.fftSize);setInterval(kpTick,70);vLog('voice meter on')}catch(e){vLog('voice meter: '+e.message)}}
+function kpTick(){const an=KP.an;if(!an)return;if(KP.ctx.state==='suspended'){try{KP.ctx.resume()}catch(e){}return}
+  if(typeof VOICE!=='undefined'&&VOICE.paused)return;if(window._macSpeaking||(window.speechSynthesis&&speechSynthesis.speaking))return;
+  const b=KP.buf;an.getFloatTimeDomainData(b);let e=0;for(let i=0;i<b.length;i++)e+=b[i]*b[i];const rms=Math.sqrt(e/b.length);if(rms<.012)return;
+  const N=1024,sr=KP.sr,lo=Math.floor(sr/650),hi=Math.min(b.length-N-1,Math.ceil(sr/75));let e0=0;for(let i=0;i<N;i++)e0+=b[i]*b[i];
+  const R=new Float32Array(hi+2);let mx=0;
+  for(let L=lo;L<=hi;L++){let s=0,eL=0;for(let i=0;i<N;i++){s+=b[i]*b[i+L];eL+=b[i+L]*b[i+L]}const r=s/Math.sqrt(e0*eL+1e-9);R[L]=r;if(r>mx)mx=r}
+  if(mx<.6)return;
+  /* the first strong peak (avoids reading a voice an octave too low) */
+  let best=0;for(let L=lo+1;L<hi;L++){if(R[L]>=.9*mx&&R[L]>=R[L-1]&&R[L]>=R[L+1]){best=L;break}}if(!best)return;
+  const a=R[best-1],c=R[best+1],d=(a-c)/(2*(a-2*R[best]+c)||1),f0=sr/(best+(isFinite(d)?d:0));
+  if(f0<70||f0>650)return;KP.fr.push({t:Date.now(),f:f0});const cut=Date.now()-12000;while(KP.fr.length&&KP.fr[0].t<cut)KP.fr.shift()}
+function kpGuess(ms){const t0=Date.now()-(ms||4500),f=KP.fr.filter(x=>x.t>=t0).map(x=>x.f).sort((a,b)=>a-b);if(f.length<5)return null;
+  const hz=Math.round(f[Math.floor(f.length/2)]),C=KIDC();return {hz,n:f.length,kid:hz>=C.pitch,adult:hz<=C.adultBelow}}
+/* decide who's talking, once per command */
+function kidJudge(why){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(!g)return;KID.lastHz=g.hz;
+  vLog(`voice ${g.hz} Hz (${g.n}) → ${g.kid?KIDC().name:g.adult?'grown-up':'not sure'}`);
+  if(g.kid){const was=kidOn();KID.until=Date.now()+KIDC().mins*60000;KID.src='voice';if(!was)kidUI()}
+  else if(g.adult&&kidOn()&&KID.src==='voice'){kidEnd()}}
+function kidStart(src){const was=kidOn();KID.until=Date.now()+(src==='said'?10:KIDC().mins)*60000;KID.src=src||'said';if(!was)kidUI()}
+function kidEnd(){KID.until=0;KID.scene='';kidUI()}
+function kidUI(){const on=kidOn();document.documentElement.classList.toggle('kidOn',on);if(!on){const el=$('kidTake');if(el)el.className='';kidDanceStop()}}
+setInterval(()=>{try{if(!kidOn()&&document.documentElement.classList.contains('kidOn'))kidUI();const el=$('kidTake');
+  if(el&&el.classList.contains('on')){const st=(typeof VOICE!=='undefined'&&VOICE.armed)?'listen':(window._macSpeaking||(window.speechSynthesis&&speechSynthesis.speaking)||Date.now()<KID.talkUntil)?'talk':'';const s=el.querySelector('.kst');if(s&&s.dataset.st!==st){s.dataset.st=st;s.setAttribute('class','kst '+st)}
+    if(!KID.busy&&Date.now()-KID.sceneAt>((KID.scene==='teeth'||KID.scene==='dance')?150000:45000)&&!(typeof VOICE!=='undefined'&&VOICE.armed))el.className=''}}catch(e){}},250);
+/* --- the star buddy (SVG for her screen, canvas for the orb) --- */
+function kidStar(sz,cls){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?23:48;p.push((50+r*Math.cos(a)).toFixed(1)+','+(54+r*Math.sin(a)).toFixed(1))}const d='M'+p.join(' L')+'Z';
+  return `<svg class="kst ${cls||''}" width="${sz}" height="${sz}" viewBox="0 0 100 100"><defs><radialGradient id="ksg" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#fff6c8"/><stop offset="1" stop-color="#ffd24a" stop-opacity="0"/></radialGradient></defs>
+   <g class="kst-b"><path d="${d}" fill="#ffd24a" stroke="#ffb703" stroke-width="5" stroke-linejoin="round"/><path d="${d}" fill="url(#ksg)" opacity=".55"/>
+   <g class="kst-e"><ellipse cx="41" cy="50" rx="4.2" ry="5.4" fill="#3a2508"/><ellipse cx="59" cy="50" rx="4.2" ry="5.4" fill="#3a2508"/><circle cx="42.4" cy="48" r="1.6" fill="#fff"/><circle cx="60.4" cy="48" r="1.6" fill="#fff"/></g>
+   <path class="kst-h" d="M37 50 Q41 45.5 45 50 M55 50 Q59 45.5 63 50" fill="none" stroke="#3a2508" stroke-width="3" stroke-linecap="round"/>
+   <ellipse cx="34" cy="60" rx="5" ry="3.2" fill="#ff8fa3" opacity=".75"/><ellipse cx="66" cy="60" rx="5" ry="3.2" fill="#ff8fa3" opacity=".75"/>
+   <path class="kst-m1" d="M41 60 Q50 70 59 60" fill="none" stroke="#5b3a10" stroke-width="3.2" stroke-linecap="round"/>
+   <g class="kst-m2"><ellipse cx="50" cy="63" rx="6.5" ry="5.5" fill="#7a2f1d"/><ellipse cx="50" cy="65.5" rx="4" ry="2.4" fill="#ff8a8a"/></g>
+   <ellipse class="kst-m3" cx="50" cy="63" rx="4" ry="4.6" fill="#7a2f1d"/></g></svg>`}
+function kidStarCanvas(c,cx,cy,R,st,t,lvl){const bob=Math.sin(t*2.4)*R*.05,sc=1+(st==='listen'?lvl*.12:0),rot=Math.sin(t*1.6)*.07;
+  c.save();c.translate(cx,cy+bob);c.rotate(rot);c.scale(sc*R/50,sc*R/50);c.translate(-50,-54);
+  const g=c.createRadialGradient(50,54,10,50,54,90);g.addColorStop(0,'rgba(255,214,90,.45)');g.addColorStop(1,'rgba(255,214,90,0)');c.fillStyle=g;c.fillRect(-60,-60,220,220);
+  c.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?23:48;c.lineTo(50+r*Math.cos(a),54+r*Math.sin(a))}c.closePath();
+  c.lineJoin='round';c.lineWidth=5;c.strokeStyle='#ffb703';c.stroke();c.fillStyle='#ffd24a';c.fill();
+  const blink=(t%4)>3.85;c.fillStyle='#3a2508';
+  if(blink){c.lineWidth=3;c.strokeStyle='#3a2508';c.beginPath();c.moveTo(37,50);c.quadraticCurveTo(41,47,45,50);c.moveTo(55,50);c.quadraticCurveTo(59,47,63,50);c.stroke()}
+  else{c.beginPath();c.ellipse(41,50,4.2,5.4,0,0,7);c.ellipse(59,50,4.2,5.4,0,0,7);c.fill();c.fillStyle='#fff';c.beginPath();c.arc(42.4,48,1.6,0,7);c.arc(60.4,48,1.6,0,7);c.fill()}
+  c.fillStyle='rgba(255,143,163,.75)';c.beginPath();c.ellipse(34,60,5,3.2,0,0,7);c.ellipse(66,60,5,3.2,0,0,7);c.fill();
+  if(st==='speak'){const o=2+lvl*6*Math.abs(Math.sin(t*9));c.fillStyle='#7a2f1d';c.beginPath();c.ellipse(50,63,6,o,0,0,7);c.fill()}
+  else if(st==='listen'||st==='think'){c.fillStyle='#7a2f1d';c.beginPath();c.ellipse(50,63,4,4.6,0,0,7);c.fill()}
+  else{c.lineWidth=3.2;c.strokeStyle='#5b3a10';c.lineCap='round';c.beginPath();c.moveTo(41,60);c.quadraticCurveTo(50,70,59,60);c.stroke()}
+  if(st==='think'){c.fillStyle='#fff3b0';for(let k=0;k<5;k++){const a=t*2+k*1.256;c.globalAlpha=.5+.5*Math.sin(t*3+k);c.beginPath();c.arc(50+Math.cos(a)*62,54+Math.sin(a)*62,2.6,0,7);c.fill()}c.globalAlpha=1}
+  c.restore()}
+/* --- her screen --- */
+function kidShow(html,scene,say){let el=$('kidTake');if(!el){el=document.createElement('div');el.id='kidTake';document.body.appendChild(el);el.addEventListener('click',e=>{if(e.target.closest('[data-k]')){kidHandle(e.target.closest('[data-k]').dataset.k);return}el.className='';kidDanceStop()})}
+  if(scene!=='dance')kidDanceStop();KID.scene=scene||'';KID.sceneAt=Date.now();
+  el.className='on'+(scene?' k-'+scene:'');
+  el.innerHTML=`<div class="k-sky">${Array.from({length:14},(_,i)=>`<i style="left:${(i*37+11)%100}%;top:${(i*53+7)%62}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div>
+   <div class="k-badge"><i>⭐</i>${esc(KIDC().name)} mode<b>${kidStars().n} ★</b></div><div class="k-in">${html}</div>`;
+  if(say){KID.talkUntil=Date.now()+Math.min(12000,String(say).split(/\s+/).length*420+800);reply(say)}}
+const kidBubble=(t,side)=>`<div class="k-bub${side?' side':''}">${t}</div>`;
+const kidSaid=q=>q?`<div class="k-said">🎤 “${esc(q)}”</div>`:'';
+function kidMenu(q,hello){const nm=esc(KIDC().name);
+  kidShow(`<div class="k-hero">${kidStar(420,'big')}</div>${kidBubble(hello||`Hi ${nm}! 👋<br>I missed you!`)}
+   <div class="k-menu">${[['animals','🐮','Animal sounds','#3fae6b'],['sleeps','🌙','Sleeps until…','#5b6be0'],['teeth','🪥','Brush teeth','#2fa7c9'],['stars','⭐','My stars','#e8a317'],['dance','💃','Dance party','#e0558f'],['story','📖','Story time','#8b5bd6']].map(([k,e,t,c])=>`<div class="k-btn" data-k="${k}" style="background:${c}"><span>${e}</span><b>${t}</b></div>`).join('')}</div>
+   <div class="k-hint">Just say it — “Nova, dance party!”</div>`,'menu',(hello||`Hi ${KIDC().name}! I missed you!`).replace(/<[^>]+>|👋/g,'').trim()+' What do you want to do?')}
+/* --- stars --- */
+function kidStars(){return Object.assign({n:0,log:[],rounds:0},NM.get('kidstars',{}))}
+function kidStarsShow(q,said,pop){const S=kidStars(),G=KIDC().goal,n=Math.min(S.n,G),nm=esc(KIDC().name);
+  const cells=Array.from({length:G},(_,i)=>`<div class="k-cell${i<n?' on':''}${pop&&i===n-1?' pop':''}">${i<n?'⭐':''}</div>`).join('');
+  const left=G-n,log=S.log.slice(-3).reverse().map(x=>`<div class="k-log"><b>${esc(x.why?nmCap(x.why):'Being a superstar')}</b><span>${kidWhen(x.at)}</span></div>`).join('');
+  kidShow(`${kidSaid(q)}<div class="k-title">${nm}’s stars</div><div class="k-cells g${G}">${cells}</div>
+   <div class="k-big2">${left>0?`${n} ${n===1?'star':'stars'}! ${left} more for a surprise 🎁`:'All the stars! Surprise time! 🎁'}</div>${log}
+   <div class="k-row">${kidStar(170,'mini')}${kidBubble(said,1)}</div>`,'stars',said.replace(/<[^>]+>/g,''));
+  if(n>=G)kidConfetti()}
+const kidWhen=t=>{const d=new Date(t),td=dayStart(new Date()).getTime();return t>=td?'today':t>=td-864e5?'yesterday':d.toLocaleDateString([],{weekday:'long'})};
+function kidGive(k,why){k=Math.max(1,Math.min(5,k||1));const S=kidStars(),G=KIDC().goal;if(S.n>=G){S.rounds++;S.n=0;S.log=[]}
+  S.n=Math.min(G,S.n+k);for(let i=0;i<k;i++)S.log.push({at:Date.now(),why:why||''});S.log=S.log.slice(-30);NM.set('kidstars',S);const nm=KIDC().name,left=G-S.n;
+  kidStarsShow('',`${k>1?k+' new stars':'A new star'} for ${nm}${why?' for '+why:''}! ${left>0?`That's ${S.n}. ${left} more for a surprise!`:`That's all ${G}! Surprise time!`}`,true)}
+/* --- activities --- */
+const KID_ANIMALS={cow:['🐄','Moooo!','Cows say moo'],dog:['🐶','Woof woof!','Dogs say woof'],puppy:['🐶','Woof woof!','Puppies say woof'],cat:['🐱','Meow!','Cats say meow'],kitty:['🐱','Meow!','Kitties say meow'],kitten:['🐱','Mew mew!','Kittens say mew'],pig:['🐷','Oink oink!','Pigs say oink'],duck:['🦆','Quack quack!','Ducks say quack'],sheep:['🐑','Baaaa!','Sheep say baa'],horse:['🐴','Neigh!','Horses say neigh'],lion:['🦁','Roooar!','Lions say roar'],chicken:['🐔','Cluck cluck!','Chickens say cluck'],rooster:['🐓','Cock-a-doodle-doo!','Roosters say cock-a-doodle-doo'],frog:['🐸','Ribbit!','Frogs say ribbit'],owl:['🦉','Hoo hoo!','Owls say hoo'],goat:['🐐','Maaa!','Goats say maa'],monkey:['🐵','Ooh ooh ah ah!','Monkeys say ooh ooh ah ah'],snake:['🐍','Hissss!','Snakes say hiss'],bee:['🐝','Bzzzz!','Bees say bzzz'],elephant:['🐘','Pawoo!','Elephants trumpet'],mouse:['🐭','Squeak squeak!','Mice say squeak'],bird:['🐦','Tweet tweet!','Birds say tweet'],wolf:['🐺','Awoooo!','Wolves howl'],bear:['🐻','Grrrr!','Bears say grr'],dinosaur:['🦖','Rawrrr!','Dinosaurs say rawr'],turkey:['🦃','Gobble gobble!','Turkeys say gobble'],donkey:['🫏','Hee-haw!','Donkeys say hee-haw'],tiger:['🐯','Grrrowl!','Tigers growl'],seal:['🦭','Ar ar ar!','Seals say ar ar'],bunny:['🐰','Sniff sniff!','Bunnies wiggle their noses and go sniff sniff'],fish:['🐟','Blub blub!','Fish go blub blub']};
+function kidAnimal(q,a){const keys=Object.keys(KID_ANIMALS);if(!a||!KID_ANIMALS[a])a=keys[Math.floor(Math.random()*keys.length)];const [e,s,line]=KID_ANIMALS[a],nm=a.replace(/y$/,'ie');
+  const more=keys.filter(k=>k!==a&&!/puppy|kitty|kitten|rooster|bunny/.test(k)).sort(()=>Math.random()-.5).slice(0,5);
+  kidShow(`${kidSaid(q)}<div class="k-ani">${e}</div><div class="k-snd">${s.toUpperCase()}</div><div class="k-row">${kidStar(170,'mini')}${kidBubble(`${line}! Can you ${s.replace(/!$/,'').toLowerCase().split(' ')[0]} like a ${a}?`,1)}</div>
+   <div class="k-more">${more.map(k=>`<div data-k="what does a ${k} say"><span>${KID_ANIMALS[k][0]}</span><small>${KID_ANIMALS[k][1].split(' ')[0].replace(/!$/,'').toLowerCase()}</small></div>`).join('')}</div>`,'animals',`${s} ${line}! Can you do it too?`)}
+function kidSleeps(q,what){const now=new Date(),td=dayStart(now);let tgt=null,label='',pic='🎉',line='';
+  const W=(what||'').toLowerCase();
+  if(/nana|papa|grandma|grandpa|mom and dad|grandparents|home/.test(W)||!W){const ev=(typeof calEvents!=='undefined'?calEvents:[]).filter(e=>e.start>now&&/nana|papa|mom (&|and) dad|parents|pearson|pick ?up mom/i.test(e.title||'')).sort((a,b)=>a.start-b.start)[0];
+    if(ev){tgt=ev.start;label='Nana and Papa come home';pic='✈️👵👴'}}
+  if(!tgt&&/christmas|santa/.test(W)||(!tgt&&!W&&now.getMonth()>=10)){tgt=new Date(now.getFullYear(),11,25);if(tgt<td)tgt.setFullYear(tgt.getFullYear()+1);label='Christmas';pic='🎄🎅🎁'}
+  if(!tgt&&/birthday/.test(W)){const b=KIDC().birthday;if(!b){kidShow(`${kidSaid(q)}<div class="k-ani">🎂</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('I don’t know your birthday yet! Ask Daddy to tell me.',1)}</div>`,'sleeps','I don\'t know your birthday yet! Ask Daddy to tell me, and then I can count the sleeps.');return}
+    const [m,d]=b.split('-').map(Number);tgt=new Date(now.getFullYear(),m-1,d);if(tgt<td)tgt.setFullYear(tgt.getFullYear()+1);label='your birthday';pic='🎂🎈🎁'}
+  if(!tgt&&/halloween/.test(W)){tgt=new Date(now.getFullYear(),9,31);if(tgt<td)tgt.setFullYear(tgt.getFullYear()+1);label='Halloween';pic='🎃👻'}
+  if(!tgt){kidShow(`${kidSaid(q)}<div class="k-ani">🌙</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('Sleeps until what? Christmas? Nana and Papa?',1)}</div>`,'sleeps','Sleeps until what? You can ask me about Christmas, or Nana and Papa.');return}
+  const n=Math.max(0,Math.round((dayStart(tgt)-td)/864e5));
+  const moons=n<=14?Array.from({length:n},(_,i)=>`<div class="k-moon"><span>🌙</span><b>${i+1}</b></div>`).join(''):'';
+  line=n===0?`It's today! ${nmCap(label)} is today!`:n===1?`Just one more sleep until ${label}!`:`${n} more sleeps until ${label}!`;
+  kidShow(`${kidSaid(q)}<div class="k-num">${n===0?'🎉':n}</div><div class="k-big">${n===0?'It’s today!':n===1?'more sleep!':'more sleeps!'}</div>${moons?`<div class="k-moons">${moons}</div>`:''}<div class="k-pic">${pic}</div>
+   <div class="k-row">${kidStar(170,'mini')}${kidBubble(line,1)}</div>`,'sleeps',line)}
+function kidTeeth(q){const T0=Date.now(),D=120000,parts=['bottom left','bottom right','top left','top right'],tips=['Start with the bottom teeth!','Now the other side of the bottom!','Now the top teeth!','Last ones! The other top side!'];let last=-1;
+  kidShow(`<div class="k-title">Brushy brushy! 🪥</div><div class="k-ring"><svg viewBox="0 0 300 300"><circle cx="150" cy="150" r="120" class="bg"/><circle cx="150" cy="150" r="120" class="fg"/></svg><span>😁</span></div>
+   <div class="k-tip"></div><div class="k-parts">${parts.map(p=>`<div>${p}</div>`).join('')}</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('🎵 Brush, brush, brush your teeth, make them nice and clean! 🎵',1)}</div>`,'teeth','Brushy brushy time! Brush, brush, brush your teeth, make them nice and clean! Start with the bottom teeth.');
+  clearInterval(KID.t);KID.busy=1;KID.t=setInterval(()=>{const el=$('kidTake');if(!el||!el.classList.contains('k-teeth')){clearInterval(KID.t);KID.busy=0;return}KID.sceneAt=Date.now();
+    const f=Math.min(1,(Date.now()-T0)/D),q4=Math.min(3,Math.floor(f*4)),C=2*Math.PI*120;el.querySelector('.k-ring .fg').style.strokeDashoffset=(C*f).toFixed(1);el.querySelector('.k-ring .fg').style.strokeDasharray=C.toFixed(1);
+    el.querySelectorAll('.k-parts div').forEach((d,i)=>d.className=i<q4?'done':i===q4?'on':'');el.querySelector('.k-tip').textContent=tips[q4];
+    if(q4!==last){if(last>=0&&f<1){KID.talkUntil=Date.now()+2500;reply(tips[q4])}last=q4}
+    if(f>=1){clearInterval(KID.t);KID.busy=0;try{tkChime()}catch(e){}kidShow(`<div class="k-ani">😁✨</div><div class="k-big">Sparkly clean!</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('Great job! Your teeth are so shiny! Go show Daddy and maybe you’ll get a star!',1)}</div>`,'done','Great job! Your teeth are so shiny! Go show Daddy, and maybe you\'ll get a star!');kidConfetti()}},500)}
+function kidConfetti(){const el=$('kidTake');if(!el)return;const box=document.createElement('div');box.className='k-conf';const C=['#ffd24a','#ff6fa3','#5ad1f0','#7be07b','#b58cff','#ff9a3c'];
+  box.innerHTML=Array.from({length:60},(_,i)=>`<i style="left:${Math.random()*100}%;background:${C[i%6]};animation-delay:${(Math.random()*1.6).toFixed(2)}s;animation-duration:${(2.4+Math.random()*1.8).toFixed(2)}s;transform:rotate(${Math.random()*360|0}deg)"></i>`).join('');el.appendChild(box);setTimeout(()=>box.remove(),5000)}
+function kidDanceStop(){if(KID.dance){try{KID.dance.stop()}catch(e){}KID.dance=null}}
+function kidDance(q){kidShow(`<div class="k-dance">${kidStar(380,'dance')}</div><div class="k-big">Dance party! 💃</div><div class="k-shapes">${'🎵⭐🎶💖🌈✨'.match(/./gu).map((e,i)=>`<span style="animation-delay:${i*.18}s">${e}</span>`).join('')}</div><div class="k-hint">say “stop” when you’re tired</div>`,'dance','Dance party! Shake your sillies out!');
+  kidConfetti();KID.busy=1;
+  /* a bouncy little tune, made right here (no internet needed) */
+  try{const A=new (window.AudioContext||window.webkitAudioContext)(),M=A.createGain();M.gain.value=.16;M.connect(A.destination);let alive=true;const bpm=124,b=60/bpm,t0=A.currentTime+.3;
+    const mel=[72,76,79,76,74,77,81,77,72,76,79,84,83,79,76,74],bass=[48,48,53,53,55,55,48,48];
+    const note=(m,t,d,type,g)=>{const o=A.createOscillator(),v=A.createGain();o.type=type;o.frequency.value=440*Math.pow(2,(m-69)/12);v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+.01);v.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(v);v.connect(M);o.start(t);o.stop(t+d+.05)};
+    const kick=t=>{const o=A.createOscillator(),v=A.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);v.gain.setValueAtTime(.9,t);v.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(v);v.connect(M);o.start(t);o.stop(t+.2)};
+    const bars=24;for(let i=0;i<bars*8;i++){const t=t0+i*b/2;note(mel[i%16]+(Math.floor(i/32)%2?2:0),t,b*.45,'square',.22);if(i%2===0)kick(t);if(i%4===0)note(bass[(i/4)%8],t,b*1.6,'triangle',.5)}
+    KID.dance={stop:()=>{if(!alive)return;alive=false;M.gain.setTargetAtTime(0,A.currentTime,.1);setTimeout(()=>A.close(),600)}};
+    setTimeout(()=>{if(KID.dance&&alive){kidDanceStop();KID.busy=0;const el=$('kidTake');if(el&&el.classList.contains('k-dance')){KID.talkUntil=Date.now()+3000;reply('Phew! What great dancing!')}}},bars*8*b/2*1000+800)}catch(e){KID.busy=0}}
+const KID_JOKES=[['Why did the cookie go to the doctor?','Because it felt crummy!'],['What do you call a sleeping dinosaur?','A dino-snore!'],['Why do bees have sticky hair?','Because they use honeycombs!'],['What do you call a cow with no legs?','Ground beef! Moo!'],['What do elves learn in school?','The elf-abet!'],['Why did the teddy bear say no to dessert?','Because she was stuffed!'],['What do you call a fish with no eyes?','A fsh!'],['Why can’t Elsa have a balloon?','Because she will let it go!'],['What did the banana say to the monkey?','Nothing, bananas can’t talk, silly!'],['How do you make an octopus laugh?','With ten-tickles!'],['What do you call a funny mountain?','Hill-arious!'],['Why did the cat sit on the computer?','To keep an eye on the mouse!']];
+function kidJoke(q){const [a,b]=KID_JOKES[Math.floor(Math.random()*KID_JOKES.length)];kidShow(`${kidSaid(q)}<div class="k-ani">😂</div><div class="k-joke">${esc(a)}</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('…',1)}</div>`,'joke',a);
+  setTimeout(()=>{const el=$('kidTake');if(!el||!el.classList.contains('k-joke'))return;const bb=el.querySelector('.k-bub');if(bb)bb.textContent=b;KID.talkUntil=Date.now()+3500;reply(b)},4500)}
+function kidCount(q,to){to=Math.max(3,Math.min(20,to||10));let i=0;kidShow(`${kidSaid(q)}<div class="k-num k-cnt">1</div><div class="k-dots">${Array.from({length:to},()=>'<i></i>').join('')}</div><div class="k-row">${kidStar(170,'mini')}${kidBubble('Count with me!',1)}</div>`,'count','Count with me!');
+  clearInterval(KID.t);KID.busy=1;KID.t=setInterval(()=>{const el=$('kidTake');if(!el||!el.classList.contains('k-count')){clearInterval(KID.t);KID.busy=0;return}i++;KID.sceneAt=Date.now();el.querySelector('.k-cnt').textContent=i;el.querySelectorAll('.k-dots i').forEach((d,k)=>d.className=k<i?'on':'');KID.talkUntil=Date.now()+900;reply(String(i)+(i===to?'! Yay!':''));
+    if(i>=to){clearInterval(KID.t);KID.busy=0;kidConfetti()}},1500)}
+function kidWear(q){const c=(typeof WXD!=='undefined'&&WXD&&WXD.c)||{},T=Math.round(c.temperature_2m??5),code=+c.weather_code||0,snow=[71,73,75,77,85,86].includes(code),rain=(code>=51&&code<=67)||(code>=80&&code<=82)||code>=95;
+  let items=[],line='';if(T<=0){items=['🧥','🧣','🧤','👢','🧢'];line=`It's cold, ${T} degrees! Wear your big coat, your hat, your mitts and your boots.`}
+  else if(T<=8){items=['🧥','🧢','👟'];line=`It's chilly outside, ${T} degrees. Wear your coat and a hat!`}else if(T<=16){items=['🧶','👖','👟'];line=`It's a bit cool, ${T} degrees. A sweater would be good!`}else{items=['👕','🩳','👟','🕶️'];line=`It's warm, ${T} degrees! T-shirt weather!`}
+  if(snow){items=['❄️','⛄',...items.filter(x=>x!=='👟')];if(!items.includes('👢'))items.push('👢');line+=' And it\'s snowy, so boots on!'}else if(rain){items.push('☔','🥾');line+=' And it\'s rainy, so bring your umbrella!'}
+  kidShow(`${kidSaid(q)}<div class="k-num" style="font-size:22vw">${T}°</div><div class="k-wear">${items.map(e=>`<span>${e}</span>`).join('')}</div><div class="k-row">${kidStar(170,'mini')}${kidBubble(line,1)}</div>`,'wear',line)}
+async function kidChat(q,story){const nm=KIDC().name;
+  kidShow(`${kidSaid(q)}<div class="k-hero">${kidStar(380,'think')}</div>${kidBubble(story?'Let me think of a story…':'Hmm, let me think…')}`,story?'story':'chat');KID.busy=1;
+  const ctx=`You are Nova, a friendly talking star on the family's screen, talking with ${nm}, a 4-year-old girl. Her grandparents are Nana and Papa. Her dad is Daddy. `+
+   `Use very simple words a 4-year-old knows. Be warm, playful, silly and encouraging. Never scary, sad or grown-up; no news, no brands, no links. `+
+   `If she asks you to do grown-up things (turn things off, change settings, buy things, call or message people), say kindly that's a job for Daddy or Mommy. If you don't know, say so in a fun way. Plain text, no emojis, no markdown.`+
+   (story?` Tell a short bedtime-style story (about 90 words) starring ${nm}, with a gentle happy ending. Start with a title line like "TITLE: ..." then the story.`:` Answer in one or two short sentences (max 30 words). You can ask her a fun little question back.`);
+  let a='';try{a=await fmFeatAsk(story?`Tell me a story${/about (.+)/.test(q)?' '+q.match(/about (.+)/)[0]:''}`:q,ctx)}catch(e){}KID.busy=0;
+  if(!a){a=story?'TITLE: The Sleepy Star\nOnce upon a time, a little star named Twinkle was too excited to sleep. Rosemary sang her a quiet song, and Twinkle yawned a big star yawn and floated off to dreamland. The end!':'Oops, my star brain is a little sleepy. Can you ask me again?'}
+  a=a.replace(/[*_#]/g,'').trim();const el=$('kidTake');if(!el||!el.classList.contains(story?'k-story':'k-chat'))return;
+  if(story){const m=a.match(/^TITLE:\s*(.+)\n+([\s\S]+)$/i),tt=m?m[1].trim():'A story for '+nm,body=(m?m[2]:a).trim();
+    kidShow(`<div class="k-title">📖 ${esc(tt)}</div><div class="k-story">${esc(body).replace(/\n+/g,'<br><br>')}</div><div class="k-row">${kidStar(150,'mini')}</div>`,'story',tt+'. '+body);KID.talkUntil=Date.now()+body.split(/\s+/).length*420;KID.sceneAt=Date.now()+60000}
+  else kidShow(`${kidSaid(q)}<div class="k-hero">${kidStar(380,'')}</div>${kidBubble(esc(a))}`,'chat',a)}
+/* everything she says comes through here */
+function kidHandle(t,q){q=q==null?t:q;t=String(t||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();KID.until=Math.max(KID.until,Date.now()+KIDC().mins*60000);
+  if(/^(stop|stop it|all done|i'?m done|bye|goodbye|bye bye|the end|no more)$/.test(t)){kidDanceStop();clearInterval(KID.t);KID.busy=0;const el=$('kidTake');if(el)el.className='';return reply(`Bye bye ${KIDC().name}! See you soon!`)}
+  if(new RegExp(`^(?:give|add) (?:${KIDC().name.toLowerCase()}|her) .*stars?`).test(t)&&KID.lastHz&&KID.lastHz<KIDC().pitch){kidEnd();KID.lock=Date.now()+60000;KID.fromVoice=0;return handleCommand(t)}
+  if(/give (me|myself|rosemary|her) (a |another |\d+ |two |more )?stars?|i want a star|can i (have|get) a star/.test(t))return kidStarsShow(q,`Only grown-ups can give stars! Do something super nice, and ask Daddy for one!`);
+  if(/\b(my stars|how many stars|show (me )?(my )?stars|star chart|see (my |the )?stars|stars please)\b|^stars$/.test(t)){const S=kidStars(),G=KIDC().goal,n=Math.min(S.n,G);return kidStarsShow(q,n?(n>=G?`You got all ${G} stars! Surprise time!`:`You have ${n} ${n===1?'star':'stars'}! ${G-n} more for a surprise!`):`No stars yet! Be super helpful and ask Daddy for one!`)}
+  {const m=t.match(/(?:what|how) (?:does|do|did|would) (?:a |an |the )?([a-z]+?)s? (?:say|go|sound)|(?:be a|sound like a|pretend to be a|play) ([a-z]+)|^([a-z]+) sounds?$|animal sounds?|animals?$/);
+   if(m){const a=(m[1]||m[2]||m[3]||'').replace(/ies$/,'y').replace(/ves$/,'f');return kidAnimal(q,KID_ANIMALS[a]?a:KID_ANIMALS[a+'y']?a+'y':'')}}
+  if(/\bsleeps?\b|how many (days|nights)|when (is|are|do|does|will) (nana|papa|christmas|my birthday|santa)|sleeps until/.test(t)){const w=(t.match(/(nana|papa|grandma|grandpa|christmas|santa|birthday|halloween|home)/)||[])[1]||'';return kidSleeps(q,w)}
+  if(/brush|teeth|tooth/.test(t))return kidTeeth(q);
+  if(/dance|party|music|song|sing/.test(t))return kidDance(q);
+  if(/\bstory\b|stories/.test(t))return kidChat(q,true);
+  if(/\bjoke|funny|make me laugh|silly\b/.test(t))return kidJoke(q);
+  {const m=t.match(/count(?: to)? (\d+|ten|five|twenty)|count with me|^count$/);if(m){const w={ten:10,five:5,twenty:20}[m[1]]||+m[1]||10;return kidCount(q,w)}}
+  if(/wear|boots|coat|jacket|cold outside|hot outside|weather|snow(ing)?|rain(ing)?|outside/.test(t))return kidWear(q);
+  if(/^(hi|hello|hey|hiya|good morning|good night|it'?s (me|rosemary)|i'?m rosemary|this is rosemary|rosemary'?s here|what can (i|we) do|menu|home|let'?s play|play)( nova)?$/.test(t)||!t){const h=new Date().getHours();return kidMenu(q,/good night/.test(t)?`Good night ${esc(KIDC().name)}! Sweet dreams! 🌙`:h<11?`Good morning ${esc(KIDC().name)}! ☀️`:'')}
+  return kidChat(q,false)}
+/* voice hooks: judge the voice when Nova lights up, and again for the whole command */
+(()=>{try{const _a=voiceArm;voiceArm=function(){try{kidJudge('arm')}catch(e){}return _a.apply(this,arguments)};const _r=voiceRun;voiceRun=function(){try{kidJudge('run')}catch(e){}KID.fromVoice=Date.now();return _r.apply(this,arguments)}}catch(e){}})();
+setTimeout(()=>{try{kpStart()}catch(e){}},6000);
+
 function handleCommand(raw){if(!NOVA_MAIN)return;
   /* "one more hour" said to one screen reaches every dashboard (the kitchen screen and the MacBook each keep their own clock) */
   {const m=String(raw||'').match(/^nlate (\d+)(?: (\d+))?$/);if(m){const a=+m[1],b=+(m[2]||0);
@@ -6560,10 +6800,25 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
-  if(!t){if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
+  const kidVoice=kidOn()&&Date.now()-(KID.fromVoice||0)<4000;
+  if(!t){if(kidVoice)return kidMenu('');if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
   /* automations from the iPhones (Shortcuts): "presence NAME arrived" / "presence NAME left" / "alarm off NAME" */
   {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
+  /* ---- Rosemary mode ---- */
+  {const nm=KIDC().name.toLowerCase(),K=KIDC();
+   const dad=t.match(/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy|a grown ?up|an adult)\b[,\s]*(.*)$|^(?:kid mode|rosemary mode) off\b[,\s]*(.*)$|^(?:grown ?up|adult) mode\b[,\s]*(.*)$/);
+   if(dad){KID.lock=Date.now()+3*60000;kidEnd();const rest=(dad[1]||dad[2]||dad[3]||'').trim();if(rest){KID.fromVoice=0;return handleCommand(rest)}return reply('Got it, grown-up mode.')}
+   if(new RegExp(`^(?:it'?s|this is|i'?m) ${nm}\\b|^${nm}'?s here$|^(?:kid|${nm}) mode(?: on)?$`).test(t)){KID.lock=0;kidStart('said');KID.fromVoice=Date.now();return kidMenu(t,`Hi ${K.name}! 👋<br>It’s you!`)}
+   if(kidVoice)return kidHandle(t,t);
+   /* grown-up star commands: "give Rosemary a star (for cleaning up)", "give her 2 stars", "take away a star", "reset Rosemary's stars" */
+   const g=t.match(new RegExp(`^(?:give|add) (?:${nm}|her) (a|an|one|two|three|\\d+)? ?(?:more |extra |gold )?stars?(?: (?:for|because) (.+))?$`));
+   if(g){const k={a:1,an:1,one:1,two:2,three:3}[g[1]]||+g[1]||1;kidGive(k,(g[2]||'').replace(/^(she|being)\s+/,'$1 ').trim());return}
+   if(new RegExp(`^(?:take|remove) (?:away )?(?:a|one) (?:of ${nm}'?s |of her )?stars?(?: (?:from|away from) (?:${nm}|her))?(?: away)?$`).test(t)){const S=kidStars();S.n=Math.max(0,S.n-1);S.log.pop();NM.set('kidstars',S);return reply(`Okay, ${K.name} has ${S.n} ${S.n===1?'star':'stars'} now.`)}
+   if(new RegExp(`^(?:reset|clear|start over) (?:${nm}'?s |her |the )?(?:stars|star chart)$`).test(t)){NM.set('kidstars',Object.assign(kidStars(),{n:0,log:[]}));return reply(`${K.name}'s star chart is fresh and empty.`)}
+   if(new RegExp(`^(?:how many stars (?:does )?(?:${nm}|she) (?:have|has|got)|(?:show )?${nm}'?s stars|star chart)$`).test(t)){const S=kidStars(),n=Math.min(S.n,K.goal);kidStarsShow('',`${K.name} has ${n} ${n===1?'star':'stars'}. ${K.goal-n>0?(K.goal-n)+' more for a surprise!':'Surprise time!'}`);return}
+   const bd=t.match(new RegExp(`^${nm}'?s birthday is (?:on )?([a-z]+) (\\d{1,2})(?:st|nd|rd|th)?$`));if(bd){const mo=['january','february','march','april','may','june','july','august','september','october','november','december'].indexOf(bd[1]);if(mo>=0){CFG.kid=Object.assign(CFG.kid||{},{birthday:(mo+1)+'-'+bd[2]});try{localStorage.setItem('nova-kidbday',CFG.kid.birthday)}catch(e){}return reply(`Got it, ${K.name}'s birthday is ${nmCap(bd[1])} ${bd[2]}.`)}}
+   if(/^(?:voice check|how high is my voice|what'?s my voice|who am i)$/.test(t)){const g2=kpGuess(6000);return reply(g2?`Your voice was about ${g2.hz} hertz. I'd say that's ${g2.kid?K.name:g2.adult?'a grown-up':'hard to tell'}. ${K.name} mode starts above ${K.pitch}.`:'I couldn\'t hear enough to tell. Try again a bit louder.')}}
   /* the Ember clock is up and you want the dashboard back for the rest of the night */
   {const emOff=()=>{const C0=CFG.nightClock||{},w=C0.wakeAt||7,f=C0.from||0,n=new Date(),u=new Date(n),h=n.getHours();
      /* during the clock's hours: skip it until morning. In the evening (a "goodnight" you took back): only until the clock's usual start, so it still comes on at midnight */
@@ -8666,6 +8921,7 @@ const ORB_P=(()=>{const N=640,P=[];for(let i=0;i<N;i++){const y=1-2*(i+.5)/N,r=M
 const orbOK=()=>document.documentElement.classList.contains('nvx')&&!(typeof COOK!=='undefined'&&COOK.on)&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
 function orbDraw(c,W,H,st,t,lvl,R0,cy){
   c.clearRect(0,0,W,H);const cx=W/2;cy=cy==null?H/2:cy;
+  if(R0>=150&&typeof kidOn==='function'&&kidOn()){kidStarCanvas(c,cx,cy,R0*1.25,st,t,lvl);return}
   let R=R0*(st==='think'?.72:1)*(1+(st==='idle'||st==='speak'?.025*Math.sin(t*1.6):0)+(st==='listen'?lvl*.08:0));
   const al=st==='alert';
   const g=c.createRadialGradient(cx,cy,0,cx,cy,R*2);g.addColorStop(0,al?`rgba(255,96,40,${.22+.12*Math.sin(t*3)})`:'rgba(255,106,43,.15)');g.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=g;c.fillRect(0,0,W,H);
@@ -9588,7 +9844,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 263';
+document.getElementById('ver').textContent='build nova 264';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
