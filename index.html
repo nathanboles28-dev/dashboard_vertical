@@ -6421,7 +6421,8 @@ function fmFeatures(s){const C=NM.get('fmfsong',{})[fmFeatKey(s||{})]||{},D=NM.g
   /* the day's shows and who hosts them, starting with the one on now */
   F.push(['lineup',()=>{const cur=fmShow(),i0=FM_SHOWS.indexOf(cur),hr=h=>{const d=new Date();d.setHours(h,0,0,0);return d.toLocaleTimeString([],{hour:'numeric'}).replace(/:00/,'')};
     return {tag:"Today's lineup",rows:Array.from({length:FM_SHOWS.length},(_,k)=>FM_SHOWS[(i0+k)%FM_SHOWS.length]).map((x,k)=>[`${x.name} with ${x.host}`,k===0?'On now · till '+hr(x.to):hr(x.from)+'–'+hr(x.to)]),rowsAll:1}}]);
-  F.push(['take',()=>C.take?{tag:"Nova's take",body:C.take,foot:'— Nova'}:null]);
+  /* Nova's take is about "right now" (time, day, weather), so it only shows the same morning/afternoon it was written */
+  F.push(['take',()=>C.take&&Date.now()-(C.tAt||0)<3*3600e3&&new Date(C.tAt||0).toDateString()===new Date().toDateString()?{tag:"Nova's take",body:C.take,foot:'— Nova'}:null]);
   return F}
 function fmFeatHTML(f){if(f.lights)return `<span class="fm-tag">${esc(f.tag)}</span><div class="ff-hc">${f.lights.map(x=>`<div class="${x.lv}"><i></i><b>${x.name}</b><span>${x.st}</span><em>${x.det||''}</em></div>`).join('')}</div>${f.foot?`<div class="ff-f">${f.foot}</div>`:''}`;
   if(f.rows)return `<span class="fm-tag">${esc(f.tag)}</span><div class="ff-rows${f.rowsAll?' ff-lu':''}">${f.rows.map((r,i)=>`<div class="fm-row${f.rowsAll&&i===0?' on':''}"><b>${esc(r[0])}</b><em>${esc(r[1])}</em></div>`).join('')}</div>`;
@@ -6817,6 +6818,29 @@ function kidHandle(t,q){q=q==null?t:q;t=String(t||'').toLowerCase().replace(/[?.
 (()=>{try{const _a=voiceArm;voiceArm=function(){try{kidJudge('arm')}catch(e){}return _a.apply(this,arguments)};const _r=voiceRun;voiceRun=function(){try{kidJudge('run')}catch(e){}KID.fromVoice=Date.now();return _r.apply(this,arguments)}}catch(e){}})();
 setTimeout(()=>{try{kpStart()}catch(e){}},6000);
 
+/* ===== Auto-update: the site has a tiny version.txt with the build number. The dash checks it every few minutes,
+   and only when a newer build is out does it reload, at a quiet moment (no DJ on air, no focus/meeting/takeover, nobody talking to it) ===== */
+const NV_BUILD=(()=>{try{const m=document.documentElement.innerHTML.match(/textContent='build nova (\d+)'/);return m?+m[1]:0}catch(e){return 0}})();
+const UPD={want:0,since:0};
+function updQuiet(){try{if(typeof FM!=='undefined'&&(FM.air||FM.queued||FM.pend||Date.now()-(FM.airEnd||0)<15000))return false;
+  if(typeof VOICE!=='undefined'&&(VOICE.armed||Date.now()-(VOICE.at||0)<20000))return false;if(typeof aiBusy!=='undefined'&&aiBusy)return false;
+  for(const id of ['lvTake','focTake','mtgBar','kidTake','hlFull','nvOrb','fmSid','fmOn','nvRem','amb','cook'])if($(id)&&$(id).classList.contains('on'))return false;
+  if(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())return false;if(typeof focusOn==='function'&&focusOn())return false;
+  if((typeof HLF!=='undefined'&&HLF.on)||(typeof AMB!=='undefined'&&AMB.on)||(typeof COOK!=='undefined'&&COOK.on))return false;
+  return true}catch(e){return true}}
+async function updCheck(){if(!/^https?:/.test(location.protocol)||!NV_BUILD)return;
+  try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=parseInt((await r.text()).trim(),10);
+    if(v>NV_BUILD){/* already tried this build and still got the old page (GitHub's cache): wait 15 minutes, 4 tries max */
+      let tr={};try{tr=JSON.parse(localStorage.getItem('nova-updtry')||'{}')}catch(e){}if(tr.v===v&&(tr.n>=4||Date.now()-tr.at<15*60000))return;
+      if(!UPD.want){UPD.want=v;UPD.since=Date.now();vLog('update ready: build '+v)}}}catch(e){}}
+setInterval(()=>{if(!UPD.want)return;const waited=Date.now()-UPD.since;
+  /* reload when it's quiet; after 45 minutes of waiting, any moment that isn't mid-break or mid-command will do */
+  const hard=(typeof HLF!=='undefined'&&HLF.on)||(typeof AMB!=='undefined'&&AMB.on)||(typeof COOK!=='undefined'&&COOK.on)||($('kidTake')&&$('kidTake').classList.contains('on'))||(typeof focusOn==='function'&&focusOn());
+  if(updQuiet()||(waited>45*60000&&!hard&&!(typeof FM!=='undefined'&&FM.air)&&!(typeof VOICE!=='undefined'&&VOICE.armed))){try{let tr={};try{tr=JSON.parse(localStorage.getItem('nova-updtry')||'{}')}catch(e){}localStorage.setItem('nova-updtry',JSON.stringify({v:UPD.want,at:Date.now(),n:tr.v===UPD.want?(tr.n||0)+1:1}));localStorage.setItem('nova-updated',String(UPD.want))}catch(e){}
+    /* a fresh address so neither Chrome nor GitHub hands back the old copy */
+    const q=new URLSearchParams(location.search);q.set('v',UPD.want);location.replace(location.pathname+'?'+q.toString()+location.hash)}},5000);
+setInterval(updCheck,4*60000);setTimeout(updCheck,60000);
+setTimeout(()=>{try{const u=localStorage.getItem('nova-updated');if(u){localStorage.removeItem('nova-updated');if(+u!==NV_BUILD)return;localStorage.removeItem('nova-updtry');toast(`✨ Updated to build ${u}`);try{fmDiag('auto-updated to build '+u)}catch(e){}}}catch(e){}},5000);
 function handleCommand(raw){if(!NOVA_MAIN)return;
   /* "one more hour" said to one screen reaches every dashboard (the kitchen screen and the MacBook each keep their own clock) */
   {const m=String(raw||'').match(/^nlate (\d+)(?: (\d+))?$/);if(m){const a=+m[1],b=+(m[2]||0);
@@ -9875,7 +9899,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 265';
+document.getElementById('ver').textContent='build nova 266';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
