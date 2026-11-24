@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shield Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600&family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Yellowtail&family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;600&family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Yellowtail&family=Monoton&family=Barlow+Condensed:wght@600&display=swap" rel="stylesheet">
 <style>
 :root{--u:1vh}
 :root{--ink:#fbf6f2;--dim:rgba(250,240,232,.68);--glass:rgba(255,255,255,.075);--edge:rgba(255,255,255,.15);
@@ -2996,6 +2996,34 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+/* ===== Nova FM neon sign logo ===== */
+.nv-stk.nv-neo{flex-direction:row;align-items:center;gap:1.8vw;background:rgba(10,14,24,.35);border:.42vw solid #ff7a45;border-radius:2.2vw;padding:.7vw 2.6vw .9vw;transform:none;box-shadow:0 0 1.4vw rgba(228,87,46,.65),inset 0 0 1.4vw rgba(228,87,46,.45);color:#ffe1d4}
+.nv-stk.nv-neo>div{display:flex;align-items:center;gap:1.2vw}
+.nv-stk.nv-neo b,html.nv2.nvx.th-bc .page .nv-stk.nv-neo b{font:400 8vw/1.05 'Yellowtail',cursive!important;text-transform:none!important;color:#ffe9de;text-shadow:0 0 .5vw #ff8a5a,0 0 1.4vw #e4572e,0 0 2.8vw #e4572e;letter-spacing:0}
+.nv-stk.nv-neo i{width:auto;height:auto;background:none;border-radius:0;display:block;font:400 3.2vw/1 'Monoton','Barlow Condensed',sans-serif;font-style:normal;color:#d8e8ff;text-shadow:0 0 .5vw #7fb2ff,0 0 1.4vw #3b7bff;margin-top:1.6vw}
+.nv-stk.nv-neo .nn-w{display:flex;align-items:center;gap:.4vw;height:6.4vw}
+.nv-stk.nv-neo .nn-w u{display:block;width:.62vw;border-radius:.4vw;background:#ffe1d4;box-shadow:0 0 .5vw #ff7a4a,0 0 1.3vw #e4572e;transform:scaleY(.45);animation:nnW .9s ease-in-out infinite alternate;animation-play-state:paused}
+.nv-stk.nv-neo .nn-w u:nth-child(1),.nv-stk.nv-neo .nn-w u:nth-child(8){height:24%;animation-duration:.8s}
+.nv-stk.nv-neo .nn-w u:nth-child(2),.nv-stk.nv-neo .nn-w u:nth-child(7){height:48%;animation-duration:.62s}
+.nv-stk.nv-neo .nn-w u:nth-child(3),.nv-stk.nv-neo .nn-w u:nth-child(6){height:72%;animation-duration:.74s}
+.nv-stk.nv-neo .nn-w u:nth-child(4),.nv-stk.nv-neo .nn-w u:nth-child(5){height:96%;background:#d8e8ff;box-shadow:0 0 .5vw #7fb2ff,0 0 1.3vw #3b7bff;animation-duration:.56s}
+.nv-stk.nv-neo .nn-w u:nth-child(even){animation-delay:-.3s}
+@keyframes nnW{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+html.npPlay .nv-stk.nv-neo .nn-w u,#fmSid .nv-stk.nv-neo .nn-w u{animation-play-state:running}
+.fm-hd .nv-stk.nv-neo{padding:.5vw 2.2vw .7vw}
+.fm-hd .nv-stk.nv-neo b,html.nv2.nvx.th-bc .page .fm-hd .nv-stk.nv-neo b{font-size:7.4vw!important}
+.fm-hd .nv-stk.nv-neo{margin:1.4vw 0 2vw}
+.fm-hd .nv-stk.nv-neo i{font-size:2.9vw;width:auto;height:auto}
+#fmSid .nv-stk.nv-neo{border-width:.8vw;border-radius:4vw;padding:1.6vw 5vw 2vw;gap:3.6vw;box-shadow:0 0 3vw rgba(228,87,46,.7),inset 0 0 3vw rgba(228,87,46,.5)}
+#fmSid .nv-stk.nv-neo b{font-size:18vw!important;text-shadow:0 0 1vw #ff8a5a,0 0 3vw #e4572e,0 0 6vw #e4572e}
+#fmSid .nv-stk.nv-neo i{width:auto;height:auto;font-size:6.4vw;margin-top:4vw;text-shadow:0 0 1vw #7fb2ff,0 0 3vw #3b7bff}
+#fmSid .nv-stk.nv-neo .nn-w{height:15vw;gap:.9vw}
+#fmSid .nv-stk.nv-neo .nn-w u{width:1.4vw;border-radius:.8vw}
+.mo-stk.nv-neo b{font-size:13vw!important}
+.mo-stk.nv-neo i{width:auto;height:auto;font-size:4.6vw;margin-top:3vw}
+.mo-stk.nv-neo .nn-w{height:11vw;gap:.7vw}
+.mo-stk.nv-neo .nn-w u{width:1vw}
+
 /* ===== Rosemary mode ===== */
 html.kidOn #nvOrb{background:radial-gradient(120% 55% at 50% 0%,#2a2f6b 0%,#141838 60%,#0d1028 100%)}
 #kidTake{position:fixed;inset:0;z-index:9001;display:none;flex-direction:column;align-items:center;background:radial-gradient(120% 55% at 50% 0%,#2a2f6b 0%,#141838 60%,#0d1028 100%);color:#fff;font-family:'Arial Rounded MT Bold','Fredoka','Nunito','NovaSans',sans-serif;overflow:hidden}
@@ -5769,7 +5797,9 @@ function fmMoment(mo){try{if(FMC().stationId===false)return;let el=$('fmSid');if
   clearTimeout(FM.sidT);FM.sidT=setTimeout(()=>el.remove(),7200);fmDiag('jingle moment: '+k)}catch(e){try{fmStationId(false)}catch(_){}}}
 /* the Nova FM sticker logo (Yellowtail script on a cream sticker) */
 const fmWord=()=>{const n=String(FMC().station||'Nova FM').trim(),m=n.match(/^(.*?)\s*(fm|am|radio)$/i);return {w:m?m[1]:n,b:m?m[2].toUpperCase():''}};
-const fmSticker=(cls='')=>{const W=fmWord();return `<div class="nv-stk ${cls}"><div><b>${esc(W.w)}</b>${W.b?`<i>${esc(W.b)}</i>`:''}</div><small>Woodstock, Ont.</small></div>`};
+/* the Nova FM neon sign: bouncing sound bars (moving while music plays), "Nova" in orange neon, FM in blue */
+const fmSticker=(cls='')=>{const W=fmWord();return `<div class="nv-stk nv-neo ${cls}"><span class="nn-w">${'<u></u>'.repeat(8)}</span><div><b>${esc(W.w)}</b>${W.b?`<i>${esc(W.b)}</i>`:''}</div></div>`};
+setInterval(()=>{try{document.documentElement.classList.toggle('npPlay',!!(typeof NP!=='undefined'&&NP&&NP.state==='playing'))}catch(e){}},1000);
 /* station ID: the sticker slaps on, FM spins in, the dial tunes to Nova, then it tucks up into the corner (full=true leads into the on-air screen) */
 function fmStationId(full){try{if(FMC().stationId===false)return;let el=$('fmSid');if(el)el.remove();
   el=document.createElement('div');el.id='fmSid';el.className=full?'full':'solo';
@@ -5820,7 +5850,7 @@ function fmDeskTick(adv){const box=document.querySelector('.fm-desk .fm-dsk');if
   if(box.dataset.h!==p.h){box.classList.remove('in');void box.offsetWidth;box.innerHTML=p.h;box.dataset.h=p.h;box.classList.add('in')}}
 setInterval(()=>fmDeskTick(true),8000);
 const fmStudioOn=s=>!!(FM.on&&s&&!npYT(s)&&!s.radio&&!(typeof rgListening==='function'&&rgListening(s)));
-function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=NM.get('fmhist',[]).slice(0,3),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
+function fmStudio(s,b){const C=FMC(),last=NM.get('fmlastbrk',null),H=(()=>{const A=NM.get('fmhist',[]).slice();const k=x=>String(x.title||'').toLowerCase()+'|'+String(x.artist||'').toLowerCase();if(s&&s.title){const i=A.findIndex(x=>!x.brk);if(i>=0&&k(A[i])===k(s))A.splice(i,1)}return A.slice(0,3)})(),tm=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).replace(/\s?[AP]M$/,'');
   const left=Math.max(0,(FM.target||fmTarget())-FM.count),test=NM.get('fmtest',false);
   let dial='';for(let f=88;f<=108;f+=.5){const x=((f-88)/20*100).toFixed(2);dial+=`<i style="left:${x}%;height:${f%2===0?40:18}%"></i>`+(f%4===0?`<em style="left:${x}%">${f}</em>`:'')}
   const noUp=!(s.next&&s.next.length);b.className='fmS-on';b.classList.toggle('fm-noup',noUp);
@@ -6353,7 +6383,8 @@ Plain text, no markdown, no emojis, no quotes around lines.`;
 async function fmFeatDyk(){const d=new Date().toDateString(),D=NM.get('fmdyk',{});if(D.d===d&&D.list&&D.list.length)return;if(FEAT.busy.dyk||!CFG.relay||!SECRETS.calkey||!fmFeatCapOk())return;FEAT.busy.dyk=1;fmFeatCapUse();
   try{const old=(D.list||[]).slice(0,12).join(' / ').slice(0,1500);
     const a=await fmFeatAsk('Write 8 different "did you know" music facts, one per line, each starting with "- ".',`Each fact true and well documented, max 24 words, mixing genres (country, rock, pop, hip hop, classics) and decades (50s to 2020s). No made-up numbers. Plain text, no markdown, no emojis. Don't repeat these: ${old}`);
-    const list=a.split(/\n|(?:^|\s)-\s+/).map(x=>x.replace(/^[-•\d.\s]+/,'').trim()).filter(x=>x.length>25&&x.length<240).slice(0,8);
+    const meta=/^(i |i'm|i am|i'll|sorry|here (are|is)|sure|okay|ok[,!. ]|as an |note:|happy to)|one (fact|at a time)|\bi can only\b|\bat a time\b/i;
+    const list=a.split(/\n|(?:^|\s)-\s+/).map(x=>x.replace(/^[-•\d.\s]+/,'').trim()).filter(x=>x.length>25&&x.length<240&&!meta.test(x)).slice(0,8);
     if(list.length)NM.set('fmdyk',{d,list,i:0,prev:(D.list||[]).slice(0,16)})}catch(e){}finally{delete FEAT.busy.dyk}}
 const fmDur=sec=>{const m=Math.round(sec/60);return m<60?m+' min':Math.floor(m/60)+' hr'+(m%60?' '+m%60+' min':'')};
 /* the six features; each returns {tag,title,body,foot} or null when there's nothing real to show */
@@ -6375,7 +6406,7 @@ function fmFeatures(s){const C=NM.get('fmfsong',{})[fmFeatKey(s||{})]||{},D=NM.g
   F.push(['tb',()=>{const y=+s.year;if(!y||y>new Date().getFullYear())return null;const age=new Date().getFullYear()-y;if(age<10)return null;
     const q=String(C.quip||'').split(/(?<=[.!?])\s+/)[0].slice(0,140);
     return {tag:'The Nova Throwback',title:`${s.album||s.title} · ${y}`,body:(age%5===0?`${s.album?'This album':'This song'} turns ${age} this year. `:`Released ${age} years ago. `)+q,foot:s.artist||''}}]);
-  F.push(['dyk',()=>{const Y=NM.get('fmdyk',{});if(!Y.list||!Y.list.length)return null;const f=Y.list[(Y.i||0)%Y.list.length];return {tag:'Did you know?',body:f,adv:1}}]);
+  F.push(['dyk',()=>{const Y=NM.get('fmdyk',{});if(Y.list)Y.list=Y.list.filter(x=>!/one (fact|at a time)|\bi can only\b|\bat a time\b|^(i |i'm|sorry|here (are|is)|sure)/i.test(x));if(!Y.list||!Y.list.length)return null;const f=Y.list[(Y.i||0)%Y.list.length];return {tag:'Did you know?',body:f,adv:1}}]);
   F.push(['up',()=>{const out=[],C2=FMC(),left=Math.max(0,(FM.target||fmTarget())-FM.count),now=new Date();
     if(FM.on&&!fmQuiet()){if(FM.pend||FM.busy)out.push(['Next break','after this song']);else if(left>0)out.push(['Next break',`after ${left} more song${left>1?'s':''}`]);
       const hh=new Date(now);hh.setHours(now.getHours()+1,0,0,0);const nxt=new Date(+hh);const qs=FMC().quiet;const quietSoon=(()=>{const h=nxt.getHours();return qs[0]>qs[1]?(h>=qs[0]||h<qs[1]):(h>=qs[0]&&h<qs[1])})();
@@ -9844,7 +9875,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 264';
+document.getElementById('ver').textContent='build nova 265';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
