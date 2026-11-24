@@ -6919,7 +6919,7 @@ async function kidChat(q,story){const nm=KIDC().name;
     kidShow(`<div class="k-title">📖 ${esc(tt)}</div><div class="k-story">${esc(body).replace(/\n+/g,'<br><br>')}</div><div class="k-row">${kidStar(150,'mini')}</div>`,'story',tt+'. '+body);KID.talkUntil=Date.now()+body.split(/\s+/).length*420;KID.sceneAt=Date.now()+60000}
   else{KID.hist.push({q:String(q).slice(0,120),a:a.slice(0,200),at:Date.now()});kidShow(`${kidSaid(q)}<div class="k-hero">${kidStar(380,'')}</div>${kidBubble(esc(a))}`,'chat',a)}}
 /* everything she says comes through here */
-const KID_BYE=/\b(go home|goodbye|good bye|bye|bye-bye|bye bye|stop|stop it|all done|i'?m done|we'?re done|exit|close (it|this|that)|back to normal|that'?s enough|turn (it |rubble )?off|rubble off|kid mode off|rosemary mode off|go away|never mind|nevermind|see you|see ya|later)\b/i;
+const KID_BYE=/\b(go home|goodbye|good bye|bye|bye-bye|bye bye|stop|stop it|all done|i'?m done|we'?re done|exit|close (it|this|that)|back to normal|that'?s enough|turn (it |rubble )?off|rubble off|kid mode off|rosemary mode off|go away|never mind|nevermind|see you|see ya|later|shh+|sh+|quiet|be quiet|hush|enough|shut up|shut it|stfu|zip it|no more|okay stop|ok stop)\b/i;
 function kidBye(who){kidDanceStop();clearInterval(KID.t);KID.busy=0;const el=$('kidTake');if(el)el.className='';KID.lock=Date.now()+30000;kidEnd();try{VOICE.followNext=0}catch(e){}
   fmDiag('rubble: bye ('+(who||'')+')');try{nextPage('dashboard',30)}catch(e){}return reply(`Bye bye ${KIDC().name}! See you soon!`)}
 function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';
@@ -10093,7 +10093,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 286';
+document.getElementById('ver').textContent='build nova 287';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
