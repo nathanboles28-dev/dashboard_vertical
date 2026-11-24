@@ -6658,12 +6658,33 @@ function storyMaybe(s){if(!s||!s.title||!storyPick(s))return;const C=NM.get('fmf
 const KIDC=()=>{const k=Object.assign({on:true,name:'Rosemary',pitch:265,adultBelow:215,goal:7,mins:4,birthday:''},CFG.kid||{});if(!k.birthday)try{k.birthday=localStorage.getItem('nova-kidbday')||''}catch(e){}return k};
 const KID={until:0,src:'',lock:0,lastHz:0,scene:'',sceneAt:0,t:null,dance:null,hist:[]};
 const kidOn=()=>KIDC().on!==false&&KID.until>Date.now();
+/* ===== Better ears for Rosemary: the last few seconds of mic audio are kept in memory (never saved), and when it's her talking,
+   that clip goes to the relay for OpenAI's transcription instead of Chrome's guess. Falls back to Chrome if it's slow or not set up. ===== */
+const STT={ok:null,checked:0,ring:null,sr:16000,w:0,filled:0,act:[],busy:0,last:''};
+function sttRing(A,src){try{const N=STT.sr*14;STT.ring=new Int16Array(N);const sp=A.createScriptProcessor(4096,1,1),z=A.createGain();z.gain.value=0;src.connect(sp);sp.connect(z);z.connect(A.destination);
+  const ratio=A.sampleRate/STT.sr;sp.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0),R=STT.ring;let e2=0;
+    for(let i=0;i<x.length;i+=ratio){const v=x[Math.floor(i)];e2+=v*v;R[STT.w]=Math.max(-1,Math.min(1,v))*32767;STT.w=(STT.w+1)%N;if(STT.filled<N)STT.filled++}
+    const rms=Math.sqrt(e2/(x.length/ratio));if(rms>.015&&!window._macSpeaking&&!(window.speechSynthesis&&speechSynthesis.speaking))STT.act.push(Date.now());const cut=Date.now()-15000;while(STT.act.length&&STT.act[0]<cut)STT.act.shift()}}catch(e){vLog('stt ring: '+e.message)}}
+/* the stretch of speech that just ended: back from now while the gaps stay under 1.3 s, max 10 s */
+function sttClip(){if(!STT.ring||!STT.act.length)return null;const now=Date.now(),A=STT.act;let end=A[A.length-1];if(now-end>6000)return null;let st=end;
+  for(let i=A.length-1;i>0;i--){if(A[i]-A[i-1]>1300)break;st=A[i-1];if(end-st>10000)break}
+  const ms=Math.min(11000,now-st+450),n=Math.min(STT.filled,Math.round(ms/1000*STT.sr));if(n<STT.sr*.4)return null;
+  const R=STT.ring,N=R.length,out=new Int16Array(n);for(let i=0;i<n;i++)out[i]=R[(STT.w-n+i+N)%N];
+  const b=new ArrayBuffer(44+n*2),v=new DataView(b),ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  ws(0,'RIFF');v.setUint32(4,36+n*2,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,STT.sr,true);v.setUint32(28,STT.sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,n*2,true);
+  new Int16Array(b,44).set(out);return new Blob([b],{type:'audio/wav'})}
+async function sttReady(){if(!CFG.relay||!SECRETS.calkey||(CFG.stt&&CFG.stt.on===false))return false;if(STT.ok!==null&&Date.now()-STT.checked<(STT.ok?3600e3:600e3))return STT.ok;
+  STT.checked=Date.now();try{const j=await (await tfetch(`${relayBase()}/stt?key=${encodeURIComponent(SECRETS.calkey)}`,8000)).json();STT.ok=!!j.ready}catch(e){STT.ok=false}return STT.ok}
+async function sttHear(){const clip=sttClip();if(!clip)return null;
+  try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),6000);
+    const r=await fetch(`${relayBase()}/stt?key=${encodeURIComponent(SECRETS.calkey)}&who=${encodeURIComponent(KIDC().name)}`,{method:'POST',headers:{'Content-Type':'audio/wav'},body:clip,signal:ac.signal});clearTimeout(tm);
+    const j=await r.json().catch(()=>({}));if(j.error){fmDiag('stt: '+j.error);if(/no key/.test(j.error))STT.ok=false;return null}return String(j.text||'').trim()}catch(e){fmDiag('stt: '+(e.name==='AbortError'?'too slow, used Chrome\'s words':e.message));return null}}
 /* --- the pitch meter: a second ear on the mic that only measures how high the voice is --- */
 const KP={an:null,buf:null,fr:[],sr:48000,ctx:null,try:0};
 async function kpStart(){if(KP.an||KP.try>3||KIDC().on===false)return;KP.try++;
   try{const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
     const A=new (window.AudioContext||window.webkitAudioContext)(),src=A.createMediaStreamSource(s),an=A.createAnalyser();an.fftSize=2048;src.connect(an);
-    KP.ctx=A;KP.an=an;KP.sr=A.sampleRate;KP.buf=new Float32Array(an.fftSize);setInterval(kpTick,70);vLog('voice meter on')}catch(e){vLog('voice meter: '+e.message)}}
+    KP.ctx=A;KP.an=an;KP.sr=A.sampleRate;KP.buf=new Float32Array(an.fftSize);setInterval(kpTick,70);sttRing(A,src);vLog('voice meter on')}catch(e){vLog('voice meter: '+e.message)}}
 function kpTick(){const an=KP.an;if(!an)return;if(KP.ctx.state==='suspended'){try{KP.ctx.resume()}catch(e){}return}
   if(typeof VOICE!=='undefined'&&VOICE.paused)return;if(window._macSpeaking||(window.speechSynthesis&&speechSynthesis.speaking))return;
   const b=KP.buf;an.getFloatTimeDomainData(b);let e=0;for(let i=0;i<b.length;i++)e+=b[i]*b[i];const rms=Math.sqrt(e/b.length);if(rms<.012)return;
@@ -6825,8 +6846,12 @@ function kidHandle(t,q){q=q==null?t:q;t=String(t||'').toLowerCase().replace(/[?.
   if(/^(hi|hello|hey|hiya|good morning|good night|it'?s (me|rosemary)|i'?m rosemary|this is rosemary|rosemary'?s here|what can (i|we) do|menu|home|let'?s play|play)( nova)?$/.test(t)||!t){const h=new Date().getHours();return kidMenu(q,/good night/.test(t)?`Good night ${esc(KIDC().name)}! Sweet dreams! 🌙`:h<11?`Good morning ${esc(KIDC().name)}! ☀️`:'')}
   return kidChat(q,false)}
 /* voice hooks: judge the voice when Nova lights up, and again for the whole command */
-(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();return _r.apply(this,arguments)}}catch(e){}})();
-setTimeout(()=>{try{kpStart()}catch(e){}},6000);
+(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}try{if(/(?:hey|hi|hello|hiya)[,\s]*(?:star|starry|stari|starr|stah)\b/i.test(String(VOICE.live||''))&&KIDC().on!==false&&Date.now()>KID.lock)kidStart('said')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();
+  const kidish=kidOn()||/^(?:hey|hi|hello|hiya)[,\s]*(?:star|starry|stari|starr|stah)\b/i.test(String(c||''));
+  if(kidish&&STT.ok&&!STT.busy&&STT.ring){STT.busy=1;const self=this,args=arguments,heard=String(c||'');try{if(typeof orbSet==='function'&&ORB.st)orbSet('think',{q:heard,a:'',secs:8})}catch(e){}
+    sttHear().then(t=>{STT.busy=0;let use=heard;if(t&&t.length>1&&!/^(you|thank you\.?|bye\.?|\.+)$/i.test(t)){use=t;fmDiag(`stt: Chrome heard "${heard.slice(0,50)}", OpenAI heard "${t.slice(0,60)}"`)}KID.fromVoice=Date.now();_r.call(self,use)}).catch(()=>{STT.busy=0;_r.apply(self,args)});return}
+  return _r.apply(this,arguments)}}catch(e){}})();
+setTimeout(()=>{try{kpStart()}catch(e){}},6000);setTimeout(()=>{try{sttReady()}catch(e){}},9000);setInterval(()=>{try{sttReady()}catch(e){}},600000);
 
 /* ===== Auto-update: the site has a tiny version.txt with the build number. The dash checks it every few minutes,
    and only when a newer build is out does it reload, at a quiet moment (no DJ on air, no focus/meeting/takeover, nobody talking to it) ===== */
@@ -9913,7 +9938,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 271';
+document.getElementById('ver').textContent='build nova 272';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
