@@ -4897,7 +4897,7 @@ async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())r
   /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
   let vName=MV.voice.name;const kspd=NM.get('kospd',0);
   /* Kokoro measured slower than talking on this Mac (start to finish): answer in Zoe so replies are instant ("try the AI voice" measures again; "always use the AI voice" keeps it) */
-  const koSlow=kspd>600&&!NM.get('koalways',false);
+  const koSlow=kspd>600&&!NM.get('koalways',false)&&String(text).split(/\s+/).length>45;/* only long answers switch to Zoe; normal replies stay in the AI voice */
   if(/^kokoro:/.test(vName)&&MV.fallback&&((window._ruFast&&!(kspd&&kspd<480))||koSlow))vName=MV.fallback;
   const words=String(text).split(/\s+/).length,isKo=/^kokoro:/.test(vName);
   if(!isKo){const P=mvPace(text);text=P.text;rate=(rate||1)*P.k}
@@ -4907,6 +4907,7 @@ async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())r
     /* how long Kokoro takes per word, start to finish (a person talks at about 360-400 ms a word) */
     if(isKo&&j.engine==='kokoro'&&words>=8){const ms=(Date.now()-t0)/words,old=NM.get('kospd',0),nv=Math.round(old?old*.7+ms*.3:ms);NM.set('kospd',nv);
       if(!macSay.lg||Date.now()-macSay.lg>3600e3){macSay.lg=Date.now();try{fmDiag(`kokoro speed: ${Math.round(ms)} ms a word this time, average ${nv} (normal talking is about 380; the roundup uses Zoe above 480)`)}catch(e){}}}
+    MV.last=(j.engine||'?')+(vName!==MV.voice.name?' (long answer, Zoe)':'');if(isKo&&j.engine&&j.engine!=='kokoro'&&(!macSay.miss||Date.now()-macSay.miss>6e5)){macSay.miss=Date.now();try{fmDiag(`voice: asked the helper for Kokoro, it used ${j.engine}${j.err?' ('+String(j.err).slice(0,80)+')':''}`)}catch(e){}}
     if(typeof vLog==='function')vLog(`said ${((Date.now()-t0)/1000).toFixed(1)}s ${j.engine||''}${j.code!=null&&j.code!==0?' code '+j.code:''}${j.err?' err '+j.err:''}: "${String(text).slice(0,28)}…"`);return !!j.ok}
   catch(e){if(typeof vLog==='function')vLog('Mac voice failed: '+e.message);MV.at=0;return false}finally{window._macSpeaking=0;if(orbMine&&ORB.st==='speak')ORB.until=Date.now()+1200}}
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
@@ -10279,7 +10280,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 290';
+document.getElementById('ver').textContent='build nova 291';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -10300,7 +10301,7 @@ window.addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reas
 /* a status line in the Nova log: 30 s after starting, then every 10 minutes */
 function nvReport(){try{const pl=typeof PL!=='undefined'&&PL&&PL.planes?PL.planes.length:null;
   if(!NOVA_MAIN)fmDiag('WARNING: this copy is NOT the main one: another copy of the dashboard is open in this browser and has the remote. Close it.');
-  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} stt=${typeof STT!=='undefined'?(STT.ok===null?'?':STT.ok?'on':'off'):'?'} voice=${typeof KP!=='undefined'?(KP.an?'meter '+(KP.ctx&&KP.ctx.state)+' '+KP.fr.length+'f':'meter off'):'?'}/${typeof VOICE!=='undefined'?VOICE.st+(VOICE.err?' '+VOICE.err:''):''} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
+  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} stt=${typeof STT!=='undefined'?(STT.ok===null?'?':STT.ok?'on':'off'):'?'} voice=${typeof KP!=='undefined'?(KP.an?'meter '+(KP.ctx&&KP.ctx.state)+' '+KP.fr.length+'f':'meter off'):'?'}/${typeof VOICE!=='undefined'?VOICE.st+(VOICE.err?' '+VOICE.err:''):''} tts=${typeof MV!=='undefined'?(MV.voice?MV.voice.name:'none')+(MV.hasKo===false?' (helper has no Kokoro)':'')+' last='+(MV.last||'-')+' ko='+NM.get('kospd',0)+'ms':'?'} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
 setTimeout(nvReport,30000);setInterval(nvReport,600000);
 /* start everything; one part failing (bad saved data, a site down) can't stop the rest, and the log says which */
 nvStart('moon',()=>moon());nvStart('weather',()=>weather());nvStart('sportsLoop',()=>sportsLoop());nvStart('npListen',()=>setTimeout(npListen,3000));nvStart('loadTx',()=>setTimeout(loadTx,12000));nvStart('loadXb',()=>setTimeout(loadXb,9000));nvStart('radar',()=>radar());nvStart('loadPhotos',()=>loadPhotos());nvStart('nextPage',()=>nextPage());nvStart('alerts',()=>alerts());nvStart('loadNews',()=>loadNews());nvStart('loadCalendar',()=>loadCalendar());nvStart('dimmer',()=>dimmer());nvStart('remote',()=>remote());nvStart('loadJelly',()=>loadJelly());nvStart('loadGameday',()=>loadGameday());nvStart('loadLocal',()=>loadLocal());nvStart('loadDrives',()=>setTimeout(loadDrives,6000));nvStart('loadHub',()=>loadHub());nvStart('ntInit',()=>setTimeout(ntInit,9000));nvStart('loadTech',()=>setTimeout(loadTech,8000));nvStart('loadWatch',()=>setTimeout(loadWatch,7000));nvStart('loadKHub',()=>setTimeout(loadKHub,4000));nvStart('loadSpotlight',()=>loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()}));nvStart('loadSchedules',()=>setTimeout(loadSchedules,5000));nvStart('loadWrapped',()=>loadWrapped());nvStart('fxInit',()=>fxInit());nvStart('loadWS',()=>loadWS());nvStart('holInit',()=>holInit());nvStart('loadRecaps',()=>setTimeout(loadRecaps,8000));nvStart('pingRelay',()=>pingRelay());nvStart('satGrab',()=>satGrab());nvStart('loadRLoop',()=>setTimeout(loadRLoop,5000));nvStart('healthDot',()=>setTimeout(healthDot,15000));
