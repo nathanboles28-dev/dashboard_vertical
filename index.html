@@ -6743,7 +6743,12 @@ setInterval(()=>{try{KV.on=kvActive();KV.wake=!KV.on&&kvWakeOK();if((!KV.on&&!KV
     if(f.length<3)return;   /* no voice in it (a bump, the fan, a door) */
     if(KV.wake){/* only a clearly little voice, short, and not too often */
       if(f.length<5||hz<270||dur>6000||now-(KV.wakeAt||0)<4000)return;const dk=new Date().toDateString();if(KV.wDay!==dk){KV.wDay=dk;KV.wN=0}if(++KV.wN>150)return;KV.wakeAt=now}
-    if(f.length>=4&&hz<180){fmDiag(`rubble ear: skipped a deep voice (${Math.round(hz)} Hz)`);return}   // a grown-up talking nearby, not her
+    if(f.length>=4&&hz<180){   /* a grown-up: if he's talking to Nova, end her mode and do what he asked */
+      if(!KV.on||now-(KV.adultAt||0)<2500)return;KV.adultAt=now;KV.busy=1;const clipA=sttClip();
+      sttHearClip(clipA).then(t=>{KV.busy=0;t=String(t||'').trim();const m=t.match(/^(?:hey|hi|okay|ok)?[,.\s]*(?:nova|noah|nover)\b[,.!?\s]*(.*)$/i)||t.match(/^((?:give|add|take|reset|this is dad|grown.?up|kid mode|rosemary mode|stop|screen|goodnight|turn|show|play|pause|what|how|when|who)\b.*)$/i);
+        if(!m){fmDiag(`rubble ear: a grown-up talking, not to Nova (${Math.round(hz)} Hz)`);return}
+        const cmd=(m[1]||'').replace(/[.!?]+$/,'').trim();fmDiag(`rubble ear: grown-up command [${cmd.replace(/["`\\]/g,'').slice(0,60)}] ${Math.round(hz)} Hz`);
+        KID.lock=Date.now()+3*60000;kidEnd();KID.fromVoice=0;if(cmd)handleCommand(cmd);else reply('Yes? I\'m listening.')}).catch(()=>{KV.busy=0});return}
     KV.busy=1;const clip=sttClip();
     const wasWake=KV.wake;
     sttHearClip(clip).then(t=>{KV.busy=0;t=String(t||'').trim();
@@ -6900,7 +6905,7 @@ async function kidChat(q,story){const nm=KIDC().name;
   kidShow(`${kidSaid(q)}<div class="k-hero">${kidStar(380,'think')}</div>${kidBubble(story?'Let me think of a story…':'Hmm, let me think…')}`,story?'story':'chat');KID.busy=1;
   KID.hist=(KID.hist||[]).filter(x=>Date.now()-x.at<5*60000).slice(-4);
   const convo=KID.hist.length&&!story?` Conversation so far (keep it going, she may be answering your last question): `+KID.hist.map(x=>`${nm}: "${x.q}" Nova: "${x.a}"`).join(' '):'';
-  const ctx=`You are Rubble, a friendly talking star on the family's screen (her star buddy; she named you Rubble), talking with ${nm}, a 4-year-old girl. Her grandparents are Nana and Papa. Her dad is Daddy. `+
+  const SS=kidStars();const ctx=`She has a star chart with ${Math.min(SS.n,KIDC().goal)} of ${KIDC().goal} stars; grown-ups give stars when she's helpful, and ${KIDC().goal} stars means a surprise (only Daddy or Mommy can give them, you can't). `+`You are Rubble, a friendly talking star on the family's screen (her star buddy; she named you Rubble), talking with ${nm}, a 4-year-old girl. Her grandparents are Nana and Papa. Her dad is Daddy. `+
    `Use very simple words a 4-year-old knows. Be warm, playful, silly and encouraging. Never scary, sad or grown-up; no news, no brands, no links. `+
    `If she asks you to do grown-up things (turn things off, change settings, buy things, call or message people), say kindly that's a job for Daddy or Mommy. If you don't know, say so in a fun way. The words come from speech recognition of a 4-year-old, so they may be garbled or misheard: guess what she most likely meant, and if it really doesn't make sense, kindly ask her to say it again. Plain text, no emojis, no markdown.`+
    (convo)+(story?` Tell a short bedtime-style story (about 90 words) starring ${nm}, with a gentle happy ending. Start with a title line like "TITLE: ..." then the story.`:` Answer in ONE short sentence, max 15 words, so she isn't waiting. Only sometimes ask her a little question back (about every third time), never two in a row.`);
@@ -6916,6 +6921,7 @@ function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';t=String(t||'').t
   if(/^(stop|stop it|all done|i'?m done|bye|goodbye|bye bye|the end|no more)$/.test(t)){kidDanceStop();clearInterval(KID.t);KID.busy=0;const el=$('kidTake');if(el)el.className='';return reply(`Bye bye ${KIDC().name}! See you soon!`)}
   if(new RegExp(`^(?:give|add) (?:${KIDC().name.toLowerCase()}|her) .*stars?`).test(t)&&KID.lastHz&&KID.lastHz<KIDC().pitch){kidEnd();KID.lock=Date.now()+60000;KID.fromVoice=0;return handleCommand(t)}
   if(/give (me|myself|rosemary|her) (a |another |\d+ |two |more )?stars?|i want a star|can i (have|get) a star/.test(t))return kidStarsShow(q,`Only grown-ups can give stars! Do something super nice, and ask Daddy for one!`);
+  if(/\b(more stars?|another star|a star please|get (a |more )?stars?|earn (a |more )?stars?|how (much|many) stars?|want (a |more |another )?stars?)\b/.test(t)){const S=kidStars(),G=KIDC().goal,n=Math.min(S.n,G);return kidStarsShow(q,`You have ${n} ${n===1?'star':'stars'}! To get more, be a super helper, like cleaning up or brushing your teeth, then ask Daddy for a star!`)}
   if(/\b(my stars|how many stars|show (me )?(my )?stars|star chart|see (my |the )?stars|stars please)\b|^stars$/.test(t)){const S=kidStars(),G=KIDC().goal,n=Math.min(S.n,G);return kidStarsShow(q,n?(n>=G?`You got all ${G} stars! Surprise time!`:`You have ${n} ${n===1?'star':'stars'}! ${G-n} more for a surprise!`):`No stars yet! Be super helpful and ask Daddy for one!`)}
   {const m=t.match(/(?:what|how) (?:does|do|did|would) (?:a |an |the )?([a-z]+?)s? (?:say|go|sound)|(?:be a|sound like a|pretend to be a|play) ([a-z]+)|^([a-z]+) sounds?$|animal sounds?|animals?$/);
    if(m){const a=(m[1]||m[2]||m[3]||'').replace(/ies$/,'y').replace(/ves$/,'f');return kidAnimal(q,KID_ANIMALS[a]?a:KID_ANIMALS[a+'y']?a+'y':'')}}
@@ -6930,7 +6936,11 @@ function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';t=String(t||'').t
   return kidChat(q,false)}
 /* voice hooks: judge the voice when Nova lights up, and again for the whole command */
 (()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}try{if(/(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(VOICE.live||''))&&KIDC().on!==false&&Date.now()>KID.lock)kidStart('said')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();
-  if(KV.on&&kidOn()){const g=kpGuess(4000);if(!(g&&g.hz<180)&&!/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy)\b/i.test(String(c||''))){try{VOICE.followNext=0}catch(e){}return}}
+  if(kidOn()){const g=kpGuess(4000);
+    if((g&&g.hz<180&&g.n>=5)||/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy)\b/i.test(String(c||''))){KID.lock=Date.now()+3*60000;kidEnd();KID.fromVoice=0;
+      if(!String(c||'').trim()&&STT.ok&&STT.ring){const self=this;STT.busy=1;sttHear().then(t=>{STT.busy=0;_r.call(self,String(t||'').replace(/^(?:hey|hi|okay|ok)?[,.\s]*(?:nova|noah)\b[,.!?\s]*/i,'').replace(/[.!?]+$/,''))}).catch(()=>{STT.busy=0;_r.call(self,'')});return}
+      return _r.apply(this,arguments)}
+    if(KV.on){try{VOICE.followNext=0}catch(e){}return}}
   const kidish=kidOn()||/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(c||''));
   if(kidish&&STT.ok&&!STT.busy&&STT.ring){STT.busy=1;const self=this,args=arguments,heard=String(c||'');try{if(typeof orbSet==='function'&&ORB.st)orbSet('think',{q:heard,a:'',secs:8})}catch(e){}
     sttHear().then(t=>{STT.busy=0;let use=heard;if(t&&t.length>1&&!/^(you|thank you\.?|bye\.?|\.+)$/i.test(t)){use=t;fmDiag(`stt: Chrome [${heard.replace(/["`\\]/g,'').slice(0,50)}] Whisper [${t.replace(/["`\\]/g,'').slice(0,70)}]`)}KID.fromVoice=Date.now();_r.call(self,use)}).catch(()=>{STT.busy=0;_r.apply(self,args)});return}
@@ -10075,7 +10085,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 281';
+document.getElementById('ver').textContent='build nova 282';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
