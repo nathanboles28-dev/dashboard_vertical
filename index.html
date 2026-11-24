@@ -6865,7 +6865,10 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
   const kidVoice=kidOn()&&Date.now()-(KID.fromVoice||0)<4000;
-  if(!t){if(kidVoice)return kidMenu('');if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
+  if(!t){if(kidVoice)return kidMenu('');
+    /* just "hey nova": only a grown-up voice gets the roundup. A higher or unclear voice (or no pitch reading) during the day gets Rosemary's screen instead */
+    if(Date.now()-(KID.fromVoice||0)<4000&&KIDC().on!==false){const g=kpGuess(5000);if(!g||g.hz>KIDC().adultBelow){if(g&&g.hz>KIDC().adultBelow){kidStart('voice')}else{fmDiag('voice: bare "hey nova" with no pitch reading, skipped the roundup')}if(kidOn())return kidMenu('');return reply('I\'m listening! What would you like?')}}
+    if(/\bnova\b/.test(t0))roundupGo({who:'',quick:false});return}
   /* automations from the iPhones (Shortcuts): "presence NAME arrived" / "presence NAME left" / "alarm off NAME" */
   {const m=t.match(/^presence ([a-z]+) (arrived|left|home|away)$/);if(m){presence(m[1],/arrived|home/.test(m[2]));return}
    const a=t.match(/^alarm (?:off|stopped)(?: ([a-z]+))?$/);if(a){alarmOff(a[1]||'');return}}
@@ -9908,7 +9911,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 269';
+document.getElementById('ver').textContent='build nova 270';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
