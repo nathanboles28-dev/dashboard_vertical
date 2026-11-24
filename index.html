@@ -6678,7 +6678,7 @@ function kpTick(){const an=KP.an;if(!an)return;if(KP.ctx.state==='suspended'){tr
 function kpGuess(ms){const t0=Date.now()-(ms||4500),f=KP.fr.filter(x=>x.t>=t0).map(x=>x.f).sort((a,b)=>a-b);if(f.length<5)return null;
   const hz=Math.round(f[Math.floor(f.length/2)]),C=KIDC();return {hz,n:f.length,kid:hz>=C.pitch,adult:hz<=C.adultBelow}}
 /* decide who's talking, once per command */
-function kidJudge(why){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(!g)return;KID.lastHz=g.hz;
+function kidJudge(why,cmd){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(why==='run')try{fmDiag(`voice: "${String(cmd||'').slice(0,60)}" · ${g?g.hz+' Hz ('+g.n+')':'pitch: not enough sound'} · ${g?(g.kid?KIDC().name:g.adult?'grown-up':'not sure'):'?'}${kidOn()?' · Rosemary mode on':''} · meter ${KP.an?(KP.ctx&&KP.ctx.state):'off'}`)}catch(e){}if(!g)return;KID.lastHz=g.hz;
   vLog(`voice ${g.hz} Hz (${g.n}) → ${g.kid?KIDC().name:g.adult?'grown-up':'not sure'}`);
   if(g.kid){const was=kidOn();KID.until=Date.now()+KIDC().mins*60000;KID.src='voice';if(!was)kidUI()}
   else if(g.adult&&kidOn()&&KID.src==='voice'){kidEnd()}}
@@ -6720,7 +6720,7 @@ function kidShow(html,scene,say){if(say&&scene!=='chat'&&scene!=='story'){KID.hi
    <div class="k-badge"><i>⭐</i>${esc(KIDC().name)} mode<b>${kidStars().n} ★</b></div><div class="k-in">${html}</div>`;
   if(say){KID.talkUntil=Date.now()+Math.min(12000,String(say).split(/\s+/).length*420+800);reply(say);
     /* the star asked her something: listen for her answer without "Hey Nova" */
-    if(/\?\s*$/.test(String(say).trim())&&kidOn()&&Date.now()-(KID.fromVoice||0)<120000&&!['teeth','dance','count','story'].includes(scene||'')){try{VOICE.followNext=1;VOICE.lastVoiceAt=Date.now()}catch(e){}}}}
+    if(kidOn()&&Date.now()-(KID.fromVoice||0)<120000&&!['teeth','dance','count','story'].includes(scene||'')){try{VOICE.followNext=1;VOICE.lastVoiceAt=Date.now()}catch(e){}}}}
 const kidBubble=(t,side)=>`<div class="k-bub${side?' side':''}">${t}</div>`;
 const kidSaid=q=>q?`<div class="k-said">🎤 “${esc(q)}”</div>`:'';
 function kidMenu(q,hello){const nm=esc(KIDC().name);
@@ -6824,7 +6824,7 @@ function kidHandle(t,q){q=q==null?t:q;t=String(t||'').toLowerCase().replace(/[?.
   if(/^(hi|hello|hey|hiya|good morning|good night|it'?s (me|rosemary)|i'?m rosemary|this is rosemary|rosemary'?s here|what can (i|we) do|menu|home|let'?s play|play)( nova)?$/.test(t)||!t){const h=new Date().getHours();return kidMenu(q,/good night/.test(t)?`Good night ${esc(KIDC().name)}! Sweet dreams! 🌙`:h<11?`Good morning ${esc(KIDC().name)}! ☀️`:'')}
   return kidChat(q,false)}
 /* voice hooks: judge the voice when Nova lights up, and again for the whole command */
-(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(){try{kidJudge('run')}catch(e){}KID.fromVoice=Date.now();return _r.apply(this,arguments)}}catch(e){}})();
+(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();return _r.apply(this,arguments)}}catch(e){}})();
 setTimeout(()=>{try{kpStart()}catch(e){}},6000);
 
 /* ===== Auto-update: the site has a tiny version.txt with the build number. The dash checks it every few minutes,
@@ -9908,7 +9908,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 268';
+document.getElementById('ver').textContent='build nova 269';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -9929,7 +9929,7 @@ window.addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reas
 /* a status line in the Nova log: 30 s after starting, then every 10 minutes */
 function nvReport(){try{const pl=typeof PL!=='undefined'&&PL&&PL.planes?PL.planes.length:null;
   if(!NOVA_MAIN)fmDiag('WARNING: this copy is NOT the main one: another copy of the dashboard is open in this browser and has the remote. Close it.');
-  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
+  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} voice=${typeof KP!=='undefined'?(KP.an?'meter '+(KP.ctx&&KP.ctx.state)+' '+KP.fr.length+'f':'meter off'):'?'}/${typeof VOICE!=='undefined'?VOICE.st+(VOICE.err?' '+VOICE.err:''):''} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
 setTimeout(nvReport,30000);setInterval(nvReport,600000);
 /* start everything; one part failing (bad saved data, a site down) can't stop the rest, and the log says which */
 nvStart('moon',()=>moon());nvStart('weather',()=>weather());nvStart('sportsLoop',()=>sportsLoop());nvStart('npListen',()=>setTimeout(npListen,3000));nvStart('loadTx',()=>setTimeout(loadTx,12000));nvStart('loadXb',()=>setTimeout(loadXb,9000));nvStart('radar',()=>radar());nvStart('loadPhotos',()=>loadPhotos());nvStart('nextPage',()=>nextPage());nvStart('alerts',()=>alerts());nvStart('loadNews',()=>loadNews());nvStart('loadCalendar',()=>loadCalendar());nvStart('dimmer',()=>dimmer());nvStart('remote',()=>remote());nvStart('loadJelly',()=>loadJelly());nvStart('loadGameday',()=>loadGameday());nvStart('loadLocal',()=>loadLocal());nvStart('loadDrives',()=>setTimeout(loadDrives,6000));nvStart('loadHub',()=>loadHub());nvStart('ntInit',()=>setTimeout(ntInit,9000));nvStart('loadTech',()=>setTimeout(loadTech,8000));nvStart('loadWatch',()=>setTimeout(loadWatch,7000));nvStart('loadKHub',()=>setTimeout(loadKHub,4000));nvStart('loadSpotlight',()=>loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()}));nvStart('loadSchedules',()=>setTimeout(loadSchedules,5000));nvStart('loadWrapped',()=>loadWrapped());nvStart('fxInit',()=>fxInit());nvStart('loadWS',()=>loadWS());nvStart('holInit',()=>holInit());nvStart('loadRecaps',()=>setTimeout(loadRecaps,8000));nvStart('pingRelay',()=>pingRelay());nvStart('satGrab',()=>satGrab());nvStart('loadRLoop',()=>setTimeout(loadRLoop,5000));nvStart('healthDot',()=>setTimeout(healthDot,15000));
