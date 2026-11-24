@@ -2995,7 +2995,44 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 .mo-ho .b{margin-top:1.9vw;display:inline-block;background:#e4572e;padding:1.9vw 4.8vw;color:#1b1310;font-size:3.3vw;font-weight:600;box-shadow:1.1vw 1.1vw 0 #000;animation:moHoB 7s cubic-bezier(.2,.9,.3,1) both}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
-<style id="nvFeat">
+<style id="nvFeat">/* ===== What Nova costs ===== */
+#costBody{display:flex;flex-direction:column;gap:1.8vw}
+#costBody .cs-tag span{display:inline-block;background:var(--xor,#e4572e);color:#fff;font-family:var(--head,'Inter');font-weight:700;font-size:2.2vw;letter-spacing:.12em;text-transform:uppercase;padding:.5vw 1.8vw}
+html.th-bc #costBody .cs-tag span{font-style:italic;transform:skewX(-10deg)}
+#costBody .cs-top{display:flex;align-items:flex-end;gap:3vw}
+#costBody .cs-top>b{font-family:var(--head,'Inter');font-weight:800;font-size:15vw;line-height:.85;color:var(--xink,#fff)}
+#costBody .cs-top small{display:block;font-family:var(--head,'Inter');font-weight:700;font-size:2.6vw;letter-spacing:.08em;color:var(--xdim,#93a4c6)}
+#costBody .cs-top em{display:block;font-style:normal;font-family:var(--head,'Inter');font-weight:800;font-size:3.2vw;color:var(--xor,#e4572e)}
+#costBody .cs-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw}
+#costBody .cs-3 .card{padding:2vw 2.4vw}
+#costBody small{font-family:var(--head,'Inter');font-weight:700;font-size:2vw;letter-spacing:.18em;text-transform:uppercase;color:var(--xdim,#93a4c6)}
+#costBody .cs-3 b{display:block;font-family:var(--head,'Inter');font-weight:800;font-size:6vw;line-height:1;margin-top:.6vw}
+#costBody .cs-t{padding:2vw 2.8vw}
+#costBody .cs-h,#costBody .cs-r{display:grid;grid-template-columns:6vw 1fr 11vw 11vw 11vw;gap:1.2vw;align-items:center}
+#costBody .cs-h span{font-family:var(--head,'Inter');font-weight:700;font-size:1.9vw;letter-spacing:.15em;color:var(--xdim,#93a4c6)}
+#costBody .cs-h span:nth-child(n+3),#costBody .cs-r>div:not(.cs-n){text-align:right}
+#costBody .cs-r{padding:1.8vw 0;border-top:1px solid var(--xline2,#1c2740)}
+#costBody .cs-r>i{font-style:normal;font-size:4.4vw}
+#costBody .cs-n b{display:block;font-family:var(--head,'Inter');font-weight:700;font-size:3.2vw;text-transform:uppercase;line-height:1}
+#costBody .cs-n small{display:block;font-family:'NovaSans','Inter',sans-serif;font-weight:400;font-size:1.9vw;letter-spacing:0;text-transform:none;margin-top:.4vw}
+#costBody .cs-n span{display:flex;align-items:center;gap:1.2vw;margin-top:.6vw}
+#costBody .cs-n em{font-style:normal;font-family:var(--head,'Inter');font-weight:800;font-size:2.8vw;color:var(--xor,#e4572e)}
+#costBody .cs-n u{text-decoration:none;font-size:1.8vw;color:#5e6f92}
+#costBody .cs-n s{text-decoration:none;font-family:var(--head,'Inter');font-weight:700;font-size:1.7vw;letter-spacing:.1em;color:#93a4c6;border:1px solid #3a4a6e;padding:0 .8vw}
+#costBody .cs-n s.m{color:#4fd18b;border-color:#4fd18b}
+#costBody .cs-r>div:not(.cs-n){font-family:var(--head,'Inter');font-weight:700;font-size:3vw;color:var(--xink,#fff)}
+#costBody .cs-7{padding:2vw 2.8vw}
+#costBody .cs-bars{display:flex;align-items:flex-end;gap:1.6vw;height:20vw;margin-top:1.6vw}
+#costBody .cs-b{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.6vw}
+#costBody .cs-b i{width:70%;background:#3a4a6e;display:block}#costBody .cs-b i.t{background:var(--xor,#e4572e)}
+#costBody .cs-b span{font-family:var(--head,'Inter');font-weight:700;font-size:1.8vw;color:var(--xdim,#93a4c6)}
+#costBody .cs-b b{font-family:var(--head,'Inter');font-weight:700;font-size:1.9vw;color:var(--xdim,#93a4c6)}
+#costBody .cs-rate{padding:2vw 2.8vw}
+#costBody .cs-rate>div{display:flex;align-items:baseline;gap:2.4vw;margin-top:.8vw}
+#costBody .cs-rate b{font-family:var(--head,'Inter');font-weight:800;font-size:6.4vw}
+#costBody .cs-rate span{font-size:2.1vw;color:var(--xdim,#93a4c6);line-height:1.35}
+#costBody .cs-foot{font-size:1.9vw;color:#5e6f92;text-align:center}
+
 /* ===== Nova FM neon sign logo ===== */
 .nv-stk.nv-neo{flex-direction:row;align-items:center;gap:1.8vw;background:rgba(10,14,24,.35);border:.42vw solid #ff7a45;border-radius:2.2vw;padding:.7vw 2.6vw .9vw;transform:none;box-shadow:0 0 1.4vw rgba(228,87,46,.65),inset 0 0 1.4vw rgba(228,87,46,.45);color:#ffe1d4}
 .nv-stk.nv-neo>div{display:flex;align-items:center;gap:1.2vw}
@@ -3243,6 +3280,7 @@ html.th-bc #rvBody .rv-r{transform:skewX(-10deg)}
 <section id="pAqua" class="page"><canvas id="aqCv"></canvas><div id="aqClock"></div></section>
 <section id="pCar" class="page"><div id="carBody"></div></section>
 <section id="pRecap" class="page"><div id="rcBody"></div></section>
+<section id="pCost" class="page"><div class="pwrap"><div class="ptitle">What Nova costs</div><div id="costBody"></div></div></section>
 <section id="pReview" class="page"><div class="pwrap"><div class="ptitle">Week in review</div><div id="rvBody"></div></div></section>
 <section id="pKHub" class="page"><div id="khBody"></div></section>
 <section id="pWeek" class="page"><div id="wkBody"></div></section>
@@ -4023,7 +4061,7 @@ function renderGames(){
 setInterval(()=>{if($('pGames').classList.contains('on'))renderGames()},5000);
 
 /* ---------- Page rotation ---------- */
-const PAGE_EL={review:'pReview',obs:'pObs',world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
+const PAGE_EL={cost:'pCost',review:'pReview',obs:'pObs',world:'pWorld',townnews:'pTown',dashboard:'shift',photos:'pPhotos',games:'pGames',forecast:'pFc',news:'pNews',standings:'pStand',coming:'pComing',jellyfin:'pJelly',gameday:'pGameday',kgameday:'pKgd',local:'pLocal',live:'pLive',hub:'pHub',wrapped:'pWrap',ws:'pWS',recap:'pRecap',khub:'pKHub',week:'pWeek',sat:'pSat',rloop:'pRLoop',watch:'pWatch',tech:'pTech',morn:'pMorn',np:'pNP',tx:'pTx',home:'pHome',xbox:'pXbox',maps:'pRLoop',aqua:'pAqua',car:'pCar',cams:'pCams',radar:'pRadar',trip:'pTrip',radio:'pRadio',nwrap:'pNWrap'};
 let paused=false;
 let pIdx=-1,pTimer;
 /* bottom page bar: the current page's segment fills left to right, then drains left to right as its time runs out */
@@ -4070,6 +4108,7 @@ function nextPage(force,hold){
   if(p.type==='live'){if(!force)lvPick++;renderLive2();loadLive()}
   if(p.type==='ws'){renderWS();loadWS()}
   if(p.type==='review')renderReview();
+  if(p.type==='cost')renderCost();
   if(p.type==='recap'){if(!force)rcPick++;renderRecap()}
   if(p.type==='khub'){window._khubNews=(window._khubNews||0)+1;hubSigs.khub='';renderKHub();if(Date.now()-khAt>600000)loadKHub()}
   if(p.type==='week')renderWeek();
@@ -4532,7 +4571,7 @@ function monthHTML(){
     <div class="mgrid">${['S','M','T','W','T','F','S'].map(x=>`<div class="mh">${x}</div>`).join('')}${cells}</div></div>`;
 }
 let comSig='';
-const PG_NAMES={review:'Week in review',obs:'Observatory',world:'Breaking news',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
+const PG_NAMES={cost:'What Nova costs',review:'Week in review',obs:'Observatory',world:'Breaking news',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
 function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
@@ -6904,12 +6943,58 @@ setInterval(()=>{if(!UPD.want)return;const waited=Date.now()-UPD.since;
     const q=new URLSearchParams(location.search);q.set('v',UPD.want);location.replace(location.pathname+'?'+q.toString()+location.hash)}},5000);
 setInterval(updCheck,4*60000);setTimeout(updCheck,60000);
 setTimeout(()=>{try{const u=localStorage.getItem('nova-updated');if(u){localStorage.removeItem('nova-updated');if(+u!==NV_BUILD)return;localStorage.removeItem('nova-updtry');toast(`✨ Updated to build ${u}`);try{fmDiag('auto-updated to build '+u)}catch(e){}}}catch(e){}},5000);
+/* ===== What Nova costs: power + money for the screen and the two Macs, tracked from Nov 24 2026 (on request only, never in the rotation) ===== */
+const PWRC=()=>Object.assign({
+  /* Hydro One (Woodstock), RPP tiered prices Nov 1 2026 – Oct 31 2027: 11.2¢ / 13.2¢; per-kWh delivery 1.45 + 1.04 + regulatory 0.47 + 0.06, line loss 1.0435,
+     credit rider −0.56¢, Ontario Electricity Rebate 15.7%, HST 13% */
+  tier1:11.2,tier2:13.2,trans:2.49,reg:0.53,loss:1.0435,rider:-0.56,oer:15.7,hst:13,winterKwh:1000,summerKwh:600,
+  devices:[{k:'mon',ico:'🖥',name:'BenQ EW2780 monitor',sub:'27" · on 24/7',w:20,dim:16,src:'spec'},
+           {k:'dash',ico:'💻',name:'Dashboard Mac',sub:'MacBook Pro 13" M1 · 2020 · runs the dash',w:8,src:'helper'},
+           {k:'fm',ico:'🎙',name:'Nova FM Mac',sub:'MacBook Pro 14" M2 · 2023 · music + DJ voice',w:10,src:'hb'}]},CFG.power||{});
+const pwrRate=t=>{const C=PWRC(),c=t===2?C.tier2:C.tier1;return (c*C.loss+(C.trans+C.reg)*C.loss+C.rider)*(1-C.oer/100)*(1+C.hst/100)};   /* ¢ per kWh, all-in */
+const PW={live:{},helperAt:0,draw:{}};
+function pwrState(){const S=NM.get('pwr',null);if(S&&S.since)return S;const n={since:Date.now(),last:Date.now(),wh:{},day:{}};NM.set('pwr',n);return n}
+function pwrWatts(){const C=PWRC(),now=Date.now(),out={};
+  for(const d of C.devices){let w=d.w,meas=false,note='';
+    if(d.k==='mon'){const dark=($('night')&&$('night').classList.contains('on'))||document.body.classList.contains('emberOn');w=dark?(d.dim||d.w):d.w;note=dark?'dark screen':'daytime'}
+    else if(d.k==='dash'&&PW.live.dash&&now-PW.live.dash.at<180000){w=PW.live.dash.w*1.1;meas=true}            /* +10% for the charger itself */
+    else if(d.k==='fm'){const hb=NM.get('fmhb',{});if(hb.pw&&now-hb.at<300000){w=hb.pw/1000*1.1;meas=true}}
+    out[d.k]={w:Math.max(0,w),meas,note}}return out}
+setInterval(()=>{try{if(!NOVA_MAIN)return;const S=pwrState(),now=Date.now(),dt=Math.min(120,(now-(S.last||now))/1000);S.last=now;if(dt<=0)return;
+  const W=pwrWatts(),dk=new Date().toLocaleDateString('en-CA');S.day[dk]=S.day[dk]||{};
+  for(const [k,v] of Object.entries(W)){const wh=v.w*dt/3600;S.wh[k]=(S.wh[k]||0)+wh;S.day[dk][k]=(S.day[dk][k]||0)+wh}
+  for(const d of Object.keys(S.day))if(now-Date.parse(d+'T12:00')>400*864e5)delete S.day[d];
+  PW.draw=W;if(now-(PW.saved||0)>60000){PW.saved=now;NM.set('pwr',S)}else PW.S=S}catch(e){}},10000);
+window.addEventListener('beforeunload',()=>{try{if(PW.S)NM.set('pwr',PW.S)}catch(e){}});
+/* the dashboard Mac's real draw, from the home helper */
+setInterval(async()=>{try{if(!NOVA_MAIN||!(CFG.home&&CFG.home.helper))return;const j=await (await tfetch(CFG.home.helper+'/power',5000)).json();if(j&&j.w>0)PW.live.dash={w:j.w,at:Date.now()}}catch(e){}},60000);
+function pwrMoney(c){return c<0.995?'$'+c.toFixed(2):c<100?'$'+c.toFixed(2):'$'+Math.round(c).toLocaleString()}
+function renderCost(){const el=$('costBody');if(!el)return;const C=PWRC(),S=PW.S||pwrState(),W=Object.keys(PW.draw||{}).length?PW.draw:pwrWatts(),r=pwrRate(1)/100;
+  const totW=Object.values(W).reduce((a,v)=>a+v.w,0),kwhDay=totW*24/1000,soFar=Object.values(S.wh||{}).reduce((a,v)=>a+v,0)/1000*r;
+  const since=new Date(S.since),sinceTxt=since.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})+' · '+fmt(since);
+  const days=Math.max(1,(Date.now()-S.since)/864e5);
+  const rows=C.devices.map(d=>{const v=W[d.k]||{w:d.w},perDay=v.w*24/1000*r;return `<div class="cs-r"><i>${d.ico}</i><div class="cs-n"><b>${esc(d.name)}</b><small>${esc(d.sub)}</small>
+     <span><em>${v.w<10?v.w.toFixed(1):Math.round(v.w)} W</em>${v.note?`<u>${esc(v.note)}</u>`:''}<s class="${v.meas?'m':''}">${v.meas?'MEASURED':'ESTIMATE'}</s></span></div>
+     <div>${pwrMoney(perDay)}</div><div>${pwrMoney(perDay*30.4)}</div><div>${pwrMoney(perDay*365)}</div></div>`}).join('');
+  const dk=[];for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*864e5);dk.push([d.toLocaleDateString('en-CA'),d.toLocaleDateString([],{weekday:'short'}).toUpperCase()])}
+  const dv=dk.map(([k])=>Object.values((S.day||{})[k]||{}).reduce((a,v)=>a+v,0)/1000*r),mx=Math.max(...dv,0.0001);
+  const bars=dk.map(([k,l],i)=>`<div class="cs-b"><span>${dv[i]?pwrMoney(dv[i]):''}</span><i style="height:${dv[i]?Math.max(4,dv[i]/mx*100):0}%" class="${i===6?'t':''}"></i><b>${l}</b></div>`).join('');
+  const mon=new Date().getMonth(),thr=(mon>=10||mon<=3)?C.winterKwh:C.summerKwh;
+  el.innerHTML=`<div class="cs-tag"><span>Tracking since ${sinceTxt}</span></div>
+   <div class="cs-top"><b>${pwrMoney(soFar)}</b><div><small>SO FAR · ${days<2?Math.round(days*24)+' HOURS':Math.floor(days)+' DAYS'}</small><em>${Math.round(totW)} W RIGHT NOW · ${kwhDay.toFixed(1)} kWh A DAY</em></div></div>
+   <div class="cs-3">${[['Per day',kwhDay*r],['Per month',kwhDay*r*30.4],['Per year',kwhDay*r*365]].map(([k,v])=>`<div class="card"><small>${k}</small><b>${pwrMoney(v)}</b></div>`).join('')}</div>
+   <div class="card cs-t"><div class="cs-h"><span></span><span>DEVICE</span><span>DAY</span><span>MONTH</span><span>YEAR</span></div>${rows}</div>
+   <div class="card cs-7"><small>LAST 7 DAYS</small><div class="cs-bars">${bars}</div></div>
+   <div class="card cs-rate"><small>YOUR RATE · HYDRO ONE WOODSTOCK · TIERED (${(mon>=10||mon<=3)?'WINTER':'SUMMER'})</small><div><b>${pwrRate(1).toFixed(1)}¢</b><span>per kWh, all-in: ${C.tier1}¢ Tier 1 + delivery ${(C.trans*C.loss).toFixed(1)}¢ + regulatory ${(C.reg*C.loss).toFixed(1)}¢, less the ${C.oer}% rebate, plus HST. Over ${thr.toLocaleString()} kWh a month: ${pwrRate(2).toFixed(1)}¢.</span></div></div>
+   <div class="cs-foot">The monitor uses BenQ’s rating (20 W, a little less with a dark screen). The Macs are measured when they report it.</div>`}
+setInterval(()=>{try{if($('pCost')&&$('pCost').classList.contains('on'))renderCost()}catch(e){}},2000);
+
 function handleCommand(raw){if(!NOVA_MAIN)return;
   /* "one more hour" said to one screen reaches every dashboard (the kitchen screen and the MacBook each keep their own clock) */
   {const m=String(raw||'').match(/^nlate (\d+)(?: (\d+))?$/);if(m){const a=+m[1],b=+(m[2]||0);
     if(a>+NM.get('nlate',0)){NM.set('nlate',a);if($('night').classList.contains('on')||nclkSlept){nclkSet(false);wakeScreen()}try{nclkTick()}catch(e){}fmDiag('screen stays on till '+new Date(a).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}))}
     if(b>+NM.get('fmwake',0))NM.set('fmwake',b);return}}
-  {const hb=String(raw||'').match(/^fmstate hb (\S+) (\S+)/);if(hb){NM.set('fmhb',{at:Date.now(),mu:hb[1],kv:hb[2]});try{fmHealthTick()}catch(e){}return}}
+  {const hb=String(raw||'').match(/^fmstate hb (\S+) (\S+)(?: (\S+))?(?: (\d+))?/);if(hb){NM.set('fmhb',{at:Date.now(),mu:hb[1],kv:hb[2],pw:hb[4]?+hb[4]:0});try{fmHealthTick()}catch(e){}return}}
   if(/^fmstate /.test(String(raw||''))){const k=String(raw).slice(0,60);if(FM.sig===k&&Date.now()-FM.sigT<20000)return;FM.sig=k;FM.sigT=Date.now()}
   {const sp=String(raw||'').match(/^fmstate speak ([\d.]+) (\d+)/);if(sp){fmCaps(+sp[1],+sp[2]);return}}
   if(/^fmstate skip\b/.test(String(raw||''))){FM.queued=null;FM.pend=null;FM.last=FM.prevLast||0;FM.count=Math.max(FM.count||0,FM.target||1);fmDiag('break dropped: the song was skipped; a new one comes after the next song you stay on');try{if($('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}return}
@@ -6965,6 +7050,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     const sz=t.match(/^snooze(?: (?:for )?(\d+))?(?: min(?:ute)?s?)?$/);if(sz){const m=+(sz[1]||5);MTG.snz[MTG.cur.k]=Date.now()+m*60000;$('mtgBar').className='';return reply(`Okay, I'll remind you again in ${m} minutes.`)}
     if(/^(got it|ok|okay|thanks|thank you|dismiss|close|on it|joining)\b/.test(t)){MTG.dis.add(MTG.cur.k);$('mtgBar').className='';return reply('Have a good meeting.')}}
   if(/^(join|join (the )?(meeting|call))$/.test(t))return reply(mtgJoin());
+  /* what Nova costs to run */
+  if(/\b(what('?s| is| does)? (this|nova|the dash(board)?|it all|everything|all this) cost(ing)?( me| to run)?|cost of (running|nova|the dash(board)?|all this)|(power|energy|electricity|hydro) (page|use|usage|cost|bill)|how much (power|electricity|energy) (do|does|are|is)|what nova costs)\b/.test(t)){showFor('cost');const C=PWRC(),W=pwrWatts(),tw=Object.values(W).reduce((a,v)=>a+v.w,0),m=tw*24/1000*pwrRate(1)/100*30.4;return reply(`Right now it's all drawing about ${Math.round(tw)} watts. That's about $${m.toFixed(2)} a month.`)}
   /* week in review */
   if(/\b(week in review|weekly review|review (of )?(the|my|this) week|how was (my|the|this) week|recap (of )?(the|this|my) week)\b/.test(t)){showFor('review');return reply('Here\'s your week.')}
   /* song stories */
@@ -9966,7 +10053,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 277';
+document.getElementById('ver').textContent='build nova 278';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
