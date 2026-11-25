@@ -101,42 +101,21 @@ BUS="${NOVA_BUS:-https://nova-bus.nathanboles28.workers.dev}"
 # Not in your library: find it on Apple Music (Apple's free search) and open it in the Music app.
 # macOS won't let scripts press Play for you, so Music is asked to open it; if it doesn't start by itself, it's left ready for one tap.
 catalog_play(){ q="$1"; ent="${2:-song}"; f="$DIR/.itunes.json"; LOG="$DIR/music-debug.log"
-  curl -sf -m 8 -G "https://itunes.apple.com/search" --data-urlencode "term=$q" -d "country=${NOVA_COUNTRY:-CA}" -d "media=music" -d "entity=$ent" -d "limit=1" -o "$f" || { echo "error search failed"; return; }
+  # a song that isn't in your library: find it in Apple Music, then hand it to the Nova Music app, which has the
+  # Accessibility permission to press play (a plain script can only open the page). The app reports back with --result.
+  curl -sf -m 8 -G "https://itunes.apple.com/search" --data-urlencode "term=$q" -d "country=${NOVA_COUNTRY:-CA}" -d "media=music" -d "entity=$ent" -d "limit=5" -o "$f" || { echo "error search failed"; return; }
   key=trackViewUrl; nk=trackName; [ "$ent" = album ] && { key=collectionViewUrl; nk=collectionName; }
-  url=$(plutil -extract "results.0.$key" raw -o - "$f" 2>/dev/null); [ -z "$url" ] && { echo "notfound"; return; }
-  nm=$(plutil -extract "results.0.$nk" raw -o - "$f" 2>/dev/null); ar=$(plutil -extract results.0.artistName raw -o - "$f" 2>/dev/null)
-  echo "---- $(date) | asked: $q | found: $nm by $ar | $url" >> "$LOG"
-  osascript - "music://${url#https://}" "$nm" "$ar" 2>&1 <<'APPLESCRIPT' | tee -a "$LOG" | tail -1
-on isIt(nm)
-  tell application "Music"
-    if player state is not playing then return false
-    try
-      set cn to name of current track
-    on error
-      return false
-    end try
-  end tell
-  return (cn contains nm or nm contains cn)
-end isIt
-on run argv
-  set u to item 1 of argv
-  set nm to item 2 of argv
-  set ar to item 3 of argv
-  tell application "Music"
-    if player state is playing then pause
-    try
-      open location u
-    end try
-  end tell
-  delay 4
-  if my isIt(nm) then return "ok " & nm & " by " & ar
-  open location u
-  delay 3
-  if my isIt(nm) then return "ok " & nm & " by " & ar
-  tell application "Music" to activate
-  return "opened " & nm & " by " & ar
-end run
-APPLESCRIPT
+  # prefer a result whose title is in what was asked (so "hello adele" doesn't pick a cover)
+  pick=0; ql=$(printf '%s' "$q" | tr '[:upper:]' '[:lower:]')
+  for i in 0 1 2 3 4; do n=$(plutil -extract "results.$i.$nk" raw -o - "$f" 2>/dev/null) || break; a=$(plutil -extract "results.$i.artistName" raw -o - "$f" 2>/dev/null)
+    nl=$(printf '%s' "$n" | tr '[:upper:]' '[:lower:]' | sed -E 's/ *[(\[].*//'); al=$(printf '%s' "$a" | tr '[:upper:]' '[:lower:]')
+    case "$ql" in *"$nl"*) case "$ql" in *"$al"*) pick=$i; break;; esac; [ "$pick" = 0 ] && [ -z "${firstn:-}" ] && { pick=$i; firstn=1; };; esac; done; firstn=""
+  url=$(plutil -extract "results.$pick.$key" raw -o - "$f" 2>/dev/null); [ -z "$url" ] && { echo "notfound"; return; }
+  nm=$(plutil -extract "results.$pick.$nk" raw -o - "$f" 2>/dev/null); ar=$(plutil -extract "results.$pick.artistName" raw -o - "$f" 2>/dev/null)
+  tn=$(plutil -extract "results.$pick.trackNumber" raw -o - "$f" 2>/dev/null); [ -z "$tn" ] && tn=1
+  echo "---- $(date) | asked: $q | found: $nm by $ar | $url | handing to the Nova Music app" >> "$LOG"
+  S=$(printf '\037'); printf 'NOVAPLAY%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n' "$S" "music://${url#https://}" "$S" "$nm" "$S" "$ar" "$S" "$ent" "$S" "$tn" "$S" "$v" "$S" "$k" >&3
+  echo "deferred"
 }
 # ---- Nova FM: a short DJ break from Nova, read in Zoe's voice over the music (ducked), with optional jingles and beds ----
 # Put your own sounds in ~/Music/Nova FM/jingles (played at the start) and ~/Music/Nova FM/beds (quiet music under the voice).
