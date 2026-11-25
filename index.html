@@ -4946,9 +4946,19 @@ function mvPace(text){const w=String(text).split(/\s+/).length;if(w<16)return {t
 function sayNorm(t){t=String(t||'');const W=n=>fmNumW(n),AP=a=>a?(/^p/i.test(a)?' P M':' A M'):'';
   const tm=(h,m,ap)=>{h=+h;m=+(m||0);let ap2=ap;if(!ap&&h>12&&h<24){h-=12;ap2='pm'}if(!ap&&h===0){h=12;ap2='am'}if(h>12||m>59)return null;
     const hw=h===0?'twelve':W(h),mw=m===0?(ap2?'':" o'clock"):m<10?' oh '+W(m):' '+W(m);return hw+mw+AP(ap2)};
-  t=t.replace(/\b(\d{1,2}):(\d{2})\s*(?:[-–—]|to|until|till)\s*(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m\.?\b)?/gi,(z,h1,m1,h2,m2,a)=>{const x=tm(h1,m1,''),y=tm(h2,m2,a);return x&&y?x.replace(/ o'clock$/,'')+' to '+y:z});
-  t=t.replace(/\b(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m\.?\b)?/gi,(z,h,m,a)=>tm(h,m,a)||z);
-  t=t.replace(/\b(\d{1,2})\s*([ap])\.?\s?m\.?\b/gi,(z,h,a)=>+h>0&&+h<=12?W(+h)+AP(a):z);
+  t=t.replace(/\b(\d{1,2}):(\d{2})\s*(?:[-–—]|to|until|till)\s*(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m(?:\.(?=\s*[a-z0-9–—-]))?(?![a-z]))?/gi,(z,h1,m1,h2,m2,a)=>{const x=tm(h1,m1,''),y=tm(h2,m2,a);return x&&y?x.replace(/ o'clock$/,'')+' to '+y:z});
+  t=t.replace(/\b(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m(?:\.(?=\s*[a-z0-9–—-]))?(?![a-z]))?/gi,(z,h,m,a)=>tm(h,m,a)||z);
+  t=t.replace(/\b(\d{1,2})\s*([ap])\.?\s?m(?:\.(?=\s*[a-z0-9–—-]))?(?![a-z])/gi,(z,h,a)=>+h>0&&+h<=12?W(+h)+AP(a):z);
+  /* units and shorthand she'd otherwise spell out: "km/h" → "kilometres an hour", "-5°C" → "minus 5 degrees" */
+  const U=[[/(\d)\s*km\/h\b/gi,'$1 kilometres an hour'],[/\bkm\/h\b/gi,'kilometres an hour'],[/\bkph\b/gi,'kilometres an hour'],[/(\d)\s*mph\b/gi,'$1 miles an hour'],[/(\d)\s*m\/s\b/gi,'$1 metres a second'],
+    [/(\d)\s*km\b/gi,'$1 kilometres'],[/(\d)\s*cm\b/gi,'$1 centimetres'],[/(\d)\s*mm\b/gi,'$1 millimetres'],[/(\d)\s*kg\b/gi,'$1 kilograms'],[/(\d)\s*lbs?\b/gi,'$1 pounds'],[/(\d)\s*kWh\b/gi,'$1 kilowatt hours'],[/(\d)\s*W\b/g,'$1 watts'],
+    [/(\d)\s*hrs?\b/gi,'$1 hours'],[/(\d)\s*mins?\b/gi,'$1 minutes'],[/(\d)\s*secs?\b/gi,'$1 seconds'],
+    [/(^|[\s(])-(\d)/g,'$1minus $2'],[/(\d)\s*°\s*[CF]\b/g,'$1 degrees'],[/(\d)\s*°/g,'$1 degrees'],[/(\d)\s*%/g,'$1 percent'],
+    [/\s&\s/g,' and '],[/\bw\/o\b/gi,'without'],[/\bw\/(?=\s)/gi,'with'],[/\band\/or\b/gi,'and or'],[/\bvs\.?\s/gi,'versus '],[/\bapprox\.?\s/gi,'about '],[/\be\.g\.?/gi,'for example'],[/\bi\.e\.?/gi,'that is'],[/\betc\.?/gi,'and so on'],
+    [/\bN\/A\b/g,'not available'],[/\b(\d+)\/(\d+)\b(?=\s*(?:stars?|rating))/gi,'$1 out of $2'],[/(\w)\/(\w)/g,'$1 or $2'],[/\$(\d+(?:\.\d+)?)\s*([MB])\b/g,(z,n,u)=>n+(u==='M'?' million':' billion')+' dollars']];
+  t=t.replace(/\b24\/7\b/g,'twenty four seven').replace(/\bHwy\.?\s/g,'Highway ').replace(/(\d)\s*[-–]\s*(\d+)\s*(?=cm|mm|km|kilometres|centimetres|millimetres|degrees|°|%|percent|per cent|minutes|hours|days|weeks)/g,'$1 to $2 ');
+  t=t.replace(/(A M|P M|o'clock|\b[a-z]+(?:-[a-z]+)?)\.?\s*[–—]\s*(?=(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b)/g,'$1 to ');
+  for(const [re,r] of U)t=t.replace(re,r);
   return t}
 async function macSay(text,rate){text=sayNorm(text);if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
@@ -10534,7 +10544,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 305';
+document.getElementById('ver').textContent='build nova 306';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
