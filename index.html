@@ -4941,7 +4941,16 @@ async function mvCheck(force){const H=CFG.home&&CFG.home.on&&CFG.home.helper,C=C
 /* Apple voices read a long answer in one flat run: give them a speaker's pauses (between sentences, at commas) and slow down a touch */
 function mvPace(text){const w=String(text).split(/\s+/).length;if(w<16)return {text,k:1};
   return {text:String(text).replace(/([.!?])["”']?\s+(?=[A-Z0-9"“])/g,'$1 [[slnc 300]] ').replace(/([,;:])\s+/g,'$1 [[slnc 120]] ').replace(/\s+[—–-]\s+/g,' [[slnc 160]] '),k:w>40?.93:.96}}
-async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
+/* every time is said in words before it's spoken: "9:00 AM" → "nine A M", "8:30" → "eight thirty", "8:05" → "eight oh five",
+   "20:30" → "eight thirty P M", "9 AM" → "nine A M", "9:00–8:30" → "nine to eight thirty". Kokoro otherwise reads "9:00" as "nine zero zero". */
+function sayNorm(t){t=String(t||'');const W=n=>fmNumW(n),AP=a=>a?(/^p/i.test(a)?' P M':' A M'):'';
+  const tm=(h,m,ap)=>{h=+h;m=+(m||0);let ap2=ap;if(!ap&&h>12&&h<24){h-=12;ap2='pm'}if(!ap&&h===0){h=12;ap2='am'}if(h>12||m>59)return null;
+    const hw=h===0?'twelve':W(h),mw=m===0?(ap2?'':" o'clock"):m<10?' oh '+W(m):' '+W(m);return hw+mw+AP(ap2)};
+  t=t.replace(/\b(\d{1,2}):(\d{2})\s*(?:[-–—]|to|until|till)\s*(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m\.?\b)?/gi,(z,h1,m1,h2,m2,a)=>{const x=tm(h1,m1,''),y=tm(h2,m2,a);return x&&y?x.replace(/ o'clock$/,'')+' to '+y:z});
+  t=t.replace(/\b(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m\.?\b)?/gi,(z,h,m,a)=>tm(h,m,a)||z);
+  t=t.replace(/\b(\d{1,2})\s*([ap])\.?\s?m\.?\b/gi,(z,h,a)=>+h>0&&+h<=12?W(+h)+AP(a):z);
+  return t}
+async function macSay(text,rate){text=sayNorm(text);if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
   let vName=MV.voice.name;const kspd=NM.get('kospd',0);
   /* Kokoro measured slower than talking on this Mac (start to finish): answer in Zoe so replies are instant ("try the AI voice" measures again; "always use the AI voice" keeps it) */
@@ -4961,7 +4970,7 @@ async function macSay(text,rate){if(!NOVA_MAIN)return true;if(!await mvCheck())r
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
 window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
 setTimeout(()=>mvCheck(true),3000);setInterval(()=>mvCheck(true),300000);
-function speak(text,fallback,noMac){
+function speak(text,fallback,noMac){text=sayNorm(text);
   if(!noMac&&MV.ok!==false||(!noMac&&Date.now()-MV.at>60000&&(CFG.macVoice||{}).on!==false)){macSay(text).then(ok=>{if(ok)return;typeof vLog==='function'&&vLog('Mac voice missed, retrying');setTimeout(()=>{MV.at=0;macSay(text).then(ok2=>{if(!ok2)speak(text,fallback,true)})},700)});return}
   if(!('speechSynthesis' in window))return;
   if(!novaVoice)pickNovaVoice();
@@ -6043,7 +6052,7 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   const kind=FM.queuedNews?'news':mode==='hour'?'id':(FM.cat==='sports'?'sports':fmKind(words).k==='weather'?'weather':fmKind(words).k==='sports'?'sports':'dj');FM.kind=kind;
   fmDiag('break sent ('+mode+':'+kind+', '+words.split(/\s+/).length+' words)');FM.prevLast=FM.prevLast0;
   if(FM.hostK&&!GUEST)NM.set('fmhostk',FM.hostK);
-  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':SHOW.voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(spoken)}`)}catch(e){return false}
+  try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'||mode==='hour'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':SHOW.voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(sayNorm(spoken))}`)}catch(e){return false}
   return true}
 function fmAirUI(on){try{const k=new Date().toDateString();if(FM.on&&NM.get('fmonDay','')!==k){NM.set('fmonDay',k);NM.set('fmonAt',Date.now())}}catch(e){}if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmAirHost(),brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
@@ -10525,7 +10534,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 304';
+document.getElementById('ver').textContent='build nova 305';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
