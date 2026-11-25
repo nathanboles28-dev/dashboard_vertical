@@ -3004,7 +3004,6 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 #pObs .pwrap{gap:calc(8*var(--k))}
 #pObs #obsBody{position:relative;inset:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:calc(8*var(--k));color:#fff;font-family:'Inter',sans-serif}
 #skRest{display:flex;flex-direction:column;gap:calc(8*var(--k))}
-body.npBar #pObs{--k:.152vw}
 #skTop{display:flex;flex-direction:column;gap:calc(6*var(--k))}
 .sk-tag{align-self:flex-start;background:var(--xor,#e4572e);color:#fff;font-family:var(--head,'Barlow Condensed'),sans-serif;font-weight:700;font-style:italic;font-size:calc(12*var(--k));letter-spacing:.14em;padding:calc(3*var(--k)) calc(10*var(--k));transform:skewX(-10deg);text-transform:uppercase;margin-left:calc(4*var(--k))}
 .sk-svg{display:block;width:100%;height:auto;overflow:visible}
@@ -6546,7 +6545,7 @@ function skDome(N,now,pass,trk){const live=now>=N.nau&&now<=N.nauE,T=live?Math.f
   const run=runs.sort((a,b)=>b.length-a.length)[0];
   if(run){const d='M'+run.map(q=>q.x.toFixed(1)+' '+q.y.toFixed(1)).join(' L');const a=run[0],z=run[run.length-1],top=run.reduce((m,q)=>q.alt>m.alt?q:m,run[0]);
     h+=`<path d="${d}" fill="none" stroke="#e4572e" stroke-width="2" stroke-dasharray="6 5"/><circle r="5.5" class="sk-iss" style="offset-path:path('${d}')"/>
-      <text x="${a.x.toFixed(0)}" y="${(a.y-8).toFixed(0)}" class="sk-tl" text-anchor="${a.x<250?'start':'end'}">${skHr(a.t).replace(/ [AP]M/,'')}</text>${Math.hypot(z.x-a.x,z.y-a.y)>70?`<text x="${z.x.toFixed(0)}" y="${(z.y-8).toFixed(0)}" class="sk-tl" text-anchor="${z.x<250?'start':'end'}">${skHr(z.t).replace(/ [AP]M/,'')}</text>`:''}
+      <text x="${a.x.toFixed(0)}" y="${(a.y-8).toFixed(0)}" class="sk-tl" text-anchor="${a.x<250?'start':'end'}">${skHr(a.t).replace(/ [AP]M/,'')}</text>${Math.hypot(z.x-a.x,z.y-a.y)>70&&Math.hypot(z.x-top.x,z.y-12-top.y)>40?`<text x="${z.x.toFixed(0)}" y="${(z.y-8).toFixed(0)}" class="sk-tl" text-anchor="${z.x<250?'start':'end'}">${skHr(z.t).replace(/ [AP]M/,'')}</text>`:''}
       <text x="${top.x.toFixed(0)}" y="${(top.y-(Math.hypot(top.x-a.x,top.y-a.y)<30?24:12)).toFixed(0)}" class="sk-lb" text-anchor="middle" fill="#fff">ISS</text>`}
   for(const p of pl){const x=X(p.az);if(x==null)continue;const y=Y(x,p.alt);h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${p.k==='jupiter'||p.k==='venus'?5:4.2}" fill="${p.col}" class="sk-pl"/><text x="${(x+(x>420?-9:9)).toFixed(0)}" y="${(y+4).toFixed(0)}" class="sk-lb" fill="${p.col}" text-anchor="${x>420?'end':'start'}">${p.name.toUpperCase()}</text>`}
   if(moon.alt>-1){const x=X(moon.az);if(x!=null){const y=Math.min(236,Y(x,moon.alt)),r=17,c=Math.cos(2*Math.PI*ph.p),rx=Math.abs(c)*r,wax=ph.p<.5,sw=wax?(c>0?0:1):(c>0?1:0);
@@ -6562,7 +6561,7 @@ function skCloudTag(N){const C=SKY.cloud;if(!C||!N.dark)return '';const w=C.filt
   if(cd(w[0])){const g=w.find(cl);if(g)return `Cloudy until ${skHr(g[0])} · clearer after`}
   return 'Some cloud tonight · gaps to look through'}
 function skComing(now,ph){const L=[],y=new Date(now).getFullYear(),day0=new Date(now).setHours(0,0,0,0);
-  const Ln=OBS.d&&OBS.d.launches&&!OBS.d.launches.error?OBS.d.launches.list.find(l=>l.net>now-30*60000):null;
+  const Ln=OBS.d&&OBS.d.launches&&!OBS.d.launches.error?OBS.d.launches.list.find(l=>l.net>now-30*60000&&!/\b(?:tbd|unconfirmed|unknown)\b/i.test(String(l.name))):null;
   if(Ln){const nm=String(Ln.name).split('|').pop().trim(),rk=String(Ln.name).split('|')[0].trim();L.push({t:Ln.net,a:`🚀 ${rk&&rk!==nm?rk+' · ':''}${nm}`,b:(new Date(Ln.net).toDateString()===new Date(now).toDateString()?'TODAY ':skyWhen(Ln.net)==='tomorrow'?'TOMORROW ':skDay(Ln.net)+' · ')+skHr(Ln.net).toUpperCase()})}
   for(const yy of [y,y+1]){const s=SK_SHOWERS.find(([m,d])=>new Date(yy,m,d).getTime()>=day0);if(s){L.push({t:new Date(yy,s[0],s[1]).getTime(),a:`☄️ ${s[2]} meteor shower`,b:`${s[3]} · ${s[4]}/HR`});break}}
   for(const yy of [y,y+1]){const s=SK_SEAS.find(([m,d])=>new Date(yy,m,d).getTime()>=day0);if(s){const t=new Date(yy,s[0],s[1]).getTime();L.push({t,a:s[2],b:skDay(t)});break}}
@@ -6607,8 +6606,12 @@ function skRender(){const b=$('obsBody');if(!b)return;const now=Date.now();
   const dl=card(`<div class="sk-row">${K('Daylight')}<span class="sk-s">${left?`${Math.floor(left/36e5)?Math.floor(left/36e5)+' h ':''}${Math.round(left%36e5/6e4)} min left today`:''}</span></div><div class="sk-dl"><b class="sk-b">${N.len?lenT:'—'}</b><span class="sk-s">${diff?`${Math.abs(diff)} min ${diff<0?'less':'more'} than yesterday · `:'same as yesterday · '}${dn<=0?(grow?'longest day today':'shortest day today'):`${grow?'shorter':'longer'} again in ${dn} day${dn>1?'s':''}`}</span></div>
     <div class="sk-bar"><i style="width:${N.rise&&N.set?Math.max(0,Math.min(100,(now-N.rise)/(N.set-N.rise)*100)).toFixed(1):0}%"></i></div>`);
   const cm=skComing(now,ph),up=card(K('Coming up in the sky')+(cm.length?cm.map(x=>`<div class="sk-cu"><span>${esc(x.a)}</span><em>${esc(x.b)}</em></div>`).join(''):'<div class="sk-s">Nothing scheduled</div>'));
-  const rest=iss+mid+sun+dl+up,R=$('skRest');if(R&&R.innerHTML!==rest)R.innerHTML=rest}
+  const rest=iss+mid+sun+dl+up,R=$('skRest');if(R&&R.innerHTML!==rest)R.innerHTML=rest;skFit()}
   catch(e){console.warn('sky page',e);try{nbPub(`${SECRETS.topic}-mcmd`,'log|dash sky page error '+String(e.message||e).slice(0,80)).catch(()=>{})}catch(x){}}}
+/* make the page fit: start from the normal size and step down until nothing runs off the bottom */
+function skFit(){const P=$('pObs'),b=$('obsBody');if(!P||!b||!P.classList.contains('on'))return;let k=.17;P.style.setProperty('--k',k+'vw');
+  for(let i=0;i<14&&b.scrollHeight>b.clientHeight+2;i++){k-=.005;P.style.setProperty('--k',k.toFixed(3)+'vw')}}
+window.addEventListener('resize',()=>{try{skFit()}catch(e){}});
 /* what Nova can say about tonight */
 function skContext(){try{const now=Date.now(),N=skNight(now),ph=skMoonPhase(now),PL=skPlanets(N,now),p=typeof skyNext==='function'?skyNext(24):null;
   return `TONIGHT'S SKY over ${CFG.city||'home'} (calculated): sunset ${N.set?tripT(N.set):'?'}, dark by ${N.dark?tripT(N.dark):'?'}; moon ${ph.name.toLowerCase()} ${ph.lit}% lit; planets: ${PL.length?PL.map(x=>`${x.name} (${x.dir}, ${x.when==='dusk'?'from dusk':x.when==='now'?'up now':'from '+x.when})`).join(', '):'none bright'}; ${p?skyPassSay(p):'no visible space station pass in the next day'}${skCloudTag(N)?'; clouds: '+skCloudTag(N):''}.`}catch(e){return ''}}
@@ -10512,7 +10515,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 299';
+document.getElementById('ver').textContent='build nova 300';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
