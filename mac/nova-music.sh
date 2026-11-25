@@ -269,7 +269,7 @@ yt_play(){ q="$1"; LOG="$DIR/music-debug.log"
   osascript -e 'tell application "Music" to pause' >/dev/null 2>&1
   brave_js "document.querySelectorAll('video').forEach(v=>v.pause())" >/dev/null
   open -a "Brave Browser" "https://www.youtube.com/watch?v=$id" >/dev/null 2>&1 || { echo "error Brave wouldn't open"; return; }
-  t=""; for i in 1 2 3 4 5 6; do sleep 2
+  t=""; for i in 1 2 3 4 5 6 7 8 9 10 11 12; do sleep 1
     t=$(brave_js "(()=>{if(!location.href.includes('$id'))return '';const v=document.querySelector('video');if(!v)return '';v.muted=false;if(v.paused)v.play();return (v.paused?'':'P|')+document.title.replace(/ - YouTube\$/,'')})()")
     case "$t" in P\|*) break;; esac; done
   echo "---- $(date) | youtube: $q -> $id | ${t:-no answer from Brave}" >> "$LOG"
@@ -353,8 +353,12 @@ on playSet(ts, shuf, label)
 end playSet
 APPLESCRIPT
 )
-        case "$r" in ok*) ;; *) if [ "$k" = album ]; then r=$(catalog_play "$q2" album); else r=$(catalog_play "$q2" song); fi;; esac
-        case "$r" in notfound*|error*) [ "$k" = song ] && r=$(yt_play "$q2");; esac
+        # not in the library: a song goes straight to YouTube in Brave (seconds, every time); Apple Music's catalog only
+        # for albums, or a song when there's no Brave (set NOVA_CATALOG_FIRST=1 in nova-music.env to try Apple Music first)
+        have_brave(){ [ -d "/Applications/Brave Browser.app" ] || [ -d "$HOME/Applications/Brave Browser.app" ]; }
+        case "$r" in ok*) ;; *) if [ "$k" = song ] && have_brave && [ "${NOVA_CATALOG_FIRST:-0}" != 1 ]; then r=$(yt_play "$q2")
+          elif [ "$k" = album ]; then r=$(catalog_play "$q2" album); else r=$(catalog_play "$q2" song); fi;; esac
+        case "$r" in notfound*|error*) [ "$k" = song ] && have_brave && r=$(yt_play "$q2");; esac
         case "$r" in ok*|notfound*|notplayed*|needaccess*|opened*|deferred) ;; *) r="error $(printf '%s' "$r" | tr -d '|' | tr '\n' ' ' | cut -c1-120)";; esac
       fi;;
     yt)       r=$(yt_play "$v"); k=song;;
@@ -393,7 +397,7 @@ if [ $((now - ${last_hb:-0})) -ge 60 ]; then
   pw=$(ioreg -rw0 -c AppleSmartBattery 2>/dev/null | grep -o '"SystemPowerIn"=[0-9]*' | head -1 | grep -o '[0-9]*$'); [ -n "$pw" ] || pw=-
   ( curl -sf -m 8 -d "fmstate hb $mu $kv $now $pw" "$BUS/bus/${NOVA_TOPIC}" ) </dev/null >/dev/null 2>&1 3>&- &
 fi
-if [ $((now - ${last_poll:-0})) -ge 7 ]; then
+if [ $((now - ${last_poll:-0})) -ge 2 ]; then
   last_poll=$now
   out=$(curl -sf -m 5 "$BUS/bus/${NOVA_TOPIC}-mcmd/json?since=$last_cmd_t" 2>/dev/null)
   while IFS= read -r line; do
