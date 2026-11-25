@@ -5101,7 +5101,7 @@ setTimeout(()=>{try{const v=+NM.get('audvol',.6);if(v>0&&v<=1)AUD.vol=v}catch(e)
 const AUD_RB=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://at1.api.radio-browser.info'];
 const AUD_ALIAS=[[/\b(?:am ?640|640(?: ?am)?(?: news)?|global news(?: radio)?|cfiq)\b/,'CFIQ'],[/\b(?:cfrb|newstalk ?1010|news ?talk ?1010|1010)\b/,'CFRB'],[/\b(?:680(?: news)?|city ?news ?680|cftr)\b/,'CFTR'],
   [/\bcbc music\b|\bcbc 2\b/,'CBC Music Eastern'],[/\bcbc(?: radio)?(?: one| 1)?\b/,'CBC Radio One - Toronto'],[/\btsn(?: 1050)?\b|\b1050\b/,'CHUM TSN 1050'],[/\bsportsnet ?590|\bthe fan(?: 590)?\b|\bfan ?590\b|\b590\b/,'Sportsnet 590 The Fan'],
-  [/\bjazz ?fm\b|\bcjrt\b/,'CJRT'],[/\bclassical(?: ?96(?:\.3)?)?\b/,'CFMZ'],[/\bq ?107\b/,'CILQ'],[/\bchfi\b|\b98\.1\b/,'CHFI'],[/\bthe edge\b|\b102\.1\b|\bcfny\b/,'CFNY'],[/\bvirgin(?: radio)?\b|\b99\.9\b/,'Virgin Radio 99.9'],
+  [/\bjazz ?fm\b|\bcjrt\b/,'CJRT'],[/\bclassical(?: ?96(?:\.3)?)?\b/,'CFMZ'],[/\bq ?107\b/,'CILQ'],[/\bchfi\b|\b98\.1\b/,'CHFI'],[/\bthe edge\b|\b102\.1\b|\bcfny\b/,'CFNY'],
   [/\bkiss(?: ?92(?:\.5)?)?\b/,'KISS 92.5'],[/\bz ?103(?:\.5)?\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom(?: ?97(?:\.3)?)?\b/,'CHBM'],[/\bfm ?96\b|\b95\.9\b/,'CFPL-FM'],[/\bam ?980\b|\b980\b/,'CFPL-AM']];
 function audSave(){NM.set('audvol',AUD.vol)}
 function audPill(){let p=$('audPill');if(!AUD.kind){if(p)p.className='';return}
@@ -5133,11 +5133,12 @@ async function audRadio(q){q=String(q||'').toLowerCase().replace(/\b(?:the|radio
   let name=q;for(const [re,n] of AUD_ALIAS)if(re.test(q)){name=n;break}
   const tryOne=async(base,nm)=>{const r=await tfetch(`${base}/json/stations/search?name=${encodeURIComponent(nm)}&limit=40&hidebroken=true&order=clickcount&reverse=true`,7000);return r.json()};
   let L=[];for(const b of AUD_RB){try{L=await tryOne(b,name);if(!L.length&&name!==q)L=await tryOne(b,q);if(!L.length){const short=name.replace(/\b(?:fm|am|\d+(?:\.\d)?)\b/g,'').trim();if(short&&short!==name)L=await tryOne(b,short)}break}catch(e){}}
-  const ok=L.filter(s=>/^https?:/.test(s.url_resolved||'')),sc=s=>(+s.hls?-6:0)+(/^https:/.test(s.url_resolved)?2:0)+(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
-  const C=ok.sort((a,b)=>sc(b)-sc(a)).slice(0,3);if(!C.length)return `I couldn't find a station called ${q}.`;
+  let ok=L.filter(s=>/^https?:/.test(s.url_resolved||''));{const NA=ok.filter(s=>s.countrycode==='CA'||s.countrycode==='US');ok=NA.length||/\b(?:bbc|uk|british|england|ireland|irish|australia|france|french|germany|german|italy|italian|spain|spanish|mexico)\b/.test(q)?(NA.length?NA:ok):[]}const sc=s=>(+s.hls?-6:0)+(/^https:/.test(s.url_resolved)?2:0)+(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
+  const C=ok.sort((a,b)=>sc(b)-sc(a)).slice(0,3);if(!C.length)return `I couldn't find a station called ${q}. Some stations, like Virgin and Move, aren't in the free station list.`;
   let last='';for(const st of C){
     const url=String(st.url_resolved).replace(/^http:\/\/([^/]+?\.streamtheworld\.com):\d+\//,'https://$1/').replace(/^http:/,'https:');
-    const label=String(st.name).replace(/^[A-Z]{4}(?:-[A-Z]{2})?\s+/,'').replace(/"/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/,?\s*(?:Toronto|London|Ottawa)?,?\s*ON\s*$/,'').trim().slice(0,40)||st.name,sub=[st.state,st.country].filter(Boolean).join(', ');
+    const cs=(String(st.name).match(/^(C[A-Z]{3}(?:-[A-Z]{2})?)\b/)||[])[1],FR={CHFI:'CHFI 98.1',CFRB:'Newstalk 1010',CFTR:'CityNews 680',CFIQ:'Global News Radio 640','CFPL-AM':'AM980 London','CFPL-FM':'FM96 London',CILQ:'Q107',CHUM:'TSN 1050',CFNY:'102.1 The Edge',CHBM:'Boom 97.3',CFMZ:'Classical 96.3'};
+    const label=FR[cs]||String(st.name).replace(/^C[A-Z]{3}(?:-[A-Z]{2})?\s+/,'').replace(/\s+-\s*(?=[A-Z][a-z]+,\s*ON)/,' ').replace(/^(\d+(?:\.\d)?)-(\w)/,'$1 $2').replace(/"/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/,?\s*(?:Toronto|London|Ottawa)?,?\s*ON\s*$/,'').trim().slice(0,40)||st.name,sub=[st.state,st.country].filter(Boolean).join(', ');
     const e=await audStream(url,'radio',label,sub);if(!e){NM.set('audlast',{url,label,sub});return `Here's ${label}.`}last=e}
   return last}
 async function audPod(q){if(!CFG.relay||!SECRETS.calkey)return "I can't look up podcasts without the relay.";
@@ -10524,7 +10525,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 303';
+document.getElementById('ver').textContent='build nova 304';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
