@@ -270,7 +270,7 @@ yt_play(){ q="$1"; LOG="$DIR/music-debug.log"
   brave_js "document.querySelectorAll('video').forEach(v=>v.pause())" >/dev/null
   open -a "Brave Browser" "https://www.youtube.com/watch?v=$id" >/dev/null 2>&1 || { echo "error Brave wouldn't open"; return; }
   t=""; for i in 1 2 3 4 5 6 7 8 9 10 11 12; do sleep 1
-    t=$(brave_js "(()=>{if(!location.href.includes('$id'))return '';const v=document.querySelector('video');if(!v)return '';v.muted=false;if(v.paused)v.play();return (v.paused?'':'P|')+document.title.replace(/ - YouTube\$/,'')})()")
+    t=$(brave_js "(()=>{if(!location.href.includes('$id'))return '';const v=document.querySelector('video');if(!v)return '';v.muted=false;if(v.paused)v.play();try{const t=document.querySelector('.ytp-autonav-toggle-button[aria-checked=true]');if(t)t.click()}catch(e){}if(!v._novaEnd){v._novaEnd=1;v.loop=false;v.addEventListener('timeupdate',()=>{if(v.duration&&v.currentTime>v.duration-1.2&&!v.paused){v.pause()}});v.addEventListener('ended',()=>v.pause())}return (v.paused?'':'P|')+document.title.replace(/ - YouTube\$/,'')})()")
     case "$t" in P\|*) break;; esac; done
   echo "---- $(date) | youtube: $q -> $id | ${t:-no answer from Brave}" >> "$LOG"
   nm=$(printf '%s' "${t#P|}" | sed -E 's/^\([0-9]+\) //; s/ *[(\[](official|lyric|audio|visuali)[^)\]]*[)\]]//Ig; s/ +$//')
