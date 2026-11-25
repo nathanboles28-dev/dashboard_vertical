@@ -5134,10 +5134,12 @@ async function audRadio(q){q=String(q||'').toLowerCase().replace(/\b(?:the|radio
   const tryOne=async(base,nm)=>{const r=await tfetch(`${base}/json/stations/search?name=${encodeURIComponent(nm)}&limit=40&hidebroken=true&order=clickcount&reverse=true`,7000);return r.json()};
   let L=[];for(const b of AUD_RB){try{L=await tryOne(b,name);if(!L.length&&name!==q)L=await tryOne(b,q);if(!L.length){const short=name.replace(/\b(?:fm|am|\d+(?:\.\d)?)\b/g,'').trim();if(short&&short!==name)L=await tryOne(b,short)}break}catch(e){}}
   const ok=L.filter(s=>/^https?:/.test(s.url_resolved||'')),sc=s=>(+s.hls?-6:0)+(/^https:/.test(s.url_resolved)?2:0)+(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
-  const st=ok.sort((a,b)=>sc(b)-sc(a))[0];if(!st)return `I couldn't find a station called ${q}.`;
-  const url=String(st.url_resolved).replace(/^http:\/\/([^/]+?\.streamtheworld\.com):\d+\//,'https://$1/').replace(/^http:/,'https:');
-  const label=String(st.name).replace(/^[A-Z]{4}(?:-[A-Z]{2})?\s+/,'').replace(/"/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/,?\s*(?:Toronto|London|Ottawa)?,?\s*ON\s*$/,'').trim().slice(0,40)||st.name,sub=[st.state,st.country].filter(Boolean).join(', ');NM.set('audlast',{url,label,sub});
-  const e=await audStream(url,'radio',label,sub);return e||`Here's ${label}.`}
+  const C=ok.sort((a,b)=>sc(b)-sc(a)).slice(0,3);if(!C.length)return `I couldn't find a station called ${q}.`;
+  let last='';for(const st of C){
+    const url=String(st.url_resolved).replace(/^http:\/\/([^/]+?\.streamtheworld\.com):\d+\//,'https://$1/').replace(/^http:/,'https:');
+    const label=String(st.name).replace(/^[A-Z]{4}(?:-[A-Z]{2})?\s+/,'').replace(/"/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/,?\s*(?:Toronto|London|Ottawa)?,?\s*ON\s*$/,'').trim().slice(0,40)||st.name,sub=[st.state,st.country].filter(Boolean).join(', ');
+    const e=await audStream(url,'radio',label,sub);if(!e){NM.set('audlast',{url,label,sub});return `Here's ${label}.`}last=e}
+  return last}
 async function audPod(q){if(!CFG.relay||!SECRETS.calkey)return "I can't look up podcasts without the relay.";
   q=String(q||'').replace(/\b(?:the )?(?:latest|newest|last|new|most recent) (?:episode|ep) of\b|\b(?:podcast|episode)s?\b|\b(?:the )?latest\b/g,' ').replace(/\s+/g,' ').trim();if(!q)return 'Which podcast?';
   let d=null;try{d=await tfetch(relayBase()+`/pod?key=${encodeURIComponent(SECRETS.calkey)}&q=${encodeURIComponent(q)}`,12000).then(r=>r.json())}catch(e){}
@@ -10522,7 +10524,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 302';
+document.getElementById('ver').textContent='build nova 303';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
