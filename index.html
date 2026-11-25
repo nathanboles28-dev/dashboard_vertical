@@ -5099,9 +5099,10 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
 const AUD={el:null,kind:'',label:'',sub:'',ctx:null,nodes:[],g:null,vol:.6,off:0,url:'',ramp:0,stopping:false};
 setTimeout(()=>{try{const v=+NM.get('audvol',.6);if(v>0&&v<=1)AUD.vol=v}catch(e){}},0);
 const AUD_RB=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://at1.api.radio-browser.info'];
-const AUD_ALIAS=[[/\b(?:cfrb|newstalk ?1010|news ?talk ?1010|1010)\b/,'Newstalk 1010'],[/\b680 ?news\b|\bcfty?r\b/,'680 NEWS'],[/\bcbc(?: radio)?(?: one)?\b/,'CBC Radio One Toronto'],[/\bcbc music\b|\bcbc 2\b/,'CBC Music Toronto'],
-  [/\b(?:tsn|tsn 1050)\b/,'TSN 1050'],[/\bsportsnet ?590|\bthe fan(?: 590)?\b|\bfan ?590\b/,'Sportsnet 590 The FAN'],[/\bjazz ?fm\b/,'JAZZ.FM91'],[/\bclassical ?96\b/,'Classical 96.3'],[/\bq ?107\b/,'Q107'],[/\bchum\b/,'CHUM 104.5'],
-  [/\bvirgin(?: radio)?\b/,'Virgin Radio 99.9'],[/\bkiss ?92\b|\bkiss\b/,'KiSS 92.5'],[/\bz ?103\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom ?97\b/,'boom 97.3'],[/\bfm ?96\b/,'FM96'],[/\bthe fox\b|\bfox 104\b/,'Fox 104.3 London']];
+const AUD_ALIAS=[[/\b(?:am ?640|640(?: ?am)?(?: news)?|global news(?: radio)?|cfiq)\b/,'CFIQ'],[/\b(?:cfrb|newstalk ?1010|news ?talk ?1010|1010)\b/,'CFRB'],[/\b(?:680(?: news)?|city ?news ?680|cftr)\b/,'CFTR'],
+  [/\bcbc music\b|\bcbc 2\b/,'CBC Music Eastern'],[/\bcbc(?: radio)?(?: one| 1)?\b/,'CBC Radio One - Toronto'],[/\btsn(?: 1050)?\b|\b1050\b/,'CHUM TSN 1050'],[/\bsportsnet ?590|\bthe fan(?: 590)?\b|\bfan ?590\b|\b590\b/,'Sportsnet 590 The Fan'],
+  [/\bjazz ?fm\b|\bcjrt\b/,'CJRT'],[/\bclassical(?: ?96(?:\.3)?)?\b/,'CFMZ'],[/\bq ?107\b/,'CILQ'],[/\bchfi\b|\b98\.1\b/,'CHFI'],[/\bthe edge\b|\b102\.1\b|\bcfny\b/,'CFNY'],[/\bvirgin(?: radio)?\b|\b99\.9\b/,'Virgin Radio 99.9'],
+  [/\bkiss(?: ?92(?:\.5)?)?\b/,'KISS 92.5'],[/\bz ?103(?:\.5)?\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom(?: ?97(?:\.3)?)?\b/,'CHBM'],[/\bfm ?96\b|\b95\.9\b/,'CFPL-FM'],[/\bam ?980\b|\b980\b/,'CFPL-AM']];
 function audSave(){NM.set('audvol',AUD.vol)}
 function audPill(){let p=$('audPill');if(!AUD.kind){if(p)p.className='';return}
   if(!p){p=document.createElement('div');p.id='audPill';document.body.appendChild(p)}
@@ -5112,13 +5113,18 @@ function audLevel(){const v=AUD.vol*(window._macSpeaking?.22:1)*(AUD.ramp?Math.m
 setInterval(()=>{if(!AUD.kind)return;if(AUD.off&&Date.now()>=AUD.off-20000)AUD.fade=1;if(AUD.off&&Date.now()>=AUD.off){audStop();return}audLevel();
   if(AUD.kind==='pod'&&AUD.el&&AUD.url&&!AUD.el.paused){const P=NM.get('podpos',{});P[AUD.url]=Math.floor(AUD.el.currentTime);const k=Object.keys(P);if(k.length>20)delete P[k[0]];NM.set('podpos',P)}},400);
 setInterval(()=>{if(AUD.kind)audPill()},30000);
-function audStop(quiet){AUD.stopping=true;try{if(AUD.el){AUD.el.pause();AUD.el.removeAttribute('src');AUD.el.load()}}catch(e){}
+function audStop(quiet){AUD.stopping=true;try{if(AUD.hls){AUD.hls.destroy();AUD.hls=null}}catch(e){}try{if(AUD.el){AUD.el.pause();AUD.el.removeAttribute('src');AUD.el.load()}}catch(e){}
   try{AUD.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});clearInterval(AUD.crk);clearTimeout(AUD.thT)}catch(e){}AUD.nodes=[];AUD.g=null;
   AUD.kind='';AUD.label='';AUD.sub='';AUD.off=0;AUD.fade=0;AUD.ramp=0;AUD.url='';setTimeout(()=>{AUD.stopping=false},300);audPill();return quiet?'':'Okay.'}
-function audMusicPause(){try{if(SECRETS.topic&&NP&&NP.state==='playing')nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{})}catch(e){}}
+function audMusicPause(){try{if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{})}catch(e){}}
 async function audStream(url,kind,label,sub,startAt){audStop(true);audMusicPause();const el=AUD.el||(AUD.el=new Audio());
   if(!el._wired){el._wired=1;el.addEventListener('error',()=>{if(AUD.stopping||!AUD.kind||AUD.kind==='sleep')return;const k=AUD.label;audStop(true);reply(`${k} won't play right now. The stream might be down.`)})}
-  AUD.kind=kind;AUD.label=label;AUD.sub=sub||'';AUD.url=url;el.src=url;el.volume=AUD.vol;try{if(startAt)el.currentTime=startAt}catch(e){}
+  AUD.kind=kind;AUD.label=label;AUD.sub=sub||'';AUD.url=url;el.volume=AUD.vol;
+  if(/\.m3u8(\?|$)|\/hls\/|playlist\.m3u/i.test(url)&&el.canPlayType('application/vnd.apple.mpegurl')!=='probably'){
+    try{if(!window.Hls)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)});
+      const h=new Hls({lowLatencyMode:false});AUD.hls=h;h.on(Hls.Events.ERROR,(x,d)=>{if(d.fatal&&AUD.kind===kind&&!AUD.stopping){const k=AUD.label;audStop(true);reply(`${k} won't play right now. The stream might be down.`)}});h.loadSource(url);h.attachMedia(el)}
+    catch(e){audStop(true);return `I couldn't start ${label}.`}}
+  else el.src=url;try{if(startAt)el.currentTime=startAt}catch(e){}
   try{await el.play()}catch(e){if(AUD.kind===kind){audStop(true);return `I couldn't start ${label}.`}}
   if(startAt){try{el.currentTime=startAt}catch(e){}}audPill();try{fmDiag(`player: ${kind} ${label}`)}catch(e){}return ''}
 /* live radio: Radio Browser (free directory of stations), Canadian first; only https streams (the dash is https) */
@@ -5127,10 +5133,11 @@ async function audRadio(q){q=String(q||'').toLowerCase().replace(/\b(?:the|radio
   let name=q;for(const [re,n] of AUD_ALIAS)if(re.test(q)){name=n;break}
   const tryOne=async(base,nm)=>{const r=await tfetch(`${base}/json/stations/search?name=${encodeURIComponent(nm)}&limit=40&hidebroken=true&order=clickcount&reverse=true`,7000);return r.json()};
   let L=[];for(const b of AUD_RB){try{L=await tryOne(b,name);if(!L.length&&name!==q)L=await tryOne(b,q);if(!L.length){const short=name.replace(/\b(?:fm|am|\d+(?:\.\d)?)\b/g,'').trim();if(short&&short!==name)L=await tryOne(b,short)}break}catch(e){}}
-  const ok=L.filter(s=>/^https:/.test(s.url_resolved||'')&&!+s.hls),sc=s=>(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
+  const ok=L.filter(s=>/^https?:/.test(s.url_resolved||'')),sc=s=>(+s.hls?-6:0)+(/^https:/.test(s.url_resolved)?2:0)+(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
   const st=ok.sort((a,b)=>sc(b)-sc(a))[0];if(!st)return `I couldn't find a station called ${q}.`;
-  const label=String(st.name).trim().slice(0,40),sub=[st.state,st.country].filter(Boolean).join(', ');NM.set('audlast',{url:st.url_resolved,label,sub});
-  const e=await audStream(st.url_resolved,'radio',label,sub);return e||`Here's ${label}.`}
+  const url=String(st.url_resolved).replace(/^http:\/\/([^/]+?\.streamtheworld\.com):\d+\//,'https://$1/').replace(/^http:/,'https:');
+  const label=String(st.name).replace(/^[A-Z]{4}(?:-[A-Z]{2})?\s+/,'').replace(/"/g,'').replace(/\s*\([^)]*\)\s*$/,'').replace(/,?\s*(?:Toronto|London|Ottawa)?,?\s*ON\s*$/,'').trim().slice(0,40)||st.name,sub=[st.state,st.country].filter(Boolean).join(', ');NM.set('audlast',{url,label,sub});
+  const e=await audStream(url,'radio',label,sub);return e||`Here's ${label}.`}
 async function audPod(q){if(!CFG.relay||!SECRETS.calkey)return "I can't look up podcasts without the relay.";
   q=String(q||'').replace(/\b(?:the )?(?:latest|newest|last|new|most recent) (?:episode|ep) of\b|\b(?:podcast|episode)s?\b|\b(?:the )?latest\b/g,' ').replace(/\s+/g,' ').trim();if(!q)return 'Which podcast?';
   let d=null;try{d=await tfetch(relayBase()+`/pod?key=${encodeURIComponent(SECRETS.calkey)}&q=${encodeURIComponent(q)}`,12000).then(r=>r.json())}catch(e){}
@@ -5180,7 +5187,7 @@ function audCmd(t){t=String(t||'').toLowerCase().replace(/[.!?]+$/,'').trim();
   if(/\b(?:podcasts?|episode)\b/.test(x))return audPod(x);
   if(/\b(?:sounds?|noise)\b/.test(x)||/^(?:the )?(?:rain|thunderstorm|thunder|ocean|ocean waves|waves|fireplace|fan|white noise|brown noise|pink noise|a fan|a fireplace|a thunderstorm|babbling brook|a stream)$/.test(x)){const k=audSleepKind(x);if(k)return audSleep(k,mins)}
   if(/^(?:the )?radio$/.test(x))return audRadio('');
-  if(/\b(?:radio|station)\b/.test(x)||/\b\d{2,3}(?:\.\d)?\s*(?:fm|am)\b|\b(?:cfrb|cbc|newstalk|news talk|680 news|tsn 1050|tsn radio|fan 590|sportsnet 590|jazz ?fm|classical 96|q ?107|chum|virgin radio|kiss 92|z ?103|indie ?88|boom 97|fm ?96|the fox)\b/.test(x)){const r=audRadio(x);return mins?r.then(s=>{if(AUD.kind)AUD.off=Date.now()+mins*60000;return s}):r}
+  if(/\b(?:radio|station)\b/.test(x)||/\b(?:am|fm) ?\d{2,4}(?:\.\d)?\b|\b\d{3,4} news\b|\bnews ?(?:radio|talk)\b|\b\d{2,4}(?:\.\d)?\s*(?:fm|am)\b|\b(?:cfrb|cbc|newstalk|news talk|680 news|tsn 1050|tsn radio|fan 590|sportsnet 590|jazz ?fm|classical 96|q ?107|chum|virgin radio|kiss 92|z ?103|indie ?88|boom 97|fm ?96|the fox)\b/.test(x)){const r=audRadio(x);return mins?r.then(s=>{if(AUD.kind)AUD.off=Date.now()+mins*60000;return s}):r}
   return null}
 
 /* ===== build 297: "add dentist Tuesday at 3" — shows on the dash right away, and your phone gets an "Add to calendar" link for Outlook ===== */
@@ -10515,7 +10522,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 300';
+document.getElementById('ver').textContent='build nova 302';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
