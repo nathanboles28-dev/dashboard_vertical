@@ -4625,7 +4625,7 @@ async function loadCalendar(){
   try{
     const evs=icsParse(await calText());
     const from=new Date(Math.min(new Date(new Date().getFullYear(),new Date().getMonth(),1).getTime(),dayStart(new Date()).getTime()-8*864e5)),to=new Date(dayStart(new Date()).getTime()+45*864e5);
-    calEvents=icsExpand(evs,from,to);calErr='';calAt=Date.now();setTimeout(prefetchRoutes,2000);
+    calEvents=nvCalMerge(icsExpand(evs,from,to));calErr='';calAt=Date.now();setTimeout(prefetchRoutes,2000);
   }catch(e){calErr=(e&&/key/i.test(e.message))?e.message:'Calendar unavailable right now';console.warn('calendar',e)}
   if($('pComing').classList.contains('on'))renderComing();
   try{birthdayCheck()}catch(e){}
@@ -5184,6 +5184,45 @@ function audCmd(t){t=String(t||'').toLowerCase().replace(/[.!?]+$/,'').trim();
   if(/\b(?:radio|station)\b/.test(x)||/\b\d{2,3}(?:\.\d)?\s*(?:fm|am)\b|\b(?:cfrb|cbc|newstalk|news talk|680 news|tsn 1050|tsn radio|fan 590|sportsnet 590|jazz ?fm|classical 96|q ?107|chum|virgin radio|kiss 92|z ?103|indie ?88|boom 97|fm ?96|the fox)\b/.test(x)){const r=audRadio(x);return mins?r.then(s=>{if(AUD.kind)AUD.off=Date.now()+mins*60000;return s}):r}
   return null}
 
+/* ===== build 297: "add dentist Tuesday at 3" — shows on the dash right away, and your phone gets an "Add to calendar" link for Outlook ===== */
+function nvCalList(){return NM.get('nvcal',[]).filter(x=>x.e>Date.now()-864e5)}
+function nvCalMerge(ev){const L=nvCalList(),keep=[],extra=[];
+  for(const x of L){const dup=ev.some(e=>String(e.title).toLowerCase().trim()===x.t.toLowerCase().trim()&&Math.abs(e.start-x.s)<2*36e5);if(!dup){keep.push(x);extra.push({title:x.t,loc:x.loc||'',desc:'Added by Nova',start:new Date(x.s),end:new Date(x.e),allDay:!!x.all,nova:1})}}
+  NM.set('nvcal',keep);return ev.concat(extra)}
+function nvCalParse(s){let rest=' '+s+' ',d=null,m,loc='',dur=0,all=false;const now=new Date();
+  const MO=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  if(m=rest.match(/\b(?:on )?(?:the )?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.? (\d{1,2})(?:st|nd|rd|th)?\b/)){
+    d=new Date(now.getFullYear(),MO.indexOf(m[1].slice(0,3)),+m[2]);if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()))d.setFullYear(d.getFullYear()+1);rest=rest.replace(m[0],' ')}
+  else if(m=rest.match(/\b(?:on )?the (\d{1,2})(?:st|nd|rd|th)\b/)){d=new Date(now.getFullYear(),now.getMonth(),+m[1]);if(d<new Date(now.getFullYear(),now.getMonth(),now.getDate()))d.setMonth(d.getMonth()+1);rest=rest.replace(m[0],' ')}
+  if(m=rest.match(/\bfor (\d+(?:\.\d+)?|an?|one|two|three|half an?) ?(hours?|hrs?|minutes?|mins?)\b/)){const v=/^(an?|one)$/.test(m[1])?1:m[1]==='two'?2:m[1]==='three'?3:/half/.test(m[1])?.5:+m[1];dur=/^h/.test(m[2])?v*60:v;rest=rest.replace(m[0],' ')}
+  if(m=rest.match(/\b(?:all day|all-day)\b/)){all=true;rest=rest.replace(m[0],' ')}
+  if(m=rest.match(/\b(?:at|@) (?!\d|noon\b|midnight\b)((?:the )?[a-z][\w'&.-]*(?: [a-z][\w'&.-]*){0,4}?)(?=\s+(?:on|at|tomorrow|today|tonight|next|this|for|from|in|monday|tuesday|wednesday|thursday|friday|saturday|sunday|jan\w*|feb\w*|march|april|may|june|july|aug\w*|sept?\w*|oct\w*|nov\w*|dec\w*|the \d)\b|\s*$)/)){loc=m[1].replace(/^the /,'');rest=rest.replace(m[0],' ')}
+  rest=rest.replace(/\btoday\b/,' ');
+  /* "at 3" for an appointment means 3 PM; 8 to 11 means morning */
+  if(!/\b(?:morning|afternoon|evening|tonight)\b/.test(rest))rest=rest.replace(/\b(at|@|by|around)\s*(\d{1,2})(:\d{2})?(?![\d:])(?!\s*(?:a\.?m|p\.?m))/,(z,a,h,mm)=>`${a} ${h}${mm||''} ${+h>=1&&+h<=7||+h===12?'pm':'am'}`);
+  const hasClock=/\b\d{1,2}(?::\d{2})?\s*(?:a\.?m\.?|p\.?m\.?)?\b|\bnoon\b|\bmidnight\b|\bmorning\b|\bafternoon\b|\bevening\b|\btonight\b/.test(rest.replace(/\bin \d+ ?(?:days?|weeks?)\b/,''));
+  const w=remWhen(rest.trim());let st=w.at;
+  if(d){if(st&&hasClock){const t=new Date(st);d.setHours(t.getHours(),t.getMinutes(),0,0)}else all=true;st=d.getTime()}
+  else if(!st){return null}
+  else if(!hasClock)all=true;
+  if(all){const x=new Date(st);x.setHours(0,0,0,0);st=x.getTime()}
+  const title=String(w.rest||'').replace(/\s+/g,' ').replace(/^(?:an?|the|my|our)\s+/,'').replace(/\s+(?:on|at|for|to|from|in|with)$/,'').replace(/^(?:event|appointment|meeting) (?:for )?/,'').trim();
+  if(!title)return null;
+  return {t:title[0].toUpperCase()+title.slice(1),s:st,e:all?st+864e5:st+(dur||60)*60000,all,loc:loc?loc.replace(/\b\w/g,c=>c.toUpperCase()):''}}
+function nvCalSay(x){const d=new Date(x.s),day=d.toDateString()===new Date().toDateString()?'today':d.toDateString()===new Date(Date.now()+864e5).toDateString()?'tomorrow':d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'});
+  return `${day}${x.all?'':' at '+d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`}
+function calCmd(t){
+  let m=t.match(/^(?:please |can you |could you )?(?:add|put|schedule|create|make|book|set up|pencil in)\s+(.+?)\s+(?:to|on|in|into) (?:my |the |our )?(?:outlook )?calendar$/)||t.match(/^(?:please |can you |could you )?(?:add|put) (?:to|on|in) (?:my |the |our )?calendar:? (.+)$/)||t.match(/^(?:please |can you |could you )?(?:schedule|book|pencil in) (.+)$/)||t.match(/^(?:add|new) (?:an? )?(?:event|appointment|calendar event):? (.+)$/);
+  if(!m){const a=t.match(/^add (.+)$/);if(a&&/\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|today|tonight|jan(?:uary)?|feb(?:ruary)?|march|april|may|june|july|aug(?:ust)?|sept(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/.test(a[1])&&/\b(?:at \d|\d{1,2}(?::\d{2})? ?(?:am|pm)|noon|morning|afternoon|evening|tonight|the \d{1,2}(?:st|nd|rd|th))\b|\b(?:jan|feb|march|april|may|june|july|aug|sept|oct|nov|dec)\w* \d/.test(a[1])&&!/\b(?:list|reminder|alarm|timer)\b/.test(a[1]))m=a}
+  if(!m)return null;
+  const x=nvCalParse(m[1]);if(!x)return 'When is it? Try "add dentist Tuesday at 3 to my calendar".';
+  const L=NM.get('nvcal',[]);L.push({...x,made:Date.now()});NM.set('nvcal',L);
+  calEvents.push({title:x.t,loc:x.loc,desc:'Added by Nova',start:new Date(x.s),end:new Date(x.e),allDay:x.all,nova:1});calEvents.sort((a,b)=>a.start-b.start);
+  try{if($('pComing').classList.contains('on'))renderComing()}catch(e){}
+  let sent=false;try{if(SECRETS.topic&&CFG.relay){const link=relayBase()+`/ics?t=${encodeURIComponent(x.t)}&s=${x.s}&e=${x.e}${x.all?'&all=1':''}${x.loc?'&loc='+encodeURIComponent(x.loc):''}`;
+    fetch(`https://ntfy.sh/${SECRETS.topic}-alert`,{method:'POST',body:`${x.t} · ${nvCalSay(x)}${x.loc?' · '+x.loc:''}\nTap to add it to your calendar.`,headers:{Title:'Add to calendar',Tags:'calendar',Click:link,Actions:`view, Add to calendar, ${link}`}}).catch(()=>{});sent=true}}catch(e){}
+  try{fmDiag(`calendar add: [${x.t.replace(/[\[\]"`]/g,'')}] ${new Date(x.s).toLocaleString()}${x.all?' all day':''}`)}catch(e){}
+  return `Added ${x.t}, ${nvCalSay(x)}${x.loc?', at '+x.loc:''}.${sent?' I sent your phone a link to put it in Outlook.':''}`}
 /* "send that to my phone", "text me the shopping list", "send me the address of Costco" (build 296) — through the same ntfy channel as the other phone alerts */
 function phoneCmd(t){
   if(/^(?:send|text|push) (?:that|it|this)(?: (?:to|on) (?:my|me|the) phone| to me)?$|^text me (?:that|it|this)$|^send (?:that|it|this) to me$/.test(t)){const a=window._lastSaid;if(!a)return 'Nothing to send yet.';fmPhone(a,'From Nova','speech_balloon');return 'Sent to your phone.'}
@@ -7497,6 +7536,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0],A=tripAway();if(f||A){if(tripShow())showFor('trip');return reply(tripSay(A&&!tripActive()?null:f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
   {const r=audCmd(t);if(r!=null){if(r&&typeof r.then==='function'){r.then(x=>{if(x)reply(x)}).catch(()=>reply('That didn\'t work.'));return}if(r)return reply(r);return}}
+  {const r=calCmd(t);if(r)return reply(r)}
   {const r=phoneCmd(t);if(r!=null){if(r&&typeof r.then==='function')return;return reply(r)}}
   /* Apple Music on the MacBook: playlists and play/pause/skip (the Nova Music helper there picks these up) */
   {const mc=c=>{const T=SECRETS.topic;if(!T)return false;nbPub(`${T}-mcmd`,c).catch(()=>{});return true};
@@ -10471,7 +10511,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 296';
+document.getElementById('ver').textContent='build nova 297';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
