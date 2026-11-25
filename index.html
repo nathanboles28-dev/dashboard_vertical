@@ -4980,7 +4980,7 @@ async function macSay(text,rate){text=sayNorm(text);if(!NOVA_MAIN)return true;if
 function macHush(){try{if(MV.ok)fetch(CFG.home.helper+'/hush',{method:'POST',headers:{'Content-Type':'text/plain'},body:'{}'})}catch(e){}}
 window.novaMacSay=macSay;window.novaMacSayOK=()=>MV.ok===true;window.novaMacHush=macHush;
 setTimeout(()=>mvCheck(true),3000);setInterval(()=>mvCheck(true),300000);
-function speak(text,fallback,noMac){text=sayNorm(text);
+function speak(text,fallback,noMac){window._lastSpoke={t:String(text||'').toLowerCase(),at:Date.now()};text=sayNorm(text);
   if(!noMac&&MV.ok!==false||(!noMac&&Date.now()-MV.at>60000&&(CFG.macVoice||{}).on!==false)){macSay(text).then(ok=>{if(ok)return;typeof vLog==='function'&&vLog('Mac voice missed, retrying');setTimeout(()=>{MV.at=0;macSay(text).then(ok2=>{if(!ok2)speak(text,fallback,true)})},700)});return}
   if(!('speechSynthesis' in window))return;
   if(!novaVoice)pickNovaVoice();
@@ -5292,6 +5292,7 @@ async function askNova(q,opt){opt=opt||{};if(aiBusy)return;aiBusy=true;nsCount('
     const j=await r.json().catch(()=>({}));a=j.answer||'';try{fmDiag(`ask: [${String(q).replace(/["`\\[\]]/g,'').slice(0,60)}]${ax?' +lookup':''}${j.searched?' · searched the web '+j.searched+'x':''}${j.searchErr?' · web search unavailable: '+String(j.searchErr).slice(0,80):''}${j.error?' · error '+String(j.error).slice(0,80):''}`)}catch(e){}if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":/credit|balance|billing/i.test(j.error||'')?"I'm out of AI credits. Top up in the Anthropic console and I'll be back.":"Sorry, I couldn't reach my brain just now."}}
   catch(e){a="Sorry, I couldn't reach my brain just now."}
   /* run any house actions Claude asked for, and keep the tags out of what's said */
+  const acted=/\[\[/.test(a);if(/\[\[(?:song|album|shuffle|playlist|music):/i.test(a))window._musQuiet=Date.now();
   try{const acts=[...a.matchAll(/\[\[(on|off|bri|scene|playlist|music|song|album|shuffle):([^\]:]+)(?::(\d{1,3}))?\]\]/gi)];
     if(acts.length)acts.forEach(([,k,n,v])=>{k=k.toLowerCase();n=n.trim();
       if(k==='scene'){const i=(CFG.home.scenes||[]).findIndex(s=>s.name.toLowerCase()===n.toLowerCase());if(i>=0)hmScene(i)}
@@ -5303,7 +5304,7 @@ async function askNova(q,opt){opt=opt||{};if(aiBusy)return;aiBusy=true;nsCount('
   aiBusy=false;reply(a);if(!(CFG.remote||{}).speak)speak(a);
   /* remember the back-and-forth for follow-ups; if this came by voice, listen for a reply once she's done talking */
   VOICE.convo=VOICE.convo&&Date.now()-VOICE.convo.at<180000?VOICE.convo:{turns:[]};VOICE.convo.turns.push({q,a});VOICE.convo.turns=VOICE.convo.turns.slice(-6);VOICE.convo.at=Date.now();
-  if((CFG.voice||{}).converse!==false&&Date.now()-(VOICE.lastVoiceAt||0)<90000&&!/\[\[/.test(a))VOICE.followNext=1}
+  if((CFG.voice||{}).converse!==false&&Date.now()-(VOICE.lastVoiceAt||0)<90000&&!acted)VOICE.followNext=1}
 function reply(text){
   const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;if(!/^(Sent to your phone|Okay\.)/.test(text))window._lastSaid=text;
   if(RM.showAnswers!==false){
@@ -7567,6 +7568,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(tripOn()&&/\b(flights?|fly|flying|plane|land|landed|landing|take ?off|took off|trip|in the air|where are|how are|weather (in|for|down)|doing)\b/.test(t)){const words=[...new Set((CFG.trips||[]).flatMap(T=>String((T.who||'')+' '+(T.say||'')).toLowerCase().split(/[^a-z]+/)).filter(w=>w.length>2&&w!=='and'))];
     if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0],A=tripAway();if(f||A){if(tripShow())showFor('trip');return reply(tripSay(A&&!tripActive()?null:f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
+  /* "stop" / "pause" while a song is playing (Apple Music or YouTube in Brave) pauses it */
+  if(!AUD.kind&&!(typeof tkRing!=='undefined'&&tkRing.length)&&/^(?:stop|pause|stop it|pause it|stop the (?:music|song)|pause the (?:music|song)|turn (?:it|the music) off|shut it off)(?: please)?$/.test(t)&&((typeof NP!=='undefined'&&NP&&NP.state==='playing')||Date.now()-((window._musAsk&&window._musAsk.at)||window._musAt||0)<30*60000)&&SECRETS.topic){nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{});try{VOICE.followNext=0}catch(e){}return reply('Paused.')}
   {const r=audCmd(t);if(r!=null){if(r&&typeof r.then==='function'){r.then(x=>{if(x)reply(x)}).catch(()=>reply('That didn\'t work.'));return}if(r)return reply(r);return}}
   {const r=calCmd(t);if(r)return reply(r)}
   {const r=phoneCmd(t);if(r!=null){if(r&&typeof r.then==='function')return;return reply(r)}}
@@ -7577,13 +7580,13 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
    /* songs, artists and albums: your library first, then anything on Apple Music */
    {const bad=/\b(playlist|game|movie|show|episode|roundup|round up|trivia|video|youtube|jellyfin|highlights?)\b|^(some )?(music|something|it|that|again|the music)$/,
       clean=x=>x.replace(/\s+(on apple music|on music|on the macbook|on the mac|please|for me)$/,'').replace(/^(some|the song|the track|a song called|the song called|songs by|music by)\s+/,'').trim(),
-      ask=(k,q)=>{q=clean(q);if(!q||q.length>80||!mc(k+'|'+q))return false;toast('🎵 <b>Looking for</b>'+esc(q));window._musAsk={q,at:Date.now()};setTimeout(()=>{const A=window._musAsk;if(A&&A.q===q){window._musAsk=null;try{fmDiag(`music: no answer from the Mac 60 s after asking for [${q.replace(/[\[\]"`]/g,'')}], trying YouTube`)}catch(e){}if(k==='song')mc('yt|'+q)}},60000);return true};
+      ask=(k,q)=>{q=clean(q);if(!q||q.length>80||!mc(k+'|'+q))return false;window._musAt=Date.now();toast('🎵 <b>Looking for</b>'+esc(q));try{VOICE.followNext=0;VOICE.convo=null}catch(e){}window._musQuiet=0;window._musAsk={q,at:Date.now()};setTimeout(()=>{const A=window._musAsk;if(A&&A.q===q){window._musAsk=null;try{fmDiag(`music: no answer from the Mac 60 s after asking for [${q.replace(/[\[\]"`]/g,'')}], trying YouTube`)}catch(e){}if(k==='song')mc('yt|'+q)}},60000);return true};
       {const yq=t.match(/^(?:can you |could you |please )?(?:play|put on) (.+?) (?:on|from) youtube$/);if(yq){const q=clean(yq[1]);if(q&&mc('yt|'+q)){toast('🎵 <b>Looking on YouTube for</b>'+esc(q));return}}}let sm;
     if(/^(?:can you |could you |please )?shuffle (?:my |the )?(?:whole )?(library|everything|all my music|my music|music|all)$/.test(t)&&mc('shuffle|*'))return reply('Shuffling your library.');
     if((sm=t.match(/^(?:can you |could you |please )?shuffle (?:some |songs by |music by )?(.+)$/))&&!bad.test(sm[1])&&ask('shuffle',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:the )?album (.+)$/)||t.match(/^(?:can you |could you |please )?(?:play|put on|throw on) (?:the )?(.+?) album$/))&&!bad.test(sm[1])&&ask('album',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:some )?(?:songs|music|stuff|tunes) by (.+)$/))&&!bad.test(sm[1])&&ask('artist',sm[1]))return;
-    if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|blast)(?: me)? (.+)$/))&&!bad.test(sm[1])&&!/^(the )?(next|previous|last)( song| track)?$/.test(sm[1])&&ask('song',sm[1]))return}
+    if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|blast|put)(?: me)? (.+?)(?: on| please)?$/))&&(!/^put /.test(t)||/ by /.test(t))&&!bad.test(sm[1])&&!/^(the )?(next|previous|last)( song| track)?$/.test(sm[1])&&ask('song',sm[1]))return}
    if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^skip( it| this| this one| this song)?$/.test(t)||/^(?:turn (?:it|that) (?:up|down)|louder|quieter|softer|volume (?:up|down)|a (?:bit|little) (?:louder|quieter))$/.test(t)){
      if(/\b(pause|stop)\b/.test(t)&&mc('pause|'))return reply('Music paused.');
      if(/\b(next|skip)\b/.test(t)&&mc('next|'))return reply('Skipping.');
@@ -7593,7 +7596,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
      if(/\b(turn|crank) (it |the music )?up\b|\blouder\b/.test(t)&&mc('up|'))return reply('Turning it up.');
      if(/\b(turn) (it |the music )?down\b|\bquieter\b/.test(t)&&mc('down|'))return reply('Turning it down.');}}
   {const mr=raw&&String(raw).match(/^musicresult (ok|notfound|notplayed|needaccess|opened|needsignin|nojs|error)\s*([^|]*)\|?([^|]*)\|?(.*)$/i);if(mr){window._musAsk=null;try{fmDiag(`music: ${mr[1]} ${String(mr[2]).replace(/[\[\]"`]/g,'').slice(0,60)} for [${String(mr[3]).replace(/[\[\]"`]/g,'').slice(0,50)}]`)}catch(e){}const kind=(mr[4]||'playlist').trim().toLowerCase(),lab=mr[2].trim(),q=(mr[3]||lab).trim();
-    if(mr[1]==='ok'){if(kind==='playlist'){toast('🎵 <b>Playing</b>'+esc(lab));return}return reply(`Playing ${lab}.`)}
+    if(mr[1]==='ok'){if(kind==='playlist'||Date.now()-(window._musQuiet||0)<60000){window._musQuiet=0;toast('🎵 <b>Playing</b>'+esc(lab));try{VOICE.followNext=0}catch(e){}return}return reply(`Playing ${lab}.`)}
     if(mr[1]==='notfound')return reply(kind==='playlist'?`I couldn't find a playlist called ${q} on the MacBook.`:`I couldn't find ${q} on Apple Music.`);
     if(mr[1]==='notplayed')return reply(`I opened ${q} in Music on the MacBook, but couldn't start it playing. Hit play there.`);
     if(mr[1]==='needsignin')return reply(`To play ${lab||q}, sign in to Apple Music in Brave on the MacBook once, at music dot apple dot com. Then I can play anything.`);
@@ -9594,7 +9597,9 @@ function voiceUI(){let el=$('vMic');if(!el){el=document.createElement('div');el.
   let E=$('vEdge');if(!E){E=document.createElement('div');E.id='vEdge';document.body.appendChild(E)}E.classList.toggle('on',!!VOICE.armed);el.innerHTML=VOICE.armed?'<i></i><b>Listening…</b>'+(VOICE.heard?`<small>${esc(VOICE.heard)}</small>`:''):'<i></i>'}
 function voiceChime(up){try{const A=new (window.AudioContext||window.webkitAudioContext)(),t=A.currentTime;[up?660:880,up?990:660].forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type='sine';o.frequency.value=f;
   g.gain.setValueAtTime(0,t+i*.12);g.gain.linearRampToValueAtTime(.18,t+i*.12+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.25);o.connect(g).connect(A.destination);o.start(t+i*.12);o.stop(t+i*.12+.3)});setTimeout(()=>A.close(),900)}catch(e){}}
-function voiceRun(cmd){try{if(cmd&&!/\b(command cent(er|re)|hud|away mode)\b/i.test(cmd))hudSeen('voice')}catch(e){}const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
+function voiceRun(cmd){try{const L=window._lastSpoke,c=String(cmd||'').toLowerCase().replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+  if(L&&c&&Date.now()-L.at<25000&&c.split(' ').length<=6&&!/^(?:stop|pause|next|skip|yes|yeah|yep|no|nope|done|snooze|okay|ok|thanks|thank you|cancel|louder|quieter|go back|repeat)$/.test(c)&&L.t.replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').includes(c)){fmDiag(`voice: ignored [${c}], that was me talking`);VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();return}}catch(e){}
+  try{if(cmd&&!/\b(command cent(er|re)|hud|away mode)\b/i.test(cmd))hudSeen('voice')}catch(e){}const fol=VOICE.follow;VOICE.follow=0;VOICE.armed=0;clearTimeout(VOICE.armT);VOICE.heard='';voiceUI();
   cmd=(cmd||'').trim();
   /* a follow-up in a conversation: silence or "thanks" just ends it */
   if(fol&&COOK.on&&(/^(never ?mind|cancel|stop|forget it|bye|goodbye|close|exit|done cooking)\b/i.test(cmd)||(COOK.stage!=='steps'&&!COOK.offer&&/^(no|nope|nah|that'?s (it|all)|i'?m good|all good|no thanks)\b/i.test(cmd)))){cookClose();VOICE.convo=null;voiceChime(false);return}
@@ -10544,7 +10549,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 306';
+document.getElementById('ver').textContent='build nova 307';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){

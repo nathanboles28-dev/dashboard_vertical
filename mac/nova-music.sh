@@ -273,7 +273,9 @@ yt_play(){ q="$1"; LOG="$DIR/music-debug.log"
     t=$(brave_js "(()=>{if(!location.href.includes('$id'))return '';const v=document.querySelector('video');if(!v)return '';v.muted=false;if(v.paused)v.play();try{const t=document.querySelector('.ytp-autonav-toggle-button[aria-checked=true]');if(t)t.click()}catch(e){}if(!v._novaEnd){v._novaEnd=1;v.loop=false;v.addEventListener('timeupdate',()=>{if(v.duration&&v.currentTime>v.duration-1.2&&!v.paused){v.pause()}});v.addEventListener('ended',()=>v.pause())}return (v.paused?'':'P|')+document.title.replace(/ - YouTube\$/,'')})()")
     case "$t" in P\|*) break;; esac; done
   echo "---- $(date) | youtube: $q -> $id | ${t:-no answer from Brave}" >> "$LOG"
-  nm=$(printf '%s' "${t#P|}" | sed -E 's/^\([0-9]+\) //; s/ *[(\[](official|lyric|audio|visuali)[^)\]]*[)\]]//Ig; s/ +$//')
+  # "Reba McEntire - I'm a Survivor (Lyrics)" -> "I'm a Survivor by Reba McEntire"
+  nm=$(printf '%s' "${t#P|}" | sed -E 's/^\([0-9]+\) //; s/ *[(][^)]*([Oo]fficial|[Ll]yric|[Aa]udio|[Vv]isuali[sz]er|[Vv]ideo|HD|4K|[Rr]emaster)[^)]*[)]//g; s/ *\[[^]]*([Oo]fficial|[Ll]yric|[Aa]udio|[Vv]isuali[sz]er|[Vv]ideo|HD|4K|[Rr]emaster)[^]]*\]//g; s/ *[|].*$//; s/ +$//')
+  nm=$(printf '%s' "$nm" | sed 's/ – / - /; s/ — / - /'); case "$nm" in *" - "*) nm="${nm#* - } by ${nm%% - *}";; esac
   [ -z "$nm" ] && nm="$q"
   echo "ok $nm on YouTube"
 }
