@@ -7545,7 +7545,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
    /* songs, artists and albums: your library first, then anything on Apple Music */
    {const bad=/\b(playlist|game|movie|show|episode|roundup|round up|trivia|video|youtube|jellyfin|highlights?)\b|^(some )?(music|something|it|that|again|the music)$/,
       clean=x=>x.replace(/\s+(on apple music|on music|on the macbook|on the mac|please|for me)$/,'').replace(/^(some|the song|the track|a song called|the song called|songs by|music by)\s+/,'').trim(),
-      ask=(k,q)=>{q=clean(q);if(!q||q.length>80||!mc(k+'|'+q))return false;toast('🎵 <b>Looking for</b>'+esc(q));window._musAsk={q,at:Date.now()};setTimeout(()=>{const A=window._musAsk;if(A&&A.q===q){window._musAsk=null;try{fmDiag(`music: no answer from the Mac 45 s after asking for [${q.replace(/[\[\]"`]/g,'')}]`)}catch(e){}}},45000);return true};let sm;
+      ask=(k,q)=>{q=clean(q);if(!q||q.length>80||!mc(k+'|'+q))return false;toast('🎵 <b>Looking for</b>'+esc(q));window._musAsk={q,at:Date.now()};setTimeout(()=>{const A=window._musAsk;if(A&&A.q===q){window._musAsk=null;try{fmDiag(`music: no answer from the Mac 60 s after asking for [${q.replace(/[\[\]"`]/g,'')}], trying YouTube`)}catch(e){}if(k==='song')mc('yt|'+q)}},60000);return true};
+      {const yq=t.match(/^(?:can you |could you |please )?(?:play|put on) (.+?) (?:on|from) youtube$/);if(yq){const q=clean(yq[1]);if(q&&mc('yt|'+q)){toast('🎵 <b>Looking on YouTube for</b>'+esc(q));return}}}let sm;
     if(/^(?:can you |could you |please )?shuffle (?:my |the )?(?:whole )?(library|everything|all my music|my music|music|all)$/.test(t)&&mc('shuffle|*'))return reply('Shuffling your library.');
     if((sm=t.match(/^(?:can you |could you |please )?shuffle (?:some |songs by |music by )?(.+)$/))&&!bad.test(sm[1])&&ask('shuffle',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:the )?album (.+)$/)||t.match(/^(?:can you |could you |please )?(?:play|put on|throw on) (?:the )?(.+?) album$/))&&!bad.test(sm[1])&&ask('album',sm[1]))return;
@@ -10511,7 +10512,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 298';
+document.getElementById('ver').textContent='build nova 299';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){

@@ -7,6 +7,9 @@ DIR="$(cd "$(dirname "$0")" && pwd)"; . "$DIR/nova-music.env"; SF="$DIR/.np-stat
 # the Nova Music app reports back after pressing play: --result "ok Song by Artist" "what you asked" "song" "app log"
 if [ "$1" = "--result" ]; then BUS="${NOVA_BUS:-https://nova-bus.nathanboles28.workers.dev}"
   { [ -n "$5" ] && echo "app: $5"; echo "result: $2"; } >> "$DIR/music-debug.log"
+  # Apple Music wouldn't start it: queue it for YouTube in Brave (the next check, a few seconds from now, plays it and reports back)
+  case "$2" in notplayed*|needaccess*|opened*) if [ "$4" = song ] && { [ -d "/Applications/Brave Browser.app" ] || [ -d "$HOME/Applications/Brave Browser.app" ]; }; then
+    echo "result: handing to YouTube" >> "$DIR/music-debug.log"; curl -sf -m 5 -d "yt|$3" "$BUS/bus/${NOVA_TOPIC}-mcmd" >/dev/null 2>&1; exit 0; fi;; esac
   curl -sf -m 5 -d "musicresult ${2}|${3}|${4}" "$BUS/bus/${NOVA_TOPIC}" >/dev/null 2>&1; exit 0; fi
 last_key=""; last_pos=0; last_t=0; sent_day=""; sent=0; last_cmd_t=""; last_poll=0; last_hb=0; last_kfix=0; [ -f "$SF" ] && . "$SF"
 DEV="${NOVA_DEVICE:-Macbook}"; CAP="${DAILY_CAP:-2000}"; [ "$CAP" -lt 2000 ] 2>/dev/null && CAP=2000
@@ -237,6 +240,43 @@ fm_air(){ txt="$1"; duckp="${2:-30}"; kind="${3:-dj}"; L="$DIR/.dj-lock"
   fm_post off; rm -f "$DIR/.dj.aiff" "$DIR/.dj.wav"; rmdir "$L" 2>/dev/null; }
 # start a break in the background so the now-playing checks keep running
 fm_go(){ ( fm_air "$1" "$2" "$3" ) </dev/null >/dev/null 2>&1 3>&- & }
+# YouTube in Brave (ad-blocked): the backup when Apple Music can't start a song. Searches for the official audio so it's
+# the studio track, not the video. Brave already lets this app run JavaScript in it (that's how YouTube shows as Now Playing).
+brave_js(){ osascript - "$1" 2>/dev/null <<'APPLESCRIPT'
+on run argv
+  set js to item 1 of argv
+  set out to ""
+  if application "Brave Browser" is not running then return ""
+  tell application "Brave Browser"
+    repeat with w in windows
+      repeat with t in tabs of w
+        if (URL of t) contains "youtube.com/watch" then
+          try
+            set out to (execute t javascript js)
+          end try
+        end if
+      end repeat
+    end repeat
+  end tell
+  return out
+end run
+APPLESCRIPT
+}
+yt_play(){ q="$1"; LOG="$DIR/music-debug.log"
+  [ -d "/Applications/Brave Browser.app" ] || [ -d "$HOME/Applications/Brave Browser.app" ] || { echo "notfound"; return; }
+  id=$(curl -sf -m 10 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36" -H "Accept-Language: en-CA,en" -G "https://www.youtube.com/results" --data-urlencode "search_query=$q official audio" | grep -o '"videoId":"[A-Za-z0-9_-]\{11\}"' | head -1 | cut -d'"' -f4)
+  [ -z "$id" ] && { echo "---- $(date) | youtube: nothing for $q" >> "$LOG"; echo "notfound"; return; }
+  osascript -e 'tell application "Music" to pause' >/dev/null 2>&1
+  brave_js "document.querySelectorAll('video').forEach(v=>v.pause())" >/dev/null
+  open -a "Brave Browser" "https://www.youtube.com/watch?v=$id" >/dev/null 2>&1 || { echo "error Brave wouldn't open"; return; }
+  t=""; for i in 1 2 3 4 5 6; do sleep 2
+    t=$(brave_js "(()=>{if(!location.href.includes('$id'))return '';const v=document.querySelector('video');if(!v)return '';v.muted=false;if(v.paused)v.play();return (v.paused?'':'P|')+document.title.replace(/ - YouTube\$/,'')})()")
+    case "$t" in P\|*) break;; esac; done
+  echo "---- $(date) | youtube: $q -> $id | ${t:-no answer from Brave}" >> "$LOG"
+  nm=$(printf '%s' "${t#P|}" | sed -E 's/^\([0-9]+\) //; s/ *[(\[](official|lyric|audio|visuali)[^)\]]*[)\]]//Ig; s/ +$//')
+  [ -z "$nm" ] && nm="$q"
+  echo "ok $nm on YouTube"
+}
 music_cmd(){ k="${1%%|*}"; v="${1#*|}"; r=""
   case "$k" in
     playlist) r=$(osascript - "$v" 2>&1 <<'APPLESCRIPT'
@@ -314,9 +354,11 @@ end playSet
 APPLESCRIPT
 )
         case "$r" in ok*) ;; *) if [ "$k" = album ]; then r=$(catalog_play "$q2" album); else r=$(catalog_play "$q2" song); fi;; esac
+        case "$r" in notfound*|error*) [ "$k" = song ] && r=$(yt_play "$q2");; esac
         case "$r" in ok*|notfound*|notplayed*|needaccess*|opened*|deferred) ;; *) r="error $(printf '%s' "$r" | tr -d '|' | tr '\n' ' ' | cut -c1-120)";; esac
       fi;;
-    pause)    osascript -e 'tell application "Music" to pause' >/dev/null 2>&1;;
+    yt)       r=$(yt_play "$v"); k=song;;
+    pause)    osascript -e 'tell application "Music" to pause' >/dev/null 2>&1; brave_js "document.querySelectorAll('video').forEach(v=>v.pause())" >/dev/null;;
     play)     osascript -e 'tell application "Music" to play' >/dev/null 2>&1;;
     next)     osascript -e 'tell application "Music" to next track' >/dev/null 2>&1;;
     previous) osascript -e 'tell application "Music" to previous track' >/dev/null 2>&1;;
