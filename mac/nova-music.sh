@@ -382,6 +382,14 @@ APPLESCRIPT
   esac
   [ -n "$r" ] && [ "$r" != deferred ] && curl -sf -m 5 -d "musicresult ${r}|${v}|${k}" "$BUS/bus/${NOVA_TOPIC}" >/dev/null 2>&1
 }
+# keep itself up to date: every 30 minutes, fetch the latest copy from the dashboard's site and swap it in if it changed
+# (checked for syntax first; the old copy is kept as nova-music.sh.bak-auto). The next run uses the new one.
+if [ $((now - ${last_upd:-0})) -ge 1800 ]; then last_upd=$now
+  ( T="$DIR/.nm-new"; curl -fsSL -m 20 "https://nathanboles28-dev.github.io/dashboard_vertical/mac/nova-music.sh?t=$now" -o "$T" 2>/dev/null \
+    && grep -q 'Nova "Now playing" sender' "$T" && bash -n "$T" 2>/dev/null && ! cmp -s "$T" "$DIR/nova-music.sh" \
+    && cp "$DIR/nova-music.sh" "$DIR/nova-music.sh.bak-auto" && chmod +x "$T" && mv -f "$T" "$DIR/nova-music.sh" \
+    && echo "mac $(date +%H:%M:%S) music script updated itself" >> "$DIR/music-debug.log"; rm -f "$T" ) </dev/null >/dev/null 2>&1 3>&- &
+fi
 # Nova FM health check: once a minute, tell the dashboard this Mac is alive, what Music is doing and whether the voice is up
 # (if the Kokoro voice is down, restart it, at most every 5 minutes)
 if [ $((now - ${last_hb:-0})) -ge 60 ]; then
@@ -431,4 +439,4 @@ if [ -f "$DIR/.dj-queue" ] && [ "$st" = playing ]; then
 fi
 # a copy of the recent log in Music > Nova FM, so it's easy to look at (or for Claude to read)
 mkdir -p "$FMDIR" 2>/dev/null; [ "$DIR/music-debug.log" -nt "$FMDIR/nova-log.txt" ] && tail -n 400 "$DIR/music-debug.log" > "$FMDIR/nova-log.txt" 2>/dev/null
-printf 'last_key=%q\nlast_pos=%q\nlast_t=%q\nsent_day=%q\nsent=%q\nlast_cmd_t=%q\nlast_poll=%q\nlast_hb=%q\nlast_kfix=%q\n' "$last_key" "$last_pos" "$last_t" "$sent_day" "$sent" "$last_cmd_t" "$last_poll" "$last_hb" "$last_kfix" > "$SF"
+printf 'last_key=%q\nlast_pos=%q\nlast_t=%q\nsent_day=%q\nsent=%q\nlast_cmd_t=%q\nlast_poll=%q\nlast_hb=%q\nlast_kfix=%q\nlast_upd=%q\n' "$last_key" "$last_pos" "$last_t" "$sent_day" "$sent" "$last_cmd_t" "$last_poll" "$last_hb" "$last_kfix" "${last_upd:-0}" > "$SF"
