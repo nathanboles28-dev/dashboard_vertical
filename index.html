@@ -5001,14 +5001,25 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Weather now',()=>wxSay());add('Weather tomorrow',()=>wxSay(true));
   add('Hourly (next 12 h)',()=>{const H=WXD&&WXD.hr;if(!H||!H.time)return '';const i0=H.time.findIndex(t=>Date.parse(t)>=Date.now()-36e5);return H.time.slice(i0,i0+12).map((t,i)=>`${new Date(t).getHours()}:00 ${Math.round(H.temperature_2m[i0+i])}° ${(WXT[H.weather_code[i0+i]]||'').toLowerCase()} ${H.precipitation_probability?H.precipitation_probability[i0+i]+'% precip':''}`).join('; ')});
   add('7-day',()=>{const d=WXD&&WXD.dl;if(!d)return '';return d.time.slice(0,7).map((t,i)=>`${new Date(t+'T12:00').toLocaleDateString([],{weekday:'short'})} ${Math.round(d.temperature_2m_max[i])}/${Math.round(d.temperature_2m_min[i])} ${(WXT[d.weather_code[i]]||'').toLowerCase()} ${(d.precipitation_probability_max||[])[i]||0}%`).join('; ')});
-  add('Weather alerts',()=>wxAlerts.map(a=>a.alert_name_en).join(', '));
+  /* build 293: things on the screen Nova couldn't see before */
+  add('Weather alerts in effect (the full text from Environment Canada; use it to explain an alert in plain words)',()=>wxAlerts.map(a=>{const tx=String(a.alert_text_en||a.text_en||a.description_en||Object.entries(a).filter(([k,v])=>/_en$/.test(k)&&typeof v==='string').map(([,v])=>v).sort((x,y)=>y.length-x.length)[0]||'').replace(/\s+/g,' ').trim();
+    return `${a.alert_name_en||a.alert_short_name_en} (${a.alert_type||'alert'})${a.feature_name_en?' for '+a.feature_name_en:''}${a.publication_datetime?', issued '+D(new Date(a.publication_datetime)):''}${a.expiration_datetime?', in effect until '+D(new Date(a.expiration_datetime)):''}${tx?'\n'+tx.slice(0,2200):''}`}).join('\n\n'));
+  add('Weather details',()=>{if(!WXD)return '';const c=WXD.c,d=WXD.dl;return [c&&c.apparent_temperature!=null?`Feels like ${Math.round(c.apparent_temperature)}°`:'',d&&d.sunrise?`Sunrise ${fmt(new Date(d.sunrise[0]))}, sunset ${fmt(new Date(d.sunset[0]))}`:'',d&&d.uv_index_max?`UV max today ${Math.round(d.uv_index_max[0])}`:'',d&&d.snowfall_sum?`Snow totals next days (cm): ${d.snowfall_sum.slice(0,4).map(x=>Math.round(x*10)/10).join(', ')}`:''].filter(Boolean).join('\n')});
+  add('Standings (NHL)',()=>(stNHL||[]).slice(0,32).map((r,i)=>`${i+1}. ${r.name||r.c} ${r.gp??''}GP ${r.w??''}-${r.l??''}-${r.otl??''} ${r.pts??''}pts`).join('\n'));
+  add('Standings (OHL)',()=>(stOHL||[]).slice(0,20).map((r,i)=>`${i+1}. ${r.name||r.c} ${r.gp??''}GP ${r.w??''}-${r.l??''}-${r.otl??''} ${r.pts??''}pts`).join('\n'));
+  add('All games today/recent (scores are away–home)',()=>(lastRes||[]).flatMap(r=>(r.games||[]).filter(g=>Math.abs(g.date-Date.now())<36*36e5).map(g=>`${String(r.L.name||r.L.league||'').toUpperCase()}: ${g.fA||g.A}${g.state==='pre'?'':' '+(g.sA??'')} at ${g.fH||g.H}${g.state==='pre'?'':' '+(g.sH??'')} (${g.state==='post'?'final':g.state==='in'?'live':'starts '+D(g.date)})`)).slice(0,40).join('\n'));
+  add('Trades and signings',()=>typeof TX!=='undefined'&&TX?[...(TX.mine||[]).slice(0,6),...(TX.nhl||[]).slice(0,8)].map(x=>`${new Date(x.at).toLocaleDateString()} ${x.lg} ${x.kind}: ${x.kind==='trade'?`${x.nameA} get ${x.aGets||'?'}; ${x.nameB} get ${x.bGets||'?'}`:`${x.team||''} ${x.who||''} ${x.how||''}`}`).join('\n'):'');
+  add('Planes overhead',()=>typeof planesSay==='function'?planesSay():'');
+  add('Nova FM radio',()=>{const H=NM.get('fmhist',[]).filter(x=>!x.brk).slice(0,6);return [typeof FM!=='undefined'?`Nova FM is ${FM.on?'on':'off'}`:'',H.length?'Recently played: '+H.map(x=>`${x.title} by ${x.artist}`).join('; '):''].filter(Boolean).join('\n')});
+  add('What the dashboard costs to run',()=>{try{const W=Object.keys(PW.draw||{}).length?PW.draw:pwrWatts(),r=pwrRate(1)/100,w=Object.values(W).reduce((a,v)=>a+v.w,0);return `About ${Math.round(w)} W total, roughly $${(w*24*30/1000*r).toFixed(2)} a month (Ontario tiered rates, all in)`}catch(e){return ''}});
+  add(`${KIDC().name}'s stars`,()=>{const S=kidStars();return `${S.n} of ${KIDC().goal} stars (Rubble mode runs 10 AM to 4 PM)`});
+  add('On the screen right now',()=>{const p=document.querySelector('.page.on, section.on');const t=p&&(p.querySelector('.ptitle,h1,h2')||{}).textContent;return [t?`Page showing: ${t}`:'',document.body.classList.contains('hasAlert')&&wxAlerts[0]?`Alert banner at the top: ${wxAlerts[0].alert_name_en}`:''].filter(Boolean).join('\n')});
   add('Nova Observatory (planet, people, natural events)',()=>typeof obsContext==='function'?obsContext():'');
   add('Calendar (next 2 weeks)',()=>calEvents.filter(e=>e.end>Date.now()&&e.start-Date.now()<14*864e5).sort((a,b)=>a.start-b.start).slice(0,25).map(e=>`${e.allDay?e.start.toDateString()+' all day':D(e.start)} – ${e.title}${e.loc?' @ '+e.loc:''}`).join('\n'));
   add('Week ahead',()=>weekSay());
   add('Leafs',()=>typeof hubOn==='function'&&hubOn()?hubSay():'');add('Knights',()=>typeof khOn==='function'&&khOn()?khSay():'');
   add('Game day',()=>gdSay());add('Live game',()=>typeof LV!=='undefined'&&LV?liveSay():'');add('Recent results',()=>recapSay());
   add('Starting goalies / pregame news',()=>{if(typeof PG==='undefined'||!PG||!PG.d)return '';const g=PG.d.goalies;return [g?`Goalies: us ${g.us&&g.us.name||'?'} (${g.us&&g.us.status||''}), them ${g.them&&g.them.name||'?'} (${g.them&&g.them.status||''})`:'',...(PG.d.news||[]).slice(0,5).map(n=>'News: '+n.t)].filter(Boolean).join('\n')});
-  add('Scores today',()=>[...(stNHL||[]),...(stOHL||[])].slice(0,20).map(g=>typeof g==='string'?g:[g.away||g.a,g.home||g.h,g.status||g.st||''].filter(Boolean).join(' ')).join('; '));
   add('Team news headlines',()=>(newsItems||[]).slice(0,8).map(n=>n.title).join('\n'));
   add('Radio game',()=>radioOn()&&RG.g?`Listening to ${rgCfg().title} (${rgCfg().station}). ${RG.g.line} · ${RG.g.det}`:'');
   add('Now playing',()=>NP&&NP.state==='playing'?`${NP.title} by ${NP.artist}${NP.album?' ('+NP.album+')':''}`:'Nothing playing');
@@ -10283,7 +10294,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 292';
+document.getElementById('ver').textContent='build nova 293';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
