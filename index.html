@@ -2996,6 +2996,10 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+#audPill{position:fixed;right:3vw;top:9.5vw;z-index:60;display:flex;align-items:center;gap:1.6vw;padding:1.3vw 2.2vw;background:rgba(10,14,24,.92);border-left:.7vw solid var(--xor,#e4572e);color:#fff;transform:translateX(120%);transition:transform .4s;max-width:62vw;box-shadow:0 .6vw 2vw rgba(0,0,0,.4)}
+#audPill.on{transform:none}#audPill i{font-style:normal;font-size:4vw}#audPill b{display:block;font-family:var(--head,'Barlow Condensed'),sans-serif;font-weight:800;font-size:3.2vw;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44vw}
+#audPill small{display:block;font-size:1.9vw;color:#93a4c6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44vw}#audPill em{font-style:normal;font-family:var(--head,'Barlow Condensed'),sans-serif;font-weight:800;font-size:2.4vw;color:#93a4c6;border:1px solid #34425f;padding:.2vw .8vw}
+
 #pObs{--k:.17vw;background:radial-gradient(120% 50% at 50% 0%,#1d2a47,#0a0e18 70%)}
 #pObs .pwrap{gap:calc(8*var(--k))}
 #pObs #obsBody{position:relative;inset:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:calc(8*var(--k));color:#fff;font-family:'Inter',sans-serif}
@@ -4283,14 +4287,23 @@ function tkTime(t){/* "at 7", "at 7:30 pm", "at noon", "tomorrow at 9", "in 20 m
   else if(d<=now){if(!ap&&h<12&&new Date(d.getTime()+12*36e5)>now)d.setTime(d.getTime()+12*36e5);else d.setDate(d.getDate()+1)}
   else if(!ap&&h<7)d.setHours(h+12);return d.getTime()}
 function tkCmd(t){
-  /* alarms (build 294): "wake me up at 6:30", "set an alarm for 7 tomorrow", "cancel my alarm", "what time is my alarm" */
-  if(/\balarms?\b/.test(t)&&/\b(cancel|stop|delete|remove|clear|turn off)\b/.test(t)&&!tkRing.length){const n=TK.rems.filter(r=>r.alarm).length;TK.rems=TK.rems.filter(r=>!r.alarm||(/\ball\b/.test(t)?false:r!==TK.rems.filter(x=>x.alarm)[0]));tkSave();return n?'Alarm cancelled.':'No alarm set.'}
-  if(/\b(?:what time is|when is|is there|do i have|any) (?:my |an |the )?alarms?\b|\bmy alarms?\b\??$/.test(t)){const A=TK.rems.filter(r=>r.alarm);return A.length?A.map(r=>'Alarm '+tkWhen(r.at)).join('. ')+'.':'No alarm set.'}
-  if(/\b(?:wake me(?: up)?|set (?:an |my |the )?alarm|alarm (?:for|at))\b/.test(t)){let u=t.replace(/\b(?:for|to)\s+(?=\d|noon)/,'at ');
-    const mm=u.match(/\bat (\d{1,2})(?::(\d{2}))?\s*(am|pm|a m|p m)?\b/);if(mm&&!mm[3]&&+mm[1]>=4&&+mm[1]<=11)u=u.replace(mm[0],mm[0]+' am');
-    const at=tkTime(u);if(!at)return 'What time? Try "wake me up at 6:30".';
-    TK.rems.push({id:Date.now(),text:'alarm',alarm:true,at});TK.rems.sort((a,b)=>a.at-b.at);tkSave();const h=(at-Date.now())/36e5;
-    return `Alarm set for ${tkWhen(at).replace(/^(tomorrow|\w{3}) /,'$1 at ')}. That's ${h>=1?Math.floor(h)+' hour'+(Math.floor(h)===1?'':'s')+(Math.round(h%1*60)?' and '+Math.round(h%1*60)+' minutes':''):Math.round(h*60)+' minutes'} from now.`}
+  /* alarms: "wake me up at 6:30", "every weekday at 6:30", "wake me up to the radio / 680 News / music / Nova FM / rain sounds", "cancel my alarm", "what time is my alarm" */
+  if(/\balarms?\b/.test(t)&&/\b(cancel|stop|delete|remove|clear|turn off)\b/.test(t)&&!tkRing.length){const A=TK.rems.filter(r=>r.alarm);if(!A.length)return 'No alarm set.';
+    const wd=/weekday/.test(t)?A.filter(r=>r.rep&&r.rep.length===5):/weekend/.test(t)?A.filter(r=>r.rep&&r.rep.length===2):/\b(?:all|every)\b/.test(t)?A:[A[0]];const kill=new Set(wd.length?wd:[A[0]]);TK.rems=TK.rems.filter(r=>!kill.has(r));tkSave();return kill.size>1?'Alarms cancelled.':'Alarm cancelled.'}
+  if(/\b(?:what time is|when is|is there|do i have|any|list|what are) (?:my |an |the )?alarms?\b|\bmy alarms?\b\??$/.test(t)){const A=TK.rems.filter(r=>r.alarm);return A.length?A.map(alarmDesc).join('. ')+'.':'No alarm set.'}
+  if(/\b(?:wake me(?: up)?|set (?:an |my |the )?alarm|alarm (?:for|at|every))\b/.test(t)){let u=t;
+    const DN=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];let rep=null;
+    if(/\b(?:every ?day|daily|every morning|each morning)\b/.test(u))rep=[0,1,2,3,4,5,6];else if(/\b(?:weekdays?|work ?days?|monday (?:to|through) friday)\b/.test(u))rep=[1,2,3,4,5];else if(/\bweekends?\b/.test(u))rep=[0,6];
+    else{const ds=DN.map((d,i)=>new RegExp('\\bevery '+d+'\\b|\\b'+d+'s\\b').test(u)?i:-1).filter(i=>i>=0);if(ds.length)rep=ds}
+    let snd='';for(const m of u.matchAll(/\b(?:to|with)\s+(.+?)(?=\s+(?:at|every|on|tomorrow|weekdays?|weekends?|daily|each)\b|$)/g)){const ph=m[1].trim();
+      if(/^\d{1,2}(?::\d{2})?\s*(?:am|pm|a m|p m|o'?clock)?$/.test(ph)||/^(?:wake|get up|be up|noon|midnight)\b/.test(ph))continue;snd=ph;u=u.replace(m[0],' ');break}
+    u=u.replace(/\b(?:for|to)\s+(?=\d|noon)/,'at ').replace(/\b(?:every ?day|daily|every morning|each morning|weekdays?|weekends?|work ?days?|every \w+day|\w+days)\b/g,' ');
+    const mm=u.match(/\bat (\d{1,2})(?::(\d{2}))?\s*(am|pm|a m|p m)?\b/);if(mm&&!mm[3]&&+mm[1]>=4&&+mm[1]<=11)u=u.replace(/\bat (\d{1,2}(?::\d{2})?)\b/,'at $1 am');
+    let at=tkTime(u);if(!at)return 'What time? Try "wake me up at 6:30".';
+    const d0=new Date(at),hm=[d0.getHours(),d0.getMinutes()];if(rep)at=alarmNext(hm,rep,Date.now());
+    const sd=snd?alarmSnd(snd):null;
+    const r={id:Date.now(),text:'alarm',alarm:true,at,hm,rep,snd:sd};TK.rems.push(r);TK.rems.sort((a,b)=>a.at-b.at);tkSave();const mn=Math.round((at-Date.now())/6e4),hh=Math.floor(mn/60),m2=mn%60;
+    return `Alarm set ${alarmDesc(r).replace(/^Alarm /,'')}.${mn<24*60?` That's ${hh?hh+' hour'+(hh===1?'':'s')+(m2?' and ':''):''}${m2||!hh?m2+' minute'+(m2===1?'':'s'):''} from now.`:''}`}
   /* timers */
   if(/\btimer\b/.test(t)&&/\b(cancel|stop|delete|remove|clear)\b/.test(t)){const nm=(t.match(/(?:cancel|stop|delete|remove|clear) (?:the |my |all )?(.*?) ?timers?/)||[])[1]||'';
     const before=TK.timers.length;TK.timers=/\ball\b/.test(t)||!nm?(/\ball\b/.test(t)||TK.timers.length<=1?[]:TK.timers.slice(0,-1)):TK.timers.filter(x=>x.name!==nm);tkSave();return before>TK.timers.length?'Timer cancelled.':'No timer to cancel.'}
@@ -4300,9 +4313,10 @@ function tkCmd(t){
     if(/^(set|start|a|an)\b/.test(nm))nm='';const f=(t.match(/timer for (?:the )?([a-z ]+?)(?: for| in|$)/)||[])[1];if(!nm&&f&&!/\d/.test(f)&&!tkDur(f))nm=f;
     TK.timers.push({id:Date.now(),name:nm.trim(),end:Date.now()+ms,dur:ms});tkSave();return `${nm?nm[0].toUpperCase()+nm.slice(1)+' timer':'Timer'} set for ${tkSay(ms)}.`}
   /* reminders */
+  let onPhone=false;if(/^remind me\b/.test(t)&&/\b(?:on|to|through) my phone\b/.test(t)){onPhone=true;t=t.replace(/\s*\b(?:on|to|through) my phone\b/,'')}
   let m=t.match(/^remind me (?:to )?(.+?) (?:at|in|tomorrow)\b.*$/)||t.match(/^remind me (?:at|in|tomorrow)\b.*? to (.+)$/);
   if(/^remind me\b/.test(t)){const at=tkTime(t);if(!m||!at)return 'When? Try "remind me at 7 to take the garbage out".';
-    const txt=m[1].replace(/\b(at|in|tomorrow)\b.*$/,'').trim();TK.rems.push({id:Date.now(),text:txt,at});TK.rems.sort((a,b)=>a.at-b.at);tkSave();return `Okay, ${tkWhen(at)}: ${txt}.`}
+    const txt=m[1].replace(/\b(at|in|tomorrow)\b.*$/,'').trim();TK.rems.push({id:Date.now(),text:txt,at,phone:onPhone||undefined});TK.rems.sort((a,b)=>a.at-b.at);tkSave();return `Okay, ${tkWhen(at)}${onPhone?' on your phone':''}: ${txt}.`}
   if(/\b(cancel|delete|remove|clear)\b.*\breminders?\b/.test(t)){const n=TK.rems.length;TK.rems=/\ball\b/.test(t)?[]:TK.rems.slice(1);tkSave();return n?'Reminder removed.':'No reminders.'}
   if(/\b(my reminders|any reminders|what reminders)\b/.test(t)){return TK.rems.length?TK.rems.map(r=>`${tkWhen(r.at)}: ${r.text}`).join('. ')+'.':'No reminders.'}
   /* list */
@@ -4313,7 +4327,7 @@ function tkCmd(t){
   if(/^clear (?:the |my )?(?:shopping |grocery )?list$/.test(t)){TK.list=[];tkSave();return 'List cleared.'}
   if(/\b(what's|whats|what is) on (?:the |my )?(?:shopping |grocery )?list\b|^(?:the |my )?(?:shopping |grocery )?list$/.test(t))return TK.list.length?'On the list: '+TK.list.map(x=>x.t).join(', ')+'.':'The list is empty.';
   /* dismiss an alert */
-  if(tkRing.length&&/^(done|stop|ok|okay|dismiss|got it|thanks|thank you|snooze)\b/.test(t)){if(/snooze/.test(t)){tkRing.forEach(a=>{if(a.k==='rem')TK.rems.push({id:Date.now(),text:a.text,at:Date.now()+10*60e3});if(a.k==='alarm')TK.rems.push({id:Date.now()+1,text:'alarm',alarm:true,at:Date.now()+9*60e3})});tkDismiss.snz=1}const al=tkRing.some(a=>a.k==='alarm');tkDismiss();return /snooze/.test(t)?(al?'Snoozed 9 minutes.':'Snoozed 10 minutes.'):'Okay.'}
+  if(tkRing.length&&/^(done|stop|ok|okay|dismiss|got it|thanks|thank you|snooze)\b/.test(t)){if(/snooze/.test(t)){tkRing.forEach(a=>{if(a.k==='rem')TK.rems.push({id:Date.now(),text:a.text,at:Date.now()+10*60e3});if(a.k==='alarm')TK.rems.push({id:Date.now()+1,text:'alarm',alarm:true,at:Date.now()+9*60e3,snd:a.snd||null})});tkDismiss.snz=1}const al=tkRing.some(a=>a.k==='alarm');tkDismiss();return /snooze/.test(t)?(al?'Snoozed 9 minutes.':'Snoozed 10 minutes.'):'Okay.'}
   return null}
 function tkRemote(o){if(o.ping){tkSig='';tkPub();return}
   if(o.cancel){TK.timers=TK.timers.filter(x=>x.id!==o.cancel)}if(o.unrem){TK.rems=TK.rems.filter(x=>x.id!==o.unrem)}
@@ -4328,16 +4342,39 @@ function tkChime(){try{const A=window.AudioContext||window.webkitAudioContext;if
 function tkFire(a){tkRing.push(a);const el=$('tkAlert');el.querySelector('.tk-ai span').textContent=a.icon;el.querySelector('.tk-at').textContent=a.title;
   el.querySelector('.tk-as').textContent=tkRing.length>1?`+${tkRing.length-1} more · say "Nova, done" or tap Done on the remote`:'Say "Nova, done" or tap Done on the remote';el.classList.add('on');
   tkChime();clearInterval(tkBeep);let n=0;tkBeep=setInterval(()=>{if(++n>40){tkDismiss();return}tkChime()},4000);tkPub()}
+/* alarm helpers (build 296) */
+function alarmNext(hm,rep,after){const d=new Date(after);for(let i=0;i<9;i++){const x=new Date(d);x.setDate(d.getDate()+i);x.setHours(hm[0],hm[1],0,0);if(x.getTime()>after+30000&&(!rep||rep.includes(x.getDay())))return x.getTime()}return after+864e5}
+function alarmDesc(r){const tm=new Date(r.at).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),R=r.rep;
+  const rp=!R?'':R.length===7?'every day':R.length===5&&!R.includes(0)&&!R.includes(6)?'weekdays':R.length===2&&R.includes(0)&&R.includes(6)?'weekends':'every '+R.map(i=>['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][i]).join(' and ');
+  return `Alarm ${rp?rp+' at '+tm:'for '+tkWhen(r.at).replace(/^(tomorrow|\w{3}) /,'$1 at ')}${r.snd?' ('+r.snd.label+')':''}`}
+function alarmSnd(p){p=p.replace(/^(?:the|some|my)\s+/,'').trim();
+  if(/^(?:music|apple music|my music|songs?)$/.test(p))return {k:'music',label:'music',say:'with music'};
+  if(/^nova ?fm$/.test(p))return {k:'novafm',label:'Nova FM',say:'with Nova FM'};
+  if(/\b(?:sounds?|noise)\b|^(?:rain|ocean|waves|birds|thunderstorm|fireplace|stream)$/.test(p)){const k=audSleepKind(p)||'ocean';return {k:'sleep',q:k,label:AUD_SLEEP[k],say:'with '+AUD_SLEEP[k].toLowerCase()}}
+  if(/\bpodcast\b/.test(p))return {k:'pod',q:p,label:p,say:'with '+p};
+  if(/^radio$/.test(p))return {k:'radio',q:'',label:'the radio',say:'with the radio'};
+  if(/\b(?:radio|station|news|fm|am|cbc|cfrb|newstalk|tsn|fan 590|chum|virgin|kiss|q ?107|jazz|classical|indie ?88|boom|z ?103)\b/.test(p))return {k:'radio',q:p,label:p,say:'with '+p};
+  return {k:'shuffle',q:p,label:p,say:'with '+p}}
+async function alarmSound(s){const mcmd=c=>{try{if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,c).catch(()=>{})}catch(e){}};
+  try{if(s.k==='music'||s.k==='novafm'||s.k==='shuffle'){if(s.k==='novafm'){FM.on=true;NM.set('fm',true)}mcmd('volume|25');setTimeout(()=>mcmd(s.k==='shuffle'?'shuffle|'+s.q.slice(0,80):'play|'),800);
+      [40,55,65].forEach((v,i)=>setTimeout(()=>{if(tkRing.some(a=>a.k==='alarm'))mcmd('volume|'+v)},20000*(i+1)));return true}
+    let r='';if(s.k==='sleep')r=audSleep(s.q,0);else if(s.k==='radio')r=await audRadio(s.q);else if(s.k==='pod')r=await audPod(s.q);
+    if(AUD.kind){AUD.ramp=Date.now();AUD.alarm=1;audLevel();return true}}catch(e){}return false}
 /* an alarm: screen on, the chime every 2.5 s for up to 10 minutes; "stop"/"done" ends it (and a morning alarm gets the roundup), "snooze" is 9 minutes */
 function alarmRing(r){try{wakeScreen();if(SECRETS.topic){fetch(`https://ntfy.sh/${SECRETS.topic}-power`,{method:'POST',body:'wake'}).catch(()=>{});if(NB.ok)nbPub(`${SECRETS.topic}-power`,'wake').catch(()=>{})}}catch(e){}
-  tkFire({k:'alarm',icon:'⏰',title:`Alarm · ${fmt(new Date(r.at))}`,text:'alarm'});clearInterval(tkBeep);let n=0;tkBeep=setInterval(()=>{if(++n>240){tkDismiss();return}tkChime()},2500);
+  tkFire({k:'alarm',icon:'⏰',title:`Alarm · ${fmt(new Date(r.at))}`,text:'alarm',snd:r.snd||null});clearInterval(tkBeep);
+  const beep=()=>{let n=0;clearInterval(tkBeep);tkBeep=setInterval(()=>{if(++n>240){tkDismiss();return}tkChime()},2500)};
+  if(r.snd){alarmSound(r.snd).then(ok=>{if(!ok)beep();else{clearInterval(tkBeep);tkBeep=setTimeout(()=>{if(tkRing.some(a=>a.k==='alarm'))tkDismiss()},30*60000)}})}else beep();
   try{fmDiag('alarm ringing for '+fmt(new Date(r.at)))}catch(e){}}
-function tkDismiss(){const wasAlarm=tkRing.some(a=>a.k==='alarm')&&!tkDismiss.snz;tkDismiss.snz=0;if(wasAlarm)setTimeout(()=>{try{alarmOff('')}catch(e){}},800);tkRing=[];clearInterval(tkBeep);$('tkAlert').classList.remove('on');tkPub()}
+function tkDismiss(){const wasAlarm=tkRing.some(a=>a.k==='alarm')&&!tkDismiss.snz,snd=tkRing.map(a=>a.snd).find(Boolean),snz=tkDismiss.snz;tkDismiss.snz=0;
+  if(snd){if(AUD.alarm){AUD.alarm=0;audStop(true)}if(snz&&/music|novafm|shuffle/.test(snd.k))try{nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{})}catch(e){}}
+  clearTimeout(tkBeep);if(wasAlarm)setTimeout(()=>{try{alarmOff('')}catch(e){}},800);tkRing=[];clearInterval(tkBeep);$('tkAlert').classList.remove('on');tkPub()}
 function tkTick(){const now=Date.now();let ch=false;
   TK.timers.filter(x=>x.end<=now).forEach(x=>{tkFire({k:'timer',icon:'⏰',title:x.name?`${x.name[0].toUpperCase()+x.name.slice(1)} timer is done`:'Timer done',text:x.name});ch=true});
   TK.timers=TK.timers.filter(x=>x.end>now);
-  TK.rems.filter(r=>r.at<=now).forEach(r=>{if(r.alarm){if(now-r.at<36e5)alarmRing(r)}else if(now-r.at<6*36e5)tkFire({k:'rem',icon:'🔔',title:r.text[0].toUpperCase()+r.text.slice(1),text:r.text});ch=true});
-  TK.rems=TK.rems.filter(r=>r.at>now);if(ch)tkSave();else tkDraw()}
+  const fired=TK.rems.filter(r=>r.at<=now);fired.forEach(r=>{if(r.alarm){if(now-r.at<36e5)alarmRing(r)}else if(now-r.at<6*36e5){tkFire({k:'rem',icon:'🔔',title:r.text[0].toUpperCase()+r.text.slice(1),text:r.text});if(r.phone)fmPhone(r.text[0].toUpperCase()+r.text.slice(1),'Reminder','bell')}ch=true});
+  fired.filter(r=>r.alarm&&r.rep&&r.hm).forEach(r=>TK.rems.push({...r,id:Date.now()+Math.random(),at:alarmNext(r.hm,r.rep,Math.max(now,r.at))}));
+  TK.rems=TK.rems.filter(r=>r.at>now);if(ch){TK.rems.sort((a,b)=>a.at-b.at);tkSave()}else tkDraw()}
 function tkDraw(){const now=Date.now(),R=2*Math.PI*15.5;
   const tm=TK.timers.slice().sort((a,b)=>a.end-b.end);
   $('tkTimers').innerHTML=tm.slice(0,2).map((x,i)=>{const left=x.end-now,f=Math.max(0,Math.min(1,left/x.dur));return `<div class="tk-t ${left<60e3?'soon':''} ${left>=36e5?'long':''}"><svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.5"/><circle class="fg" cx="18" cy="18" r="15.5" stroke-dasharray="${R.toFixed(1)}" stroke-dashoffset="${(R*(1-f)).toFixed(1)}"/></svg><div><b>${tkClock(left)}</b><small>${esc(x.name||'Timer')}${i===1&&tm.length>2?` · +${tm.length-2} more`:''}</small></div></div>`}).join('');
@@ -5034,6 +5071,8 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Starting goalies / pregame news',()=>{if(typeof PG==='undefined'||!PG||!PG.d)return '';const g=PG.d.goalies;return [g?`Goalies: us ${g.us&&g.us.name||'?'} (${g.us&&g.us.status||''}), them ${g.them&&g.them.name||'?'} (${g.them&&g.them.status||''})`:'',...(PG.d.news||[]).slice(0,5).map(n=>'News: '+n.t)].filter(Boolean).join('\n')});
   add('Team news headlines',()=>(newsItems||[]).slice(0,8).map(n=>n.title).join('\n'));
   add('Radio game',()=>radioOn()&&RG.g?`Listening to ${rgCfg().title} (${rgCfg().station}). ${RG.g.line} · ${RG.g.det}`:'');
+  add('Playing on the dash speakers',()=>AUD.kind?`${AUD.kind==='radio'?'Live radio':AUD.kind==='pod'?'Podcast':'Sleep sounds'}: ${AUD.label}${AUD.sub?' ('+AUD.sub+')':''}, volume ${Math.round(AUD.vol*100)}. They can say stop, turn it up/down, or play another station, podcast or sound.`:'');
+  add('Alarms',()=>TK.rems.filter(r=>r.alarm).map(alarmDesc).join('\n'));
   add('Now playing',()=>NP&&NP.state==='playing'?`${NP.title} by ${NP.artist}${NP.album?' ('+NP.album+')':''}`:'Nothing playing');
   add('Jellyfin',()=>jfSay());
   add('North America news (top stories now)',()=>(WORLD.major?`BREAKING: ${WORLD.major.t} (${WORLD.major.src})\n`:'')+(WORLD.items||[]).slice(0,8).map(x=>`${x.t} (${x.src})`).join('\n'));
@@ -5056,6 +5095,102 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Car',()=>typeof CAR!=='undefined'&&CAR&&CAR.soc!=null?carSay():'');
   add('Systems',()=>healthSay());
   return L.join('\n\n').slice(0,36000)}
+/* ================= build 296: Nova's own player on the dash — live radio, podcasts, sleep sounds =================
+   Plays through the dash Mac's speakers (Apple Music on the 14" is paused when one starts). "stop", "turn it up/down", "what station is this". */
+const AUD={el:null,kind:'',label:'',sub:'',ctx:null,nodes:[],g:null,vol:.6,off:0,url:'',ramp:0,stopping:false};
+setTimeout(()=>{try{const v=+NM.get('audvol',.6);if(v>0&&v<=1)AUD.vol=v}catch(e){}},0);
+const AUD_RB=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://at1.api.radio-browser.info'];
+const AUD_ALIAS=[[/\b(?:cfrb|newstalk ?1010|news ?talk ?1010|1010)\b/,'Newstalk 1010'],[/\b680 ?news\b|\bcfty?r\b/,'680 NEWS'],[/\bcbc(?: radio)?(?: one)?\b/,'CBC Radio One Toronto'],[/\bcbc music\b|\bcbc 2\b/,'CBC Music Toronto'],
+  [/\b(?:tsn|tsn 1050)\b/,'TSN 1050'],[/\bsportsnet ?590|\bthe fan(?: 590)?\b|\bfan ?590\b/,'Sportsnet 590 The FAN'],[/\bjazz ?fm\b/,'JAZZ.FM91'],[/\bclassical ?96\b/,'Classical 96.3'],[/\bq ?107\b/,'Q107'],[/\bchum\b/,'CHUM 104.5'],
+  [/\bvirgin(?: radio)?\b/,'Virgin Radio 99.9'],[/\bkiss ?92\b|\bkiss\b/,'KiSS 92.5'],[/\bz ?103\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom ?97\b/,'boom 97.3'],[/\bfm ?96\b/,'FM96'],[/\bthe fox\b|\bfox 104\b/,'Fox 104.3 London']];
+function audSave(){NM.set('audvol',AUD.vol)}
+function audPill(){let p=$('audPill');if(!AUD.kind){if(p)p.className='';return}
+  if(!p){p=document.createElement('div');p.id='audPill';document.body.appendChild(p)}
+  const ic={radio:'📻',pod:'🎙️',sleep:'🌧️'}[AUD.kind]||'🔊',left=AUD.off?Math.max(0,Math.ceil((AUD.off-Date.now())/60000)):0;
+  p.innerHTML=`<i>${ic}</i><div><b>${esc(AUD.label)}</b><small>${esc(AUD.sub||'')}${left?(AUD.sub?' · ':'')+'off in '+left+' min':''} · say “stop”</small></div><em>${Math.round(AUD.vol*100)}</em>`;p.className='on'}
+function audLevel(){const v=AUD.vol*(window._macSpeaking?.22:1)*(AUD.ramp?Math.min(1,.15+(Date.now()-AUD.ramp)/90000):1)*(AUD.fade?Math.max(0,(AUD.off-Date.now())/20000):1);
+  if(AUD.el&&AUD.kind!=='sleep')AUD.el.volume=Math.max(0,Math.min(1,v));if(AUD.g&&AUD.ctx)AUD.g.gain.setTargetAtTime(Math.max(0,v),AUD.ctx.currentTime,.2)}
+setInterval(()=>{if(!AUD.kind)return;if(AUD.off&&Date.now()>=AUD.off-20000)AUD.fade=1;if(AUD.off&&Date.now()>=AUD.off){audStop();return}audLevel();
+  if(AUD.kind==='pod'&&AUD.el&&AUD.url&&!AUD.el.paused){const P=NM.get('podpos',{});P[AUD.url]=Math.floor(AUD.el.currentTime);const k=Object.keys(P);if(k.length>20)delete P[k[0]];NM.set('podpos',P)}},400);
+setInterval(()=>{if(AUD.kind)audPill()},30000);
+function audStop(quiet){AUD.stopping=true;try{if(AUD.el){AUD.el.pause();AUD.el.removeAttribute('src');AUD.el.load()}}catch(e){}
+  try{AUD.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});clearInterval(AUD.crk);clearTimeout(AUD.thT)}catch(e){}AUD.nodes=[];AUD.g=null;
+  AUD.kind='';AUD.label='';AUD.sub='';AUD.off=0;AUD.fade=0;AUD.ramp=0;AUD.url='';setTimeout(()=>{AUD.stopping=false},300);audPill();return quiet?'':'Okay.'}
+function audMusicPause(){try{if(SECRETS.topic&&NP&&NP.state==='playing')nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{})}catch(e){}}
+async function audStream(url,kind,label,sub,startAt){audStop(true);audMusicPause();const el=AUD.el||(AUD.el=new Audio());
+  if(!el._wired){el._wired=1;el.addEventListener('error',()=>{if(AUD.stopping||!AUD.kind||AUD.kind==='sleep')return;const k=AUD.label;audStop(true);reply(`${k} won't play right now. The stream might be down.`)})}
+  AUD.kind=kind;AUD.label=label;AUD.sub=sub||'';AUD.url=url;el.src=url;el.volume=AUD.vol;try{if(startAt)el.currentTime=startAt}catch(e){}
+  try{await el.play()}catch(e){if(AUD.kind===kind){audStop(true);return `I couldn't start ${label}.`}}
+  if(startAt){try{el.currentTime=startAt}catch(e){}}audPill();try{fmDiag(`player: ${kind} ${label}`)}catch(e){}return ''}
+/* live radio: Radio Browser (free directory of stations), Canadian first; only https streams (the dash is https) */
+async function audRadio(q){q=String(q||'').toLowerCase().replace(/\b(?:the|radio|station|on the|please|some)\b/g,' ').replace(/\s+/g,' ').trim();
+  if(!q){const L=NM.get('audlast',null);if(L&&L.url)return audStream(L.url,'radio',L.label,L.sub).then(e=>e||`Here's ${L.label}.`);q='cbc'}
+  let name=q;for(const [re,n] of AUD_ALIAS)if(re.test(q)){name=n;break}
+  const tryOne=async(base,nm)=>{const r=await tfetch(`${base}/json/stations/search?name=${encodeURIComponent(nm)}&limit=40&hidebroken=true&order=clickcount&reverse=true`,7000);return r.json()};
+  let L=[];for(const b of AUD_RB){try{L=await tryOne(b,name);if(!L.length&&name!==q)L=await tryOne(b,q);if(!L.length){const short=name.replace(/\b(?:fm|am|\d+(?:\.\d)?)\b/g,'').trim();if(short&&short!==name)L=await tryOne(b,short)}break}catch(e){}}
+  const ok=L.filter(s=>/^https:/.test(s.url_resolved||'')&&!+s.hls),sc=s=>(s.countrycode==='CA'?40:s.countrycode==='US'?10:0)+(/ontario/i.test(s.state||'')?25:0)+(/toronto|london|woodstock|kitchener/i.test(s.name+' '+(s.state||''))?8:0)+(/mp3|aac/i.test(s.codec||'')?5:0)+Math.log10(1+(+s.clickcount||0))*3+Math.log10(1+(+s.votes||0));
+  const st=ok.sort((a,b)=>sc(b)-sc(a))[0];if(!st)return `I couldn't find a station called ${q}.`;
+  const label=String(st.name).trim().slice(0,40),sub=[st.state,st.country].filter(Boolean).join(', ');NM.set('audlast',{url:st.url_resolved,label,sub});
+  const e=await audStream(st.url_resolved,'radio',label,sub);return e||`Here's ${label}.`}
+async function audPod(q){if(!CFG.relay||!SECRETS.calkey)return "I can't look up podcasts without the relay.";
+  q=String(q||'').replace(/\b(?:the )?(?:latest|newest|last|new|most recent) (?:episode|ep) of\b|\b(?:podcast|episode)s?\b|\b(?:the )?latest\b/g,' ').replace(/\s+/g,' ').trim();if(!q)return 'Which podcast?';
+  let d=null;try{d=await tfetch(relayBase()+`/pod?key=${encodeURIComponent(SECRETS.calkey)}&q=${encodeURIComponent(q)}`,12000).then(r=>r.json())}catch(e){}
+  if(!d||d.error)return "I couldn't reach the podcast directory.";if(d.none||!d.eps||!d.eps.length)return `I couldn't find a podcast called ${q}.`;
+  const ep=d.eps[0],pos=(NM.get('podpos',{})||{})[ep.url]||0,e=await audStream(ep.url,'pod',d.show,ep.title,pos>30?pos:0);
+  return e||`Playing the latest ${d.show}: ${ep.title}${pos>30?', picking up where you left off':''}.`}
+/* sleep sounds, made right here (no files, no internet): rain, thunderstorm, ocean, stream, fireplace, fan, white/pink/brown noise */
+function audNoise(c,kind){const n=c.sampleRate*4,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);let last=0,p=[0,0,0,0,0,0,0];
+  for(let i=0;i<n;i++){const w=Math.random()*2-1;if(kind==='brown'){last=(last+.02*w)/1.02;d[i]=last*3.5}else if(kind==='pink'){p[0]=.99886*p[0]+w*.0555179;p[1]=.99332*p[1]+w*.0750759;p[2]=.969*p[2]+w*.153852;p[3]=.8665*p[3]+w*.3104856;p[4]=.55*p[4]+w*.5329522;p[5]=-.7616*p[5]-w*.016898;d[i]=(p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6]+w*.5362)*.11;p[6]=w*.115926}else d[i]=w*.5}
+  const s=c.createBufferSource();s.buffer=b;s.loop=true;return s}
+const AUD_SLEEP={rain:'Rain',thunderstorm:'Thunderstorm',ocean:'Ocean waves',stream:'Babbling brook',fireplace:'Fireplace',fan:'Fan',white:'White noise',pink:'Pink noise',brown:'Brown noise'};
+function audSleepKind(t){return /thunder|storm/.test(t)?'thunderstorm':/rain/.test(t)?'rain':/ocean|wave|beach|sea/.test(t)?'ocean':/stream|brook|river|creek|water/.test(t)?'stream':/fire|crackl/.test(t)?'fireplace':/\bfan\b/.test(t)?'fan':/white/.test(t)?'white':/pink/.test(t)?'pink':/brown/.test(t)?'brown':/sleep|nature|relax/.test(t)?'rain':''}
+function audSleep(kind,mins){audStop(true);audMusicPause();const A=window.AudioContext||window.webkitAudioContext;if(!A)return "Sound isn't available here.";
+  const c=AUD.ctx||(AUD.ctx=new A());if(c.state==='suspended')c.resume();const g=c.createGain();g.gain.value=0;g.connect(c.destination);AUD.g=g;const N=[g];
+  const chain=(src,...fs)=>{let x=src;fs.forEach(f=>{x.connect(f);x=f});return x};
+  const filt=(type,f,q)=>{const x=c.createBiquadFilter();x.type=type;x.frequency.value=f;if(q)x.Q.value=q;N.push(x);return x};
+  const lfo=(rate,depth,target,base)=>{const o=c.createOscillator(),og=c.createGain();o.frequency.value=rate;og.gain.value=depth;o.connect(og).connect(target);target.value=base;o.start();N.push(o,og)};
+  const layer=(noise,vol,...fs)=>{const s=audNoise(c,noise),lg=c.createGain();lg.gain.value=vol;chain(s,...fs).connect(lg);lg.connect(g);s.start();N.push(s,lg);return lg};
+  if(kind==='rain'||kind==='thunderstorm'){layer('pink',.9,filt('highpass',500),filt('lowpass',7000));layer('white',.12,filt('bandpass',3500,.6));
+    const dr=()=>{if(!AUD.kind)return;const s=audNoise(c,'white'),e=c.createGain(),f=filt('bandpass',2000+Math.random()*4000,4);e.gain.value=0;s.connect(f).connect(e).connect(g);const t=c.currentTime;e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(.25*Math.random(),t+.004);e.gain.exponentialRampToValueAtTime(.001,t+.06);s.start(t);s.stop(t+.08)};
+    AUD.crk=setInterval(()=>{for(let i=0;i<3;i++)setTimeout(dr,Math.random()*200)},180);
+    if(kind==='thunderstorm'){const th=()=>{if(AUD.kind!=='sleep')return;const s=audNoise(c,'brown'),e=c.createGain(),f=filt('lowpass',140);s.connect(f).connect(e).connect(g);const t=c.currentTime,d=3+Math.random()*4;
+        e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(1.6,t+.4+Math.random());e.gain.exponentialRampToValueAtTime(.001,t+d);s.start(t);s.stop(t+d+.1);AUD.thT=setTimeout(th,15000+Math.random()*30000)};AUD.thT=setTimeout(th,4000)}}
+  else if(kind==='ocean'){const lg=layer('brown',.9,filt('lowpass',700));lfo(.075,.45,lg.gain,.55);const lg2=layer('pink',.25,filt('highpass',800),filt('lowpass',3000));lfo(.075,.22,lg2.gain,.25)}
+  else if(kind==='stream'){const lg=layer('white',.35,filt('bandpass',1800,.7),filt('lowpass',5000));lfo(.9,.08,lg.gain,.35);layer('pink',.4,filt('lowpass',900))}
+  else if(kind==='fireplace'){layer('brown',.8,filt('lowpass',400));const cr=()=>{if(!AUD.kind)return;const s=audNoise(c,'white'),e=c.createGain(),f=filt('highpass',1500);s.connect(f).connect(e).connect(g);const t=c.currentTime;e.gain.setValueAtTime(.4*Math.random(),t);e.gain.exponentialRampToValueAtTime(.001,t+.02+Math.random()*.05);s.start(t);s.stop(t+.1)};
+    AUD.crk=setInterval(()=>{if(Math.random()<.5)cr();if(Math.random()<.15)setTimeout(cr,60)},120)}
+  else if(kind==='fan'){layer('brown',1,filt('lowpass',800));layer('pink',.15,filt('bandpass',230,3))}
+  else layer(kind,kind==='white'?.5:kind==='brown'?1:.9);
+  AUD.nodes=N;AUD.kind='sleep';AUD.label=AUD_SLEEP[kind]||'Sleep sounds';AUD.sub='sleep sounds';AUD.off=mins?Date.now()+mins*60000:0;audLevel();audPill();try{fmDiag('player: sleep '+kind)}catch(e){}
+  return `${AUD.label}${mins?` for ${mins>=60&&mins%60===0?(mins/60)+' hour'+(mins>60?'s':''):mins+' minutes'}`:''}. Say stop when you're done.`}
+const audDur=t=>{const m=t.match(/\bfor (?:the next )?(\d+|an?|one|two|three|half an?)\s*(hours?|hrs?|minutes?|mins?)\b/);if(!m)return 0;const v=/^(an?|one)$/.test(m[1])?1:m[1]==='two'?2:m[1]==='three'?3:/half/.test(m[1])?.5:+m[1];return Math.round(/^h/.test(m[2])?v*60:v)};
+/* voice: returns a reply, a promise of one, or null when it isn't a player thing */
+function audCmd(t){t=String(t||'').toLowerCase().replace(/[.!?]+$/,'').trim();
+  if(AUD.kind&&!(typeof tkRing!=='undefined'&&tkRing.length)){
+    if(/^(?:stop|pause|turn (?:it|that) off|shut (?:it|that) off|off|that'?s enough|enough|quiet|silence|stop (?:the |that )?(?:radio|podcast|music|sound|sounds|noise|rain|ocean|waves|fan|fireplace|playing|station))(?: please)?$|^(?:turn|switch) off (?:the )?(?:radio|podcast|rain|ocean|waves|fan|fireplace|sound|sounds|noise|white noise)$/.test(t))return audStop();
+    if(/\b(?:turn (?:it|that|the (?:radio|podcast|sound|volume)) up|louder|volume up|crank it|a (?:bit|little) louder)\b/.test(t)){AUD.vol=Math.min(1,AUD.vol+.12);audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
+    if(/\b(?:turn (?:it|that|the (?:radio|podcast|sound|volume)) down|quieter|softer|volume down|a (?:bit|little) quieter)\b/.test(t)){AUD.vol=Math.max(.05,AUD.vol-.12);audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
+    const vm=t.match(/^(?:set (?:the )?)?volume (?:to |at )?(\d{1,3})(?: percent)?$/);if(vm){AUD.vol=Math.max(.05,Math.min(1,+vm[1]/100));audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
+    if(/\b(?:what (?:station|podcast|is this|am i listening to|'?s playing|is playing)|what'?s this)\b/.test(t))return AUD.kind==='pod'?`${AUD.label}: ${AUD.sub}.`:`${AUD.label}${AUD.sub&&AUD.kind==='radio'?', from '+AUD.sub:''}.`;
+    if(/\b(?:skip|forward|ahead) (?:30|thirty)?\s*(?:seconds|secs)?\b/.test(t)&&AUD.kind==='pod'){AUD.el.currentTime+=30;return 'Skipped ahead.'}
+    if(/\b(?:back|rewind|go back) (?:15|fifteen|30|thirty)?\s*(?:seconds|secs)?\b/.test(t)&&AUD.kind==='pod'){AUD.el.currentTime=Math.max(0,AUD.el.currentTime-15);return 'Back 15 seconds.'}
+    const st=t.match(/^(?:turn (?:it|that) off|stop|sleep timer|stop playing) (?:in|after) (.+)$/);if(st){const ms=tkDur(st[1]);if(ms){AUD.off=Date.now()+ms;audPill();return `Okay, off in ${tkSay(ms)}.`}}}
+  const pl=t.match(/^(?:(?:can you |could you |please |hey )?(?:play|put on|turn on|start|listen to|tune (?:in )?to|i want to (?:hear|listen to)|let'?s (?:hear|listen to)))\s+(?:me |us |some )?(.+)$/);
+  if(!pl)return null;let x=pl[1].replace(/\s+please$/,'').trim();const mins=audDur(x);x=x.replace(/\bfor (?:the next )?(?:\d+|an?|one|two|three|half an?)\s*(?:hours?|hrs?|minutes?|mins?)\b/,'').trim();
+  if(/\bnova ?fm\b/.test(x))return null;
+  if(/\b(?:podcasts?|episode)\b/.test(x))return audPod(x);
+  if(/\b(?:sounds?|noise)\b/.test(x)||/^(?:the )?(?:rain|thunderstorm|thunder|ocean|ocean waves|waves|fireplace|fan|white noise|brown noise|pink noise|a fan|a fireplace|a thunderstorm|babbling brook|a stream)$/.test(x)){const k=audSleepKind(x);if(k)return audSleep(k,mins)}
+  if(/^(?:the )?radio$/.test(x))return audRadio('');
+  if(/\b(?:radio|station)\b/.test(x)||/\b\d{2,3}(?:\.\d)?\s*(?:fm|am)\b|\b(?:cfrb|cbc|newstalk|news talk|680 news|tsn 1050|tsn radio|fan 590|sportsnet 590|jazz ?fm|classical 96|q ?107|chum|virgin radio|kiss 92|z ?103|indie ?88|boom 97|fm ?96|the fox)\b/.test(x)){const r=audRadio(x);return mins?r.then(s=>{if(AUD.kind)AUD.off=Date.now()+mins*60000;return s}):r}
+  return null}
+
+/* "send that to my phone", "text me the shopping list", "send me the address of Costco" (build 296) — through the same ntfy channel as the other phone alerts */
+function phoneCmd(t){
+  if(/^(?:send|text|push) (?:that|it|this)(?: (?:to|on) (?:my|me|the) phone| to me)?$|^text me (?:that|it|this)$|^send (?:that|it|this) to me$/.test(t)){const a=window._lastSaid;if(!a)return 'Nothing to send yet.';fmPhone(a,'From Nova','speech_balloon');return 'Sent to your phone.'}
+  if(/^(?:send|text) (?:me )?(?:the |my )?(?:shopping |grocery )?list(?: (?:to|on) (?:my|me|the) phone)?$/.test(t)){if(!TK.list.length)return 'The list is empty.';fmPhone(TK.list.map(x=>'• '+x.t).join('\n'),'Shopping list','shopping_cart');return 'Sent the list to your phone.'}
+  const m=t.match(/^(?:send|text) me (.+?)(?: (?:on|to) my phone)?$|^send (.+?) to my phone$/);
+  if(m&&aiOn()){const q=(m[1]||m[2]).trim();if(/^(?:that|it|this)$/.test(q))return null;askNova(q,{phone:true});return Promise.resolve('')}
+  return null}
 /* ===== build 294: things Nova looks up when a question needs them (other towns' weather, other sports, drive time anywhere) ===== */
 const AX_SPORT=[[/\braptors?\b/,'basketball/nba','tor','Raptors'],[/\b(?:blue ?jays|jays)\b/,'baseball/mlb','tor','Blue Jays'],[/\bbills\b/,'football/nfl','buf','Bills'],
   [/\b(?:tfc|toronto fc)\b/,'soccer/usa.1','tor','Toronto FC'],[/\bnba\b|\bbasketball\b/,'basketball/nba','',''],[/\bmlb\b|\bbaseball\b|world series/,'baseball/mlb','',''],[/\bnfl\b|football|super bowl/,'football/nfl','','']];
@@ -5083,10 +5218,10 @@ async function axDrive(q){const m=q.match(/\b(?:how (?:long|far)(?: (?:does|will
     return `## Drive from home to ${d.name||to} (looked up for this question)\n${d.km!=null?d.km+' km, ':''}about ${d.tmin||d.min} min${d.tmin&&d.min&&d.tmin!==d.min?` with traffic right now (${d.min} min normally)`:''}`}catch(e){return ''}}
 async function askExtra(q){try{const r=await Promise.all([axWeather(q),axSports(q.toLowerCase()),axDrive(q)].map(p=>Promise.race([p.catch(()=>''),new Promise(z=>setTimeout(()=>z(''),9000))])));return r.filter(Boolean).join('\n\n')}catch(e){return ''}}
 let aiBusy=false;
-async function askNova(q){if(aiBusy)return;aiBusy=true;nsCount('asks');wakeScreen&&wakeScreen();
+async function askNova(q,opt){opt=opt||{};if(aiBusy)return;aiBusy=true;nsCount('asks');wakeScreen&&wakeScreen();
   $('answer').innerHTML='<small>NOVA</small><p class="ai-think">Thinking<i>.</i><i>.</i><i>.</i></p>';$('answer').classList.add('on');clearTimeout(ansT);
   const who=(PRES&&PRES.last)||'';let a='';const ax=await askExtra(q);
-  try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),40000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q,ctx:(ax?ax+'\n\n':'')+aiContext(),who}),signal:ac.signal}).finally(()=>clearTimeout(to));
+  try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),40000);const r=await fetch(`${CFG.relay}/ask?key=${encodeURIComponent(SECRETS.calkey)}`,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({q:opt.phone?q+' (This will be sent to my phone as a text: include the useful details like address, phone number, hours or times, up to 4 short sentences.)':q,ctx:(ax?ax+'\n\n':'')+aiContext(),who}),signal:ac.signal}).finally(()=>clearTimeout(to));
     const j=await r.json().catch(()=>({}));a=j.answer||'';try{fmDiag(`ask: [${String(q).replace(/["`\\[\]]/g,'').slice(0,60)}]${ax?' +lookup':''}${j.searched?' · searched the web '+j.searched+'x':''}${j.searchErr?' · web search unavailable: '+String(j.searchErr).slice(0,80):''}${j.error?' · error '+String(j.error).slice(0,80):''}`)}catch(e){}if(!a){console.warn('ask nova',j.error||r.status);a=/key not set/i.test(j.error||'')?"I'm not hooked up to my brain yet. The AI key still needs adding in Cloudflare.":/credit|balance|billing/i.test(j.error||'')?"I'm out of AI credits. Top up in the Anthropic console and I'll be back.":"Sorry, I couldn't reach my brain just now."}}
   catch(e){a="Sorry, I couldn't reach my brain just now."}
   /* run any house actions Claude asked for, and keep the tags out of what's said */
@@ -5097,12 +5232,13 @@ async function askNova(q){if(aiBusy)return;aiBusy=true;nsCount('asks');wakeScree
       else if(k==='playlist'||k==='music'){if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,k==='playlist'?'playlist|'+n.replace(/[^a-z0-9 '&-]/gi,''):n.toLowerCase()+'|').catch(()=>{})}
       else{const d=HM.devs.find(x=>x.name.toLowerCase()===n.toLowerCase());if(d)hmSet(d.name,k==='bri'?{on:true,bri:Math.max(1,Math.min(100,+v||50))}:{on:k==='on'})}});
     a=a.replace(/\s*\[\[[^\]]*\]\]/g,'').trim()}catch(e){}
+  if(opt.phone&&a&&!/couldn't reach my brain|limit for questions/.test(a)){fmPhone(a,'From Nova','speech_balloon');a='Sent to your phone. '+a}
   aiBusy=false;reply(a);if(!(CFG.remote||{}).speak)speak(a);
   /* remember the back-and-forth for follow-ups; if this came by voice, listen for a reply once she's done talking */
   VOICE.convo=VOICE.convo&&Date.now()-VOICE.convo.at<180000?VOICE.convo:{turns:[]};VOICE.convo.turns.push({q,a});VOICE.convo.turns=VOICE.convo.turns.slice(-6);VOICE.convo.at=Date.now();
   if((CFG.voice||{}).converse!==false&&Date.now()-(VOICE.lastVoiceAt||0)<90000&&!/\[\[/.test(a))VOICE.followNext=1}
 function reply(text){
-  const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;
+  const RM=CFG.remote||{},T=SECRETS.topic;if(!text)return;if(!/^(Sent to your phone|Okay\.)/.test(text))window._lastSaid=text;
   if(RM.showAnswers!==false){
     $('answer').innerHTML=`<small>NOVA</small><p>${esc(text)}</p>`;$('answer').classList.add('on');$('toast').classList.remove('on');
     clearTimeout(ansT);ansT=setTimeout(()=>$('answer').classList.remove('on'),Math.max(8000,text.split(' ').length*450));
@@ -5626,7 +5762,7 @@ function remWhen(s){
   return {at:d.getTime(),rest}}
 let REM_UP=null,REM_T=0;
 function remList(){return NM.get('rem',[]).sort((a,b)=>a.at-b.at)}
-function remAdd(text,at){const L=NM.get('rem',[]);const r={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),text,at,made:Date.now()};L.push(r);NM.set('rem',L);return r}
+function remAdd(text,at,phone){const L=NM.get('rem',[]);const r={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),text,at,made:Date.now(),phone:phone||undefined};L.push(r);NM.set('rem',L);return r}
 function remDrop(id){NM.set('rem',NM.get('rem',[]).filter(r=>r.id!==id))}
 /* the pop-up: a reminder, or something Nova noticed (alert) */
 function remShow(r){REM_UP=r;let el=$('nvRem');if(!el){el=document.createElement('div');el.id='nvRem';document.body.appendChild(el)}
@@ -5642,7 +5778,7 @@ function nmAgo(t){const d=new Date(t),dd=Math.round((nmDay(Date.now())-nmDay(d))
   return dd===0?(d.getHours()<12?'this morning':d.getHours()<17?'this afternoon':'this evening')+' at '+tm:dd===1?'yesterday at '+tm:d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}
 function remClose(){const el=$('nvRem');if(el)el.className='';REM_UP=null;clearTimeout(REM_T);setTimeout(remTick,1500)}
 function remTick(){if(REM_UP)return;const now=Date.now(),L=remList(),due=L.find(r=>r.at<=now);
-  if(due){remDrop(due.id);if(now-due.at<12*3600e3)remShow(due);return}
+  if(due){remDrop(due.id);if(now-due.at<12*3600e3){remShow(due);if(due.phone)fmPhone(due.text,'Reminder','bell')}return}
   nmWatch()}
 setInterval(remTick,15000);
 /* things Nova notices on her own: the backup overdue (once a day, 9 AM to 10 PM) */
@@ -5668,10 +5804,10 @@ function nmCmd(t){
    if(i>=0&&(t.split(' ').length>1||/mode|scene/.test(t))&&typeof hmScene==='function'){hmScene(i);return `${S[i].name} mode on.`}}
   /* new reminder */
   let m=t.match(/^(?:please |can you |could you )?(?:remind me|set a reminder|make a reminder|add a reminder)\b\s*(.*)$/);
-  if(m){let s=m[1].replace(/^(to|that|about|for)\s+/,'');const w=remWhen(s);let txt=w.rest.replace(/^(to|that|about)\s+/,'').replace(/\s+(to|at|on|in|by)$/,'').replace(/^(to|that|about)\s+/,'').trim();
+  if(m){let ph=false;let s=m[1].replace(/\s*\b(?:on|to|through) my phone\b/,()=>{ph=true;return ''}).trim().replace(/^(to|that|about|for)\s+/,'');const w=remWhen(s);let txt=w.rest.replace(/^(to|that|about)\s+/,'').replace(/\s+(to|at|on|in|by)$/,'').replace(/^(to|that|about)\s+/,'').trim();
     if(!txt)return 'What should I remind you about? Say, remind me to call mom tonight.';
-    const at=w.at||Date.now()+3600e3,r=remAdd(nmCap(nmYou(txt)),at);
-    return `Got it. I'll remind you ${w.at?'':'in an hour, '}${/^(tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.test(remFmt(at))?'':'at '}${remFmt(at)}.`}
+    const at=w.at||Date.now()+3600e3,r=remAdd(nmCap(nmYou(txt)),at,ph);
+    return `Got it. I'll remind you ${ph?'on your phone ':''}${w.at?'':'in an hour, '}${/^(tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i.test(remFmt(at))?'':'at '}${remFmt(at)}.`}
   if(/^(what are my reminders|(do i have )?any reminders|list (my )?reminders|my reminders|what reminders)/.test(t)){const L=remList();if(!L.length)return 'No reminders set.';
     return `${L.length} reminder${L.length>1?'s':''}: `+L.slice(0,5).map(r=>`${r.text}, ${remFmt(r.at)}`).join('. ')+'.'}
   if(m=t.match(/^(?:cancel|delete|remove|clear|forget)(?: all)? (?:my |the )?reminders?(?: (?:about|to|for) (.+))?$/)){const L=remList();if(!L.length)return 'No reminders to cancel.';
@@ -7360,6 +7496,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(tripOn()&&/\b(flights?|fly|flying|plane|land|landed|landing|take ?off|took off|trip|in the air|where are|how are|weather (in|for|down)|doing)\b/.test(t)){const words=[...new Set((CFG.trips||[]).flatMap(T=>String((T.who||'')+' '+(T.say||'')).toLowerCase().split(/[^a-z]+/)).filter(w=>w.length>2&&w!=='and'))];
     if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0],A=tripAway();if(f||A){if(tripShow())showFor('trip');return reply(tripSay(A&&!tripActive()?null:f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
+  {const r=audCmd(t);if(r!=null){if(r&&typeof r.then==='function'){r.then(x=>{if(x)reply(x)}).catch(()=>reply('That didn\'t work.'));return}if(r)return reply(r);return}}
+  {const r=phoneCmd(t);if(r!=null){if(r&&typeof r.then==='function')return;return reply(r)}}
   /* Apple Music on the MacBook: playlists and play/pause/skip (the Nova Music helper there picks these up) */
   {const mc=c=>{const T=SECRETS.topic;if(!T)return false;nbPub(`${T}-mcmd`,c).catch(()=>{});return true};
    const pl=t.match(/^(?:can you |could you |please )?(?:play|start|put on|shuffle|throw on)(?: up)? (?:my |the |some )?(.+?) playlist(?: on apple music| on music| please)?$/)||t.match(/^(?:play|start|put on) (?:the |my )?playlist (.+?)(?: on apple music)?$/);
@@ -7373,7 +7511,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:the )?album (.+)$/)||t.match(/^(?:can you |could you |please )?(?:play|put on|throw on) (?:the )?(.+?) album$/))&&!bad.test(sm[1])&&ask('album',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on)(?: me)? (?:some )?(?:songs|music|stuff|tunes) by (.+)$/))&&!bad.test(sm[1])&&ask('artist',sm[1]))return;
     if((sm=t.match(/^(?:can you |could you |please )?(?:play|put on|throw on|blast)(?: me)? (.+)$/))&&!bad.test(sm[1])&&!/^(the )?(next|previous|last)( song| track)?$/.test(sm[1])&&ask('song',sm[1]))return}
-   if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^skip( it| this| this one| this song)?$/.test(t)){
+   if((/\b(music|song|track|playlist|apple music)\b/.test(t)&&!/^(what|whats|what's|who|whos|which|how|is|was|did|does)\b/.test(t))||/^skip( it| this| this one| this song)?$/.test(t)||/^(?:turn (?:it|that) (?:up|down)|louder|quieter|softer|volume (?:up|down)|a (?:bit|little) (?:louder|quieter))$/.test(t)){
      if(/\b(pause|stop)\b/.test(t)&&mc('pause|'))return reply('Music paused.');
      if(/\b(next|skip)\b/.test(t)&&mc('next|'))return reply('Skipping.');
      if(/\b(previous|last|go back|back one)\b/.test(t)&&mc('previous|'))return reply('Going back one.');
@@ -10333,7 +10471,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 295';
+document.getElementById('ver').textContent='build nova 296';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
