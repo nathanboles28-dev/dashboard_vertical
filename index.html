@@ -6888,7 +6888,9 @@ function storyMaybe(s){if(!s||!s.title||!storyPick(s))return;const C=NM.get('fmf
 /* ===== Rosemary mode: Nova hears a little voice (pitch), or "it's Rosemary". The orb turns into the star buddy, she gets her own screen, and Nova talks to her like a friendly 4-year-old's friend ===== */
 const KIDC=()=>{const k=Object.assign({on:true,buddy:'Rubble',name:'Rosemary',pitch:265,adultBelow:215,goal:7,mins:4,birthday:''},CFG.kid||{});if(!k.birthday)try{k.birthday=localStorage.getItem('nova-kidbday')||''}catch(e){}return k};
 const KID={until:0,src:'',lock:0,lastHz:0,scene:'',sceneAt:0,t:null,dance:null,hist:[]};
-const kidOn=()=>KIDC().on!==false&&KID.until>Date.now();
+/* Rosemary mode only runs 10 AM to 4 PM (CFG.kid.hours=[from,to] changes it); outside that Rubble is asleep and nothing starts it */
+const kidHrs=()=>{const H=KIDC().hours||[10,16],h=new Date().getHours();return h>=H[0]&&h<H[1]};
+const kidOn=()=>KIDC().on!==false&&KID.until>Date.now()&&kidHrs();
 /* ===== Better ears for Rosemary: the last few seconds of mic audio are kept in memory (never saved), and when it's her talking,
    that clip goes to the relay for OpenAI's transcription instead of Chrome's guess. Falls back to Chrome if it's slow or not set up. ===== */
 const STT={ok:null,checked:0,ring:null,sr:16000,w:0,filled:0,act:[],busy:0,last:''};
@@ -6916,7 +6918,7 @@ const KV={seg:0,last:0,busy:0,quietTill:0,on:false};
 const kvSpeaking=()=>!!window._macSpeaking||Date.now()<(KID.talkUntil||0)||(typeof ORB!=='undefined'&&ORB.st==='speak'&&Date.now()<(ORB.until||0))||!!(window.speechSynthesis&&speechSynthesis.speaking)||(typeof FM!=='undefined'&&FM.air)||(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy());
 const kvActive=()=>kidOn()&&STT.ok&&!!STT.ring&&KIDC().on!==false&&!(typeof VOICE!=='undefined'&&VOICE.paused&&!kvSpeaking()&&VOICE.st==='off');
 /* not in her mode yet: listen only for a little voice, daytime, and only act if Whisper hears "Rubble" (or Star / Nova) */
-const kvWakeOK=()=>!kidOn()&&STT.ok&&!!STT.ring&&KIDC().on!==false&&(()=>{const h=new Date().getHours();return h>=7&&h<20})()&&!document.body.classList.contains('emberOn')&&!(typeof VOICE!=='undefined'&&VOICE.armed);
+const kvWakeOK=()=>!kidOn()&&STT.ok&&!!STT.ring&&KIDC().on!==false&&(()=>{const h=new Date().getHours();return h>=7&&h<20})()&&kidHrs()&&!document.body.classList.contains('emberOn')&&!(typeof VOICE!=='undefined'&&VOICE.armed);
 setInterval(()=>{try{KV.on=kvActive();KV.wake=!KV.on&&kvWakeOK();if((!KV.on&&!KV.wake)||KV.busy){KV.seg=0;return}const now=Date.now();
   if(kvSpeaking()){KV.quietTill=now+700;KV.seg=0;return}if(now<KV.quietTill){KV.seg=0;return}
   const A=STT.act,la=A.length?A[A.length-1]:0;
@@ -6977,9 +6979,9 @@ function kpGuess(ms){const t0=Date.now()-(ms||4500),f=KP.fr.filter(x=>x.t>=t0).m
 /* decide who's talking, once per command */
 function kidJudge(why,cmd){if(KIDC().on===false||Date.now()<KID.lock)return;const g=kpGuess(why==='arm'?2500:4500);if(why==='run')try{fmDiag(`voice: [${String(cmd||'').replace(/["`\\]/g,'').slice(0,60)}] · ${g?g.hz+' Hz ('+g.n+')':'pitch: not enough sound'} · ${g?(g.kid?KIDC().name:g.adult?'grown-up':'not sure'):'?'}${kidOn()?' · Rosemary mode on':''} · meter ${KP.an?(KP.ctx&&KP.ctx.state):'off'}`)}catch(e){}if(!g)return;KID.lastHz=g.hz;
   vLog(`voice ${g.hz} Hz (${g.n}) → ${g.kid?KIDC().name:g.adult?'grown-up':'not sure'}`);
-  if(g.kid){const was=kidOn();KID.until=Date.now()+KIDC().mins*60000;KID.src='voice';if(!was)kidUI()}
+  if(g.kid&&kidHrs()){const was=kidOn();KID.until=Date.now()+KIDC().mins*60000;KID.src='voice';if(!was)kidUI()}
   else if(g.hz<180&&g.n>=8&&kidOn()&&KID.src==='voice'&&!KV.on){kidEnd()}}
-function kidStart(src){const was=kidOn();KID.until=Date.now()+(src==='said'?10:KIDC().mins)*60000;KID.src=src||'said';if(!was)kidUI()}
+function kidStart(src){if(!kidHrs())return;const was=kidOn();KID.until=Date.now()+(src==='said'?10:KIDC().mins)*60000;KID.src=src||'said';if(!was)kidUI()}
 function kidEnd(){KID.until=0;KID.scene='';kidUI()}
 function kidUI(){const on=kidOn();document.documentElement.classList.toggle('kidOn',on);if(!on){const el=$('kidTake');if(el)el.className='';kidDanceStop()}}
 setInterval(()=>{try{if(!kidOn()&&document.documentElement.classList.contains('kidOn'))kidUI();const el=$('kidTake');
@@ -7129,7 +7131,7 @@ function kidHandle(t,q){q=q==null?t:q;KID.src=KID.src||'voice';
   if(/^(hi|hello|hey|hiya|good morning|good night|it'?s (me|rosemary)|i'?m rosemary|this is rosemary|rosemary'?s here|what can (i|we) do|menu|home|let'?s play|play)( nova)?$/.test(t)||!t){const h=new Date().getHours();return kidMenu(q,/good night/.test(t)?`Good night ${esc(KIDC().name)}! Sweet dreams! 🌙`:h<11?`Good morning ${esc(KIDC().name)}! ☀️`:'')}
   return kidChat(q,false)}
 /* voice hooks: judge the voice when Nova lights up, and again for the whole command */
-(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}try{if(/(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(VOICE.live||''))&&KIDC().on!==false){KID.lock=0;kidStart('said')}}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();
+(()=>{try{const _a=voiceArm;voiceArm=function(follow){try{kidJudge('arm')}catch(e){}try{if(/(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/i.test(String(VOICE.live||''))&&KIDC().on!==false&&kidHrs()){KID.lock=0;kidStart('said')}}catch(e){}const r=_a.apply(this,arguments);if(follow&&kidOn()){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),12000)}return r};const _r=voiceRun;voiceRun=function(c){try{kidJudge('run',c)}catch(e){}KID.fromVoice=Date.now();
   if(kidOn()){const g=kpGuess(4000);
     if((g&&g.hz<180&&g.n>=5)||/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy)\b/i.test(String(c||''))){KID.lock=Date.now()+30000;kidEnd();KID.fromVoice=0;
       if(!String(c||'').trim()&&STT.ok&&STT.ring){const self=this;STT.busy=1;sttHear().then(t=>{STT.busy=0;_r.call(self,String(t||'').replace(/^(?:hey|hi|okay|ok)?[,.\s]*(?:nova|noah)\b[,.!?\s]*/i,'').replace(/[.!?]+$/,''))}).catch(()=>{STT.busy=0;_r.call(self,'')});return}
@@ -7230,6 +7232,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(/^(good ?night|sleep|screen off)$/i.test(String(raw||'').trim()))NM.set('fmwake',0);
   const t0=String(raw||'').toLowerCase().replace(/[?.!]/g,'').trim(),t=t0.replace(/^\s*(hey|ok|okay|hi|hello|yo)?,?\s*nova[,\s]*/,'').trim();
   /* just "hey nova" / "hello nova" on its own = the roundup */
+  if(/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/.test(t0)&&KIDC().on!==false&&Date.now()-(KID.fromVoice||0)<4000&&!kidHrs()){const H=KIDC().hours||[10,16],f=x=>x===12?'12':x>12?x-12:x;return reply(`${KIDC().buddy} is asleep right now. He plays from ${f(H[0])} to ${f(H[1])}.`)}
   if(/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b/.test(t0)&&KIDC().on!==false&&Date.now()-(KID.fromVoice||0)<4000){KID.lock=0;kidStart('said');const rest=t0.replace(/^(?:hey|hay|hi|hello|hiya|a|eh|ok|okay|yo)[,\s]*(?:r[uoa]b+(?:le|les|l|el|ul|al|er|o|y|ble|bles|bel)?(?![a-z])|rumble|rumbles|rebel|bubble|bubbles|robert|star|google|goggle|ruby|rubie)\b[,\s]*/,'').trim();KID.fromVoice=Date.now();return rest?kidHandle(rest,rest):kidMenu('')}
   const kidVoice=kidOn()&&Date.now()-(KID.fromVoice||0)<4000;
   if(!t){if(kidVoice)return kidMenu('');
@@ -7243,7 +7246,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   {const nm=KIDC().name.toLowerCase(),K=KIDC();
    const dad=t.match(/^(?:no,? )?(?:this is|it'?s|i'?m) (?:dad|daddy|nathan|mom|mommy|a grown ?up|an adult)\b[,\s]*(.*)$|^(?:kid mode|rosemary mode) off\b[,\s]*(.*)$|^(?:grown ?up|adult) mode\b[,\s]*(.*)$/);
    if(dad){KID.lock=Date.now()+30000;kidEnd();const rest=(dad[1]||dad[2]||dad[3]||'').trim();if(rest){KID.fromVoice=0;return handleCommand(rest)}return reply('Got it, grown-up mode.')}
-   if(new RegExp(`^(?:it'?s|this is|i'?m) ${nm}\\b|^${nm}'?s here$|^(?:kid|${nm}) mode(?: on)?$`).test(t)){KID.lock=0;kidStart('said');KID.fromVoice=Date.now();return kidMenu(t,`Hi ${K.name}! 👋<br>It’s you!`)}
+   if(new RegExp(`^(?:it'?s|this is|i'?m) ${nm}\\b|^${nm}'?s here$|^(?:kid|${nm}) mode(?: on)?$`).test(t)&&kidHrs()){KID.lock=0;kidStart('said');KID.fromVoice=Date.now();return kidMenu(t,`Hi ${K.name}! 👋<br>It’s you!`)}
    if(kidVoice)return kidHandle(t,t);
    /* grown-up star commands: "give Rosemary a star (for cleaning up)", "give her 2 stars", "take away a star", "reset Rosemary's stars" */
    const g=t.match(new RegExp(`^(?:give|add) (?:${nm}|her) (a|an|one|two|three|\\d+)? ?(?:more |extra |gold )?stars?(?: (?:for|because) (.+))?$`));
@@ -10280,7 +10283,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 291';
+document.getElementById('ver').textContent='build nova 292';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
