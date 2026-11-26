@@ -5147,7 +5147,7 @@ function aiContext(){const L=[],add=(k,f)=>{try{const v=typeof f==='function'?f(
   add('Nova FM radio',()=>{const H=NM.get('fmhist',[]).filter(x=>!x.brk).slice(0,6);return [typeof FM!=='undefined'?`Nova FM is ${FM.on?'on':'off'}`:'',H.length?'Recently played: '+H.map(x=>`${x.title} by ${x.artist}`).join('; '):''].filter(Boolean).join('\n')});
   add('What the dashboard costs to run',()=>{try{const W=Object.keys(PW.draw||{}).length?PW.draw:pwrWatts(),r=pwrRate(1)/100,w=Object.values(W).reduce((a,v)=>a+v.w,0);return `About ${Math.round(w)} W total, roughly $${(w*24*30/1000*r).toFixed(2)} a month (Ontario tiered rates, all in)`}catch(e){return ''}});
   add(`${KIDC().name}'s stars`,()=>{const S=kidStars();return `${S.n} of ${KIDC().goal} stars (Rubble mode runs 10 AM to 4 PM)`});
-  add('On the screen right now',()=>{const p=document.querySelector('.page.on, section.on');const t=p&&(p.querySelector('.ptitle,h1,h2')||{}).textContent;return [t?`Page showing: ${t}`:'',document.body.classList.contains('hasAlert')&&wxAlerts[0]?`Alert banner at the top: ${wxAlerts[0].alert_name_en}`:''].filter(Boolean).join('\n')});
+  add('On the screen right now',()=>{const p=document.querySelector('.page.on, section.on');const t=p&&(p.querySelector('.ptitle,h1,h2')||{}).textContent;return [t?`Page showing: ${t}`:'',document.body.classList.contains('hasAlert')&&wxShown()[0]?`Alert banner at the top: ${wxShown()[0].alert_name_en}`:''].filter(Boolean).join('\n')});
   add('Nova Observatory (planet, people, natural events)',()=>typeof obsContext==='function'?obsContext():'');
   add('Calendar (next 2 weeks)',()=>calEvents.filter(e=>e.end>Date.now()&&e.start-Date.now()<14*864e5).sort((a,b)=>a.start-b.start).slice(0,25).map(e=>`${e.allDay?e.start.toDateString()+' all day':D(e.start)} – ${e.title}${e.loc?' @ '+e.loc:''}`).join('\n'));
   add('Week ahead',()=>weekSay());
@@ -10759,7 +10759,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 320';
+document.getElementById('ver').textContent='build nova 321';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
