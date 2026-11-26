@@ -7817,6 +7817,9 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     if(words.length&&new RegExp('\\b('+words.join('|')+'|parents|folks)\\b').test(t)){const f=tripActive()||tripNext()[0],A=tripAway();if(f||A){if(tripShow())showFor('trip');return reply(tripSay(A&&!tripActive()?null:f))}return reply("I don't have any flights for them coming up.")}}
   {const r=tkCmd(t);if(r)return reply(r)}
   /* "stop" / "pause" while a song is playing (Apple Music or YouTube in Brave) pauses it */
+  /* page pause (the phone remote's Pause / Resume buttons, or saying "pause the page") — plain "pause" while a song plays still pauses the music */
+  if(/^(?:pause|hold|freeze|stay on|stop on|lock)(?: the| this)? (?:page|screen|dashboard|rotation|pages)(?: please)?$|^stay (?:here|on this(?: page)?)$/.test(t)){paused=true;clearTimeout(pTimer);pgFreeze();return reply('Okay, I\'ll stay on this page.')}
+  if(/^(?:resume|unpause|unfreeze|start|restart)(?: the)? (?:page|pages|screen|dashboard|rotation|rotating)(?: please)?$/.test(t)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(!AUD.kind&&!(typeof tkRing!=='undefined'&&tkRing.length)&&/^(?:stop|pause|stop it|pause it|stop the (?:music|song)|pause the (?:music|song)|turn (?:it|the music) off|shut it off)(?: please)?$/.test(t)&&((typeof NP!=='undefined'&&NP&&NP.state==='playing')||Date.now()-((window._musAsk&&window._musAsk.at)||window._musAt||0)<30*60000)&&SECRETS.topic){nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{});try{VOICE.followNext=0}catch(e){}return reply('Paused.')}
   {const r=audCmd(t);if(r!=null){if(r&&typeof r.then==='function'){r.then(x=>{if(x)reply(x)}).catch(()=>reply('That didn\'t work.'));return}if(r)return reply(r);return}}
   {const r=wallCmd(t);if(r!=null){if(r)reply(r);return}}
@@ -10864,7 +10867,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 328';
+document.getElementById('ver').textContent='build nova 329';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
