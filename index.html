@@ -3002,7 +3002,7 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 #npV .npv-bg{position:absolute!important;inset:0;background:radial-gradient(90% 55% at 50% 30%,color-mix(in srgb,var(--c1) 75%,#000) 0%,color-mix(in srgb,var(--c1) 35%,#0d0a12) 45%,#100b16 85%);transition:background 2s}
 #npV .npv-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(60% 30% at 82% 90%,color-mix(in srgb,var(--c2) 30%,transparent),transparent 70%)}
 #npV.air .npv-bg{background:radial-gradient(90% 55% at 50% 30%,#5a2412 0%,#2a1410 45%,#100b0c 85%)}
-#npV .npv-hd{flex:none;display:flex;justify-content:space-between;align-items:center;gap:2vw}
+#npV .npv-hd{flex:none;display:flex;justify-content:flex-start;align-items:center;gap:3vw;margin-top:0;padding-right:24vw;min-height:9vw}#npV .npv-big{font-size:3vw;opacity:.8}
 #npV .npv-logo{display:flex;align-items:center;gap:2vw;min-width:0}
 #npV .npv-logo>span{font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:600;font-size:2.7vw;letter-spacing:.1vw;text-transform:uppercase;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #npV .npv-hd .nv-stk{transform:scale(.82);transform-origin:left center}
@@ -4786,7 +4786,7 @@ function monthHTML(){
 }
 let comSig='';
 const PG_NAMES={wall:'Wallpaper',cost:'What Nova costs',review:'Week in review',obs:'Observatory',world:'Breaking news',radio:'On the radio',trip:'Flight',nwrap:'Nova Wrapped',townnews:'Around here',dashboard:'Main',np:'Now playing',forecast:'Forecast',coming:'Coming up',week:'Week ahead',maps:'Weather maps',radar:'Flights',sat:'Satellite',rloop:'Radar',cams:'Live cams',news:'Team news',tx:'Trades',home:'Home',xbox:'Xbox',recap:'Recap',ws:'World Series',gameday:'Game day',kgameday:'Knights game day',live:'Live',hub:'Leafs hub',khub:'Knights hub',standings:'Standings',jellyfin:'Jellyfin',wrapped:'Wrapped',watch:'Watch next',photos:'Photos',tech:'Home tech',games:'Tonight',aqua:'Aquarium',car:'Car',morn:'Morning'};
-function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle)');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
+function n2AlignClock(){const m=$('mini'),t=document.body.classList.contains('cooking')?document.querySelector('#cook.on .ck-title'):document.querySelector('.page.on :is(.jf-title,.ptitle),#pNP.on.npv .npv-logo');if(!m)return;if(!t||!t.offsetHeight){m.style.top='';return}
   const r=t.getBoundingClientRect(),mh=m.getBoundingClientRect().height;if(r.top<0||r.top>window.innerHeight*.3)return;m.style.top=Math.round(r.top+r.height/2-mh/2)+'px'}
 function n2FitTitles(){setTimeout(n2AlignClock,900);n2AlignClock();document.querySelectorAll('.page.on :is(.jf-title,.ptitle),#cook.on .ck-title').forEach(t=>{t.style.removeProperty('font-size');let f=parseFloat(getComputedStyle(t).fontSize),n=0;
   while(t.scrollWidth>t.clientWidth+1&&n++<30&&f>14){f*=.94;t.style.setProperty('font-size',f+'px','important')}})}
@@ -9324,14 +9324,13 @@ function renderNPV(s){const P=$('pNP'),v=$('npV');P.classList.add('npv');
   const t=air?(sh?sh.host:'Nova FM'):(s.title||(yt?'YouTube video':'Unknown song')),ts=t.length>26?'l3':t.length>16?'l2':'';
   v.className=(s.state==='paused'&&!air?'paused':'')+(air?' air':'');
   v.innerHTML=`<div class="npv-bg"></div>
-   <div class="npv-hd">${fm?`<div class="npv-logo">${stk}<span>${esc(sh?sh.name:'')}${sh&&sh.host?' · '+esc(sh.host):''}</span></div>`:`<div class="npv-logo"><span class="npv-k">${yt?'Now watching':'Now playing'}</span></div>`}
-     <div class="npv-oa${air?' on':''}"><i></i>On air</div></div>
+   <div class="npv-hd">${fm?`<div class="npv-logo">${stk}</div><div class="npv-oa${air?' on':''}"><i></i>On air</div>`:`<div class="npv-logo"><span class="npv-k npv-big">${yt?'Now watching':'Now playing'}</span></div>`}</div>
    <div class="npv-stage">
      <div class="npv-rec"><div class="npv-spin"><div class="npv-grv"></div><div class="npv-lab" style="${url&&!air?`background-image:url('${esc(url)}')`:''}">${air?stk:''}</div><div class="npv-hole"></div></div>
        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" class="t"/><circle cx="50" cy="50" r="49" class="p" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg></div>
      <div class="npv-sl">${air?`<div class="npv-fmc">${stk}<small>on the air</small></div>`:url?`<img src="${esc(url)}" alt="">`:`<div class="npv-none">${yt?'▶':'♪'}</div>`}</div></div>
    <div class="npv-meta">
-     <div class="npv-k">${air?'On the mic · the song picks up right after':s.state==='paused'?'Paused':(yt?'Now watching':'Now playing')+(s.shuf?' · 🔀 Shuffle':'')+(yt?' · YouTube':' · your library')}</div>
+     <div class="npv-k">${air?'On the mic · the song picks up right after':[s.state==='paused'?'Paused':fm&&sh?esc(sh.name)+(sh.host?' with '+esc(sh.host):''):yt?'YouTube':'Your library',s.state!=='paused'&&s.shuf?'🔀 Shuffle':''].filter(Boolean).join(' · ')}</div>
      <div class="npv-t ${ts}">${esc(t)}</div>
      <div class="npv-a">${air?esc(sh?sh.name:'Nova FM'):esc(s.artist||'')}</div>
      ${!air&&s.album&&!yt?`<div class="npv-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
@@ -10850,7 +10849,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 322';
+document.getElementById('ver').textContent='build nova 323';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
