@@ -2516,7 +2516,7 @@ body:not(.noTicker):not(.hasTicker) #npBody.fmS-on:not(.fm-noup) .fm-row{padding
 #amb .amb-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 #amb.vid .amb-v{opacity:1}#amb.vid .amb-st{opacity:0}
 #amb .amb-sc{position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(5,8,15,.35),rgba(5,8,15,0) 28%,rgba(5,8,15,0) 70%,rgba(5,8,15,.5))}
-#amb .amb-ov{position:absolute;inset:0;pointer-events:none;color:#f4efe6}
+#amb .amb-ov{position:absolute;inset:0;pointer-events:none;color:#f4efe6;transition:transform 40s ease-in-out}
 #amb .amb-ck{position:absolute}
 #amb .amb-ov.tl .amb-ck{left:7.4vw;top:13vw}
 #amb .amb-ov.c .amb-ck{left:0;right:0;top:34vh;text-align:center}
@@ -5175,7 +5175,7 @@ const AUD_ALIAS=[[/\b(?:am ?640|640(?: ?am)?(?: news)?|global news(?: radio)?|cf
   [/\bjazz ?fm\b|\bcjrt\b/,'CJRT'],[/\bclassical(?: ?96(?:\.3)?)?\b/,'CFMZ'],[/\bq ?107\b/,'CILQ'],[/\bchfi\b|\b98\.1\b/,'CHFI'],[/\bthe edge\b|\b102\.1\b|\bcfny\b/,'CFNY'],
   [/\bkiss(?: ?92(?:\.5)?)?\b/,'KISS 92.5'],[/\bz ?103(?:\.5)?\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom(?: ?97(?:\.3)?)?\b/,'CHBM'],[/\bfm ?96\b|\b95\.9\b/,'CFPL-FM'],[/\bam ?980\b|\b980\b/,'CFPL-AM']];
 function audSave(){NM.set('audvol',AUD.vol)}
-function audPill(){let p=$('audPill');if(!AUD.kind){if(p)p.className='';return}
+function audPill(){let p=$('audPill');if(!AUD.kind||(AUD.amb&&typeof AMB!=='undefined'&&AMB.on)){if(p)p.className='';return}
   if(!p){p=document.createElement('div');p.id='audPill';document.body.appendChild(p)}
   const ic={radio:'📻',pod:'🎙️',sleep:'🌧️'}[AUD.kind]||'🔊',left=AUD.off?Math.max(0,Math.ceil((AUD.off-Date.now())/60000)):0;
   p.innerHTML=`<i>${ic}</i><div><b>${esc(AUD.label)}</b><small>${esc(AUD.sub||'')}${left?(AUD.sub?' · ':'')+'off in '+left+' min':''} · say “stop”</small></div><em>${Math.round(AUD.vol*100)}</em>`;p.className='on'}
@@ -6379,12 +6379,16 @@ function ambPaint(){const el=$('amb');if(!el||!AMB.on)return;
   if($('night')&&$('night').classList.contains('on')){ambOff();return}
   const n=new Date(),tm=n.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),m=tm.match(/^(.*?)\s?([AP]M)$/i),hm=m?m[1]:tm,ap=m?m[2].toUpperCase():'';
   const s=typeof NP!=='undefined'&&NP&&NP.state==='playing'?NP:null,fm=typeof FM!=='undefined'&&FM.on;
-  const ov=el.querySelector('.amb-ov');ov.className='amb-ov '+(AMB.pos[AMB.k]||'tl');
+  const ov=el.querySelector('.amb-ov'),ps=AMB.pos[AMB.k]||'tl';ov.className='amb-ov '+ps;
+  /* drift the clock to a new spot every 2 minutes, slowly, so nothing sits still long enough to burn in */
+  if(!AMB.mv||Date.now()-AMB.mv>120000){AMB.mv=Date.now();const r=(a,b)=>a+Math.random()*(b-a);
+    const [x,y]=ps==='c'?[r(-14,14),r(-18,5)]:ps==='bl'?[r(0,26),r(-34,0)]:[r(0,26),r(0,34)];
+    ov.style.transform=`translate(${x.toFixed(1)}vw,${y.toFixed(1)}vh)`}
   ov.innerHTML=`<div class="amb-ck"><b>${esc(hm)}<span>${esc(ap)}</span></b><small>${esc(ambLine(AMB.k))}</small></div>${s?`<div class="amb-np">${fm?'<i>Nova FM</i>':'<i>♪</i>'}<u></u><span>${esc(s.title||'')}${s.artist?' — '+esc(s.artist):''}</span></div>`:''}`}
 function ambFit(){const el=$('amb');if(!el)return;const st=el.querySelector('.amb-st');if(!st)return;const sc=Math.max(innerWidth/540,innerHeight/960);st.style.transform=`translate(${(innerWidth-540*sc)/2}px,${(innerHeight-960*sc)/2}px) scale(${sc})`}
 function ambOn(k){k=AMB.S[k]?k:ambPick();let el=$('amb');
   if(!el){el=document.createElement('div');el.id='amb';el.addEventListener('click',()=>ambOff());document.body.appendChild(el)}
-  AMB.on=true;AMB.k=k;el.className='on';
+  AMB.on=true;AMB.k=k;AMB.mv=0;el.className='on';
   el.innerHTML=`<div class="amb-st">${AMB.S[k]}</div><video class="amb-v" muted loop playsinline autoplay preload="auto"></video><div class="amb-sc"></div><div class="amb-ov"></div>`;
   ambFit();ambPaint();clearInterval(AMB.t);AMB.t=setInterval(ambPaint,15000);
   /* the real video: try each clip (1080p, then 720p); if none loads, the drawn scene stays */
@@ -10708,7 +10712,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 317';
+document.getElementById('ver').textContent='build nova 318';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
