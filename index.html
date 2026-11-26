@@ -9827,8 +9827,8 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
   if(V.on===false){VOICE.st='off';return}if(!SR){VOICE.st='err';VOICE.err='this browser has no speech recognition';return}
   try{if(VOICE.rec){VOICE.rec.onend=null;VOICE.rec.onerror=null;VOICE.rec.onresult=null;VOICE.rec.abort()}}catch(e){}
   const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=5;
-  rec.onstart=()=>{VOICE.st='on';VOICE.err='';voiceUI();vLog('listening')};
-  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();VOICE.live=txt;VOICE.fails=0;if(VOICE.test){if(fin)vLog('heard: "'+txt+'"');voiceTestUI()}
+  rec.onstart=()=>{VOICE.started=Date.now();VOICE.st='on';VOICE.err='';voiceUI();vLog('listening')};
+  rec.onresult=ev=>{for(let i=ev.resultIndex;i<ev.results.length;i++){const R=ev.results[i],txt=R[0].transcript.trim(),fin=R.isFinal;VOICE.at=Date.now();if(fin){VOICE.res=(VOICE.res||[]).filter(t=>Date.now()-t<600000);VOICE.res.push(Date.now())}VOICE.live=txt;VOICE.fails=0;if(VOICE.test){if(fin)vLog('heard: "'+txt+'"');voiceTestUI()}
     const ru=typeof NovaRoundup!=='undefined'&&NovaRoundup.busy();
     if(ru||VOICE.paused)continue;   // never act on its own voice
     if(!VOICE.armed&&typeof FM!=='undefined'&&(FM.air||Date.now()-(FM.airEnd||0)<5000))continue;   // Nova FM is on air: that's her own voice saying "Nova"
@@ -9836,7 +9836,9 @@ function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.
       /* while you're talking, keep listening: the window restarts so it's 3 seconds after your last word */
       if(!vF(c)){clearTimeout(VOICE.armT);VOICE.armT=setTimeout(()=>voiceRun(VOICE.heard),3000)}
       if(fin){VOICE.pre=0;if(!vF(c))voiceRun(c)}continue}
-    let m=null;for(let a=0;a<R.length&&!m;a++)m=(R[a].transcript||'').trim().match(WAKE);if(!m)continue;
+    let m=null;for(let a=0;a<R.length&&!m;a++)m=(R[a].transcript||'').trim().match(WAKE);
+    if(!m&&fin&&/^(?:hey|hay|hi|ok|okay|a|eh)\b|\bno(?:v|b|w)\w*\b/i.test(txt)&&Date.now()-(VOICE.nmAt||0)>20000){VOICE.nmAt=Date.now();fmDiag(`voice: no wake word in [${txt.slice(0,60)}]${R.length>1?' (also: '+[...R].slice(1,3).map(a=>a.transcript.trim().slice(0,40)).join(' / ')+')':''}`)}
+    if(!m)continue;
     if(fin){VOICE.fails=0;VOICE.pre=0;!vFill(m[1])?(VOICE.armed||voiceChime(true),voiceRun(m[1])):(VOICE.armed?null:voiceArm())}
     else if(!VOICE.pre&&vFill(m[1])){VOICE.pre=1;voiceArm()}   // light up as soon as "hey nova" is heard, not after the pause
   }};
@@ -9859,7 +9861,12 @@ setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking)||!
   if(ru)VOICE.pz=0;
   if(!ru&&!VOICE.paused&&VOICE.followNext&&VOICE.st==='on'&&!VOICE.armed){VOICE.followNext=0;setTimeout(()=>{if(!VOICE.paused&&!VOICE.armed)voiceArm(true)},600)}
   if(VOICE.paused){if(!dark){VOICE.ps=VOICE.ps||Date.now();if(Date.now()-VOICE.ps>180000){vLog('paused too long, forcing the mic back on');VOICE.paused=0;VOICE.ps=0;aiBusy=false;voiceStart()}}}
-  else if(VOICE.st==='on')VOICE.off=0;
+  else if(VOICE.st==='on'){VOICE.off=0;
+    /* Chrome's speech recognition can stay "on" but go deaf. If the mic meter hears someone talking and no words have come back for 15 s, start it fresh */
+    const talk=typeof KP!=='undefined'&&KP.an&&KP.fr.filter(f=>Date.now()-f.t<8000).length>=12;
+    if(!VOICE.armed&&talk&&Date.now()-(VOICE.at||0)>15000&&Date.now()-(VOICE.kick||0)>45000){VOICE.kick=Date.now();VOICE.kicks=(VOICE.kicks||0)+1;vLog('went deaf, restarting');fmDiag('voice: talking heard but no words for 15s, restarted the listener');voiceStart()}
+    /* and a fresh start every 10 quiet minutes anyway */
+    else if(!VOICE.armed&&!talk&&Date.now()-Math.max(VOICE.at||0,VOICE.kick||0,VOICE.started||0)>600000){VOICE.kick=Date.now();voiceStart()}}
   else{VOICE.off=VOICE.off||Date.now();if(Date.now()-VOICE.off>8000&&(CFG.voice||{}).on!==false){VOICE.off=0;vLog('mic went quiet, restarting it');voiceStart()}}},300);
 /* fresh start every night at 4 AM: picks up new uploads and clears anything that built up (settings and keys are kept) */
 const bootAt=Date.now();setInterval(()=>{const n=new Date();if(n.getHours()===4&&n.getMinutes()<10&&Date.now()-bootAt>3600e3)location.reload()},60000);
@@ -10685,7 +10692,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 314';
+document.getElementById('ver').textContent='build nova 315';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
@@ -10706,7 +10713,7 @@ window.addEventListener('unhandledrejection',e=>{const m=String(e.reason&&e.reas
 /* a status line in the Nova log: 30 s after starting, then every 10 minutes */
 function nvReport(){try{const pl=typeof PL!=='undefined'&&PL&&PL.planes?PL.planes.length:null;
   if(!NOVA_MAIN)fmDiag('WARNING: this copy is NOT the main one: another copy of the dashboard is open in this browser and has the remote. Close it.');
-  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} stt=${typeof STT!=='undefined'?(STT.ok===null?'?':STT.ok?'on':'off'):'?'} voice=${typeof KP!=='undefined'?(KP.an?'meter '+(KP.ctx&&KP.ctx.state)+' '+KP.fr.length+'f':'meter off'):'?'}/${typeof VOICE!=='undefined'?VOICE.st+(VOICE.err?' '+VOICE.err:''):''} tts=${typeof MV!=='undefined'?(MV.voice?MV.voice.name:'none')+(MV.hasKo===false?' (helper has no Kokoro)':'')+' last='+(MV.last||'-')+' ko='+NM.get('kospd',0)+'ms':'?'} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
+  fmDiag(`status ${$('ver').textContent.replace('build ','')} main=${NOVA_MAIN} remote=${typeof remoteUp!=='undefined'?remoteUp:'?'} stt=${typeof STT!=='undefined'?(STT.ok===null?'?':STT.ok?'on':'off'):'?'} voice=${typeof KP!=='undefined'?(KP.an?'meter '+(KP.ctx&&KP.ctx.state)+' '+KP.fr.length+'f':'meter off'):'?'}/${typeof VOICE!=='undefined'?VOICE.st+(VOICE.err?' '+VOICE.err:'')+` heard=${(VOICE.res||[]).filter(t=>Date.now()-t<600000).length}/10m last=${VOICE.at?Math.round((Date.now()-VOICE.at)/1000)+'s':'never'} ends=${VOICE.ends.length}/2m kicks=${VOICE.kicks||0}${VOICE.paused?' PAUSED':''}`:''} tts=${typeof MV!=='undefined'?(MV.voice?MV.voice.name:'none')+(MV.hasKo===false?' (helper has no Kokoro)':'')+' last='+(MV.last||'-')+' ko='+NM.get('kospd',0)+'ms':'?'} lastcmd=${window._lastCmd?Math.round((Date.now()-window._lastCmd)/1000)+'s ago':'none'} planes=${pl!=null?pl:(typeof plErr!=='undefined'&&plErr)||'none yet'} radar=${typeof RD!=='undefined'&&RD.planes?Object.keys(RD.planes).length:'?'}${typeof rdOn==='function'&&!rdOn()?' (radar off: no planes setting/relay/key)':''} errors=${NV_ERR.length?NV_ERR.slice(-3).join(' | '):'none'} ${navigator.userAgent.match(/(Mac OS X [\d_]+|Android [\d.]+|iPhone|iPad|CrKey|Linux)/)?.[0]||''}`)}catch(e){}}
 setTimeout(nvReport,30000);setInterval(nvReport,600000);
 /* start everything; one part failing (bad saved data, a site down) can't stop the rest, and the log says which */
 nvStart('moon',()=>moon());nvStart('weather',()=>weather());nvStart('sportsLoop',()=>sportsLoop());nvStart('npListen',()=>setTimeout(npListen,3000));nvStart('loadTx',()=>setTimeout(loadTx,12000));nvStart('loadXb',()=>setTimeout(loadXb,9000));nvStart('radar',()=>radar());nvStart('loadPhotos',()=>loadPhotos());nvStart('nextPage',()=>nextPage());nvStart('alerts',()=>alerts());nvStart('loadNews',()=>loadNews());nvStart('loadCalendar',()=>loadCalendar());nvStart('dimmer',()=>dimmer());nvStart('remote',()=>remote());nvStart('loadJelly',()=>loadJelly());nvStart('loadGameday',()=>loadGameday());nvStart('loadLocal',()=>loadLocal());nvStart('loadDrives',()=>setTimeout(loadDrives,6000));nvStart('loadHub',()=>loadHub());nvStart('ntInit',()=>setTimeout(ntInit,9000));nvStart('loadTech',()=>setTimeout(loadTech,8000));nvStart('loadWatch',()=>setTimeout(loadWatch,7000));nvStart('loadKHub',()=>setTimeout(loadKHub,4000));nvStart('loadSpotlight',()=>loadSpotlight().then(()=>{if($('shift').classList.contains('on'))renderSpot()}));nvStart('loadSchedules',()=>setTimeout(loadSchedules,5000));nvStart('loadWrapped',()=>loadWrapped());nvStart('fxInit',()=>fxInit());nvStart('loadWS',()=>loadWS());nvStart('holInit',()=>holInit());nvStart('loadRecaps',()=>setTimeout(loadRecaps,8000));nvStart('pingRelay',()=>pingRelay());nvStart('satGrab',()=>satGrab());nvStart('loadRLoop',()=>setTimeout(loadRLoop,5000));nvStart('healthDot',()=>setTimeout(healthDot,15000));
