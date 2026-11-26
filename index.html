@@ -5179,12 +5179,12 @@ function audPill(){let p=$('audPill');if(!AUD.kind){if(p)p.className='';return}
   if(!p){p=document.createElement('div');p.id='audPill';document.body.appendChild(p)}
   const ic={radio:'📻',pod:'🎙️',sleep:'🌧️'}[AUD.kind]||'🔊',left=AUD.off?Math.max(0,Math.ceil((AUD.off-Date.now())/60000)):0;
   p.innerHTML=`<i>${ic}</i><div><b>${esc(AUD.label)}</b><small>${esc(AUD.sub||'')}${left?(AUD.sub?' · ':'')+'off in '+left+' min':''} · say “stop”</small></div><em>${Math.round(AUD.vol*100)}</em>`;p.className='on'}
-function audLevel(){const v=AUD.vol*(window._macSpeaking?.22:1)*(AUD.ramp?Math.min(1,.15+(Date.now()-AUD.ramp)/90000):1)*(AUD.fade?Math.max(0,(AUD.off-Date.now())/20000):1);
+function audLevel(){const v=AUD.vol*(AUD.amb?.45:1)*(window._macSpeaking?.22:1)*(AUD.ramp?Math.min(1,.15+(Date.now()-AUD.ramp)/90000):1)*(AUD.fade?Math.max(0,(AUD.off-Date.now())/20000):1);
   if(AUD.el&&AUD.kind!=='sleep')AUD.el.volume=Math.max(0,Math.min(1,v));if(AUD.g&&AUD.ctx)AUD.g.gain.setTargetAtTime(Math.max(0,v),AUD.ctx.currentTime,.2)}
 setInterval(()=>{if(!AUD.kind)return;if(AUD.off&&Date.now()>=AUD.off-20000)AUD.fade=1;if(AUD.off&&Date.now()>=AUD.off){audStop();return}audLevel();
   if(AUD.kind==='pod'&&AUD.el&&AUD.url&&!AUD.el.paused){const P=NM.get('podpos',{});P[AUD.url]=Math.floor(AUD.el.currentTime);const k=Object.keys(P);if(k.length>20)delete P[k[0]];NM.set('podpos',P)}},400);
 setInterval(()=>{if(AUD.kind)audPill()},30000);
-function audStop(quiet){AUD.stopping=true;try{if(AUD.hls){AUD.hls.destroy();AUD.hls=null}}catch(e){}try{if(AUD.el){AUD.el.pause();AUD.el.removeAttribute('src');AUD.el.load()}}catch(e){}
+function audStop(quiet){AUD.stopping=true;AUD.amb=0;try{if(AUD.hls){AUD.hls.destroy();AUD.hls=null}}catch(e){}try{if(AUD.el){AUD.el.pause();AUD.el.removeAttribute('src');AUD.el.load()}}catch(e){}
   try{AUD.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});clearInterval(AUD.crk);clearTimeout(AUD.thT)}catch(e){}AUD.nodes=[];AUD.g=null;
   AUD.kind='';AUD.label='';AUD.sub='';AUD.off=0;AUD.fade=0;AUD.ramp=0;AUD.url='';setTimeout(()=>{AUD.stopping=false},300);audPill();return quiet?'':'Okay.'}
 function audMusicPause(){try{if(SECRETS.topic)nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{})}catch(e){}}
@@ -5222,9 +5222,9 @@ async function audPod(q){if(!CFG.relay||!SECRETS.calkey)return "I can't look up 
 function audNoise(c,kind){const n=c.sampleRate*4,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);let last=0,p=[0,0,0,0,0,0,0];
   for(let i=0;i<n;i++){const w=Math.random()*2-1;if(kind==='brown'){last=(last+.02*w)/1.02;d[i]=last*3.5}else if(kind==='pink'){p[0]=.99886*p[0]+w*.0555179;p[1]=.99332*p[1]+w*.0750759;p[2]=.969*p[2]+w*.153852;p[3]=.8665*p[3]+w*.3104856;p[4]=.55*p[4]+w*.5329522;p[5]=-.7616*p[5]-w*.016898;d[i]=(p[0]+p[1]+p[2]+p[3]+p[4]+p[5]+p[6]+w*.5362)*.11;p[6]=w*.115926}else d[i]=w*.5}
   const s=c.createBufferSource();s.buffer=b;s.loop=true;return s}
-const AUD_SLEEP={rain:'Rain',thunderstorm:'Thunderstorm',ocean:'Ocean waves',stream:'Babbling brook',fireplace:'Fireplace',fan:'Fan',white:'White noise',pink:'Pink noise',brown:'Brown noise'};
+const AUD_SLEEP={snow:'Snowy night',evening:'Evening breeze',rain:'Rain',thunderstorm:'Thunderstorm',ocean:'Ocean waves',stream:'Babbling brook',fireplace:'Fireplace',fan:'Fan',white:'White noise',pink:'Pink noise',brown:'Brown noise'};
 function audSleepKind(t){return /thunder|storm/.test(t)?'thunderstorm':/rain/.test(t)?'rain':/ocean|wave|beach|sea/.test(t)?'ocean':/stream|brook|river|creek|water/.test(t)?'stream':/fire|crackl/.test(t)?'fireplace':/\bfan\b/.test(t)?'fan':/white/.test(t)?'white':/pink/.test(t)?'pink':/brown/.test(t)?'brown':/sleep|nature|relax/.test(t)?'rain':''}
-function audSleep(kind,mins){audStop(true);audMusicPause();const A=window.AudioContext||window.webkitAudioContext;if(!A)return "Sound isn't available here.";
+function audSleep(kind,mins,amb){audStop(true);if(!amb)audMusicPause();const A=window.AudioContext||window.webkitAudioContext;if(!A)return "Sound isn't available here.";
   const c=AUD.ctx||(AUD.ctx=new A());if(c.state==='suspended')c.resume();const g=c.createGain();g.gain.value=0;g.connect(c.destination);AUD.g=g;const N=[g];
   const chain=(src,...fs)=>{let x=src;fs.forEach(f=>{x.connect(f);x=f});return x};
   const filt=(type,f,q)=>{const x=c.createBiquadFilter();x.type=type;x.frequency.value=f;if(q)x.Q.value=q;N.push(x);return x};
@@ -5239,6 +5239,16 @@ function audSleep(kind,mins){audStop(true);audMusicPause();const A=window.AudioC
   else if(kind==='stream'){const lg=layer('white',.35,filt('bandpass',1800,.7),filt('lowpass',5000));lfo(.9,.08,lg.gain,.35);layer('pink',.4,filt('lowpass',900))}
   else if(kind==='fireplace'){layer('brown',.8,filt('lowpass',400));const cr=()=>{if(!AUD.kind)return;const s=audNoise(c,'white'),e=c.createGain(),f=filt('highpass',1500);s.connect(f).connect(e).connect(g);const t=c.currentTime;e.gain.setValueAtTime(.4*Math.random(),t);e.gain.exponentialRampToValueAtTime(.001,t+.02+Math.random()*.05);s.start(t);s.stop(t+.1)};
     AUD.crk=setInterval(()=>{if(Math.random()<.5)cr();if(Math.random()<.15)setTimeout(cr,60)},120)}
+  else if(kind==='snow'){   /* snowy night: low winter wind that gusts, a faint whistle, and a quiet fire crackling inside */
+    const w=layer('brown',.7,filt('lowpass',520));lfo(.06,.35,w.gain,.55);
+    const wh=layer('pink',.12,filt('bandpass',750,2.5));lfo(.045,.1,wh.gain,.1);
+    const cr=()=>{if(!AUD.kind)return;const s=audNoise(c,'white'),e=c.createGain(),f=filt('highpass',1800);s.connect(f).connect(e).connect(g);const t=c.currentTime;e.gain.setValueAtTime(.12*Math.random(),t);e.gain.exponentialRampToValueAtTime(.001,t+.02+Math.random()*.04);s.start(t);s.stop(t+.08)};
+    AUD.crk=setInterval(()=>{if(Math.random()<.25)cr()},160)}
+  else if(kind==='evening'){   /* sunset: a soft breeze and crickets */
+    const w=layer('pink',.35,filt('lowpass',900));lfo(.08,.15,w.gain,.3);
+    const ck=()=>{if(!AUD.kind)return;const o=c.createOscillator(),e=c.createGain();o.frequency.value=4300+Math.random()*400;o.connect(e).connect(g);const t=c.currentTime;e.gain.setValueAtTime(0,t);
+      for(let i=0;i<3;i++){e.gain.setValueAtTime(.025,t+i*.05);e.gain.setValueAtTime(0,t+i*.05+.025)}o.start(t);o.stop(t+.2)};
+    AUD.crk=setInterval(()=>{if(Math.random()<.35)ck()},400)}
   else if(kind==='fan'){layer('brown',1,filt('lowpass',800));layer('pink',.15,filt('bandpass',230,3))}
   else layer(kind,kind==='white'?.5:kind==='brown'?1:.9);
   AUD.nodes=N;AUD.kind='sleep';AUD.label=AUD_SLEEP[kind]||'Sleep sounds';AUD.sub='sleep sounds';AUD.off=mins?Date.now()+mins*60000:0;audLevel();audPill();try{fmDiag('player: sleep '+kind)}catch(e){}
@@ -5247,7 +5257,7 @@ const audDur=t=>{const m=t.match(/\bfor (?:the next )?(\d+|an?|one|two|three|hal
 /* voice: returns a reply, a promise of one, or null when it isn't a player thing */
 function audCmd(t){t=String(t||'').toLowerCase().replace(/[.!?]+$/,'').trim();
   if(AUD.kind&&!(typeof tkRing!=='undefined'&&tkRing.length)){
-    if(/^(?:stop|pause|turn (?:it|that) off|shut (?:it|that) off|off|that'?s enough|enough|quiet|silence|stop (?:the |that )?(?:radio|podcast|music|sound|sounds|noise|rain|ocean|waves|fan|fireplace|playing|station))(?: please)?$|^(?:turn|switch) off (?:the )?(?:radio|podcast|rain|ocean|waves|fan|fireplace|sound|sounds|noise|white noise)$/.test(t))return audStop();
+    if(/^(?:stop|pause|turn (?:it|that) off|shut (?:it|that) off|off|that'?s enough|enough|quiet|silence|stop (?:the |that )?(?:radio|podcast|music|sound|sounds|noise|rain|ocean|waves|fan|fireplace|playing|station))(?: please)?$|^(?:turn|switch) off (?:the )?(?:radio|podcast|rain|ocean|waves|fan|fireplace|sound|sounds|noise|white noise)$/.test(t)){if(AUD.amb&&typeof AMB!=='undefined'&&AMB.on){ambOff();return 'Back to the dashboard.'}return audStop()}
     if(/\b(?:turn (?:it|that|the (?:radio|podcast|sound|volume)) up|louder|volume up|crank it|a (?:bit|little) louder)\b/.test(t)){AUD.vol=Math.min(1,AUD.vol+.12);audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
     if(/\b(?:turn (?:it|that|the (?:radio|podcast|sound|volume)) down|quieter|softer|volume down|a (?:bit|little) quieter)\b/.test(t)){AUD.vol=Math.max(.05,AUD.vol-.12);audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
     const vm=t.match(/^(?:set (?:the )?)?volume (?:to |at )?(\d{1,3})(?: percent)?$/);if(vm){AUD.vol=Math.max(.05,Math.min(1,+vm[1]/100));audSave();audLevel();audPill();return `Volume ${Math.round(AUD.vol*100)}.`}
@@ -6381,8 +6391,12 @@ function ambOn(k){k=AMB.S[k]?k:ambPick();let el=$('amb');
   const L=(AMB.V[k]||[]).slice().sort(()=>Math.random()-.5),urls=[].concat(...L),v=el.querySelector('video');let i=0;
   const next=()=>{if(i>=urls.length||!AMB.on||AMB.k!==k){v.remove();return}v.src=urls[i++];v.play().catch(()=>{})};
   v.addEventListener('error',next);v.addEventListener('playing',()=>{if(AMB.k===k)el.classList.add('vid')});next();
-  try{wakeScreen()}catch(e){}return AMB.names[k]}
-function ambOff(){const el=$('amb');AMB.on=false;clearInterval(AMB.t);if(el){el.className='';setTimeout(()=>{if(!AMB.on){const v=el.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}el.innerHTML=''}},700)}}
+  try{wakeScreen()}catch(e){}ambSound(k);return AMB.names[k]}
+const AMB_SND={rain:'rain',storm:'thunderstorm',cabin:'snow',sunset:'evening'};
+function ambSound(k){try{if((CFG.ambient||{}).sound===false||NM.get('ambsnd',1)===0)return;
+  const busy=(AUD.kind&&!AUD.amb)||(typeof NP!=='undefined'&&NP&&NP.state==='playing');if(busy)return;
+  audSleep(AMB_SND[k]||'snow',0,true);AUD.amb=1;AUD.sub='ambient';audLevel();audPill()}catch(e){}}
+function ambOff(){const el=$('amb');AMB.on=false;clearInterval(AMB.t);try{if(AUD.amb)audStop(true)}catch(e){}if(el){el.className='';setTimeout(()=>{if(!AMB.on){const v=el.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}el.innerHTML=''}},700)}}
 addEventListener('resize',ambFit);
 /* ================= Nova Observatory: the globe =================
    One WebGL2 quad, no libraries: each pixel works out where its ray hits the Earth, then lights it from the real Sun
@@ -7679,6 +7693,8 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   /* ambient displays */
   {const am=t.match(/^(?:nova,? )?(?:ambient|ambience|ambiance)(?: (?:mode|display|screen))?(?: (.+))?$/);
    if(am||/^(?:show (?:me )?)?(?:the )?(rainy city|snowy cabin|thunderstorm|sunset) (?:scene|ambient)$/.test(t)){const w=(am?am[1]:t)||'';
+     if(/\b(?:sound|sounds|audio|noise)\b/.test(w)&&/\b(off|mute|no|stop|quiet)\b/.test(w)){NM.set('ambsnd',0);if(AUD.amb)audStop(true);return reply("Okay, ambient will be quiet.")}
+     if(/\b(?:sound|sounds|audio|noise)\b/.test(w)){NM.set('ambsnd',1);if(AMB.on)ambSound(AMB.k);return reply("Ambient sounds on.")}
      if(/\b(off|stop|exit|close|done)\b/.test(w)){ambOff();return reply('Ambient off.')}
      const k=/rain|city/.test(w)?'rain':/snow|cabin|winter|forest/.test(w)?'cabin':/storm|thunder|lightning/.test(w)?'storm':/sun ?set|sunrise|lake|dusk/.test(w)?'sunset':'';
      const nm=ambOn(k);return reply(nm+'.')}
@@ -10692,7 +10708,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 316';
+document.getElementById('ver').textContent='build nova 317';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
