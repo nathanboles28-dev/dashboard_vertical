@@ -9282,7 +9282,14 @@ const npT=x=>{x=Math.max(0,Math.round(x||0));return Math.floor(x/60)+':'+String(
 const npKey=s=>s.radio?'radio|'+(s.title||''):s.src==='youtube'?'yt|'+(s.vid||s.title):(s.artist||'')+'|'+(s.album||s.title||'');
 const npYT=s=>!!s&&s.src==='youtube';
 async function npArt(s){const k=npKey(s);if(npArtCache[k]!==undefined)return npArtCache[k];npArtCache[k]=null;
-  const q=async(term,ent)=>{const j=await jsonpObj('https://itunes.apple.com/search?country=CA&limit=1&entity='+ent+'&term='+encodeURIComponent(term),8000);const r=(j.results||[])[0];return r&&r.artworkUrl100?r.artworkUrl100.replace(/\d+x\d+bb/,'600x600bb'):null};
+  /* only accept a cover whose artist really matches (a plain first result once gave Chris Brown a Charlie Brown Christmas cover) */
+  const nz=x=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  const nzc=x=>nz(String(x||'').replace(/\s*[\(\[][^\)\]]*[\)\]]/g,''));
+  const q=async(term,ent)=>{const j=await jsonpObj('https://itunes.apple.com/search?country=CA&limit=15&entity='+ent+'&term='+encodeURIComponent(term),8000);
+    const A=nz(String(s.artist||'').split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bx\b)\s*/i)[0]),AL=nzc(s.album),TI=nzc(s.title);
+    const ok=(j.results||[]).filter(r=>r.artworkUrl100&&A&&(nz(r.artistName).includes(A)||A.includes(nz(r.artistName))));
+    const sc=r=>(AL&&nzc(r.collectionName)===AL?4:0)+(AL&&nzc(r.collectionName).includes(AL)?2:0)+(TI&&nzc(r.trackName)===TI?3:0);
+    const r=ok.sort((x,y)=>sc(y)-sc(x))[0];return r?r.artworkUrl100.replace(/\d+x\d+bb/,'600x600bb'):null};
   let u=null;if(s.radio)u=rgLogo()||null;else if(npYT(s))u=s.vid?`https://i.ytimg.com/vi/${encodeURIComponent(s.vid)}/hqdefault.jpg`:null;
   else{/* search simply: main artist only, no "(feat. …)", no "(Deluxe)" etc. Several tries, most exact first */
     const cl=x=>String(x||'').replace(/\s*[\(\[][^\)\]]*(feat|ft\.|with |deluxe|edition|remaster|version|explicit|clean|sold out|anniversary|expanded|bonus)[^\)\]]*[\)\]]/gi,'').replace(/\s+-\s+(single|ep)$/i,'').trim(),
@@ -10850,7 +10857,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 324';
+document.getElementById('ver').textContent='build nova 325';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
