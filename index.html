@@ -7979,7 +7979,10 @@ function remote(){
   const onCmd=d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
     if(!/^fmstate /.test(String(d.message||''))){window._lastCmd=Date.now();try{const mm=String(d.message||'');if(mm.length<80&&!/^[\[{]|^(presence|alarm|ping)\b/i.test(mm))fmDiag(`remote: [${mm}]`)}catch(e){}if(!/^(presence|alarm)\b/i.test(String(d.message||'')))hudSeen('remote')}
-    let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
+    let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}
+    /* the remote's Pause / Resume buttons always mean the page (an old copy of the remote sends just "pause") */
+    {const b=String(m||'').trim().toLowerCase();if(b==='pause')m='pause the page';else if(b==='resume')m='resume the page'}
+    handleCommand(m)};
   nbSub(T,'',onCmd,ok=>{remoteUp=ok});
   /* still listen on ntfy too, for anything not switched over yet (an old Siri shortcut); listening doesn't use up ntfy's daily limit */
   nbCheck().then(ok=>{if(ok&&window.EventSource){const es=new EventSource(`https://ntfy.sh/${T}/sse`);es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}onCmd(d)}}});
@@ -10869,7 +10872,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 330';
+document.getElementById('ver').textContent='build nova 331';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
