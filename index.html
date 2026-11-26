@@ -2996,6 +2996,13 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+/* Home: one warm lamp colour for anything that's on (no neon glows) */
+html #pHome .hm-t.on .ic,html #pHome .hm-dots i.on{background:#e8a45c!important;box-shadow:none!important}
+html #pHome .hm-t.on .ic svg,html #pHome .hm-dots i.on svg{stroke:#2a1a0a!important}
+html #pHome .hm-t.on{background:rgba(232,164,92,.09)!important}
+html #pHome .hm-rm.lit{background:rgba(232,164,92,.12)!important;border-color:rgba(232,164,92,.35)!important;box-shadow:none!important}
+html #pHome .hm-cnt>div.on{background:rgba(232,164,92,.12)!important;border-color:rgba(232,164,92,.35)!important}
+html #hmBadge i{background:#e8a45c!important;box-shadow:none!important}
 #fTemp .fdeg{margin-left:.1em;letter-spacing:0}
 /* news pictures: one size everywhere, filler when there's no photo */
 .n3i.ph{width:calc(15*var(--u))!important;height:calc(9.6*var(--u))!important;position:relative;overflow:hidden;flex:none}
@@ -10678,7 +10685,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 313';
+document.getElementById('ver').textContent='build nova 314';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
