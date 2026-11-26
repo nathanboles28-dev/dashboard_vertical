@@ -3001,17 +3001,10 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 .n3i.ph>img{position:absolute;inset:0;width:100%!important;height:100%!important;object-fit:cover}
 .nfh{position:relative;overflow:hidden}.nfh>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hb2-nw .th{position:relative}
-.nf{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4%;background:linear-gradient(135deg,#1d2a47,#3a2f7a);color:#fff;text-align:center}
-.nf.t-leafs,.nf.t-mapleleafs{background:linear-gradient(135deg,#00205b,#2f6bd8)}.nf.t-knights{background:linear-gradient(135deg,#0b3a26,#1f8f5a)}
-.nf.t-jays,.nf.t-bluejays{background:linear-gradient(135deg,#123a8a,#3ec7ff)}.nf.t-world,.nf.t-breaking{background:linear-gradient(135deg,#4a0d12,#b3262e)}
-.nf.c0:not([class*="t-leafs"]):not([class*="t-knights"]):not(.t-world){background:linear-gradient(135deg,#5a2a0e,#d9782e)}
-.nf.c1:not([class*="t-leafs"]):not([class*="t-knights"]):not(.t-world){background:linear-gradient(135deg,#123e52,#2a9bc8)}
-.nf.c2:not([class*="t-leafs"]):not([class*="t-knights"]):not(.t-world){background:linear-gradient(135deg,#2a1a5a,#7a5cff)}
-.nf.c3:not([class*="t-leafs"]):not([class*="t-knights"]):not(.t-world){background:linear-gradient(135deg,#233d1a,#5fa83a)}
-.nf .nf-lg{width:auto;height:52%;max-width:70%;object-fit:contain;filter:drop-shadow(0 .4vw .8vw rgba(0,0,0,.35))}
-.nf i{font-style:normal;font-size:38cqh;line-height:1}
+.nf{position:absolute;inset:0;background:#1d2a47 center/cover no-repeat}
+.nf::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 35%,rgba(0,0,0,.6))}
 .n3i.ph,.hb2-nw .th,.nfh{container-type:size}
-.nf em{font-style:normal;font-family:var(--head,'Inter'),sans-serif;font-weight:700;font-size:11cqh;letter-spacing:.08em;text-transform:uppercase;opacity:.85;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nf em{position:absolute;left:5%;bottom:7%;z-index:1;font-style:normal;font-family:var(--head,'Inter'),sans-serif;font-weight:700;font-size:max(9px,11cqh);letter-spacing:.08em;text-transform:uppercase;color:#fff;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .n3hero.img .nfh{position:absolute;inset:0}.wb .wb-img.nfh{aspect-ratio:16/9;width:100%}
 
 body.pgWall #mini{opacity:0!important;transition:opacity .4s}
@@ -4484,10 +4477,18 @@ async function loadNewsFeed(){const F=CFG.newsFeed,K=SECRETS.calkey;if(!F||!CFG.
   if(Date.now()-repAt>1800000&&typeof hubOn==='function'&&hubOn()){repAt=Date.now();try{const j=await (await tfetch(`${CFG.relay}/report?key=${encodeURIComponent(K)}&team=${encodeURIComponent((CFG.hub&&CFG.hub.team)||'TOR')}`,20000)).json();if(!j.error)REP=j}catch(e){}}
   return ok}
 const nTag=t=>`<span class="n3t t-${esc(String(t).toLowerCase())}">${esc(t)}</span>`;
-/* every story gets the same photo-sized box: its picture, or a matching filler (team logo or an icon on the team/topic colour) — never a lone letter */
-const nFillHtml=(t,src)=>{const T0=String(t||'NEWS').toUpperCase(),T=T0==='TOR'?'LEAFS':T0==='LDN'?'KNIGHTS':T0,k=T.toLowerCase().replace(/[^a-z]/g,''),hc=[...T].reduce((a,c)=>a+c.charCodeAt(0),0)%4,
-  lg=/LEAFS|MAPLE/.test(T)&&typeof HUB!=='undefined'&&HUB&&HUB.logo?HUB.logo:/KNIGHTS/.test(T)&&typeof KH!=='undefined'&&KH&&KH.logo?KH.logo:'';
-  return `<div class="nf t-${k} c${hc}">${lg?`<img class="nf-lg" src="${esc(lg)}" alt="">`:`<i>${/LEAFS|KNIGHTS|NHL|OHL|HOCKEY/.test(T)?'🏒':/JAYS|MLB|BASEBALL/.test(T)?'⚾':/RAPTORS|NBA/.test(T)?'🏀':/WORLD|BREAKING/.test(T)?'🌎':/WEATHER/.test(T)?'🌦️':/LOCAL|WOODSTOCK|OXFORD|LONDON|INGERSOLL|TILLSONBURG/.test(T)?'🏘️':'📰'}</i>`}<em>${esc(String(src||T).replace(/^www\./,'').slice(0,24))}</em></div>`};
+/* every story gets the same photo-sized box: its picture, or a real photo that fits the topic (the team's arena, Woodstock's city hall,
+   downtown London, Parliament Hill, the Earth) with the source's name on it. Photos: Wikimedia Commons (free licences). */
+const NF_PH={leafs:['W9/93/Scotiabank_Arena_Toronto_Carolina_March_20_2026.jpg/960px-Scotiabank_Arena_Toronto_Carolina_March_20_2026.jpg','Wb/bc/NHL_faceoff.jpg/960px-NHL_faceoff.jpg'],
+  knights:['W6/6a/London_Knight%27s_game_%2822570362523%29.jpg/960px-London_Knight%27s_game_%2822570362523%29.jpg','W1/16/Budweiser_Gardens_-_Interior_2015.JPG/960px-Budweiser_Gardens_-_Interior_2015.JPG'],
+  local:['W6/68/City_Hall_Woodstock_Ontario_1.jpg/960px-City_Hall_Woodstock_Ontario_1.jpg','W1/1f/Old_City_Hall_Woodstock_Ontario_1.jpg/960px-Old_City_Hall_Woodstock_Ontario_1.jpg'],
+  london:['Wc/c5/Downtown_London%2C_Ontario_%2821637060110%29.jpg/960px-Downtown_London%2C_Ontario_%2821637060110%29.jpg','Wa/a1/Downtown_London%2C_Ontario_%2821650475140%29.jpg/960px-Downtown_London%2C_Ontario_%2821650475140%29.jpg'],
+  canada:['Wb/b2/Centre_Block_-_Parliament_Hill.jpg/960px-Centre_Block_-_Parliament_Hill.jpg'],
+  world:['W9/97/The_Earth_seen_from_Apollo_17.jpg/960px-The_Earth_seen_from_Apollo_17.jpg']};
+const nFillHtml=(t,src)=>{const T0=String(t||'NEWS').toUpperCase(),T=T0==='TOR'?'LEAFS':T0==='LDN'?'KNIGHTS':T0;
+  const k=/LEAFS|MAPLE|NHL/.test(T)?'leafs':/KNIGHTS|OHL/.test(T)?'knights':/LONDON/.test(T)?'london':/WOODSTOCK|OXFORD|INGERSOLL|TILLSONBURG|LOCAL|TOWN/.test(T)?'local':/WORLD|BREAKING|US\b|USA/.test(T)?'world':'canada';
+  const L=NF_PH[k],h=[...String(src||T)].reduce((a,c)=>a+c.charCodeAt(0),0),u=L[h%L.length].replace(/^W/,'https://thumb.wikimedia.org/wikipedia/commons/thumb/');
+  return `<div class="nf" style="background-image:url('${u}')"><em>${esc(String(src||T).replace(/^www\./,'').slice(0,26))}</em></div>`};
 window.nImgErr=el=>{const p=el.parentNode;el.remove();if(p&&!p.querySelector('.nf'))p.insertAdjacentHTML('beforeend',nFillHtml(p.dataset.t,p.dataset.s))};
 const nImgOk="if(this.naturalWidth<260||this.naturalHeight<150)nImgErr(this)";
 const nTile=(t,img,src)=>`<div class="n3i ph" data-t="${esc(t)}" data-s="${esc(src||'')}">${img?`<img src="${esc(img)}" alt="" loading="lazy" onload="${nImgOk}" onerror="nImgErr(this)">`:nFillHtml(t,src)}</div>`;
@@ -10662,7 +10663,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 310';
+document.getElementById('ver').textContent='build nova 311';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
