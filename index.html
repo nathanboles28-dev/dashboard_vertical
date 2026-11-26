@@ -9405,7 +9405,7 @@ function npApply(){const s=npState(),C=NPC(),pg=window._curPage||'';
   if(!s&&pg==='np')nextPage()}
 /* a new song: show the Now playing page for a few seconds, then go back to wherever the board was */
 let npLastSong='';
-function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)return;
+function npPeek(){/* off: Nathan doesn't want the song page popping up on every new song (turn back on with CFG.nowPlaying.peek:true) */if(NPC().peek!==true)return;const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)return;
   const cur=window._curPage||'';
   if(paused||cur==='live'||document.body.classList.contains('aqua')||($('night')&&$('night').classList.contains('on')))return;
   if(cur!=='np'||window._npPeek){const P=window._npPeek||{prev:cur,left:Math.max(8,Math.round(((window._pgEnd||0)-Date.now())/1000))};
@@ -10872,7 +10872,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 331';
+document.getElementById('ver').textContent='build nova 332';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
