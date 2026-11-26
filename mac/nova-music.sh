@@ -122,7 +122,7 @@ catalog_play(){ q="$1"; ent="${2:-song}"; f="$DIR/.itunes.json"; LOG="$DIR/music
 }
 # ---- Nova FM: a short DJ break from Nova, read in Zoe's voice over the music (ducked), with optional jingles and beds ----
 # Put your own sounds in ~/Music/Nova FM/jingles (played at the start) and ~/Music/Nova FM/beds (quiet music under the voice).
-# Optional settings in nova-music.env: DJ_VOICE="Zoe (Premium)"  DJ_RATE=160  DJ_VOL=1.0  DJ_BED=0.22
+# Optional settings in nova-music.env: DJ_VOICE="Zoe (Premium)"  DJ_RATE=160  DJ_VOL=1.0  DJ_BED=0.22  DJ_LOUD=0.33 (how loud her voice is; 0.33 is about as loud as songs)
 FMDIR="${NOVA_FM_DIR:-$HOME/Music/Nova FM}"
 # on air / speaking / off, to the dashboard: on the main channel and (as a backup) on the now-playing channel, and say in the log how it went
 fm_post(){ B="${NOVA_BUS:-https://nova-bus.nathanboles28.workers.dev}"
@@ -192,7 +192,15 @@ fm_air(){ txt="$1"; duckp="${2:-30}"; kind="${3:-dj}"; L="$DIR/.dj-lock"
     body=$(TXT="$txt" OUT="$DIR/.dj.wav" SP="${DJ_SPEED:-0.95}" KV="${hostv:-${DJ_KOKORO:-af_heart}}" perl -MJSON::PP -e 'print JSON::PP->new->encode({text=>$ENV{TXT},out=>$ENV{OUT},speed=>$ENV{SP}+0,voice=>$ENV{KV}})' 2>/dev/null)
     rr=$(curl -s -m 90 --data-binary "$body" http://127.0.0.1:8583/render 2>/dev/null)
     case "$rr" in *'"ok": true'*) [ -s "$DIR/.dj.wav" ] && { AF="$DIR/.dj.wav"; eng=kokoro
-        KP="$HOME/Library/Application Support/NovaVoice/venv/bin/python"; [ -x "$KP" ] && "$KP" -c 'import sys,soundfile as sf,numpy as np;a,r=sf.read(sys.argv[1]);m=float(np.max(np.abs(a))) if len(a) else 0;(m>0.01) and sf.write(sys.argv[1],np.clip(a*(0.95/m),-1,1),r)' "$AF" 2>>"$DIR/music-debug.log"; };; *) echo "dj kokoro failed $(date +%T): $(printf %s "$rr" | cut -c1-120)" >> "$DIR/music-debug.log";; esac
+        KP="$HOME/Library/Application Support/NovaVoice/venv/bin/python"; [ -x "$KP" ] && "$KP" -c 'import sys,os,soundfile as sf,numpy as np
+a,r=sf.read(sys.argv[1])
+if len(a):
+  t=float(os.environ.get("DJ_LOUD","0.33"))
+  v=np.abs(a)>0.02*float(np.max(np.abs(a)))
+  rms=float(np.sqrt(np.mean(np.square(a[v])))) if v.any() else 0
+  if rms>0.001:
+    g=max(1.0,min(10.0,t/rms))
+    sf.write(sys.argv[1],0.97*np.tanh(a*g),r)' "$AF" 2>>"$DIR/music-debug.log"; };; *) echo "dj kokoro failed $(date +%T): $(printf %s "$rr" | cut -c1-120)" >> "$DIR/music-debug.log";; esac
   fi
   if [ "$eng" = say ]; then
     V="${DJ_VOICE:-Zoe (Premium)}"; say -v '?' 2>/dev/null | grep -qF "$V" || V="Samantha"
