@@ -5333,8 +5333,16 @@ async function wlSpace(){const q=wlPick(WL_SPACE),s=await tfetch(`https://images
   const it=((s.collection||{}).items||[]).filter(x=>x.links&&x.links[0]&&x.data&&x.data[0]&&!WL.seen.includes(x.data[0].nasa_id)&&!/\b(launch|astronaut|crew|logo|diagram|chart|graph|portrait|press|conference|meeting)\b/i.test(x.data[0].title));
   if(!it.length)return null;const x=wlPick(it.slice(0,60)),d=x.data[0];
   return {url:x.links[0].href.replace(/~(thumb|small|medium)\.(jpg|png)$/i,'~large.$2'),fallback:x.links[0].href.replace(/~thumb\./,'~medium.'),title:(/^[a-z]{2,6}\d{3}[a-z]?\d+$/i.test(d.title)||/^[A-Z0-9_]+$/.test(d.title)?(wlClean(d.description).split(/[.!?] /)[0]||'From the space station'):wlClean(d.title)).slice(0,70),by:`${d.center?d.center+' · ':''}NASA`,desc:wlClean(d.description).slice(0,400),key:d.nasa_id}}
-async function wlFetch(){const th=wlTheme(),k=th==='mix'?wlPick(['art','nature','nature','animals','animals','space']):th;
-  for(let n=0;n<5;n++){try{const r=k==='art'?await wlArt():k==='space'?await wlSpace():await wlCommons(k==='animals'?WL_ANI:WL_NAT);
+/* Pexels / Pixabay through the relay, once their keys are set there (otherwise the free sources) */
+WL.pro=null;WL.proAt=0;
+async function wlPro(k){if(WL.pro===false&&Date.now()-WL.proAt<6*36e5)return null;if(!CFG.relay||!SECRETS.calkey)return null;
+  const seen=WL.seen.filter(x=>/pexels|pixabay/.test(x)).slice(-40).join(',');
+  const j=await tfetch(relayBase()+`/wall?key=${encodeURIComponent(SECRETS.calkey)}&theme=${k}&seen=${encodeURIComponent(seen)}`,12000).then(r=>r.json()).catch(()=>null);
+  if(!j||j.error||(j.none&&!j.empty)){WL.pro=false;WL.proAt=Date.now();return null}WL.pro=true;if(!j.photo)return null;
+  const p=j.photo;return {url:p.url,title:p.title.replace(/^\w/,c=>c.toUpperCase()),by:p.by,desc:p.title,key:p.link}}
+const WL_PRO=['nature','animals','winter','cozy','cities','ocean','canada'];
+async function wlFetch(){const th=wlTheme(),k=th==='mix'?wlPick(WL.pro?['art','nature','nature','animals','animals','space','winter','cozy','cities','ocean','canada']:['art','nature','nature','animals','animals','space']):th;
+  for(let n=0;n<5;n++){try{const r=(WL_PRO.includes(k)?await wlPro(k):null)||(k==='art'?await wlArt():k==='space'?await wlSpace():await wlCommons(k==='animals'?WL_ANI:WL_NAT));
       if(r){r.theme=k;let dim=null;await new Promise((ok,no)=>{const im=new Image();im.onload=()=>{dim=[im.naturalWidth,im.naturalHeight];ok()};im.onerror=()=>{if(r.fallback&&im.src!==r.fallback){im.src=r.fallback;r.url=r.fallback}else no()};im.src=r.url});
         WL.seen.push(r.key);WL.seen=WL.seen.slice(-120);NM.set('wlseen',WL.seen);
         /* too small to fill the screen without looking blurry: try another */
@@ -5353,9 +5361,9 @@ function renderWall(fresh){const P=$('pWall');if(!P)return;
   wlTick();clearInterval(WL.tk);WL.tk=setInterval(wlTick,1000);setTimeout(wlPrep,8000)}
 setTimeout(()=>{if(wlOn())wlPrep()},15000);
 function wallCmd(t){
-  const m=t.match(/^(?:(?:change|set|switch|make) (?:the |my )?(?:wallpaper|background|clock screen)(?: to)?|(?:wallpaper|background)(?: to)?|show me(?: some)?|i want(?: to see)?) (art|paintings?|nature|landscapes?|animals?|wildlife|space|stars|the universe|mix|a mix|everything|all of them|mix them all|all)(?: (?:on the |for the )?(?:wallpaper|background))?$/)||t.match(/^(?:mix them all|mix (?:up )?the wallpapers?)$/);
+  const m=t.match(/^(?:(?:change|set|switch|make) (?:the |my )?(?:wallpaper|background|clock screen)(?: to)?|(?:wallpaper|background)(?: to)?|show me(?: some)?|i want(?: to see)?) (art|paintings?|nature|landscapes?|animals?|wildlife|space|stars|the universe|winter|snow|cozy|cosy|cities|city|ocean|beach|beaches|canada|mix|a mix|everything|all of them|mix them all|all)(?: (?:on the |for the )?(?:wallpaper|background))?$/)||t.match(/^(?:mix them all|mix (?:up )?the wallpapers?)$/);
   if(m&&(m[1]?/wallpaper|background|clock screen/.test(t)||/^show me|^i want/.test(t)&&/wallpaper|background/.test(t)||/^(?:wallpaper|background)/.test(t):true)){
-    const k=!m[1]||/mix|every|all/.test(m[1])?'mix':/art|paint/.test(m[1])?'art':/nature|landscape/.test(m[1])?'nature':/animal|wild/.test(m[1])?'animals':'space';
+    const k=!m[1]||/mix|every|all/.test(m[1])?'mix':/art|paint/.test(m[1])?'art':/nature|landscape/.test(m[1])?'nature':/animal|wild/.test(m[1])?'animals':/winter|snow/.test(m[1])?'winter':/coz|cos/.test(m[1])?'cozy':/cit/.test(m[1])?'cities':/ocean|beach/.test(m[1])?'ocean':/canada/.test(m[1])?'canada':'space';
     NM.set('wltheme',k);NM.set('wlon',true);WL.next=null;wlPrep();return `Wallpaper set to ${k==='mix'?'a mix of everything':k}.`}
   if(/^(?:turn off|hide|skip|stop|no more|get rid of) (?:the )?(?:wallpaper|clock screen|picture page)$/.test(t)){NM.set('wlon',false);return 'Okay, no more wallpaper page. Say "turn on the wallpaper" to bring it back.'}
   if(/^(?:turn on|show|bring back) (?:the )?(?:wallpaper|clock screen|picture page)$/.test(t)){NM.set('wlon',true);wlPrep();showFor('wall');return 'Wallpaper is back.'}
@@ -10663,7 +10671,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 311';
+document.getElementById('ver').textContent='build nova 312';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
