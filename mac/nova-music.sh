@@ -157,8 +157,14 @@ fm_jingle(){ duckp="${1:-30}"; jkind="${2:-dj}"; L="$DIR/.dj-lock"
   r=$(osascript -e 'tell application "Music" to (player state as text) & "|" & (sound volume as text)' 2>/dev/null)
   case "$r" in playing*) ;; *) rmdir "$L"; return;; esac
   v0=$(num "${r#*|}"); [ "$v0" -lt 1 ] 2>/dev/null && v0=50; [ "$duckp" -gt "${DJ_JDUCK:-15}" ] 2>/dev/null && duckp=${DJ_JDUCK:-15}; dv=$(( v0 * duckp / 100 ))
-  echo "jingle $(date +%T): $(basename "$J") (music $v0 -> $dv)" >> "$DIR/music-debug.log"
-  fm_fade "$v0" "$dv" 0.6; afplay -v "${DJ_JVOL:-1.15}" "$J"; sleep 0.2; fm_fade "$dv" "$v0" 1.6; rmdir "$L" 2>/dev/null; }
+  # never over a song: pause it, play the jingle, then start the song again from the top (or carry on, if it was well into it)
+  ppos=$(num "$(osascript -e 'tell application "Music" to player position' 2>/dev/null | cut -d. -f1)")
+  echo "jingle $(date +%T): $(basename "$J") (song paused at ${ppos}s)" >> "$DIR/music-debug.log"
+  fm_fade "$v0" 0 0.4; osascript -e 'tell application "Music" to pause' >/dev/null 2>&1
+  osascript -e "tell application \"Music\" to set sound volume to $v0" >/dev/null 2>&1
+  afplay -v "${DJ_JVOL:-1.15}" "$J"; sleep 0.25
+  [ "${ppos:-0}" -lt 25 ] 2>/dev/null && osascript -e 'tell application "Music" to set player position to 0' >/dev/null 2>&1
+  osascript -e 'tell application "Music" to play' >/dev/null 2>&1; rmdir "$L" 2>/dev/null; }
 fm_fade(){ osascript - "$1" "$2" "$3" >/dev/null 2>&1 <<'APPLESCRIPT'
 on run argv
   set a to (item 1 of argv) as integer
