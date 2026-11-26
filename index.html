@@ -4223,7 +4223,9 @@ function pgBar(fresh){try{const i=$('dots').querySelector('i.on');if(!i)return;l
   const k=[{transform:'scaleX(1)',transformOrigin:'100% 50%',offset:Math.min(.999,a+.0001)},{transform:'scaleX(0)',transformOrigin:'100% 50%',offset:1}];
   if(FILL)k.unshift({transform:'scaleX(0)',transformOrigin:'0% 50%',offset:0,easing:'cubic-bezier(.3,.7,.3,1)'},{transform:'scaleX(1)',transformOrigin:'0% 50%',offset:a});
   f.animate(k,{duration:tot,fill:'forwards'})}catch(e){}}
-function pgFreeze(){window._pgEnd=Infinity;pgBar(false)}
+function pgFreeze(){window._pgEnd=Infinity;pgBar(false);try{if(paused)NM.set('pgPause',{p:window._curPage||'',at:Date.now()})}catch(e){}}
+/* a paused page stays paused through an update or reload (for up to 6 hours) */
+setTimeout(()=>{try{const z=NM.get('pgPause',null);if(z&&z.p&&Date.now()-z.at<6*3600e3&&!paused){nextPage(z.p,0);paused=true;clearTimeout(pTimer);pgFreeze();fmDiag('page pause kept through the reload: '+z.p)}}catch(e){}},6000);
 const canShow=p=>!!PAGE_EL[p.type]&&(p.type!=='wall'||wlOn())&&(p.type!=='obs'||obsOn())&&(p.type!=='radio'||radioOn())&&(p.type!=='nwrap'||nwShow())&&(p.type!=='trip'||tripPgOn())&&(p.type!=='world'||!!worldBig())&&(p.type!=='townnews'||!!(CFG.newsFeed&&CFG.newsFeed.local&&CFG.relay&&TOWN.length))&&(p.type!=='home'||(typeof hmOn==='function'&&hmOn()))&&(p.type!=='tx'||(typeof txOn==='function'&&txOn()))&&(p.type!=='xbox'||(typeof xbOn==='function'&&xbOn()))&&(p.type!=='np'||(typeof npOn==='function'&&npOn()&&NPC().page!==false))&&(p.type!=='photos'||photosOn())&&(p.type!=='jellyfin'||jfOn())&&(p.type!=='gameday'||gdToday())&&(p.type!=='kgameday'||kgdToday())&&(p.type!=='local'||locOn())&&(p.type!=='live'||liveOn())&&(p.type!=='hub'||hubOn())&&(p.type!=='ws'||wsShow())&&(p.type!=='recap'||recapOn())&&(p.type!=='khub'||khOn())&&(p.type!=='week'||weekOn())&&(p.type!=='review'||reviewOn())&&(p.type!=='radar'||rdOn())&&(p.type!=='sat'||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='rloop'||!(CFG.radarLoop&&CFG.radarLoop.on===false))&&(p.type!=='maps'||!(CFG.radarLoop&&CFG.radarLoop.on===false)||(CFG.satellite&&CFG.satellite.on!==false))&&(p.type!=='cams'||(CFG.cams&&CFG.cams.on!==false&&camsList().length>0))&&(p.type!=='watch'||wtOn())&&(p.type!=='tech'||tsOn())&&(p.type!=='wrapped'||(jfOn()&&!(CFG.wrapped&&CFG.wrapped.on===false)&&new Date().getDate()<=((CFG.wrapped&&CFG.wrapped.days)||7)));
 const goals={};const r_key=(L,g)=>L.label+g.id;
 function goalAlert(key,team,mine){
@@ -7819,7 +7821,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   /* "stop" / "pause" while a song is playing (Apple Music or YouTube in Brave) pauses it */
   /* page pause (the phone remote's Pause / Resume buttons, or saying "pause the page") — plain "pause" while a song plays still pauses the music */
   if(/^(?:pause|hold|freeze|stay on|stop on|lock)(?: the| this)? (?:page|screen|dashboard|rotation|pages)(?: please)?$|^stay (?:here|on this(?: page)?)$/.test(t)){paused=true;clearTimeout(pTimer);pgFreeze();return reply('Okay, I\'ll stay on this page.')}
-  if(/^(?:resume|unpause|unfreeze|start|restart)(?: the)? (?:page|pages|screen|dashboard|rotation|rotating)(?: please)?$/.test(t)){paused=false;nextPage();return reply('Okay, back to rotating.')}
+  if(/^(?:resume|unpause|unfreeze|start|restart)(?: the)? (?:page|pages|screen|dashboard|rotation|rotating)(?: please)?$/.test(t)){paused=false;NM.set('pgPause',null);nextPage();return reply('Okay, back to rotating.')}
   if(!AUD.kind&&!(typeof tkRing!=='undefined'&&tkRing.length)&&/^(?:stop|pause|stop it|pause it|stop the (?:music|song)|pause the (?:music|song)|turn (?:it|the music) off|shut it off)(?: please)?$/.test(t)&&((typeof NP!=='undefined'&&NP&&NP.state==='playing')||Date.now()-((window._musAsk&&window._musAsk.at)||window._musAt||0)<30*60000)&&SECRETS.topic){nbPub(`${SECRETS.topic}-mcmd`,'pause|').catch(()=>{});try{VOICE.followNext=0}catch(e){}return reply('Paused.')}
   {const r=audCmd(t);if(r!=null){if(r&&typeof r.then==='function'){r.then(x=>{if(x)reply(x)}).catch(()=>reply('That didn\'t work.'));return}if(r)return reply(r);return}}
   {const r=wallCmd(t);if(r!=null){if(r)reply(r);return}}
@@ -7877,7 +7879,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
    if(al&&(named||/^dismiss/.test(t))&&wxShown().length){const n=wxDismiss();if(!named)try{hideOverlays()}catch(e){}return reply(n>1?'Okay, the weather alerts are hidden.':'Okay, the weather alert is hidden.')}
    if(al&&named&&wxAlerts.length)return reply("It's already hidden.")
    if(/^(?:show|bring back|unhide)(?: me)?(?: the)?(?: special)?(?: weather)? (?:alert|alerts|warning|statement|banner)(?: again)?$/.test(t)&&wxAlerts.length){NM.set('wxdis',[]);drawAlert();return reply('Okay, the weather alert is back.')}}
-  if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
+  if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;NM.set('pgPause',null);nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);pgFreeze();return reply('Okay, I\'ll stay on this page.')}
   if(/^(close|hide|dismiss|done|ok|okay|never ?mind|thanks|thank you)( it| that| this| status| the status)?$/.test(t)){hideOverlays();return reply('Okay.')}
   if(has(/\b(status|health|what'?s broken|diagnos\w*)\b/)){if($('hpanel').classList.contains('on')){hideOverlays();return reply('Status closed.')}showHealth(20);return reply(healthSay())}
@@ -7976,7 +7978,7 @@ function remote(){
   const T=SECRETS.topic;if(!T)return;
   const onCmd=d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
-    if(!/^fmstate /.test(String(d.message||''))){window._lastCmd=Date.now();if(!/^(presence|alarm)\b/i.test(String(d.message||'')))hudSeen('remote')}
+    if(!/^fmstate /.test(String(d.message||''))){window._lastCmd=Date.now();try{const mm=String(d.message||'');if(mm.length<80&&!/^[\[{]|^(presence|alarm|ping)\b/i.test(mm))fmDiag(`remote: [${mm}]`)}catch(e){}if(!/^(presence|alarm)\b/i.test(String(d.message||'')))hudSeen('remote')}
     let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}handleCommand(m)};
   nbSub(T,'',onCmd,ok=>{remoteUp=ok});
   /* still listen on ntfy too, for anything not switched over yet (an old Siri shortcut); listening doesn't use up ntfy's daily limit */
@@ -9613,7 +9615,7 @@ function stepPage(dir){const list=(CFG.pages||[]).filter(canShow);if(!list.lengt
 document.addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
   if(['ArrowRight','ArrowDown','PageDown'].includes(e.key)){e.preventDefault();stepPage(1)}
   else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();stepPage(-1)}
-  else if(e.key===' '){e.preventDefault();paused=!paused;if(paused){clearTimeout(pTimer);pgFreeze();toast('⏸ Paused · press Space to carry on')}else{toast('▶ Back to rotating');nextPage()}}});
+  else if(e.key===' '){e.preventDefault();paused=!paused;if(!paused)NM.set('pgPause',null);if(paused){clearTimeout(pTimer);pgFreeze();toast('⏸ Paused · press Space to carry on')}else{toast('▶ Back to rotating');nextPage()}}});
 let swX=null,swY=0;
 document.addEventListener('touchstart',e=>{const t=e.touches[0];swX=t.clientX;swY=t.clientY},{passive:true});
 document.addEventListener('touchend',e=>{if(swX==null)return;const t=e.changedTouches[0],dx=t.clientX-swX,dy=t.clientY-swY;swX=null;
@@ -10867,7 +10869,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 329';
+document.getElementById('ver').textContent='build nova 330';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
