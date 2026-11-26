@@ -2516,7 +2516,7 @@ body:not(.noTicker):not(.hasTicker) #npBody.fmS-on:not(.fm-noup) .fm-row{padding
 #amb .amb-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s}
 #amb.vid .amb-v{opacity:1}#amb.vid .amb-st{opacity:0}
 #amb .amb-sc{position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(5,8,15,.35),rgba(5,8,15,0) 28%,rgba(5,8,15,0) 70%,rgba(5,8,15,.5))}
-#amb .amb-ov{position:absolute;inset:0;pointer-events:none;color:#f4efe6;transition:transform 40s ease-in-out}
+#amb .amb-ov{position:absolute;inset:0;pointer-events:none;color:#f4efe6;transition:opacity 2s ease}#amb .amb-ov.fade{opacity:0}#amb .amb-ov.tr .amb-ck{right:7.4vw;top:13vw;text-align:right}#amb .amb-ov.br .amb-ck{right:7.4vw;bottom:16vw;text-align:right}#amb .amb-ov.bl .amb-ck{bottom:16vw}
 #amb .amb-ck{position:absolute}
 #amb .amb-ov.tl .amb-ck{left:7.4vw;top:13vw}
 #amb .amb-ov.c .amb-ck{left:0;right:0;top:34vh;text-align:center}
@@ -2996,6 +2996,17 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+#ss{position:fixed;inset:0;z-index:9000;background:#000;opacity:0;pointer-events:none;transition:opacity .8s;overflow:hidden;cursor:none;color:#fff}
+#ss.on{opacity:1;pointer-events:auto}
+#ss .ss-img{position:absolute;inset:0;background:#000 center/cover no-repeat;opacity:0;transition:opacity 2.5s ease}
+#ss .ss-img.on{opacity:1}#ss .ss-img.kb{animation:wlKb 190s ease-in-out forwards}
+#ss .ss-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.6) 100%);transition:background 2s}
+#ss .ss-shade.tl,#ss .ss-shade.tr{background:linear-gradient(0deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.6) 100%)}
+#ss .ss-ck{position:absolute;text-shadow:0 .4vw 2.6vw rgba(0,0,0,.5);transition:opacity 2s ease}#ss .ss-ck.fade{opacity:0}
+#ss .ss-ck.bl{left:5.2vw;bottom:12vw}#ss .ss-ck.tl{left:5.2vw;top:10vw}#ss .ss-ck.tr{right:5.2vw;top:10vw;text-align:right}#ss .ss-ck.br{right:5.2vw;bottom:12vw;text-align:right}
+#ss .ss-t{font-family:'Inter',sans-serif;font-weight:300;font-size:23.7vw;line-height:.9;letter-spacing:-.75vw}
+#ss .ss-s{display:flex;align-items:center;gap:2.6vw;margin-top:2.2vw;font-family:'Inter',sans-serif;font-size:3.9vw}#ss .ss-ck.tr .ss-s,#ss .ss-ck.br .ss-s{justify-content:flex-end}#ss .ss-s i{font-style:normal;opacity:.5}
+#ss .ss-cr{margin-top:1.6vw;font-family:'Inter',sans-serif;font-size:1.9vw;color:rgba(255,255,255,.65)}
 /* Home: one warm lamp colour for anything that's on (no neon glows) */
 html #pHome .hm-t.on .ic,html #pHome .hm-dots i.on{background:#e8a45c!important;box-shadow:none!important}
 html #pHome .hm-t.on .ic svg,html #pHome .hm-dots i.on svg{stroke:#2a1a0a!important}
@@ -6379,16 +6390,17 @@ function ambPaint(){const el=$('amb');if(!el||!AMB.on)return;
   if($('night')&&$('night').classList.contains('on')){ambOff();return}
   const n=new Date(),tm=n.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}),m=tm.match(/^(.*?)\s?([AP]M)$/i),hm=m?m[1]:tm,ap=m?m[2].toUpperCase():'';
   const s=typeof NP!=='undefined'&&NP&&NP.state==='playing'?NP:null,fm=typeof FM!=='undefined'&&FM.on;
-  const ov=el.querySelector('.amb-ov'),ps=AMB.pos[AMB.k]||'tl';ov.className='amb-ov '+ps;
-  /* drift the clock to a new spot every 2 minutes, slowly, so nothing sits still long enough to burn in */
-  if(!AMB.mv||Date.now()-AMB.mv>120000){AMB.mv=Date.now();const r=(a,b)=>a+Math.random()*(b-a);
-    const [x,y]=ps==='c'?[r(-14,14),r(-18,5)]:ps==='bl'?[r(0,26),r(-34,0)]:[r(0,26),r(0,34)];
-    ov.style.transform=`translate(${x.toFixed(1)}vw,${y.toFixed(1)}vh)`}
+  const ov=el.querySelector('.amb-ov');
+  /* the clock sits in a corner, and every 3 minutes fades out and back in at another one, so nothing burns in */
+  if(!AMB.spot)AMB.spot=AMB.pos[AMB.k]==='bl'?'bl':'tl';
+  if(!AMB.mv)AMB.mv=Date.now();else if(Date.now()-AMB.mv>180000&&!AMB.hop){AMB.hop=1;ov.classList.add('fade');
+    setTimeout(()=>{AMB.spot=ssNextSpot(AMB.spot);AMB.mv=Date.now();AMB.hop=0;ambPaint();requestAnimationFrame(()=>ov.classList.remove('fade'))},2200)}
+  ov.className='amb-ov '+AMB.spot+(AMB.hop?' fade':'');
   ov.innerHTML=`<div class="amb-ck"><b>${esc(hm)}<span>${esc(ap)}</span></b><small>${esc(ambLine(AMB.k))}</small></div>${s?`<div class="amb-np">${fm?'<i>Nova FM</i>':'<i>♪</i>'}<u></u><span>${esc(s.title||'')}${s.artist?' — '+esc(s.artist):''}</span></div>`:''}`}
 function ambFit(){const el=$('amb');if(!el)return;const st=el.querySelector('.amb-st');if(!st)return;const sc=Math.max(innerWidth/540,innerHeight/960);st.style.transform=`translate(${(innerWidth-540*sc)/2}px,${(innerHeight-960*sc)/2}px) scale(${sc})`}
 function ambOn(k){k=AMB.S[k]?k:ambPick();let el=$('amb');
   if(!el){el=document.createElement('div');el.id='amb';el.addEventListener('click',()=>ambOff());document.body.appendChild(el)}
-  AMB.on=true;AMB.k=k;AMB.mv=0;el.className='on';
+  AMB.on=true;AMB.k=k;AMB.mv=0;AMB.spot='';AMB.hop=0;el.className='on';
   el.innerHTML=`<div class="amb-st">${AMB.S[k]}</div><video class="amb-v" muted loop playsinline autoplay preload="auto"></video><div class="amb-sc"></div><div class="amb-ov"></div>`;
   ambFit();ambPaint();clearInterval(AMB.t);AMB.t=setInterval(ambPaint,15000);
   /* the real video: try each clip (1080p, then 720p); if none loads, the drawn scene stays */
@@ -6402,6 +6414,29 @@ function ambSound(k){try{if((CFG.ambient||{}).sound===false||NM.get('ambsnd',1)=
   audSleep(AMB_SND[k]||'snow',0,true);AUD.amb=1;AUD.sub='ambient';audLevel();audPill()}catch(e){}}
 function ambOff(){const el=$('amb');AMB.on=false;clearInterval(AMB.t);try{if(AUD.amb)audStop(true)}catch(e){}if(el){el.className='';setTimeout(()=>{if(!AMB.on){const v=el.querySelector('video');if(v){v.pause();v.removeAttribute('src');v.load()}el.innerHTML=''}},700)}}
 addEventListener('resize',ambFit);
+/* ================= Screensaver: full-screen wallpaper photos, a new one every 3 minutes, and a corner clock that moves ================= */
+const SS={on:false,t:null,img:null,mv:0,spot:'bl',hop:0,n:0};
+function ssNextSpot(cur){const all=['bl','tl','tr','br'].filter(x=>x!==cur);return all[Math.floor(Math.random()*all.length)]}
+function ssOn(){let el=$('ss');
+  if(!el){el=document.createElement('div');el.id='ss';el.addEventListener('click',()=>ssOff());document.body.appendChild(el)}
+  try{if(typeof AMB!=='undefined'&&AMB.on)ambOff()}catch(e){}
+  el.innerHTML='<div class="ss-img" id="ssA"></div><div class="ss-img" id="ssB"></div><div class="ss-shade"></div><div class="ss-ck bl"><div class="ss-t"></div><div class="ss-s"></div><div class="ss-cr"></div></div>';
+  SS.on=true;SS.mv=Date.now();SS.spot=['bl','tl','tr','br'][Math.floor(Math.random()*4)];SS.hop=0;SS.n=0;el.className='on';
+  ssNext();ssTick();clearInterval(SS.t);SS.t=setInterval(ssTick,1000);try{wakeScreen()}catch(e){}return 'Screensaver on.'}
+async function ssNext(){if(!SS.on)return;SS.at=Date.now()-150000;const r=WL.next||await wlFetch().catch(()=>null);WL.next=null;setTimeout(()=>{try{wlPrep()}catch(e){}},5000);
+  if(!r||!SS.on)return;const a=$('ssA'),b=$('ssB');if(!a)return;const top=a.classList.contains('on')?b:a,old=top===a?b:a;
+  top.style.backgroundImage=`url("${r.url.replace(/"/g,'%22')}")`;top.classList.remove('kb');void top.offsetWidth;top.classList.add('kb','on');old.classList.remove('on');SS.img=r;SS.at=Date.now()}
+function ssTick(){const el=$('ss');if(!SS.on||!el)return;
+  if($('night')&&$('night').classList.contains('on')){ssOff();return}
+  if(Date.now()-(SS.at||0)>180000&&SS.n++%10===0)ssNext();
+  const ck=el.querySelector('.ss-ck');
+  if(Date.now()-SS.mv>150000&&!SS.hop){SS.hop=1;ck.classList.add('fade');setTimeout(()=>{SS.spot=ssNextSpot(SS.spot);SS.mv=Date.now();ck.className='ss-ck '+SS.spot+' fade';el.querySelector('.ss-shade').className='ss-shade '+SS.spot;requestAnimationFrame(()=>requestAnimationFrame(()=>{ck.classList.remove('fade');SS.hop=0}))},2200)}
+  else if(!SS.hop){ck.className='ss-ck '+SS.spot;el.querySelector('.ss-shade').className='ss-shade '+SS.spot}
+  const d=new Date(),h=d.getHours()%12||12,m=String(d.getMinutes()).padStart(2,'0'),c=WXD&&WXD.c,w=c?(WX[c.weather_code]||['',''])[0]:'';
+  ck.querySelector('.ss-t').innerHTML=`${h}<span class="wl-col">:</span>${m}`;
+  ck.querySelector('.ss-s').innerHTML=`<span>${d.toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})}</span>${c?`<i>|</i><span>${w} ${Math.round(c.temperature_2m)}°</span>`:''}`;
+  ck.querySelector('.ss-cr').innerHTML=SS.img?esc(SS.img.title||''):''}
+function ssOff(){const el=$('ss');SS.on=false;clearInterval(SS.t);if(el){el.className='';setTimeout(()=>{if(!SS.on)el.innerHTML=''},800)}}
 /* ================= Nova Observatory: the globe =================
    One WebGL2 quad, no libraries: each pixel works out where its ray hits the Earth, then lights it from the real Sun
    position (day side from NASA Blue Marble, night side from NASA Black Marble city lights, a soft atmosphere at the rim).
@@ -7694,6 +7729,9 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
     if(have&&have.h)return say(have);reply('Let me look that up…');storyFetch(s).then(st=>{if(st&&st.h)say(st);else reply(`I don't know a story about ${s.title} I'm sure is true, so I'll skip it.`)});return}
   if($('lvTake')&&$('lvTake').classList.contains('on')&&/^(got it|ok|okay|thanks|thank you|on my way|leaving|i'm leaving|im leaving|heading out|dismiss|close)\b/.test(t)){LVT.dis.add(LVT.cur);$('lvTake').className='';return reply('Drive safe.')}
   if(!HLF.on&&$('pRecap')&&$('pRecap').classList.contains('on')&&/^(yes|yeah|yep|yup|sure|ok|okay|please|yes please|play (them|it|the highlights)|show (me|them))\b/.test(t)){if(hlfShow('leafs'))return;}
+  /* screensaver */
+  if(/^(?:(?:start|turn on|put on|show)(?: the| a)? )?screen ?saver(?: (?:on|mode|please))?$/.test(t))return reply(ssOn());
+  if(SS.on&&/^(?:exit|stop|close|done|back|go back|normal|dashboard|wake up|screen ?saver off|turn off (?:the )?screen ?saver|stop (?:the )?screen ?saver)$/.test(t)){ssOff();return reply('Back to the dashboard.')}
   /* ambient displays */
   {const am=t.match(/^(?:nova,? )?(?:ambient|ambience|ambiance)(?: (?:mode|display|screen))?(?: (.+))?$/);
    if(am||/^(?:show (?:me )?)?(?:the )?(rainy city|snowy cabin|thunderstorm|sunset) (?:scene|ambient)$/.test(t)){const w=(am?am[1]:t)||'';
@@ -10712,7 +10750,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 318';
+document.getElementById('ver').textContent='build nova 319';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
