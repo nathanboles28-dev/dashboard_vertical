@@ -2996,6 +2996,55 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+#fmOn.quiet{display:none!important}
+#pNP.npv #npBody,#pNP.npv #npBg{display:none!important}#pNP.npv::before,#pNP.npv::after{display:none!important}
+#npV{position:absolute;inset:0;overflow:hidden;color:#f6f1ea;font-family:'Inter',sans-serif;display:flex;flex-direction:column;padding:6.2vw 6.5vw 13vw}#npV:empty{display:none}#npV>*{position:relative}
+#npV .npv-bg{position:absolute!important;inset:0;background:radial-gradient(90% 55% at 50% 30%,color-mix(in srgb,var(--c1) 75%,#000) 0%,color-mix(in srgb,var(--c1) 35%,#0d0a12) 45%,#100b16 85%);transition:background 2s}
+#npV .npv-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(60% 30% at 82% 90%,color-mix(in srgb,var(--c2) 30%,transparent),transparent 70%)}
+#npV.air .npv-bg{background:radial-gradient(90% 55% at 50% 30%,#5a2412 0%,#2a1410 45%,#100b0c 85%)}
+#npV .npv-hd{flex:none;display:flex;justify-content:space-between;align-items:center;gap:2vw}
+#npV .npv-logo{display:flex;align-items:center;gap:2vw;min-width:0}
+#npV .npv-logo>span{font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:600;font-size:2.7vw;letter-spacing:.1vw;text-transform:uppercase;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#npV .npv-hd .nv-stk{transform:scale(.82);transform-origin:left center}
+#npV .npv-k{font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:700;font-size:2.3vw;letter-spacing:.35vw;text-transform:uppercase;opacity:.65}
+#npV .npv-oa{display:flex;align-items:center;gap:1vw;font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:700;font-size:2.4vw;letter-spacing:.3vw;text-transform:uppercase;padding:1.1vw 2.2vw;border-radius:4vw;border:2px solid rgba(255,255,255,.18);color:rgba(255,255,255,.35);transition:all .6s}
+#npV .npv-oa i{width:1.2vw;height:1.2vw;border-radius:50%;background:currentColor}
+#npV .npv-oa.on{background:#ff3b3b;border-color:#ff3b3b;color:#fff;box-shadow:0 0 4vw rgba(255,59,59,.6)}#npV .npv-oa.on i{animation:fmBlink 1.2s ease-in-out infinite}
+#npV .npv-stage{flex:none;width:87vw;height:62vw;margin-top:5vw}
+#npV .npv-sl{position:absolute;left:0;top:1.5vw;width:58vw;height:58vw;border-radius:1.4vw;overflow:hidden;box-shadow:0 3vw 8vw rgba(0,0,0,.55);background:#222;z-index:2}
+#npV .npv-sl img{width:100%;height:100%;object-fit:cover;display:block}
+#npV .npv-none{width:100%;height:100%;display:grid;place-items:center;font-size:20vw;color:rgba(255,255,255,.5);background:linear-gradient(140deg,var(--c2),var(--c1))}
+#npV .npv-fmc{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vw;background:radial-gradient(circle at 50% 45%,#3a1c12,#140c0a 75%)}
+#npV .npv-fmc .nv-stk{transform:scale(1.5)}#npV .npv-fmc small{margin-top:7vw;font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:700;font-size:2.6vw;letter-spacing:.6vw;text-transform:uppercase;color:#ff8a5c}
+#npV .npv-rec{position:absolute;left:24vw;top:0;width:61vw;height:61vw;transition:transform 1.2s cubic-bezier(.3,.7,.3,1)}
+#npV.paused .npv-rec{transform:translateX(-9vw)}
+#npV .npv-spin{position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,#121014 0 .28vw,#1d1b21 .28vw .46vw);box-shadow:0 3vw 8vw rgba(0,0,0,.6);animation:npvSpin 3.2s linear infinite}
+#npV.paused .npv-spin{animation-play-state:paused}
+#npV .npv-grv{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 200deg,transparent 0 20%,rgba(255,255,255,.10) 25%,transparent 32%,transparent 70%,rgba(255,255,255,.07) 75%,transparent 82%);animation:npvSpin 3.2s linear infinite reverse}
+#npV.paused .npv-grv{animation-play-state:paused}
+#npV .npv-lab{position:absolute;left:35%;top:35%;width:30%;height:30%;border-radius:50%;background:linear-gradient(140deg,var(--c2),var(--c1)) center/cover;display:grid;place-items:center;overflow:hidden}
+#npV.air .npv-lab{background:#1a0f0c}#npV .npv-lab .nv-stk{transform:scale(.42)}
+#npV .npv-hole{position:absolute;left:48.5%;top:48.5%;width:3%;height:3%;border-radius:50%;background:#100b16}
+#npV .npv-rec svg{position:absolute;inset:-1.3vw;width:calc(100% + 2.6vw);height:calc(100% + 2.6vw);transform:rotate(-90deg);overflow:visible}
+#npV .npv-rec svg circle{fill:none;stroke-width:.55;vector-effect:none}#npV .npv-rec svg .t{stroke:rgba(255,255,255,.14)}#npV .npv-rec svg .p{stroke:color-mix(in srgb,var(--c2) 70%,#fff);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+#npV.air .npv-rec svg{opacity:0}
+@keyframes npvSpin{to{transform:rotate(360deg)}}
+#npV .npv-meta{flex:none;margin-top:5vw}
+#npV .npv-t{font-family:'NovaBC','Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;font-size:11vw;line-height:.92;margin-top:1.6vw;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#npV .npv-t.l2{font-size:9vw}#npV .npv-t.l3{font-size:7.4vw}
+#npV .npv-a{font-size:4.3vw;font-weight:600;margin-top:1.6vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#npV .npv-al{font-size:2.8vw;opacity:.6;margin-top:.6vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#npV .npv-wave{display:flex;align-items:flex-end;gap:.65vw;height:10vw;margin-top:4vw}
+#npV .npv-wave i{flex:1;border-radius:.55vw .55vw .2vw .2vw;background:rgba(255,255,255,.3);transform-origin:bottom;animation:npvBar 1.1s ease-in-out infinite alternate;transition:background .6s}
+#npV .npv-wave i.on{background:#fff}#npV.paused .npv-wave i{animation-play-state:paused}
+#npV.air .npv-wave i{background:#ff8a5c;animation-duration:.45s}
+@keyframes npvBar{from{transform:scaleY(.55)}to{transform:scaleY(1)}}
+#npV .npv-tm{display:flex;justify-content:space-between;font-size:2.3vw;opacity:.6;margin-top:1.3vw;min-height:3vw}
+#npV .npv-just{flex:none;margin-top:auto;padding-top:3vw}
+#npV .npv-jg{display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;margin-top:1.6vw}
+#npV .npv-jp{display:flex;gap:1.6vw;align-items:center;background:rgba(255,255,255,.07);border-radius:1.7vw;padding:1.5vw;min-width:0}
+#npV .npv-ja{width:8.4vw;height:8.4vw;border-radius:1vw;flex:none;background:center/cover;display:grid;place-items:center}#npV .npv-ja b{font-family:'NovaBC',sans-serif;font-size:4vw;opacity:.8}
+#npV .npv-jp>div:last-child{min-width:0}#npV .npv-jp b{display:block;font-size:2.4vw;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#npV .npv-jp small{display:block;font-size:1.95vw;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #ss{position:fixed;inset:0;z-index:9000;background:#000;opacity:0;pointer-events:none;transition:opacity .8s;overflow:hidden;cursor:none;color:#fff}
 #ss.on{opacity:1;pointer-events:auto}
 #ss .ss-img{position:absolute;inset:0;background:#000 center/cover no-repeat;opacity:0;transition:opacity 2.5s ease}
@@ -3392,7 +3441,7 @@ html.th-bc #rvBody .rv-r{transform:skewX(-10deg)}
 <section id="pHome" class="page"><div class="jf-title">Home</div><div id="hmBody"></div></section>
 <section id="pXbox" class="page"><div class="jf-title">Xbox</div><div id="xbBody"></div></section>
 <section id="pTx" class="page"><div class="jf-title">Trades &amp; signings</div><div id="txBody"></div></section>
-<section id="pNP" class="page"><div class="np-bg" id="npBg"></div><div id="npBody"></div></section>
+<section id="pNP" class="page"><div class="np-bg" id="npBg"></div><div id="npBody"></div><div id="npV"></div></section>
 <div id="npMini"></div>
 <section id="pLive" class="page"><div id="lvBody"></div></section>
 <section id="pGameday" class="page"><div id="gdBody"></div></section>
@@ -7153,7 +7202,7 @@ function fmOnAir(on){let el=$('fmOn');
     <div class="fo-k">${esc(K.lab)}</div><canvas width="1080" height="520"></canvas>${K.spec&&FM.spec.html?FM.spec.html:''}
     <div class="fo-n">Song paused · it starts from the top in a moment</div>
     <div class="fo-lt"><b>${esc(fmWord().w)}</b>${fmWord().b?`<i>${esc(fmWord().b)}</i>`:''}<span>WOODSTOCK${fmWx()?' · '+fmWx():''} · ${new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}).toUpperCase()}</span></div>`;
-  el.classList.add('on');wakeScreen&&wakeScreen();if(first)fmStationId(true);
+  el.classList.add('on');el.classList.toggle('quiet',!(K.spec&&FM.spec&&FM.spec.html)&&FMC().popup!==true);if(!el.classList.contains('quiet'))wakeScreen&&wakeScreen();if(first)fmStationId(true);
   const cv=el.querySelector('canvas'),c=cv.getContext('2d'),t0=performance.now();
   /* live captions: words light up at her speaking pace (after the jingle and the fade, ~1.6 s) */
   /* captions: the Mac says exactly when she starts and how long she talks (fmCaps); if it never does (older script), guess */
@@ -9249,13 +9298,55 @@ async function npArt(s){const k=npKey(s);if(npArtCache[k]!==undefined)return npA
   npArtCache[k]=out;return out}
 const npDark=(p,a)=>`rgba(${Math.round(p.r*.55)},${Math.round(p.g*.55)},${Math.round(p.b*.55)},${a})`;
 function npPaint(){const s=npState(),k=s?npKey(s):'',A=s&&npArtCache[k]||null,pal=A&&A.pal;
+  try{if(s&&$('pNP')&&$('pNP').classList.contains('npv'))renderNPV(s)}catch(e){}
   const r=document.documentElement.style;
   if(pal){r.setProperty('--np1',npDark(pal[0],.94));r.setProperty('--np2',npDark(pal[1],.94));
     $('npBg').style.background=`radial-gradient(circle at 30% 25%,rgb(${pal[0].r},${pal[0].g},${pal[0].b}),transparent 55%),radial-gradient(circle at 75% 65%,rgb(${pal[1].r},${pal[1].g},${pal[1].b}),transparent 55%),#120d1f`}
   else{r.removeProperty('--np1');r.removeProperty('--np2');$('npBg').style.background='radial-gradient(circle at 30% 25%,#ff7a59,transparent 55%),radial-gradient(circle at 75% 60%,#8a3ffc,transparent 55%),radial-gradient(circle at 40% 90%,#1f6feb,transparent 60%),#120d1f'}
   const url=A&&A.url;document.querySelectorAll('.np-art,#npMini .mn-a,#npCard .ca').forEach(el=>{if(el.classList.contains('np-art')){el.classList.toggle('none',!url);el.innerHTML=url?`<img src="${esc(url)}" alt="">`:''}else el.style.backgroundImage=url?`url("${url}")`:''});if(window._mnXb&&xbPl())xbMini()}
 const npEq='<span class="np-eq"><i></i><i></i><i></i><i></i></span>';
-function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';return}
+/* ===== Song page, vinyl layout: the cover with a record sliding out of it, colours from the cover, just played.
+   While the DJ talks, the Nova FM logo takes over the sleeve and the record label (no pop-up). ===== */
+let npvSig='',npvAirWas=false;
+const npvHash=t=>{let h=7;for(const c of String(t||''))h=(h*31+c.charCodeAt(0))>>>0;return h};
+function npvArt(x){const k=npKey(x),A=npArtCache[k];return A&&A.url?A.url:''}
+function npvTile(x){const u=npvArt(x),i=npvHash(x.title+x.artist)%360;
+  return `<div class="npv-jp"><div class="npv-ja" style="${u?`background-image:url('${esc(u)}')`:`background:linear-gradient(140deg,hsl(${i},60%,55%),hsl(${(i+50)%360},55%,28%))`}">${u?'':`<b>${esc((x.title||'?').charAt(0))}</b>`}</div><div><b>${esc(x.title||'')}</b><small>${esc(x.artist||'')}</small></div></div>`}
+function renderNPV(s){const P=$('pNP'),v=$('npV');P.classList.add('npv');
+  const air=!!(typeof FM!=='undefined'&&FM.on&&FM.air),fm=typeof fmStudioOn==='function'&&fmStudioOn(s),yt=npYT(s),url=npvArt(s),A=npArtCache[npKey(s)],pal=A&&A.pal;
+  const H=NM.get('fmhist',[]).filter(x=>!x.brk&&!(x.title===s.title&&x.artist===s.artist)).slice(0,3);
+  const sig=[s.title,s.artist,s.album,s.state,url,air,fm,H.map(x=>x.title+npvArt(x)).join(),pal?pal[0].r:''].join('|');
+  if(sig===npvSig&&v.innerHTML){npvTick();return}npvSig=sig;
+  const c1=pal?`rgb(${pal[0].r},${pal[0].g},${pal[0].b})`:'#8a3470',c2=pal?`rgb(${pal[1].r},${pal[1].g},${pal[1].b})`:'#ff8a5c';
+  v.style.setProperty('--c1',c1);v.style.setProperty('--c2',c2);
+  const seed=npvHash(s.title+s.artist),bars=Array.from({length:44},(_,i)=>{const h=22+((i*53+seed)%62)+(i%7===0?10:0);return `<i style="height:${h}%;animation-delay:-${((i*17+seed)%13)/10}s"></i>`}).join('');
+  const sh=fm?fmShow():null,stk=typeof fmSticker==='function'?fmSticker('npv-stk'):'';
+  const t=air?(sh?sh.host:'Nova FM'):(s.title||(yt?'YouTube video':'Unknown song')),ts=t.length>26?'l3':t.length>16?'l2':'';
+  v.className=(s.state==='paused'&&!air?'paused':'')+(air?' air':'');
+  v.innerHTML=`<div class="npv-bg"></div>
+   <div class="npv-hd">${fm?`<div class="npv-logo">${stk}<span>${esc(sh?sh.name:'')}${sh&&sh.host?' · '+esc(sh.host):''}</span></div>`:`<div class="npv-logo"><span class="npv-k">${yt?'Now watching':'Now playing'}</span></div>`}
+     <div class="npv-oa${air?' on':''}"><i></i>On air</div></div>
+   <div class="npv-stage">
+     <div class="npv-rec"><div class="npv-spin"><div class="npv-grv"></div><div class="npv-lab" style="${url&&!air?`background-image:url('${esc(url)}')`:''}">${air?stk:''}</div><div class="npv-hole"></div></div>
+       <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" class="t"/><circle cx="50" cy="50" r="49" class="p" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg></div>
+     <div class="npv-sl">${air?`<div class="npv-fmc">${stk}<small>on the air</small></div>`:url?`<img src="${esc(url)}" alt="">`:`<div class="npv-none">${yt?'▶':'♪'}</div>`}</div></div>
+   <div class="npv-meta">
+     <div class="npv-k">${air?'On the mic · the song picks up right after':s.state==='paused'?'Paused':(yt?'Now watching':'Now playing')+(s.shuf?' · 🔀 Shuffle':'')+(yt?' · YouTube':' · your library')}</div>
+     <div class="npv-t ${ts}">${esc(t)}</div>
+     <div class="npv-a">${air?esc(sh?sh.name:'Nova FM'):esc(s.artist||'')}</div>
+     ${!air&&s.album&&!yt?`<div class="npv-al">${esc(s.album)}${s.year?' · '+s.year:''}</div>`:''}
+     <div class="npv-wave">${bars}</div>
+     <div class="npv-tm"><span class="npv-cur">${air?'':npT(s.cur)}</span><span>${air||!s.dur?'':npT(s.dur)}</span></div></div>
+   ${H.length?`<div class="npv-just"><div class="npv-k">Just played</div><div class="npv-jg">${H.map(npvTile).join('')}</div></div>`:''}`;
+  npvTick()}
+function npvTick(){const v=$('npV');if(!v||!v.innerHTML)return;const s=npState();if(!s)return;const air=v.classList.contains('air');
+  const pc=air||!s.dur?0:Math.min(1,s.cur/s.dur),c=v.querySelector('.npv-rec .p');if(c)c.setAttribute('stroke-dashoffset',(100-pc*100).toFixed(2));
+  const B=v.querySelectorAll('.npv-wave i'),n=Math.round(B.length*pc);B.forEach((b,i)=>b.classList.toggle('on',air||i<n));
+  const cu=v.querySelector('.npv-cur');if(cu&&!air)cu.textContent=npT(s.cur)}
+setInterval(()=>{if($('pNP')&&$('pNP').classList.contains('on')&&$('pNP').classList.contains('npv')){const s=npState();if(s){const a=!!(FM.on&&FM.air);if(a!==npvAirWas){npvAirWas=a;renderNPV(s)}else npvTick()}}},1000);
+function renderNP(){const s=npState(),b=$('npBody');if(!s){b.innerHTML='';$('npV')&&($('npV').innerHTML='');npvSig='';return}
+  if(NPC().layout!=='classic'){b.innerHTML='';b.className='';npSig='';renderNPV(s);return}
+  $('pNP').classList.remove('npv');$('npV').innerHTML='';
   if(fmStudioOn(s)){const sig='fm|'+[fmShow().k,FM.pend,s.title,s.artist,s.state,JSON.stringify(s.next||''),s.shuf,FM.air,FM.busy,FM.count,(NM.get('fmhist',[])[0]||{}).at,(NM.get('fmlastbrk',{})||{}).at].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;fmStudio(s,b);fmDeskTick(false);npPaint();npTick();return}
   if(b.classList.contains('fmS-on')){b.className='';npSig=''}
   const sig=[s.title,s.artist,s.album,s.state].join('|');if(sig===npSig&&b.innerHTML)return npTick();npSig=sig;
@@ -9303,7 +9394,7 @@ function npPeek(){const secs=NPC().peekSecs??10;if(!secs||NPC().page===false)ret
       if(Q.prev==='morn'||!Q.prev){nextPage();return}
       nextPage(Q.prev,Q.left)},secs*1000)}}
 function npUpdate(j,fresh){if(fresh&&j&&j.state==='playing')hudSeen('music started');if(j&&j.state==='playing'&&j.src!=='youtube'&&typeof FM!=='undefined'&&+NM.get('fmlast',0)&&Date.now()-NM.get('fmlast',0)<30*60000)NM.set('fmlast',Date.now());const prev=NP&&[NP.title,NP.artist,NP.state].join('|');NP=j;if(rgListening(j))rgLoad(true);
-  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{if(j.src!=='youtube'&&!j.radio)fmLog({title:j.title,artist:j.artist,year:j.year,genre:j.genre,dur:j.dur});fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
+  if(j.state==='playing'){const song=(j.title||'')+'|'+(j.artist||'');if(song!==npLastSong){npLastSong=song;if(fresh)try{if(j.src!=='youtube'&&!j.radio)fmLog({title:j.title,artist:j.artist,album:j.album,year:j.year,genre:j.genre,dur:j.dur});fmSong(j)}catch(e){}if(fresh&&!rgListening(j))setTimeout(npPeek,300)}}
   else if(j.state==='stopped')npLastSong='';
   const s=npState();if(s){npArt(s).then(()=>{npPaint()});renderNPMini();if($('pNP').classList.contains('on'))renderNP()}
   npApply();}
@@ -10759,7 +10850,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 321';
+document.getElementById('ver').textContent='build nova 322';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
