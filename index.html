@@ -9864,7 +9864,7 @@ setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking)||!
   else if(VOICE.st==='on'){VOICE.off=0;
     /* Chrome's speech recognition can stay "on" but go deaf. If the mic meter hears someone talking and no words have come back for 15 s, start it fresh */
     const talk=typeof KP!=='undefined'&&KP.an&&KP.fr.filter(f=>Date.now()-f.t<8000).length>=12;
-    if(!VOICE.armed&&talk&&Date.now()-(VOICE.at||0)>15000&&Date.now()-(VOICE.kick||0)>45000){VOICE.kick=Date.now();VOICE.kicks=(VOICE.kicks||0)+1;vLog('went deaf, restarting');fmDiag('voice: talking heard but no words for 15s, restarted the listener');voiceStart()}
+    if(!VOICE.armed&&talk&&Date.now()-Math.max(VOICE.at||0,VOICE.started||0)>15000&&Date.now()-(VOICE.kick||0)>45000){VOICE.kick=Date.now();VOICE.kicks=(VOICE.kicks||0)+1;vLog('went deaf, restarting');fmDiag('voice: talking heard but no words for 15s, restarted the listener');voiceStart()}
     /* and a fresh start every 10 quiet minutes anyway */
     else if(!VOICE.armed&&!talk&&Date.now()-Math.max(VOICE.at||0,VOICE.kick||0,VOICE.started||0)>600000){VOICE.kick=Date.now();voiceStart()}}
   else{VOICE.off=VOICE.off||Date.now();if(Date.now()-VOICE.off>8000&&(CFG.voice||{}).on!==false){VOICE.off=0;vLog('mic went quiet, restarting it');voiceStart()}}},300);
@@ -10692,7 +10692,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 315';
+document.getElementById('ver').textContent='build nova 316';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
