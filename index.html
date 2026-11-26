@@ -6129,6 +6129,8 @@ function fmSong(j){if(!j||j.state!=='playing'||j.src==='youtube'||(typeof rgList
    if(lp&&gap>30*60000){FM.welcome=gap;FM.count=0;FM.target=1;FM.last=0}NM.set('fmlast',Date.now())}
   /* a jingle on its own between songs, at most one every 20 minutes and never within 10 minutes of the DJ talking (none after a skip, none if a break is about to play or one just did;
      talk breaks open with a jingle and count as one). Quiet hours mean no jingles either, unless Nova FM was woken. */
+  /* a break that was waiting but never aired (the music stopped before the song ended): the Mac drops it after 15 minutes, so drop it here too, or it blocks every break and jingle after */
+  fmStaleCheck();
   {const prevAt=FM.songAt||0;FM.songAt=Date.now();const C=FMC(),gap=(C.jingleMin||(NM.get('fmtest',false)?2:20))*60000,jl=+NM.get('fmjlast',0);
    /* not right before a break either: none when a break is due within a song, and none around the top of the hour while the hour ID is still to come */
    const nd=new Date(),hkJ=nd.toDateString()+'|'+nd.getHours(),idDue=(nd.getMinutes()<20&&NM.get('fmhour','')!==hkJ)||nd.getMinutes()>=56;
@@ -6269,6 +6271,9 @@ async function fmBreak(mode,song){const C=FMC(),T=SECRETS.topic;if(!T||FM.busy)r
   if(FM.hostK&&!GUEST)NM.set('fmhostk',FM.hostK);
   try{await nbPub(`${T}-mcmd`,`dj|${mode==='now'?'now':'next'}:${kind}@${(FMC().hostVoices===false?'':SHOW.voice)||''}|${Math.max(5,Math.min(90,+C.duck||30))}|${fmB64(sayNorm(spoken))}`)}catch(e){return false}
   return true}
+function fmStaleCheck(){const old=x=>x&&Date.now()-(typeof x==='object'?x.at:x)>16*60000;
+  if(!FM.air&&(old(FM.queued)||old(FM.pend))){FM.queued=null;FM.pend=null;fmDiag('a waiting break never aired (the music stopped), cleared it so breaks carry on')}}
+setInterval(()=>{try{fmStaleCheck()}catch(e){}},60000);
 function fmAirUI(on){try{const k=new Date().toDateString();if(FM.on&&NM.get('fmonDay','')!==k){NM.set('fmonDay',k);NM.set('fmonAt',Date.now())}}catch(e){}if(on)try{NM.set('fmjlast',Date.now())}catch(e){}if(on)FM.pend=0;if(on&&!FM.air){FM.airWords=(FM.queued&&FM.queued.words)||'';if(FM.airWords){NM.set('fmlastbrk',{words:FM.airWords,at:Date.now()});fmLog({host:fmAirHost(),brk:1})}FM.queued=null}
   try{fmOnAir(on);document.querySelectorAll('.fm-air').forEach(e=>e.classList.toggle('on',on));if(!on&&$('pNP').classList.contains('on')){npSig='';renderNP()}}catch(e){}
   if(FM.air&&!on)FM.airEnd=Date.now();FM.air=on;document.documentElement.classList.toggle('fmAir',on);let el=$('fmAir');
@@ -10857,7 +10862,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 326';
+document.getElementById('ver').textContent='build nova 327';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
