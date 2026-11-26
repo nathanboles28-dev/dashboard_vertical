@@ -4458,10 +4458,15 @@ async function alerts(){
       .filter(p=>(!p.expiration_datetime||new Date(p.expiration_datetime)>now)&&!/end|cancel/i.test(String(p.status_en||p.status||'')))
       .filter(p=>{const k=p.alert_name_en||p.alert_short_name_en;if(!k||seen.has(k))return false;seen.add(k);return true})
       .sort((a,b)=>(rank[a.alert_type]??9)-(rank[b.alert_type]??9));
+    try{const live=new Set(wxAlerts.map(wxKey)),d=NM.get('wxdis',[])||[];if(d.some(k=>!live.has(k)))NM.set('wxdis',d.filter(k=>live.has(k)))}catch(e){}
   }catch(e){console.warn('alerts',e)}
   drawAlert();
 }
-function drawAlert(){
+/* alerts you've dismissed stay hidden until that alert ends (a new or upgraded alert still shows) */
+const wxKey=a=>String(a.alert_name_en||a.alert_short_name_en||'').toLowerCase();
+const wxShown=()=>{const d=NM.get('wxdis',[])||[];return wxAlerts.filter(a=>!d.includes(wxKey(a)))};
+function wxDismiss(){const L=wxShown();if(!L.length)return false;const d=NM.get('wxdis',[])||[];NM.set('wxdis',[...new Set([...d,...L.map(wxKey)])]);drawAlert();return L.length}
+function drawAlert(){const wxAlerts=wxShown();
   document.body.classList.toggle('hasAlert',wxAlerts.length>0);
   if(!wxAlerts.length)return;
   const a=wxAlerts[alIdx%wxAlerts.length],col=String(a.risk_colour_en||'').toLowerCase();
@@ -7809,6 +7814,10 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
       const d=HM.devs.find(x=>x.name.toLowerCase()===nm)||HM.devs.find(x=>x.name.toLowerCase().includes(nm)||nm.includes(x.name.toLowerCase()));
       if(d){hmSet(d.name,{on:st==='on'});return reply(`${d.name} ${st}.`)}}
   }
+  {const al=/^(?:dismiss|hide|clear|close|get rid of|remove)(?: (?:the|that|this))?(?: special)?(?: weather)?(?: alert| alerts| warning| warnings| statement| statements| watch| advisory| banner| message)?(?: please)?$/.test(t),named=/alert|warning|statement|watch|advisory|banner/.test(t);
+   if(al&&(named||/^dismiss/.test(t))&&wxShown().length){const n=wxDismiss();if(!named)try{hideOverlays()}catch(e){}return reply(n>1?'Okay, the weather alerts are hidden.':'Okay, the weather alert is hidden.')}
+   if(al&&named&&wxAlerts.length)return reply("It's already hidden.")
+   if(/^(?:show|bring back|unhide)(?: me)?(?: the)?(?: special)?(?: weather)? (?:alert|alerts|warning|statement|banner)(?: again)?$/.test(t)&&wxAlerts.length){NM.set('wxdis',[]);drawAlert();return reply('Okay, the weather alert is back.')}}
   if(has(/\b(unpause|resume|continue|carry on|keep going|start rotating)\b/)){paused=false;nextPage();return reply('Okay, back to rotating.')}
   if(has(/\b(pause|stop|stay|hold|freeze|don'?t move)\b/)){paused=true;clearTimeout(pTimer);pgFreeze();return reply('Okay, I\'ll stay on this page.')}
   if(/^(close|hide|dismiss|done|ok|okay|never ?mind|thanks|thank you)( it| that| this| status| the status)?$/.test(t)){hideOverlays();return reply('Okay.')}
@@ -8604,7 +8613,7 @@ function ruData(o={}){const R=CFG.roundup||{},n=new Date(),h=n.getHours(),C=Nova
       lines:[`Shots <b>${F.sog||0}–${O.sog||0}</b>`,LV.pp?`<b>${esc((LV.pp.s==='h'?LV.home:LV.away).abbr)}</b> on the power play`:''].filter(Boolean),
       say:`Live right now: the ${nick(F.name)} ${d>0?'lead':d<0?'trail':'are tied with'} the ${nick(O.name)}${d?'':''} ${Math.max(F.score,O.score)} to ${Math.min(F.score,O.score)} in the ${/OT/i.test(pr)?'overtime':pr+' period'}.`}});
   /* 2. weather warnings */
-  sg(()=>{if(!wxAlerts.length)return;const a=wxAlerts[0],nm=String(a.alert_name_en||a.alert_short_name_en||'weather alert');
+  sg(()=>{const wxAlerts=wxShown();if(!wxAlerts.length)return;const a=wxAlerts[0],nm=String(a.alert_name_en||a.alert_short_name_en||'weather alert');
     return {key:'alert',tag:'ALRT',title:'Warning',kicker:'Environment Canada // '+(CFG.city||''),value:'!',unit:'Alert',big:nm.replace(/\b\w/g,c=>c.toUpperCase()),gauge:1,color:'#ff3b3b',alarm:true,
       lines:wxAlerts.slice(0,3).map(x=>`<b>${esc(x.alert_name_en||x.alert_short_name_en||'')}</b>${x.risk_colour_en?' · '+esc(x.risk_colour_en):''}`),
       say:`Heads up: there's ${/^[aeiou]/i.test(nm)?'an':'a'} ${nm} in effect.`}});
@@ -10419,7 +10428,7 @@ function ntItems(){const SKYT=[];try{const p=skyNext(12);if(p)SKYT.push(`<span c
   /* weather */
   try{if(WXD){const c=WXD.c,dl=WXD.dl;out.push(`${tag('WEATHER','w')} ${wx(c.weather_code,c.is_day===0)[0]} ${Math.round(c.temperature_2m)}° now · high ${Math.round(dl.temperature_2m_max[0])}°, low ${Math.round(dl.temperature_2m_min[0])}°${dl.precipitation_probability_max&&dl.precipitation_probability_max[0]>=50?' · '+dl.precipitation_probability_max[0]+'% chance of '+((dl.snowfall_sum||[])[0]>0?'snow':'rain'):''}`)}
     const sn=snowInfo();if(sn&&sn.s24>=2)out.push(`${tag('SNOW','w')} ❄️ About ${Math.round(sn.s24)} cm in the next 24 hours`);
-    (wxAlerts||[]).slice(0,2).forEach(a=>out.push(`${tag('ALERT','live')} ${esc(a.alert_name_en||a.headline||a.title||'Weather alert')}`))}catch(e){}
+    (wxShown()||[]).slice(0,2).forEach(a=>out.push(`${tag('ALERT','live')} ${esc(a.alert_name_en||a.headline||a.title||'Weather alert')}`))}catch(e){}
   /* roads */
   try{((LOC&&LOC.events)||[]).filter(affectsMe).filter(e=>evInfo(e).red).slice(0,2).forEach(e=>out.push(`${tag('ROADS','live')} ${evInfo(e).i} ${esc(evInfo(e).n)} · ${esc(e.road)} ${esc(shortDir(e.dir||''))} · ${esc(e.dist)} km away`));
     ((DRV&&DRV.drives)||[]).filter(x=>!x.error&&x.delay>=8).slice(0,2).forEach(x=>out.push(`${tag('TRAFFIC','a')} 🚗 ${esc(x.name)} is ${x.min} min (+${x.delay} for traffic)`))}catch(e){}
@@ -10750,7 +10759,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 319';
+document.getElementById('ver').textContent='build nova 320';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
