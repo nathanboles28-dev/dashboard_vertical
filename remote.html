@@ -249,6 +249,7 @@ function listen(){
   if(!T){setConn(false,'Not set up');askTopic();return}
   nbSub(T+'-reply','',d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;
+    if(/^VIEWLINK\|/.test(d.message||'')){const u=d.message.slice(9);try{localStorage.setItem('nova-viewlink',u)}catch(e){}if(window._wantView){window._wantView=0;location.href=u}return}
     $('sayCard').style.display='block';$('sayText').textContent=d.message;clearTimeout(window._sayT);window._sayT=setTimeout(()=>{$('sayCard').style.display='none'},30000);if(speakOn)say(d.message)},
     ok=>setConn(ok,ok?'':'Reconnecting…'));
 }
@@ -273,6 +274,13 @@ function hmRender(){if(!HM||!HM.devices||!HM.devices.length)return;$('hmSec').st
 function hmListen(){if(!T)return;
   nbSub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}},ok=>{if(ok)hmCmd({ping:1})})}
 hmListen();
+/* ---------- View dashboard: the kitchen screen, view-only, on this phone ---------- */
+(function(){const b=document.createElement('button');b.id='viewDash';b.innerHTML='🖥️ View dashboard';
+  b.style.cssText='font:inherit;font-size:16px;font-weight:600;color:var(--ink);border:1px solid var(--edge);background:var(--glass);border-radius:16px;padding:14px;width:100%';
+  const w=document.querySelector('.wrap'),h=w&&w.querySelector('header');if(h)h.after(b);else if(w)w.prepend(b);
+  b.onclick=()=>{let u='';try{u=localStorage.getItem('nova-viewlink')||''}catch(e){}if(u){location.href=u;return}
+    if(!T){askTopic();return}window._wantView=1;b.textContent='Asking the dashboard…';nbPub(T,JSON.stringify({viewlink:1})).catch(()=>{});
+    setTimeout(()=>{if(window._wantView){window._wantView=0;b.innerHTML='🖥️ View dashboard';setConn(false,"Dashboard didn't answer")}},15000)}})();
 
 /* ---------- share a lights-only remote (for someone else's phone) ---------- */
 (function(){const w=document.createElement('button');w.id='shareLights';w.textContent='Share lights remote';
