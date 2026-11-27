@@ -281,7 +281,7 @@ hmListen();
   w.onclick=async()=>{if(!T){askTopic();return}let bus='';try{bus=localStorage.getItem('nova-bus')||''}catch(e){}
     const u=new URL('lights.html',location.href).href+'#topic='+encodeURIComponent(T)+(bus?'&bus='+encodeURIComponent(bus):'');
     const msg='Nova lights: open this, then Share → Add to Home Screen';
-    try{if(navigator.share){await navigator.share({title:'Nova lights',text:msg,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}
+    try{if(navigator.share){await navigator.share({title:'Nova Home',text:msg,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}
     try{await navigator.clipboard.writeText(u);w.textContent='Link copied: paste it to her'}catch(e){prompt('Copy this link',u)}}})();
 
 /* ---------- Timers, reminders, list (state comes from the dashboard) ---------- */
