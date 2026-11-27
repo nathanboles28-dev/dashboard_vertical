@@ -10033,7 +10033,9 @@ setInterval(()=>{let spk=!!(window.speechSynthesis&&speechSynthesis.speaking)||!
   if(spk){VOICE.spk=VOICE.spk||Date.now();if(Date.now()-VOICE.spk>45000&&!(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())){try{speechSynthesis.cancel()}catch(e){}vLog('cleared stuck speech');spk=false;VOICE.spk=0}}else VOICE.spk=0;
   /* screen off for the night = mic off too (a TV in the background can't wake her up) */
   const emb=document.body.classList.contains('emberOn')&&!(new Date().getHours()>=6&&new Date().getHours()<12);/* the Ember clock overnight: mic off until 6 AM (use the phone remote) */
-  const dark=(CFG.voice||{}).sleepWithScreen!==false&&(($('night')&&$('night').classList.contains('on'))||emb);
+  /* ...but she keeps listening overnight while ambient, the screensaver or sleep sounds are on, or if someone talked to her in the last half hour */
+  const awake=(typeof AMB!=='undefined'&&AMB.on)||(typeof SS!=='undefined'&&SS.on)||(typeof AUD!=='undefined'&&!!AUD.kind)||Date.now()-(window._lastCmd||0)<1800e3;
+  const dark=(CFG.voice||{}).sleepWithScreen!==false&&!awake&&(($('night')&&$('night').classList.contains('on'))||emb);
   const ru=(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())||aiBusy||spk||dark,R=VOICE.rec;if(VOICE.test)voiceTestUI();if(!R)return;
   if(ru&&!VOICE.paused){VOICE.paused=1;VOICE.armed=0;clearTimeout(VOICE.armT);voiceUI();try{R.abort()}catch(e){}}
   else if(!ru&&VOICE.paused){if(!VOICE.pz)VOICE.pz=Date.now();if(Date.now()-VOICE.pz>(VOICE.followNext?900:2000)){VOICE.paused=0;VOICE.pz=0;VOICE.ps=0;try{R.start()}catch(e){}if(VOICE.followNext){VOICE.followNext=0;setTimeout(()=>{if(!VOICE.paused&&!VOICE.armed)voiceArm(true)},500)}}}
@@ -10872,7 +10874,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 332';
+document.getElementById('ver').textContent='build nova 333';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
