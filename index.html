@@ -5696,6 +5696,7 @@ async function tripPoll(force){if(!tripOn())return;const now=Date.now(),vis=$('p
       if(!m.ground&&(m.alt||0)>300){if(!L.air&&dA>3){L.air=true;L.took=dA>40&&m.kt>80?Math.max(f.dep-30*60e3,now-dA/(m.kt*1.852)*36e5-6*60e3):now}
         const lt=L.trail[L.trail.length-1];if(!lt||gcKm(lt[0],lt[1],m.lat,m.lon)>2)L.trail.push([+m.lat.toFixed(4),+m.lon.toFixed(4)]);if(L.trail.length>700)L.trail.splice(0,L.trail.length-700);
         L.eta=m.kt>80?now+dB/(m.kt*1.852)*36e5+(dB<60?2:7)*60e3:L.eta;
+        {const pe=tripPearsonEta(f);if(pe)L.eta=pe}   /* Pearson's own estimate beats distance ÷ speed (that skips the approach) */
         if(L.air)tripEvent(f,'off');if(L.air&&L.eta&&L.eta-now<22*60e3&&dB<350)tripEvent(f,'near');
         if(L.air&&(m.alt||0)<400&&dB<12){L.landed=now;L.air=false;tripEvent(f,'down')}}
       else if(L.air&&dB<30){L.landed=now;L.air=false;tripEvent(f,'down')}
@@ -6974,6 +6975,11 @@ const puIs=e=>{const t=e.title+' '+e.loc+' '+(e.desc||'');
   /* also a flight someone is coming home on: a flight number plus arriving/landing, or mom/dad/parents */
   return !!puNo(e)&&/\b(?:arriv\w*|lands?|landing|coming (?:home|back)|mom|dad|parents|pick)\b|\bto (?:yyz|toronto|pearson)\b/i.test(t)&&!/\b(?:depart\w*|my flight|leaving)\b/i.test(e.title)};
 const puNo=e=>{const m=(e.title+' '+(e.desc||'')+' '+e.loc).toUpperCase().match(/\b(AC|QK|RV|WS|WG|TS|PD|F8|Y9|UA|AA|DL|B6|AS|WN|AM|Y4|CM|BA|AF|KL|LH|LX|OS|SN|TP|IB|AZ|EI|VS|EK|QR|EY|TK|LY|ET|CX|NH|JL|KE|OZ|CA|MU|HU|CZ|BW|CU|AV|4N|NK|F9|G4|SY)\s?(\d{1,4})\b/);return m?m[1]+m[2]:''};
+/* landing at Pearson: use the airport's estimated arrival (what flight apps show) */
+function tripPearsonEta(f){try{const no=String(f.no||'').toUpperCase().replace(/\s+/g,'');
+  if(!no||!/\bYYZ\b|toronto|pearson/i.test([f.to,f.B&&f.B.join?f.B.join(' '):''].join(' ')))return null;
+  puFetch(no);const P=PU.d[no];if(!P||!P.est)return null;const ref=f.arr||Date.now(),[h,m]=P.est.split(':').map(Number),d=new Date(ref);d.setHours(h,m,0,0);
+  if(Math.abs(d-ref)>12*36e5)d.setDate(d.getDate()+(d<ref?1:-1));return d.getTime()}catch(e){return null}}
 async function puFetch(no){if(!no||Date.now()-(PU.at[no]||0)<5*60000)return;PU.at[no]=Date.now();
   try{const j=await (await tfetch(relayBase()+`/pearson?key=${encodeURIComponent(SECRETS.calkey)}&no=${no}`,20000)).json();if(!j.error)PU.d[no]=j}catch(e){}}
 /* when they'll be ready to get in the car */
@@ -10896,7 +10902,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 335';
+document.getElementById('ver').textContent='build nova 336';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
