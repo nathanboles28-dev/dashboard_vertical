@@ -5244,7 +5244,7 @@ const AUD_ALIAS=[[/\b(?:am ?640|640(?: ?am)?(?: news)?|global news(?: radio)?|cf
   [/\bjazz ?fm\b|\bcjrt\b/,'CJRT'],[/\bclassical(?: ?96(?:\.3)?)?\b/,'CFMZ'],[/\bq ?107\b/,'CILQ'],[/\bchfi\b|\b98\.1\b/,'CHFI'],[/\bthe edge\b|\b102\.1\b|\bcfny\b/,'CFNY'],
   [/\bkiss(?: ?92(?:\.5)?)?\b/,'KISS 92.5'],[/\bz ?103(?:\.5)?\b/,'Z103.5'],[/\bindie ?88\b/,'Indie88'],[/\bboom(?: ?97(?:\.3)?)?\b/,'CHBM'],[/\bfm ?96\b|\b95\.9\b/,'CFPL-FM'],[/\bam ?980\b|\b980\b/,'CFPL-AM']];
 function audSave(){NM.set('audvol',AUD.vol)}
-function audPill(){let p=$('audPill');if(!AUD.kind||(AUD.amb&&typeof AMB!=='undefined'&&AMB.on)){if(p)p.className='';return}
+function audPill(){let p=$('audPill');if(!AUD.kind||AUD.kind==='sleep'||AUD.amb){if(p)p.className='';return}
   if(!p){p=document.createElement('div');p.id='audPill';document.body.appendChild(p)}
   const ic={radio:'📻',pod:'🎙️',sleep:'🌧️'}[AUD.kind]||'🔊',left=AUD.off?Math.max(0,Math.ceil((AUD.off-Date.now())/60000)):0;
   p.innerHTML=`<i>${ic}</i><div><b>${esc(AUD.label)}</b><small>${esc(AUD.sub||'')}${left?(AUD.sub?' · ':'')+'off in '+left+' min':''} · say “stop”</small></div><em>${Math.round(AUD.vol*100)}</em>`;p.className='on'}
@@ -5335,7 +5335,11 @@ function audCmd(t){t=String(t||'').toLowerCase().replace(/[.!?]+$/,'').trim();
     if(/\b(?:back|rewind|go back) (?:15|fifteen|30|thirty)?\s*(?:seconds|secs)?\b/.test(t)&&AUD.kind==='pod'){AUD.el.currentTime=Math.max(0,AUD.el.currentTime-15);return 'Back 15 seconds.'}
     const st=t.match(/^(?:turn (?:it|that) off|stop|sleep timer|stop playing) (?:in|after) (.+)$/);if(st){const ms=tkDur(st[1]);if(ms){AUD.off=Date.now()+ms;audPill();return `Okay, off in ${tkSay(ms)}.`}}}
   const pl=t.match(/^(?:(?:can you |could you |please |hey )?(?:play|put on|turn on|start|listen to|tune (?:in )?to|i want to (?:hear|listen to)|let'?s (?:hear|listen to)))\s+(?:me |us |some )?(.+)$/);
-  if(!pl)return null;let x=pl[1].replace(/\s+please$/,'').trim();const mins=audDur(x);x=x.replace(/\bfor (?:the next )?(?:\d+|an?|one|two|three|half an?)\s*(?:hours?|hrs?|minutes?|mins?)\b/,'').trim();
+  /* a sound's name on its own ("rain sounds", "white noise") means play it, not the weather */
+  if(!pl){const bare=t.replace(/\s+please$/,'').match(/^(?:some |the )?((?:rain|thunderstorm|thunder|storm|ocean|waves?|fireplace|fire|fan|white|brown|pink|stream|brook|sleep|snow|evening)(?: (?:sounds?|noise))?(?: for .+)?)$/);
+    if(bare&&(/\b(?:sounds?|noise)\b/.test(bare[1])||/^(?:white noise|brown noise|pink noise|fireplace|thunderstorm)$/.test(bare[1]))){const k=audSleepKind(bare[1]);if(k)return audSleep(k,audDur(bare[1]))}
+    return null}
+  let x=pl[1].replace(/\s+please$/,'').trim();const mins=audDur(x);x=x.replace(/\bfor (?:the next )?(?:\d+|an?|one|two|three|half an?)\s*(?:hours?|hrs?|minutes?|mins?)\b/,'').trim();
   if(/\bnova ?fm\b/.test(x))return null;
   if(/\b(?:podcasts?|episode)\b/.test(x))return audPod(x);
   if(/\b(?:sounds?|noise)\b/.test(x)||/^(?:the )?(?:rain|thunderstorm|thunder|ocean|ocean waves|waves|fireplace|fan|white noise|brown noise|pink noise|a fan|a fireplace|a thunderstorm|babbling brook|a stream)$/.test(x)){const k=audSleepKind(x);if(k)return audSleep(k,mins)}
@@ -7655,6 +7659,7 @@ function updQuiet(){try{if(typeof FM!=='undefined'&&(FM.air||FM.queued||FM.pend|
   for(const id of ['lvTake','focTake','mtgBar','kidTake','hlFull','nvOrb','fmSid','fmOn','nvRem','amb','cook'])if($(id)&&$(id).classList.contains('on'))return false;
   if(typeof NovaRoundup!=='undefined'&&NovaRoundup.busy())return false;if(typeof focusOn==='function'&&focusOn())return false;
   if((typeof HLF!=='undefined'&&HLF.on)||(typeof AMB!=='undefined'&&AMB.on)||(typeof COOK!=='undefined'&&COOK.on))return false;
+  if(typeof AUD!=='undefined'&&AUD.kind)return false;   /* never cut off rain sounds, the radio or a podcast */
   return true}catch(e){return true}}
 async function updCheck(){if(!/^https?:/.test(location.protocol)||!NV_BUILD)return;
   try{const r=await fetch('version.txt?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=parseInt((await r.text()).trim(),10);
@@ -7663,7 +7668,7 @@ async function updCheck(){if(!/^https?:/.test(location.protocol)||!NV_BUILD)retu
       if(!UPD.want){UPD.want=v;UPD.since=Date.now();vLog('update ready: build '+v)}}}catch(e){}}
 setInterval(()=>{if(!UPD.want)return;const waited=Date.now()-UPD.since;
   /* reload when it's quiet; after 45 minutes of waiting, any moment that isn't mid-break or mid-command will do */
-  const hard=(typeof HLF!=='undefined'&&HLF.on)||(typeof AMB!=='undefined'&&AMB.on)||(typeof COOK!=='undefined'&&COOK.on)||($('kidTake')&&$('kidTake').classList.contains('on'))||(typeof focusOn==='function'&&focusOn());
+  const hard=(typeof AUD!=='undefined'&&AUD.kind)||(typeof SS!=='undefined'&&SS.on)||(typeof HLF!=='undefined'&&HLF.on)||(typeof AMB!=='undefined'&&AMB.on)||(typeof COOK!=='undefined'&&COOK.on)||($('kidTake')&&$('kidTake').classList.contains('on'))||(typeof focusOn==='function'&&focusOn());
   if(updQuiet()||(waited>45*60000&&!hard&&!(typeof FM!=='undefined'&&FM.air)&&!(typeof VOICE!=='undefined'&&VOICE.armed))){try{let tr={};try{tr=JSON.parse(localStorage.getItem('nova-updtry')||'{}')}catch(e){}localStorage.setItem('nova-updtry',JSON.stringify({v:UPD.want,at:Date.now(),n:tr.v===UPD.want?(tr.n||0)+1:1}));localStorage.setItem('nova-updated',String(UPD.want))}catch(e){}
     /* a fresh address so neither Chrome nor GitHub hands back the old copy */
     const q=new URLSearchParams(location.search);q.set('v',UPD.want);location.replace(location.pathname+'?'+q.toString()+location.hash)}},5000);
@@ -10874,7 +10879,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 333';
+document.getElementById('ver').textContent='build nova 334';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
