@@ -5079,6 +5079,14 @@ function sayNorm(t){t=String(t||'');const W=n=>fmNumW(n),AP=a=>a?(/^p/i.test(a)?
   t=t.replace(/\b24\/7\b/g,'twenty four seven').replace(/\bHwy\.?\s/g,'Highway ').replace(/(\d)\s*[-–]\s*(\d+)\s*(?=cm|mm|km|kilometres|centimetres|millimetres|degrees|°|%|percent|per cent|minutes|hours|days|weeks)/g,'$1 to $2 ');
   t=t.replace(/(A M|P M|o'clock|\b[a-z]+(?:-[a-z]+)?)\.?\s*[–—]\s*(?=(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b)/g,'$1 to ');
   for(const [re,r] of U)t=t.replace(re,r);
+  /* sports: "10-14-3" is a record, "W 5-2" a score, "PIT" a team */
+  const pl=(n,a,b)=>`${n} ${+n===1?a:b}`;
+  t=t.replace(/(?<![\d-])(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?![\d-])/g,(z,w,l,o,so)=>`${pl(w,'win','wins')}, ${pl(l,'loss','losses')}, ${pl(o,'overtime loss','overtime losses')} and ${pl(so,'shootout loss','shootout losses')}`)
+   .replace(/(?<![\d-])(\d{1,2})-(\d{1,2})-(\d{1,2})(?![\d-])/g,(z,w,l,o)=>`${pl(w,'win','wins')}, ${pl(l,'loss','losses')} and ${pl(o,'overtime loss','overtime losses')}`)
+   .replace(/\b([WL])\s+(\d{1,2})\s*-\s*(\d{1,2})\b/g,(z,r,a,b)=>(r==='W'?'won ':'lost ')+a+' to '+b)
+   .replace(/\b(won|lost|beat|win|loss|leads?|trail(?:s|ing)?|up|down|tied)\s+(\d{1,2})\s*-\s*(\d{1,2})\b/gi,'$1 $2 to $3');
+  const NHLA={ANA:'Anaheim',BOS:'Boston',BUF:'Buffalo',CGY:'Calgary',CAR:'Carolina',CHI:'Chicago',COL:'Colorado',CBJ:'Columbus',DAL:'Dallas',DET:'Detroit',EDM:'Edmonton',FLA:'Florida',LAK:'Los Angeles',MIN:'Minnesota',MTL:'Montreal',NSH:'Nashville',NJD:'New Jersey',NYI:'the Islanders',NYR:'the Rangers',OTT:'Ottawa',PHI:'Philadelphia',PIT:'Pittsburgh',SJS:'San Jose',SEA:'Seattle',STL:'St. Louis',TBL:'Tampa Bay',TOR:'Toronto',UTA:'Utah',VAN:'Vancouver',VGK:'Vegas',WSH:'Washington',WPG:'Winnipeg'};
+  t=t.replace(/(\bvs\.?|\bversus|\bat|@|\bagainst|\bhosts?|\bvisits?|\bplays?|\bbeat|\blost to|\bto)\s*([A-Z]{3})\b/g,(z,w,a)=>NHLA[a]?(w==='@'?'at':w)+' '+NHLA[a]:z);
   return t}
 async function macSay(text,rate){text=sayNorm(text);if(!NOVA_MAIN)return true;if(!await mvCheck())return false;window._macSpeaking=Date.now();
   /* the roundup talks for a minute or more straight: Kokoro only if it keeps up on this Mac (measured below), Zoe otherwise */
@@ -7954,7 +7962,7 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(has(/\b(world series|series|brewers|rays|fall classic)\b/)){if(wsShow())showFor('ws');return reply(wsSay())}
   if(has(/\b(wrapped|most watched|watched the most)\b/)){showFor('wrapped');return reply(WR?`This month: ${Math.round(WR.hours)} hours watched${WR.shows&&WR.shows[0]?', and the top show is '+WR.shows[0].title:''}.`:'Still working that out.')}
   if(HLF.on&&/^(stop|close|done|exit|enough|that's enough|thats enough|ok stop|stop it|stop the (video|highlights|clips))$/.test(t)){hlfClose();return reply('Okay.')}
-  if(has(/\b(highlights?|goals|replays?|clips?)\b/)&&/\b(show|play|watch|see|put on|pull up)\b/.test(t)&&!/\b(playlist|song|album)\b/.test(t)){
+  if(has(/\b(highlights?|goals|replays?|clips?)\b/)&&(/\b(show|play|watch|see|put on|pull up)\b/.test(t)||/^(?:the )?(?:(?:toronto )?(?:maple )?leafs?|knights|london knights|leaf'?s)?\s*(?:game )?(?:highlights?|goals|replays?|clips?)(?: please)?$/.test(t))&&!/\b(playlist|song|album)\b/.test(t)){
     const tm=/knights|london/.test(t)?'knights':'leafs';
     /* a game on right now: get tonight's clips first */
     if(tm==='leafs'&&!LVH.length&&liveGames().length){loadLiveHighlights().then(()=>{if(!hlfShow(tm)){showFor('hub');reply('No clips from tonight yet. ESPN usually posts them a few minutes after each goal.')}});return reply('Getting tonight\'s goals.')}
@@ -10902,7 +10910,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 336';
+document.getElementById('ver').textContent='build nova 337';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
