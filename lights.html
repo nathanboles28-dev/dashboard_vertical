@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lights">
+<meta name="theme-color" content="#0a0b0f">
+<title>Lights</title>
+<style>
+:root{--ink:#f5f5f7;--dim:rgba(235,235,245,.6);--edge:rgba(255,255,255,.13);--glass:rgba(255,255,255,.08);--on:#e8a45c}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:#000;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(120% 70% at 50% 0%,#1f1a16 0%,#0b0a0c 55%,#000 100%) fixed;padding:max(22px,env(safe-area-inset-top)) 18px max(26px,env(safe-area-inset-bottom))}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 2px}
+h1{font-size:32px;font-weight:700;letter-spacing:-.02em}
+.pill{font-size:13px;font-weight:600;padding:6px 12px;border-radius:20px;background:var(--glass);border:1px solid var(--edge);color:var(--dim);display:flex;align-items:center;gap:7px}
+.pill i{width:8px;height:8px;border-radius:50%;background:#777}.pill.ok i{background:#34c759}.pill.bad i{background:#ff5c6c}
+.sum{font-size:15px;color:var(--dim);padding:0 2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lt{position:relative;text-align:left;font:inherit;color:inherit;border:1px solid var(--edge);border-radius:22px;padding:16px 16px 14px;min-height:132px;
+ background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));display:flex;flex-direction:column;gap:10px;transition:background .25s,border-color .25s}
+.lt.on{background:linear-gradient(180deg,rgba(232,164,92,.24),rgba(232,164,92,.10));border-color:rgba(232,164,92,.45)}
+.lt.wide{grid-column:1/-1}
+.lt .top{display:flex;align-items:center;justify-content:space-between}
+.bulb{width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.12);display:grid;place-items:center;cursor:pointer}
+.bulb svg{width:24px;height:24px;stroke:rgba(255,255,255,.75);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lt.on .bulb{background:var(--on)}.lt.on .bulb svg{stroke:#2a1a0a}
+.lt b{font-size:17px;font-weight:600;line-height:1.2}
+.lt small{font-size:14px;color:var(--dim)}
+.lt.off-line{opacity:.5}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;border-radius:15px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:auto}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:-400px 0 0 385px var(--on)}
+.btn{font:inherit;font-size:17px;font-weight:600;color:var(--ink);border:1px solid var(--edge);background:var(--glass);border-radius:18px;padding:16px;cursor:pointer}
+.empty{padding:40px 10px;text-align:center;color:var(--dim);font-size:16px;line-height:1.5}
+.empty button{margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Lights</h1><div class="pill" id="conn"><i></i><span>Connecting</span></div></header>
+  <div class="sum" id="sum"></div>
+  <div class="grid" id="grid"><div class="empty lt wide" style="min-height:0">Getting the lights…</div></div>
+  <button class="btn" id="allOff" style="display:none">Turn all lights off</button>
+</div>
+<script>
+/* Lights-only Nova remote: every light the dashboard controls except the office.
+   Same channel as the main remote: opened once with #topic=…(&bus=…), then remembered on this phone. */
+const $=id=>document.getElementById(id);
+const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('topic');if(v){localStorage.setItem('nova-topic',v.trim())}
+  const b=h.get('bus');if(b)localStorage.setItem('nova-bus',b);if(v||b)history.replaceState(null,'',location.pathname+location.search);return localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
+const BUS=(()=>{try{return (localStorage.getItem('nova-bus')||'').replace(/\/$/,'')}catch(e){return ''}})();
+const HIDE=/office/i;                       /* lights she doesn't get */
+const isLight=d=>d.t==='light'||/\b(light|lights|lamp|bulb|bulbs|strip|pendant|sconce|chandelier)\b/i.test(d.n);
+const esc=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NB={ok:null};
+function nbCheck(){if(NB.ok!==null)return Promise.resolve(NB.ok);if(!BUS)return Promise.resolve(NB.ok=false);
+  const ac=new AbortController();setTimeout(()=>ac.abort(),8000);
+  return fetch(BUS+'/bus/ping',{signal:ac.signal,cache:'no-store'}).then(r=>r.json()).then(j=>NB.ok=!!(j&&j.ok)).catch(()=>NB.ok=false)}
+function pub(topic,body){return nbCheck().then(ok=>fetch(ok?`${BUS}/bus/${topic}`:`https://ntfy.sh/${topic}`,{method:'POST',body}))}
+function sub(topic,since,onMsg,onState){nbCheck().then(ok=>{
+  if(!ok){const es=new EventSource(`https://ntfy.sh/${topic}/sse${since?'?since='+since:''}`);es.onopen=()=>onState(true);es.onerror=()=>onState(es.readyState===1);
+    es.onmessage=e=>{try{onMsg(JSON.parse(e.data))}catch(x){}};return}
+  let ws,back=2000,ping;const go=()=>{ws=new WebSocket(BUS.replace(/^http/,'ws')+`/bus/${topic}/ws?since=${since||''}`);
+    ws.onopen=()=>{back=2000;onState(true);clearInterval(ping);ping=setInterval(()=>{try{ws.send('ping')}catch(e){}},30000)};
+    ws.onmessage=e=>{if(e.data==='pong')return;try{onMsg(JSON.parse(e.data))}catch(x){}};
+    ws.onclose=()=>{clearInterval(ping);onState(false);setTimeout(go,back);back=Math.min(30000,back*1.6)};ws.onerror=()=>{try{ws.close()}catch(e){}}};
+  go();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ws&&ws.readyState===3){back=2000;go()}})})}
+function conn(ok,msg){$('conn').className='pill '+(ok?'ok':'bad');$('conn').querySelector('span').textContent=msg||(ok?'Connected':'Offline')}
+function cmd(o){pub(T,JSON.stringify({hm:o})).then(r=>{if(!r.ok)throw 0;conn(true)}).catch(()=>conn(false,"Can't reach Nova"))}
+let L=[],hold=0;
+const BULB='<svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg>';
+function render(){const g=$('grid');
+  if(!L.length){g.innerHTML='<div class="empty lt wide" style="min-height:0">No lights yet. Make sure the dashboard is on.</div>';$('allOff').style.display='none';$('sum').textContent='';return}
+  const on=L.filter(d=>d.on&&d.r!==false);$('sum').textContent=on.length?`${on.length} of ${L.length} on`:'All off';
+  g.innerHTML=L.map((d,i)=>{const live=d.r!==false,isOn=d.on&&live;
+    return `<div class="lt${isOn?' on':''}${live?'':' off-line'}${L.length%2&&i===L.length-1?' wide':''}" data-i="${i}">
+      <div class="top"><button class="bulb" data-t="${i}" aria-label="Turn ${esc(d.n)} ${isOn?'off':'on'}">${BULB}</button></div>
+      <div><b>${esc(d.n)}</b><br><small>${!live?'Not responding':isOn?(d.b!=null?d.b+'%':'On'):'Off'}</small></div>
+      ${isOn&&d.b!=null?`<input type="range" min="1" max="100" value="${d.b}" data-b="${i}" aria-label="${esc(d.n)} brightness">`:''}</div>`}).join('');
+  $('allOff').style.display=on.length?'':'none';
+  g.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const d=L[+b.dataset.t];if(d.r===false)return;d.on=!d.on;hold=Date.now();render();cmd({n:d.n,v:{on:d.on}})});
+  g.querySelectorAll('.lt').forEach(c=>c.onclick=e=>{if(e.target.closest('input,button'))return;const b=c.querySelector('.bulb');b&&b.click()});
+  g.querySelectorAll('[data-b]').forEach(r=>{r.oninput=()=>{hold=Date.now();const d=L[+r.dataset.b];d.b=+r.value;r.closest('.lt').querySelector('small').textContent=d.b+'%'};
+    r.onchange=()=>{hold=Date.now();const d=L[+r.dataset.b];cmd({n:d.n,v:{bri:+r.value}})}})}
+$('allOff').onclick=()=>{hold=Date.now();L.forEach(d=>{if(d.on&&d.r!==false){d.on=false;cmd({n:d.n,v:{on:false}})}});render()};
+function take(j){L=(j.devices||[]).filter(d=>isLight(d)&&!HIDE.test(d.n)).sort((a,b)=>a.n.localeCompare(b.n));render()}
+if(!T){$('grid').innerHTML='<div class="empty lt wide" style="min-height:0">This phone isn\'t connected to Nova yet.<br><button class="btn" id="setT">Enter the Nova channel name</button></div>';
+  $('setT').onclick=()=>{const v=(prompt('Nova channel name')||'').trim().replace(/^.*#topic=/,'').split('&')[0];if(v){localStorage.setItem('nova-topic',v);location.reload()}};conn(false,'Not set up')}
+else sub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hold<2500)setTimeout(()=>take(j),2500);else take(j)}catch(x){}},ok=>{conn(ok);if(ok)cmd({ping:1})});
+</script>
+</body>
+</html>

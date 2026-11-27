@@ -274,6 +274,16 @@ function hmListen(){if(!T)return;
   nbSub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hmHold<2500)setTimeout(()=>{HM=j;hmRender()},2500);else{HM=j;hmRender()}}catch(x){}},ok=>{if(ok)hmCmd({ping:1})})}
 hmListen();
 
+/* ---------- share a lights-only remote (for someone else's phone) ---------- */
+(function(){const w=document.createElement('button');w.id='shareLights';w.textContent='Share lights remote';
+  w.style.cssText='font:inherit;font-size:15px;font-weight:600;color:var(--ink);border:1px solid var(--edge);background:var(--glass);border-radius:16px;padding:14px;margin-top:4px;width:100%';
+  const sec=$('hmSec');(sec||document.querySelector('.wrap')).appendChild(w);
+  w.onclick=async()=>{if(!T){askTopic();return}let bus='';try{bus=localStorage.getItem('nova-bus')||''}catch(e){}
+    const u=new URL('lights.html',location.href).href+'#topic='+encodeURIComponent(T)+(bus?'&bus='+encodeURIComponent(bus):'');
+    const msg='Nova lights: open this, then Share → Add to Home Screen';
+    try{if(navigator.share){await navigator.share({title:'Nova lights',text:msg,url:u});return}}catch(e){if(e&&e.name==='AbortError')return}
+    try{await navigator.clipboard.writeText(u);w.textContent='Link copied: paste it to her'}catch(e){prompt('Copy this link',u)}}})();
+
 /* ---------- Timers, reminders, list (state comes from the dashboard) ---------- */
 let TKS=null;
 function tkSend(o){if(!T)return;nbPub(T,JSON.stringify({tk:o})).catch(()=>setConn(false,'Can\'t reach the dashboard'))}
