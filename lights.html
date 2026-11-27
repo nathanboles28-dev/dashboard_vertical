@@ -50,8 +50,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;heigh
    Same channel as the main remote: opened once with #topic=…(&bus=…), then remembered on this phone. */
 const $=id=>document.getElementById(id);
 const T=(()=>{try{const h=new URLSearchParams(location.hash.slice(1)),v=h.get('topic');if(v){localStorage.setItem('nova-topic',v.trim())}
-  const b=h.get('bus');if(b)localStorage.setItem('nova-bus',b);if(v||b)history.replaceState(null,'',location.pathname+location.search);return localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
-const BUS=(()=>{try{return (localStorage.getItem('nova-bus')||'').replace(/\/$/,'')}catch(e){return ''}})();
+  const b=h.get('bus');if(b)localStorage.setItem('nova-bus',b);/* keep #topic in the address: a home-screen icon saves the address, not this storage */return v||localStorage.getItem('nova-topic')||''}catch(e){return ''}})();
+const BUS=(()=>{try{return (new URLSearchParams(location.hash.slice(1)).get('bus')||localStorage.getItem('nova-bus')||'https://nova-bus.nathanboles28.workers.dev').replace(/\/$/,'')}catch(e){return 'https://nova-bus.nathanboles28.workers.dev'}})();
 const HIDE=/^office light$/i;               /* the only thing she doesn't get */
 const isLight=d=>d.t==='light'||/\b(light|lights|lamp|bulb|bulbs|strip|pendant|sconce|chandelier)\b/i.test(d.n);
 const esc=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -91,7 +91,7 @@ function render(){const g=$('grid');
 $('allOff').onclick=()=>{hold=Date.now();L.forEach(d=>{if(d.on&&d.r!==false){d.on=false;cmd({n:d.n,v:{on:false}})}});render()};
 function take(j){L=(j.devices||[]).filter(d=>!HIDE.test(String(d.n).trim())).sort((a,b)=>a.n.localeCompare(b.n));render()}
 if(!T){$('grid').innerHTML='<div class="empty lt wide" style="min-height:0">This phone isn\'t connected to Nova yet.<br><button class="btn" id="setT">Enter the Nova channel name</button></div>';
-  $('setT').onclick=()=>{const v=(prompt('Nova channel name')||'').trim().replace(/^.*#topic=/,'').split('&')[0];if(v){localStorage.setItem('nova-topic',v);location.reload()}};conn(false,'Not set up')}
+  $('setT').onclick=()=>{const v=(prompt('Nova channel name')||'').trim().replace(/^.*#topic=/,'').split('&')[0];if(v){localStorage.setItem('nova-topic',v);location.hash='topic='+encodeURIComponent(v);location.reload()}};conn(false,'Not set up')}
 else sub(T+'-home','latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);if(Date.now()-hold<2500)setTimeout(()=>take(j),2500);else take(j)}catch(x){}},ok=>{conn(ok);if(ok)cmd({ping:1})});
 </script>
 </body>
