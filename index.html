@@ -6969,7 +6969,10 @@ function hlfClose(quiet){const el=$('hlFull');clearTimeout(HLF.t);if(el){const v
    (landing + taxi and walk + customs if it's an international flight + bags), and "Time to leave" works back from that
    with the live drive time to the airport. No flight number: the event's start time is taken as the landing time. */
 const PU={d:{},at:{}};
-const puIs=e=>/\bpick\s*-?\s*up\b|\bpickup\b/i.test(e.title)&&/pearson|\byyz\b|airport|terminal/i.test(e.title+' '+e.loc+' '+(e.desc||''));
+const puIs=e=>{const t=e.title+' '+e.loc+' '+(e.desc||'');
+  if(/\bpick\s*-?\s*up\b|\bpickup\b/i.test(e.title)&&/pearson|\byyz\b|airport|terminal/i.test(t))return true;
+  /* also a flight someone is coming home on: a flight number plus arriving/landing, or mom/dad/parents */
+  return !!puNo(e)&&/\b(?:arriv\w*|lands?|landing|coming (?:home|back)|mom|dad|parents|pick)\b|\bto (?:yyz|toronto|pearson)\b/i.test(t)&&!/\b(?:depart\w*|my flight|leaving)\b/i.test(e.title)};
 const puNo=e=>{const m=(e.title+' '+(e.desc||'')+' '+e.loc).toUpperCase().match(/\b(AC|QK|RV|WS|WG|TS|PD|F8|Y9|UA|AA|DL|B6|AS|WN|AM|Y4|CM|BA|AF|KL|LH|LX|OS|SN|TP|IB|AZ|EI|VS|EK|QR|EY|TK|LY|ET|CX|NH|JL|KE|OZ|CA|MU|HU|CZ|BW|CU|AV|4N|NK|F9|G4|SY)\s?(\d{1,4})\b/);return m?m[1]+m[2]:''};
 async function puFetch(no){if(!no||Date.now()-(PU.at[no]||0)<5*60000)return;PU.at[no]=Date.now();
   try{const j=await (await tfetch(relayBase()+`/pearson?key=${encodeURIComponent(SECRETS.calkey)}&no=${no}`,20000)).json();if(!j.error)PU.d[no]=j}catch(e){}}
@@ -6989,10 +6992,24 @@ function lvtPick(){if(CFG.leave&&CFG.leave.on===false)return null;if(typeof calO
   for(const e0 of calEvents){if(e0.allDay||!(e0.start instanceof Date))continue;
     let e=e0,pu=null;if(puIs(e0)){pu=puPlan(e0);e=Object.assign({},e0,{loc:'Toronto Pearson Airport'+(pu.term?' Terminal '+pu.term.slice(1):''),start:new Date(pu.ready)})}
     if(!e.loc||(typeof mtgIs==='function'&&mtgIs(e)&&!mtgPhysical(e)))continue;const st=e.start.getTime();if(st<now-5*60000||st>now+5*36e5)continue;
-    if(typeof rtSkip==='function'&&rtSkip(e.loc))continue;const k=e.title+'|'+st;if(LVT.dis.has(k))continue;
+    if(typeof rtSkip==='function'&&rtSkip(e.loc))continue;const k=e.title+'|'+st;
     const r=rtGet(e.loc);if(!r){routeTo(e.loc);continue}
-    const drive=(LVT.k===k&&LVT.r&&LVT.r.tmin)||r.min||0,leaveAt=st-drive*60000-buf;
+    /* pickups: be there 15 minutes before they're ready (landing + taxi + customs + bags) */
+    const b=pu?((CFG.leave&&CFG.leave.pickupEarly)||15)*60000:buf;
+    const drive=(LVT.k===k&&LVT.r&&LVT.r.tmin)||r.min||0,leaveAt=st-drive*60000-b;
+    lvtPhone(e,k,leaveAt,drive,pu,LVT.k===k&&LVT.r?LVT.r:r);
+    if(LVT.dis.has(k))continue;
     if(now>=leaveAt-30*60000&&now<st)return {e,k,leaveAt,drive,r:LVT.k===k&&LVT.r?LVT.r:r,pu}}return null}
+/* phone alerts: a heads-up 30 minutes before you need to leave, then "leave now" (each once, even through reloads) */
+function lvtPhone(e,k,leaveAt,drive,pu,r){try{const now=Date.now(),sent=NM.get('lvsent',{});
+  for(const x in sent)if(now-sent[x]>24*36e5)delete sent[x];
+  const hd=h=>{const m=Math.round(h);return m>=60?Math.floor(m/60)+' h '+(m%60?m%60+' min':''):m+' min'};
+  const why=pu?`${pu.no?pu.no+' ':''}lands ${fmt(new Date(pu.land))} (${pu.src}), ready about ${fmt(new Date(pu.ready))} after taxi${pu.intl?', customs':''} and bags`:`starts ${fmt(e.start)}`;
+  const traf=r&&r.delay?` (+${r.delay} min traffic)`:'';
+  const where=pu?'Pearson'+(pu.term?' Terminal '+pu.term.slice(1):''):e.loc;
+  const send=(tag,title,msg)=>{if(sent[k+tag])return;sent[k+tag]=now;NM.set('lvsent',sent);fmPhone(msg,title,'car');fmDiag('leave alert sent: '+title)};
+  if(now>=leaveAt-30*60000&&now<leaveAt-2*60000)send('|30',`Leave by ${fmt(new Date(leaveAt))} · ${e.title}`,`${why}. Drive to ${where} is ${hd(drive)}${traf}. That gets you there ${pu?'15 minutes before they\'re ready':'a few minutes early'}.`);
+  if(now>=leaveAt-2*60000&&now<leaveAt+20*60000)send('|now',`Time to leave · ${e.title}`,`${why}. ${hd(drive)} to ${where}${traf}.`)}catch(x){}}
 async function lvtTraffic(P){if(LVT.k===P.k&&Date.now()-LVT.at<5*60000)return;LVT.k=P.k;LVT.at=Date.now();
   try{const r=await tfetch(relayBase()+`/route?key=${encodeURIComponent(SECRETS.calkey)}&lat=${CFG.lat}&lon=${CFG.lon}&traffic=1&q=${encodeURIComponent(P.e.loc)}`,20000),d=await r.json();if(!d.error&&!d.none)LVT.r=d}catch(e){}}
 function lvtTick(){let el=$('lvTake');const P=lvtPick();
@@ -10879,7 +10896,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 334';
+document.getElementById('ver').textContent='build nova 335';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
