@@ -2996,6 +2996,8 @@ html.fmAir #npMini.nvfm .mn-nv{background:#1b1310;color:#f3e6cc}
 @keyframes moHoA{0%{transform:translateX(-104vw)}12%,100%{transform:none}}@keyframes moHoB{0%,6%{transform:translateX(-104vw)}18%,100%{transform:none}}
 </style>
 <style id="nvFeat">
+html.nvView #ver::after{content:' · view only'}
+html.nvView body{touch-action:pan-y}
 /* wallpaper page: just the photo, the clock and the song at the top; no music bar or page bar at the bottom */
 body.pgWall #npMini,body.pgWall #dots,body.pgWall #hdot,body.pgWall #ver{display:none!important}body.pgWall #pWall{bottom:0!important;height:auto!important}
 #fmOn.quiet{display:none!important}
@@ -3454,6 +3456,20 @@ html.th-bc #rvBody .rv-r{transform:skewX(-10deg)}
 <div id="alertBar"></div><div id="goalFx"></div><div id="mini"></div><div id="dots"></div><div id="toast"></div><div id="tkMini"></div><div id="tkAlert"><div class="tk-ai"><div class="tk-ring"></div><span></span></div><div class="tk-at"></div><div class="tk-as"></div></div><div id="answer"></div><div id="ticker"><div id="tkScore"></div><div id="tkPlay"></div></div><div id="nticker"><div class="nt-track" id="ntTrack"></div></div><div id="dimmer"></div><div id="hdot" title=""></div><div id="hpanel"></div><div id="intro"></div><div id="celeb"></div><div id="bday"></div><div id="night"></div><div id="morning"></div><div id="lwf"><div class="p">🌺</div><b>Lest we forget</b><span>Two minutes of silence · Remembrance Day</span></div>
 <div id="ver" style="position:fixed;right:1vw;bottom:calc(.5*var(--u));z-index:3;font-size:calc(1.2*var(--u));color:#fff;opacity:.4"></div>
 <script>
+/* ===== View-only mode (your phone): the same dashboard, but it only looks. No mic, no voice, no DJ breaks, no AI calls,
+   no phone alerts, and it never runs remote commands, so it can't double up with the kitchen screen. ===== */
+const NOVA_VIEW=(()=>{try{if(/(^|[#&])view=1(&|$)/.test(location.hash))localStorage.setItem('nova-view','1');return localStorage.getItem('nova-view')==='1'}catch(e){return /view=1/.test(location.hash)}})();
+if(NOVA_VIEW){try{
+  if(navigator.mediaDevices)navigator.mediaDevices.getUserMedia=()=>Promise.reject(new Error('view only'));
+  try{delete window.SpeechRecognition}catch(e){}window.SpeechRecognition=undefined;window.webkitSpeechRecognition=undefined;
+  if(window.speechSynthesis)speechSynthesis.speak=()=>{};
+  const of=window.fetch.bind(window);
+  window.fetch=function(u,o){const s=String(typeof u==='string'?u:(u&&u.url)||''),m=String((o&&o.method)||'GET').toUpperCase();
+    if(m!=='GET'&&(/\/bus\/|ntfy\.sh|127\.0\.0\.1|localhost/.test(s)))return Promise.resolve(new Response('{}',{status:200}));   /* never sends anything */
+    if(/\/(ask|tts|stt|cook|kokoro|speak)(\?|$)/.test(s.replace(/^https?:\/\/[^/]+/,'')))return Promise.resolve(new Response('{"answer":"","capped":true}',{status:200,headers:{'Content-Type':'application/json'}}));
+    return of(u,o)};
+  document.documentElement.classList.add('nvView');
+}catch(e){}}
 /* ===== SETTINGS: edit these ===== */
 const CFG={
   kid:{on:true,name:'Rosemary',pitch:265,adultBelow:215,goal:7,mins:4,birthday:''},
@@ -3658,7 +3674,7 @@ const $=id=>document.getElementById(id);
    #calkey=YOURKEY&topic=YOURTOPIC&relay=…&bus=… on the end of the address; they're saved and the address is cleaned up. */
 const SECRETS=(()=>{const out={calkey:'',topic:'',gmapkey:'',relay:'',bus:''};try{const h=new URLSearchParams(location.hash.slice(1));let got=false;
   Object.keys(out).forEach(k=>{const v=h.get(k);if(v){localStorage.setItem('nova-'+k,v.trim());got=true}});
-  if(got)history.replaceState(null,'',location.pathname+location.search);
+  if(got&&!NOVA_VIEW)history.replaceState(null,'',location.pathname+location.search);   /* view mode keeps them: a phone home-screen icon only remembers its address */
   Object.keys(out).forEach(k=>out[k]=localStorage.getItem('nova-'+k)||'')}catch(e){}return out})();
 if(!CFG.relay)CFG.relay=SECRETS.relay;if(!CFG.bus)CFG.bus=SECRETS.bus;
 document.addEventListener('DOMContentLoaded',()=>{const f=$('fcTitle');if(f&&CFG.city&&CFG.city!=='Home')f.textContent='Forecast · '+CFG.city});
@@ -8010,12 +8026,12 @@ function handleCommand(raw){if(!NOVA_MAIN)return;
   if(aiOn())return askNova(t);
   reply('Sorry, I didn\'t catch that. Try weather, scores, news, standings, calendar, Jellyfin, traffic or game day.');
 }
-function remote(){
+function remote(){if(NOVA_VIEW)return;
   const T=SECRETS.topic;if(!T)return;
   const onCmd=d=>{if(d.event&&d.event!=='message')return;
     if(d.time&&Date.now()/1000-d.time>30)return;   /* ignore old commands after a reconnect */
     if(!/^fmstate /.test(String(d.message||''))){window._lastCmd=Date.now();try{const mm=String(d.message||'');if(mm.length<80&&!/^[\[{]|^(presence|alarm|ping)\b/i.test(mm))fmDiag(`remote: [${mm}]`)}catch(e){}if(!/^(presence|alarm)\b/i.test(String(d.message||'')))hudSeen('remote')}
-    let m=d.message;try{const j=JSON.parse(m);if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}
+    let m=d.message;try{const j=JSON.parse(m);if(j.viewlink){nbPub(`${T}-reply`,'VIEWLINK|'+location.origin+location.pathname+'#view=1&calkey='+encodeURIComponent(SECRETS.calkey||'')+'&topic='+encodeURIComponent(SECRETS.topic||'')+(SECRETS.bus?'&bus='+encodeURIComponent(SECRETS.bus):'')+(SECRETS.relay?'&relay='+encodeURIComponent(SECRETS.relay):'')).catch(()=>{});return}if(j.hm){hmRemote(j.hm);return}if(j.tk){tkRemote(j.tk);return}m=j.text||j.cmd||m}catch(x){}
     /* the remote's Pause / Resume buttons always mean the page (an old copy of the remote sends just "pause") */
     {const b=String(m||'').trim().toLowerCase();if(b==='pause')m='pause the page';else if(b==='resume')m='resume the page'}
     handleCommand(m)};
@@ -10038,7 +10054,10 @@ function orbMini(cv){if(!cv||!document.documentElement.classList.contains('nvx')
   const _ask=askNova;askNova=function(){if(ORB.st)orbSet('think',{secs:25});return _ask.apply(this,arguments)};
   const _rep=reply;reply=function(text){if(ORB.st&&text&&ORB.pg&&((document.querySelector('.page.on')||{}).id||'')!==ORB.pg){orbHide();return _rep.apply(this,arguments)}if(ORB.st&&text){const w=String(text).split(/\s+/).length;orbSet('speak',{a:text,secs:Math.min(16,Math.max(4,w*.42+1.5))})}return _rep.apply(this,arguments)};
 })();
-function voiceStart(){const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(NOVA_VIEW){let sx=0,sy=0,st=0;addEventListener('touchstart',e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now()},{passive:true});
+  addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Date.now()-st>800||Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5)return;
+    try{if(dx<0)nextPage(undefined,paused?0:90);else nextPage(0,paused?0:90)}catch(x){}},{passive:true})}
+function voiceStart(){if(NOVA_VIEW)return;const V=CFG.voice||{},SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(V.on===false){VOICE.st='off';return}if(!SR){VOICE.st='err';VOICE.err='this browser has no speech recognition';return}
   try{if(VOICE.rec){VOICE.rec.onend=null;VOICE.rec.onerror=null;VOICE.rec.onresult=null;VOICE.rec.abort()}}catch(e){}
   const rec=new SR();VOICE.rec=rec;rec.lang=V.lang||'en-CA';rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=5;
@@ -10910,7 +10929,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 337';
+document.getElementById('ver').textContent='build nova 338';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
