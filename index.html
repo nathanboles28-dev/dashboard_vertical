@@ -4343,10 +4343,16 @@ function hmColor(d){d={...d,type:hmKind(d)};if(d.type==='fan')return '#7fd3ff';i
 function hmTone(d){if(d.type!=='light')return '';if(d.mode!=='ct'&&d.sat>8){const h=d.hue;return h<15||h>=345?'Red':h<45?'Orange':h<70?'Yellow':h<160?'Green':h<200?'Teal':h<255?'Blue':h<290?'Purple':'Pink'}
   const k=d.ct?1e6/d.ct:2700;return k<3000?'Warm white':k<4500?'Soft white':'Bright white'}
 const hmFind=n=>HM.devs.find(d=>d.name.toLowerCase()===String(n).toLowerCase());
-async function hmLoad(){const H=CFG.home;if(!H||!H.on)return;try{const r=await fetch(H.helper+'/devices',{cache:'no-store'});const j=await r.json();if(j.error)throw new Error(j.error);HM.devs=j.devices||[];HM.err='';HM.at=Date.now()}
+/* view mode (phone): the helper only answers on the kitchen Mac, so read the state the kitchen dashboard broadcasts to the remotes */
+let hmViewSub=false;
+function hmViewLoad(){if(hmViewSub||!SECRETS.topic)return;hmViewSub=true;
+  nbSub(`${SECRETS.topic}-home`,'latest',d=>{if(d.event&&d.event!=='message')return;try{const j=JSON.parse(d.message);
+    HM.devs=(j.devices||[]).map(x=>({name:x.n,type:x.t,on:!!x.on,bri:x.b,reach:x.r!==false,_c:x.c}));HM.err='';HM.at=j.at||Date.now();
+    if($('pHome')&&$('pHome').classList.contains('on'))renderHome();hmBadge()}catch(e){}})}
+async function hmLoad(){const H=CFG.home;if(!H||!H.on)return;if(NOVA_VIEW){hmViewLoad();return}try{const r=await fetch(H.helper+'/devices',{cache:'no-store'});const j=await r.json();if(j.error)throw new Error(j.error);HM.devs=j.devices||[];HM.err='';HM.at=Date.now()}
   catch(e){HM.err=HM.devs.length?'':'Home helper not running on this Mac';}
   if($('pHome')&&$('pHome').classList.contains('on'))renderHome();hmBadge();hmReply()}
-async function hmSet(name,v){const d=hmFind(name);if(!d)return;Object.assign(d,v.color?{}:v);if(v.ct)d.mode='ct';if(v.hue!=null)d.mode='hs';renderHome();hmBadge();
+async function hmSet(name,v){if(NOVA_VIEW)return;const d=hmFind(name);if(!d)return;Object.assign(d,v.color?{}:v);if(v.ct)d.mode='ct';if(v.hue!=null)d.mode='hs';renderHome();hmBadge();
   try{await fetch(CFG.home.helper+'/set',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({id:d.id,...v})})}catch(e){}setTimeout(hmLoad,1500)}
 function hmScene(i){const sc=(CFG.home.scenes||[])[i];if(!sc)return;HM.scene=sc.name;for(const [n,v] of Object.entries(sc.set))hmSet(n,v)}
 function hmTile(n){const d=hmFind(n);if(!d)return `<div class="jf-glass hm-t gone"><div class="ic">${hmSvg('switch')}</div><div><b>${esc(n)}</b><small>Not found</small></div></div>`;
@@ -10929,7 +10935,7 @@ function radarSay(){const P=(PL&&PL.planes)||[];if(!P.length)return 'No planes o
 /* Keep pixels moving to avoid burn-in */
 setInterval(()=>{const x=(Math.random()*2-1)*.8,y=(Math.random()*2-1)*.8;document.querySelectorAll('.page').forEach(el=>el.style.transform=`translate(${x}vw,${y}vh)`)},300000);
 
-document.getElementById('ver').textContent='build nova 338';
+document.getElementById('ver').textContent='build nova 339';
 /* ---------- Glass theme background: a softly blurred photo from your folder, changes every few minutes ---------- */
 let bgOn=0,bgFails=0;
 function bgCycle(){
